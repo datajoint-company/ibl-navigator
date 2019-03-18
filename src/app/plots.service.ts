@@ -13,20 +13,28 @@ export class PlotsService {
         this.http.get(`http://localhost:3000/api/plots/${ type }/${ id }`)
         .subscribe((plotData) => {
             this.plots = plotData;
-            // console.log('plots (in service) are: ');
-            // console.log(this.plots);
+            console.log('plots (in service getPlots) are: ');
+            console.log(this.plots);
             this.plotsUpdated.next(this.plots);
         });
     }
 
     retrievePlot(plotInfo) {
-        this.http.post(`http://localhost:3000/api/plot/`, plotInfo)
-            .subscribe((plotData) => {
-                this.plots = plotData;
-                // console.log('plots (in service) are: ');
-                // console.log(this.plots);
-                this.plotsUpdated.next(this.plots);
-            });
+        console.log('POSTing for:', plotInfo);
+        this.http.post(`http://localhost:3000/api/plot/`, plotInfo, { responseType: 'text' })
+            .subscribe(
+                (plotData) => {
+                    this.plots = plotData;
+                    console.log('plots (in service retrievePlot) are: ');
+                    console.log(this.plots);
+                    this.plotsUpdated.next(this.plots);
+                },
+                (err: any) => {
+                    console.log('err in http.post subscription - sending back plot data anyways');
+                    console.log(err);
+                    this.plotsUpdated.next(this.plots);
+                }
+            );
     }
 
     getPlotUpdateListener() {

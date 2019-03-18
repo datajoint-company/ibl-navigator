@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { PlotsService } from '../../plots.service';
+import { Component, OnInit, ViewChild, ElementRef, OnChanges, SimpleChanges, OnDestroy, Inject } from '@angular/core';
+import { ViewSamplePlotsComponent } from '../view-sample-plots.component';
+import { Subscription, Observable } from 'rxjs';
+import { PlotsService } from '../../../plots.service';
 
 declare var Plotly: any;
 
@@ -9,18 +10,21 @@ declare var Plotly: any;
   templateUrl: './sample-plot.component.html',
   styleUrls: ['./sample-plot.component.css']
 })
-export class SamplePlotComponent implements OnInit, OnDestroy {
+export class SamplePlotComponent implements OnInit, OnChanges, OnDestroy {
   plots;
   loading: boolean;
-  plotInfo = { type: 'water_administration', id: 2, lab: 'somelab', date: new Date() };
+  plotInfo = { type: 'water_administration', id: 1};
 
   private plotsSubscription: Subscription;
 
-  @ViewChild('samplePlot') el: ElementRef;
 
-  constructor(public plotsService: PlotsService) {}
+  @ViewChild('samplePlot') el: ElementRef;
+  constructor(public plotsService: PlotsService, @Inject(ViewSamplePlotsComponent) private VSPComp: ViewSamplePlotsComponent) {}
 
   ngOnInit() {
+    this.plotInfo = this.VSPComp.PMTComp.selectedPlot;
+    console.log('VSPComp is');
+    console.log(this.VSPComp);
     this.loading = true;
     this.plotsService.retrievePlot(this.plotInfo);
     // this.plotsService.getPlots('scatter', 1);
@@ -36,14 +40,23 @@ export class SamplePlotComponent implements OnInit, OnDestroy {
 
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('ngOnChange in sample-plot comp');
+    console.log(changes);
+    // for (let testing in changes) {
+    //   console.log(testing);
+    //   console.log(changes[testing]);
+    // }
+  }
+
   ngOnDestroy() {
     this.plotsSubscription.unsubscribe();
   }
 
   plotSample(plot) {
     const element = this.el.nativeElement;
-    console.log('plots for samplePlot are: ');
-    console.log(plot);
+    // console.log('plots for samplePlot are: ');
+    // console.log(plot);
     let layout;
     if (!plot.layout) {
       layout = {
@@ -138,16 +151,16 @@ export class SamplePlotComponent implements OnInit, OnDestroy {
     const config = {
       modeBarButtonsToRemove: ['sendDataToCloud'],
       displaylogo: false,
-      modeBarButtonsToAdd: [{
-        name: 'toImage2',
-        icon: Plotly.Icons.camera,
-        click: function (gd) {
-          Plotly.downloadImage(gd);
-        }
-      }],
+      // modeBarButtonsToAdd: [{
+      //   name: 'toImage2',
+      //   icon: Plotly.Icons.camera,
+      //   click: function (gd) {
+      //     Plotly.downloadImage(gd);
+      //   }
+      // }],
       toImageButtonOptions: {
         format: 'svg', // one of png, svg, jpeg, webp
-        filename: 'custom_image',
+        filename: 'svg_image',
         height: 1300,
         width: 1700,
         scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
