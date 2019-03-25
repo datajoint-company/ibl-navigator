@@ -13,6 +13,9 @@ usage::
 api specification
 =================
 
+All API endpoints documented here are under a version prefix; currently '/v0',
+so, if an endpoint is documented as '/stuff', the real URL would be '/v0/stuff'.
+
 WIP draft v0.1 api spec::
 
   Requests
