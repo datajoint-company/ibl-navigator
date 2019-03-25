@@ -124,8 +124,10 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
 
     const dummyplot = {
       'data': [{
-        'x': [0, img_width * scale_factor],
-        'y': [0, img_height * scale_factor],
+        // 'x': [0, img_width * scale_factor],
+        // 'y': [0, img_height * scale_factor],
+        'x': [ -15, 20],
+        'y': [0, 249],
         'mode': 'markers',
         'marker': { 'opacity': 0.9 }
       }]
@@ -137,10 +139,15 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
         // source: plot,
         source: imageSource,
         // source: 'https://raw.githubusercontent.com/michaelbabyn/plot_data/master/bridge.jpg',
-        sizex: img_width * scale_factor,
-        sizey: img_height * scale_factor,
-        x: 0,
-        y: img_height * scale_factor,
+        
+        // sizex: img_width * scale_factor,
+        // sizey: img_height * scale_factor,
+        // x: 0,
+        // y: img_height * scale_factor,
+        sizex: 35,
+        sizey: 249,
+        x: -15,
+        y: 249,
         xref: 'x',
         yref: 'y',
         sizing: 'stretch',
@@ -163,6 +170,7 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
     layout2['width'] = img_width * scale_factor;
     layout2['height'] = img_height * scale_factor;
 
+
     const config2 = {
       modeBarButtonsToRemove: ['sendDataToCloud'],
       displaylogo: false,
@@ -182,7 +190,7 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
       }
     };
     // console.log('image source is: ' + layout2['images'][1].source);
-    Plotly.plot(element, dummyplot.data, layout2, config2);
+    Plotly.newPlot(element, dummyplot.data, layout2, config2);
 
   }
 

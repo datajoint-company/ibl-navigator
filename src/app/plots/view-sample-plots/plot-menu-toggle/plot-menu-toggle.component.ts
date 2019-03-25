@@ -20,6 +20,7 @@ export class PlotMenuToggleComponent implements OnInit {
   // ];
 
   plotMenu = [
+    { type: 'raster_test_data', id: 2 },
     { type: 'raster_test_data', id: 1 },
     { type: 'raster_test_data', id: 0 }
   ];
