@@ -1,5 +1,5 @@
-<div class="container">
-  <form (ngSubmit)="onLogin(f)" #f="ngForm">
+<div class="col-lg-4 col-md-6 col-sm-8 col-12">
+  <form (ngSubmit)="onLogin(f)" #f="ngForm" *ngIf="!isLoggedIn">
     <div class="form-group">
       <label for="username">Username</label>
       <input class="form-control" type="text" id="username" name="username" ngModel>
@@ -8,8 +8,8 @@
       <label for="password">Password</label>
       <input class="form-control" type="password" id="password" name="password" ngModel>
     </div>
-    <button class="btn-outline-dark btn" type="submit">Log In</button>
+    <button class="btn-outline-dark btn" type="submit" *ngIf="!isLoggedIn">Log In</button>
   </form>
   
-  <button class="btn-outline-danger btn" (click)="logOut()">Log Out</button>
+  <button class="btn-outline-danger btn" (click)="logOut()" *ngIf="isLoggedIn">Log Out</button>
 </div>
