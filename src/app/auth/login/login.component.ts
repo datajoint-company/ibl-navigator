@@ -8,6 +8,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  isLoggedIn = this.authService.isLoggedIn;
 
   constructor(private authService: AuthService) { }
 

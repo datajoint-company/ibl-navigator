@@ -8,10 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AuthGuard } from './auth/auth-guard.service';
 import { AppComponent } from './app.component';
-import { ByMouseComponent } from './by-mouse/by-mouse.component';
-import { EachMouseComponent } from './each-mouse/each-mouse.component';
-import { ByLabComponent } from './by-lab/by-lab.component';
-import { EachLabComponent } from './each-lab/each-lab.component';
 import { EachBatchComponent } from './each-batch/each-batch.component';
 import { LoginComponent } from './auth/login/login.component';
 import { AuthService } from './auth/auth.service';
@@ -19,24 +15,37 @@ import { SamplePlotComponent } from './plots/view-sample-plots/sample-plot/sampl
 import { PlotsService } from './plots.service';
 import { ViewSamplePlotsComponent } from './plots/view-sample-plots/view-sample-plots.component';
 import { PlotMenuToggleComponent } from './plots/view-sample-plots/plot-menu-toggle/plot-menu-toggle.component';
+import { SessionListComponent } from './session-list/session-list.component';
+import { SessionComponent } from './session-list/session/session.component';
+import { MouseListComponent } from './mouse-list/mouse-list.component';
+import { MouseComponent } from './mouse-list/mouse/mouse.component';
+import { CellListComponent } from './cell-list/cell-list.component';
+import { CellComponent } from './cell-list/cell/cell.component';
+import { OverviewComponent } from './overview/overview.component';
 
 const appRoutes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: '', component: OverviewComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'plot', component: ViewSamplePlotsComponent },
+  { path: 'cells', component: CellListComponent },
   {
-    path: 'by-mouse',
-        canActivate: [AuthGuard],
-        canActivateChild: [AuthGuard],
-        component: ByMouseComponent,
-        children: [
-          { path: ':lab/:mousename', component: EachMouseComponent }
-        ]
+    path: 'subjects',
+      canActivate: [AuthGuard],
+      canActivateChild: [AuthGuard],
+      component: MouseListComponent,
+      children: [
+        { path: ':lab/:mousename', component: MouseComponent }
+      ]
   },
   {
-    path: 'by-lab', component: ByLabComponent, children: [
-      { path: ':lab/', component: EachLabComponent },
-      { path: ':lab/:batchname', component: EachBatchComponent }
-    ]
+    path: 'sessions',
+      canActivate: [AuthGuard],
+      canActivateChild: [AuthGuard],
+      component: SessionListComponent,
+      children: [
+        { path: ':sessionID/', component: SessionComponent },
+        { path: ':sessionID/:batchname', component: EachBatchComponent }
+      ]
   }
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
   // { path: '**', redirectTo: '/not-found' }
@@ -46,15 +55,18 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    ByMouseComponent,
-    ByLabComponent,
-    EachMouseComponent,
-    EachLabComponent,
     EachBatchComponent,
     LoginComponent,
     SamplePlotComponent,
     ViewSamplePlotsComponent,
-    PlotMenuToggleComponent
+    PlotMenuToggleComponent,
+    SessionListComponent,
+    SessionComponent,
+    MouseListComponent,
+    MouseComponent,
+    CellListComponent,
+    CellComponent,
+    OverviewComponent
   ],
   imports: [
     BrowserModule,

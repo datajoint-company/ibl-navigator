@@ -36,7 +36,9 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.plotsSubscription.unsubscribe();
+    if (this.plotsSubscription) {
+      this.plotsSubscription.unsubscribe();
+    }
   }
 
   testChange() {
@@ -139,7 +141,6 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
         // source: plot,
         source: imageSource,
         // source: 'https://raw.githubusercontent.com/michaelbabyn/plot_data/master/bridge.jpg',
-        
         // sizex: img_width * scale_factor,
         // sizey: img_height * scale_factor,
         // x: 0,
