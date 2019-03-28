@@ -41,3 +41,5 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+dj_local_conf.json
+__pycache__
