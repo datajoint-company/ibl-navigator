@@ -43,3 +43,5 @@ testem.log
 Thumbs.db
 dj_local_conf.json
 __pycache__
+
+.env
