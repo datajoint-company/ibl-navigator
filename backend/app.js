@@ -134,6 +134,37 @@ app.get('/api/plots/:type/:id', (req, res, next) => {
 
 });
 
+app.get('/api/sessions', (req, res) => {
+    res.status(200).send(
+        [
+            {   
+            "task_protocol": "_iblrig_tasks_habituationChoiceWorld3.5.3",
+            "session_uuid":"8aw3uhfaw3a-8laj3rjilaj3a-bnkahao39",
+            "session_start_time": "2019-03-19 10:48:51",
+            "lab_name": "angelakilab",
+            "session_end_time": "2019-03-19 11:18:31",
+            "subject_nickname": "IBL-T1"
+            },
+            {
+            "task_protocol": "_iblrig_tasks_habituationChoiceWorld3.7.6",
+            "session_uuid": "4aw3aefa3a-9kjanej3rjilaj3a-brbahao39",
+            "session_start_time": "2019-03-18 10:28:11",
+            "lab_name": "angelakilab",
+            "session_end_time": "2019-03-18 10:58:31",
+            "subject_nickname": "IBL-T1"
+            },
+            {
+            "task_protocol": "_iblrig_tasks_habituationChoiceWorld3.7.6",
+            "session_uuid": "8aw3uhfaw3a-8laj3rjilaj3a-bpppphao39",
+            "session_start_time": "2019-03-17 09:21:14",
+            "lab_name": "angelakilab",
+            "session_end_time": "2019-03-17 09:52:34",
+            "subject_nickname": "IBL-T1"
+            }
+        ]
+    )
+})
+
 // app.use('/api/plots/scatter/:id', (req, res, next) => {
 
 //     async function readThis() {

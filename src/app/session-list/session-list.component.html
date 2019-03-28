@@ -1,3 +1,19 @@
 <h4>
-  List of Sessions
+  List of Sessions:
 </h4>
+<p>{{ session_menu | json }}</p>
+<form>
+  <mat-form-field>
+    <label for="">Task Protocol</label>
+    <input matInput type="text" [formControl]="sessionMenuControl" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let tp of session_menu.task_protocol" [value]="session_menu.task_protocol">{{ tp }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  
+</form>
+
+
+<div *ngFor="let session of sessions">
+  <h6>{{ session['session_start_time'] | date}}</h6>
+</div>

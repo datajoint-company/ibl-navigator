@@ -1,9 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectModule, MatAutocompleteModule, MatInputModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AuthGuard } from './auth/auth-guard.service';
@@ -39,8 +39,8 @@ const appRoutes: Routes = [
   },
   {
     path: 'sessions',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: SessionListComponent,
       children: [
         { path: ':sessionID/', component: SessionComponent },
@@ -70,11 +70,12 @@ const appRoutes: Routes = [
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
-    MatSelectModule,
-    BrowserAnimationsModule
+    MatSelectModule, MatAutocompleteModule, MatInputModule,
+    ReactiveFormsModule
   ],
   providers: [AuthService, AuthGuard, PlotsService],
   bootstrap: [AppComponent]
