@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
-import { MatSelectModule, MatAutocompleteModule, MatInputModule } from '@angular/material';
+import { MatSelectModule, MatAutocompleteModule, MatInputModule, MatNativeDateModule, MatDatepickerModule, MatCardModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AuthGuard } from './auth/auth-guard.service';
@@ -74,7 +74,7 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
-    MatSelectModule, MatAutocompleteModule, MatInputModule,
+    MatSelectModule, MatAutocompleteModule, MatInputModule, MatNativeDateModule, MatDatepickerModule, MatCardModule,
     ReactiveFormsModule
   ],
   providers: [AuthService, AuthGuard, PlotsService],

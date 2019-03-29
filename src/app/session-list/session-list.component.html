@@ -5,9 +5,24 @@
 <form>
   <mat-form-field>
     <label for="">Task Protocol</label>
-    <input matInput type="text" [formControl]="sessionMenuControl" [matAutocomplete]="auto">
+    <input matInput type="text" [formControl]="task_protocol_control" [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let tp of session_menu.task_protocol" [value]="session_menu.task_protocol">{{ tp }}</mat-option>
+      <!-- <mat-option *ngFor="let tp of session_menu.task_protocol" [value]="tp">{{ tp }}</mat-option> -->
+      <mat-option *ngFor="let tp of filteredTaskProtocolOptions | async" [value]="tp">{{ tp }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="datePickerStart" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" placeholder="Choose date">
+    <mat-datepicker-toggle matSuffix [for]="datePickerStart"></mat-datepicker-toggle>
+    <mat-datepicker #datePickerStart></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field>
+    <label for="">Session UUID</label>
+    <input matInput type="text" [formControl]="session_uuid_control" [matAutocomplete]="auto2">
+    <mat-autocomplete #auto2="matAutocomplete">
+      <mat-option *ngFor="let sessionUuid of filteredSessionUuidOptions | async" [value]="sessionUuid">{{ sessionUuid }}</mat-option>
     </mat-autocomplete>
   </mat-form-field>
   
@@ -15,5 +30,10 @@
 
 
 <div *ngFor="let session of sessions">
-  <h6>{{ session['session_start_time'] | date}}</h6>
+  <div class="col">
+  <mat-card>
+    <mat-card-title>{{ session['session_start_time'] | date}}</mat-card-title>
+    <mat-card-subtitle>{{ session['subject_nickname'] }}/{{ session['lab_name'] }}</mat-card-subtitle>
+  </mat-card>
+  </div>
 </div>

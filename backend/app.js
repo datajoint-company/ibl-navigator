@@ -156,7 +156,7 @@ app.get('/api/sessions', (req, res) => {
     req.pipe(proxy, {
         end: true
     });
-    console.log(res);
+    // console.log(res);
     // res.status(200).send(
         // [
         //     {   
