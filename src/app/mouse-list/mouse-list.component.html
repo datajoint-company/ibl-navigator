@@ -1,3 +1,8 @@
 <h4>
   List of Subjects
 </h4>
+<hr>
+<div *ngFor="let mouse of mice">
+  <h5>{{ mouse.subject_nickname }}</h5>
+  <h6>{{ mouse.lab_name }}</h6>
+</div>

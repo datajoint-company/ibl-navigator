@@ -16,7 +16,6 @@ export class AllSessionsService {
     this.http.get(`http://localhost:3000/api/sessions`)
       .subscribe((allSessionsData) => {
         this.allSessions = allSessionsData;
-        console.log('plots (in service getPlots) are: ');
         console.log(this.allSessions);
         this.sessionsLoaded.next(this.allSessions);
       });

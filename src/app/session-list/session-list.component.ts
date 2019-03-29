@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AllSessionsService } from './all-sessions.service';
@@ -10,8 +10,14 @@ import { AllSessionsService } from './all-sessions.service';
   styleUrls: ['./session-list.component.css']
 })
 export class SessionListComponent implements OnInit, OnDestroy {
-  task_protocol_control = new FormControl();
+  // session_filter_form = new FormGroup({
+  //   task_protocol_control : new FormControl(),
+  //   session_uuid_control : new FormControl(),
+  //   session_date_control : new FormControl()
+  // });
+  task_protocol_control = new FormControl('', { updateOn: 'blur' });
   session_uuid_control = new FormControl();
+  session_date_control = new FormControl();
   sessions;
   sessionDateFilter: Function;
   sessionMinDate: Date;
@@ -94,6 +100,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.sessionMinDate = new Date(Math.min(...sessionSeconds));
         this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
     });
+    
   }
   ngOnDestroy() {
     if (this.sessionsSubscription) {

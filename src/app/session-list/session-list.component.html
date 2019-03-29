@@ -1,7 +1,7 @@
 <h4>
   List of Sessions:
 </h4>
-<!-- <p>{{ session_menu | json }}</p> -->
+<!-- <form [formGroup]="session_filter_form"> -->
 <form>
   <mat-form-field>
     <label for="">Task Protocol</label>
@@ -13,9 +13,9 @@
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput [matDatepicker]="datePickerStart" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" placeholder="Choose date">
-    <mat-datepicker-toggle matSuffix [for]="datePickerStart"></mat-datepicker-toggle>
-    <mat-datepicker #datePickerStart></mat-datepicker>
+    <input matInput [formControl]="session_date_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" placeholder="Choose date">
+    <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+    <mat-datepicker #datePicker></mat-datepicker>
   </mat-form-field>
 
   <mat-form-field>
@@ -24,10 +24,8 @@
     <mat-autocomplete #auto2="matAutocomplete">
       <mat-option *ngFor="let sessionUuid of filteredSessionUuidOptions | async" [value]="sessionUuid">{{ sessionUuid }}</mat-option>
     </mat-autocomplete>
-  </mat-form-field>
-  
+  </mat-form-field>  
 </form>
-
 
 <div *ngFor="let session of sessions">
   <div class="col">

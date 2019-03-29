@@ -29,9 +29,9 @@ const appRoutes: Routes = [
   { path: 'plot', component: ViewSamplePlotsComponent },
   { path: 'cells', component: CellListComponent },
   {
-    path: 'subjects',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+    path: 'mice',
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: MouseListComponent,
       children: [
         { path: ':lab/:mousename', component: MouseComponent }
