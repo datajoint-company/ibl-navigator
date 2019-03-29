@@ -2,6 +2,7 @@
 
 
 import json
+from datetime import date
 from datetime import datetime
 
 from flask import Flask
@@ -25,6 +26,8 @@ API_PREFIX = '/v{}'.format(API_VERSION)
 class DateTimeEncoder(json.JSONEncoder):
     ''' teach json to dump datetimes, etc '''
     def default(self, o):
+        if isinstance(o, date):
+            return o.isoformat()
         if isinstance(o, datetime):
             return o.isoformat()
         return json.JSONEncoder.default(self, o)
