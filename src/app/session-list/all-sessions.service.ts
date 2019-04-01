@@ -23,16 +23,16 @@ export class AllSessionsService {
 
   retrieveSessions(sessionsFilter) {
     console.log('POSTing for:', sessionsFilter);
-    this.http.post(`http://localhost:3000/api/sessions/`, sessionsFilter, { responseType: 'text' })
+    this.http.post(`http://localhost:3000/api/sessions/`, sessionsFilter, { responseType: 'json' })
       .subscribe(
         (filteredSessionsData) => {
           this.retrievedSessions = filteredSessionsData;
-          console.log('plots (in service retrievePlot) are: ');
+          console.log('retrievedSessions data are: ');
           console.log(this.retrievedSessions);
           this.sessionsLoaded.next(this.retrievedSessions);
         },
         (err: any) => {
-          console.log('err in http.post subscription - sending back plot data anyways');
+          console.log('err in http.post subscription - sending back  data anyways');
           console.log(err);
           this.sessionsLoaded.next(this.retrievedSessions);
         }

@@ -4,6 +4,7 @@ const util = require('util');
 const bodyParser = require('body-parser');
 const request = require('request');
 const http = require('http');
+const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
@@ -136,7 +137,8 @@ app.get('/api/plots/:type/:id', (req, res, next) => {
     });
 });
 
-app.use('/api/sessions', (req, res) => {
+app.get('/api/sessions', (req, res) => {
+    console.log('req.headers is', req.headers)
     // setup for proxy server
     var options = {
         // hostname: '127.0.0.1/',
@@ -157,6 +159,49 @@ app.use('/api/sessions', (req, res) => {
         end: true
     });
 })
+
+app.post('/api/sessions', (req, res) => {
+    console.log('req.headers is', req.headers)
+    // console.log(req.body);
+    let sessionPath = 'v0/session/?'
+    let query =''
+    let count = 0
+    console.log('filter in filterValues are: ')
+    for (filter in req.body) {
+        console.log(filter, ": ", req.body[filter])
+        if (count == 0) {
+            query = query + filter + '=' + req.body[filter]
+        } else {
+            query = query + '&' + filter + '=' + req.body[filter]
+        }
+        count += 1;
+    }
+    console.log('query path is:')
+    console.log(sessionPath + query)
+    // setup for proxy server
+    var options = {
+        // hostname: '127.0.0.1/',
+        port: 5000,
+        path: path.join(sessionPath, query),
+        method: 'GET',
+        // method: req.method,
+        // body: req.body,
+        headers: req.headers
+    };
+
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+
+    req.pipe(proxy, {
+        end: true
+    });
+})
+
+
 
 app.get('/api/mice', (req, res) => {
     // setup for proxy server

@@ -5,9 +5,8 @@
 <form>
   <mat-form-field>
     <label for="">Task Protocol</label>
-    <input matInput type="text" [formControl]="task_protocol_control" [matAutocomplete]="auto">
+    <input matInput type="text" [formControl]="task_protocol_control" [matAutocomplete]="auto" (blur)="updateSessionFilter($event)" >
     <mat-autocomplete #auto="matAutocomplete">
-      <!-- <mat-option *ngFor="let tp of session_menu.task_protocol" [value]="tp">{{ tp }}</mat-option> -->
       <mat-option *ngFor="let tp of filteredTaskProtocolOptions | async" [value]="tp">{{ tp }}</mat-option>
     </mat-autocomplete>
   </mat-form-field>

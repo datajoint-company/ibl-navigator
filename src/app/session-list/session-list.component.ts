@@ -15,7 +15,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   //   session_uuid_control : new FormControl(),
   //   session_date_control : new FormControl()
   // });
-  task_protocol_control = new FormControl('', { updateOn: 'blur' });
+  task_protocol_control = new FormControl();
   session_uuid_control = new FormControl();
   session_date_control = new FormControl();
   sessions;
@@ -32,14 +32,23 @@ export class SessionListComponent implements OnInit, OnDestroy {
   lab_name_menu = [];
   subject_nickname_menu = [];
 
+  queryValues = {
+    'subject_nickname': 'IBL-T1',
+    'session_uuid': 'b5433979-abbc-4ff3-90c0-09ea7b3f8198'
+  };
+
   private sessionsSubscription: Subscription;
 
   constructor(public allSessionsService: AllSessionsService) { }
 
   ngOnInit() {
-    this.allSessionsService.getAllSessions();
+    // this.allSessionsService.getAllSessions();
+    this.allSessionsService.retrieveSessions(this.queryValues);
     this.sessionsSubscription = this.allSessionsService.getSessionsLoadedListener()
       .subscribe((sessions: any) => {
+        console.log('retrieved sessions ---');
+        console.log(sessions.length);
+        console.log('data type: ', typeof(sessions));
         this.sessions = sessions;
         for (const session of sessions) {
           if (!this.task_protocol_menu.includes(session['task_protocol'])) {
@@ -100,7 +109,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.sessionMinDate = new Date(Math.min(...sessionSeconds));
         this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
     });
-    
   }
   ngOnDestroy() {
     if (this.sessionsSubscription) {
@@ -115,6 +123,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
     });
     return result;
+  }
+
+  updateSessionFilter(event) {
+    console.log('blur detected');
+    console.log(event);
   }
 
   
