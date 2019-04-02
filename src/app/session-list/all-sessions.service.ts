@@ -9,6 +9,7 @@ export class AllSessionsService {
   private allSessions;
   private retrievedSessions;
   private sessionsLoaded = new Subject();
+  private newSessionsLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -29,17 +30,21 @@ export class AllSessionsService {
           this.retrievedSessions = filteredSessionsData;
           console.log('retrievedSessions data are: ');
           console.log(this.retrievedSessions);
-          this.sessionsLoaded.next(this.retrievedSessions);
+          this.newSessionsLoaded.next(this.retrievedSessions);
         },
         (err: any) => {
           console.log('err in http.post subscription - sending back  data anyways');
           console.log(err);
-          this.sessionsLoaded.next(this.retrievedSessions);
+          this.newSessionsLoaded.next(this.retrievedSessions);
         }
       );
   }
 
   getSessionsLoadedListener() {
     return this.sessionsLoaded.asObservable();
+  }
+
+  getNewSessionsLoadedListener() {
+    return this.newSessionsLoaded.asObservable();
   }
 }

@@ -1,25 +1,25 @@
 <h4>
   List of Sessions:
 </h4>
-<!-- <form [formGroup]="session_filter_form"> -->
-<form>
+<form [formGroup]="session_filter_form">
+<!-- <form> -->
   <mat-form-field>
     <label for="">Task Protocol</label>
-    <input matInput type="text" [formControl]="task_protocol_control" [matAutocomplete]="auto" (blur)="updateSessionFilter($event)" >
+    <input matInput type="text" name="task_protocol" formControlName="task_protocol_control"  [matAutocomplete]="auto" (blur)="updateSessionFilter($event)" >
     <mat-autocomplete #auto="matAutocomplete">
       <mat-option *ngFor="let tp of filteredTaskProtocolOptions | async" [value]="tp">{{ tp }}</mat-option>
     </mat-autocomplete>
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput [formControl]="session_date_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" placeholder="Choose date">
+    <input matInput formControlName="session_date_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" placeholder="Choose date">
     <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
     <mat-datepicker #datePicker></mat-datepicker>
   </mat-form-field>
 
   <mat-form-field>
     <label for="">Session UUID</label>
-    <input matInput type="text" [formControl]="session_uuid_control" [matAutocomplete]="auto2">
+    <input matInput type="text" name="session_uuid" formControlName="session_uuid_control" [matAutocomplete]="auto2" (blur)="updateSessionFilter($event)">
     <mat-autocomplete #auto2="matAutocomplete">
       <mat-option *ngFor="let sessionUuid of filteredSessionUuidOptions | async" [value]="sessionUuid">{{ sessionUuid }}</mat-option>
     </mat-autocomplete>
@@ -31,6 +31,7 @@
   <mat-card>
     <mat-card-title>{{ session['session_start_time'] | date}}</mat-card-title>
     <mat-card-subtitle>{{ session['subject_nickname'] }}/{{ session['lab_name'] }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ session['task_protocol'] }}</mat-card-subtitle>
   </mat-card>
   </div>
 </div>

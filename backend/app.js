@@ -182,7 +182,7 @@ app.post('/api/sessions', (req, res) => {
     var options = {
         // hostname: '127.0.0.1/',
         port: 5000,
-        path: path.join(sessionPath, query),
+        path: sessionPath + query,
         method: 'GET',
         // method: req.method,
         // body: req.body,
