@@ -45,6 +45,7 @@ reqmap = {
     'subject': subject.Subject,
     'session': acquisition.Session,
     'weighing': action.Weighing,
+    'wateradmin': action.WaterAdministration
 }
 dumps = DateTimeEncoder.dumps
 

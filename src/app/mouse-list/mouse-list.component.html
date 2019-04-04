@@ -2,7 +2,11 @@
   List of Subjects
 </h4>
 <hr>
-<div class="mouse-card" *ngFor="let mouse of mice">
-  <h5>{{ mouse.subject_nickname }}</h5>
-  <h6>{{ mouse.lab_name }}</h6>
+<div *ngFor="let mouse of mice">
+  <a routerLink="/mouse/{{mouse['subject_uuid']}}">
+    <mat-card class="mouse-card">
+      <mat-card-title>{{ mouse.subject_nickname }}</mat-card-title>
+      <mat-card-subtitle>{{ mouse.lab_name }}</mat-card-subtitle>
+    </mat-card>
+  </a>
 </div>

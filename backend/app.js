@@ -225,6 +225,121 @@ app.get('/api/mice', (req, res) => {
     });
 })
 
+app.post('/api/mice', (req, res) => {
+    console.log('req.headers is', req.headers)
+    // console.log(req.body);
+    let sessionPath = 'v0/subject/?'
+    let query = ''
+    let count = 0
+    console.log('filter in filterValues are: ')
+    for (filter in req.body) {
+        console.log(filter, ": ", req.body[filter])
+        if (count == 0) {
+            query = query + filter + '=' + req.body[filter]
+        } else {
+            query = query + '&' + filter + '=' + req.body[filter]
+        }
+        count += 1;
+    }
+    console.log('query path is:')
+    console.log(sessionPath + query)
+    // setup for proxy server
+    var options = {
+        // hostname: '127.0.0.1/',
+        port: 5000,
+        path: sessionPath + query,
+        method: 'GET',
+        // method: req.method,
+        // body: req.body,
+        headers: req.headers
+    };
+
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+
+    req.pipe(proxy, {
+        end: true
+    });
+})
+
+app.post('/api/plot/mouse-weight-plotData', (req, res) => {
+    let sessionPath = 'v0/weighing?'
+    let query = ''
+    let count = 0
+    console.log('filter in filterValues are: ')
+    for (filter in req.body) {
+        console.log(filter, ": ", req.body[filter])
+        if (count == 0) {
+            query = query + filter + '=' + req.body[filter]
+        } else {
+            query = query + '&' + filter + '=' + req.body[filter]
+        }
+        count += 1;
+    }
+    console.log('query path is:')
+    console.log(sessionPath + query)
+    // setup for proxy server
+    var options = {
+        // hostname: '127.0.0.1/',
+        port: 5000,
+        path: sessionPath + query,
+        method: 'GET',
+        // method: req.method,
+        // body: req.body,
+        headers: req.headers
+    };
+
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+
+    req.pipe(proxy, {
+        end: true
+    });
+})
+
+app.post('/api/plot/mouse-waterIntake-plotData', (req, res) => {
+    let sessionPath = 'v0/wateradmin?'
+    let query = ''
+    let count = 0
+    console.log('filter in filterValues are: ')
+    for (filter in req.body) {
+        console.log(filter, ": ", req.body[filter])
+        if (count == 0) {
+            query = query + filter + '=' + req.body[filter]
+        } else {
+            query = query + '&' + filter + '=' + req.body[filter]
+        }
+        count += 1;
+    }
+    console.log('query path is:')
+    console.log(sessionPath + query)
+    // setup for proxy server
+    var options = {
+        port: 5000,
+        path: sessionPath + query,
+        method: 'GET',
+        headers: req.headers
+    };
+
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+
+    req.pipe(proxy, {
+        end: true
+    });
+})
 // app.use('/api/plots/scatter/:id', (req, res, next) => {
 
 //     async function readThis() {

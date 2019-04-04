@@ -1,3 +1,8 @@
-<h4>
-  Mouse Info
-</h4>
+<h4>Mouse Info</h4>
+<div *ngFor="let item of mouse | keyvalue">
+  <p>{{ item.key }}: {{ item.value }}</p>
+</div>
+<hr>
+<h5>Water Intake / Weight Plot</h5>
+<!-- <app-water-weight-plot></app-water-weight-plot> -->
+

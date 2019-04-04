@@ -25,13 +25,14 @@
     </mat-autocomplete>
   </mat-form-field>  
 </form>
-
 <div *ngFor="let session of sessions">
   <div class="col">
-  <mat-card>
-    <mat-card-title>{{ session['session_start_time'] | date}}</mat-card-title>
-    <mat-card-subtitle>{{ session['subject_nickname'] }}/{{ session['lab_name'] }}</mat-card-subtitle>
-    <mat-card-subtitle>{{ session['task_protocol'] }}</mat-card-subtitle>
-  </mat-card>
+    <a routerLink="/session/{{session['session_uuid']}}">
+      <mat-card (click)="sessionSelected(session)">
+        <mat-card-title>{{ session['session_start_time'] | date}}</mat-card-title>
+        <mat-card-subtitle>{{ session['subject_nickname'] }}/{{ session['lab_name'] }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ session['task_protocol'] }}</mat-card-subtitle>
+      </mat-card>
+    </a>
   </div>
 </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup, ControlContainer } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AllSessionsService } from './all-sessions.service';
@@ -15,9 +15,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     session_uuid_control : new FormControl(),
     session_date_control : new FormControl()
   });
-  // task_protocol_control = new FormControl();
-  // session_uuid_control = new FormControl();
-  // session_date_control = new FormControl();
   sessions;
   allSessions;
   sessionDateFilter: Function;
@@ -37,6 +34,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     'subject_nickname': 'IBL-T1',
     'session_uuid': 'b5433979-abbc-4ff3-90c0-09ea7b3f8198'
   };
+
+  selectedSession = {};
 
   private sessionsSubscription: Subscription;
 
@@ -152,7 +151,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     for ( const entry of Object.entries(this.session_filter_form.value)) {
       // entry is ["task_protocol_control", "_iblrig_tasks_trainingChoiceWorld3.7.6"]
       if (entry[1]) {
-        
         newQuery[entry[0].split('_control')[0]] = entry[1];
       }
     }
@@ -180,7 +178,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
   }
 
-  private testFn() {
-    console.log('testFn ran!');
+  sessionSelected(session) {
+    console.log('sessionSelected in list-component ran!');
+    console.log(session);
+    this.selectedSession = session;
   }
 }
