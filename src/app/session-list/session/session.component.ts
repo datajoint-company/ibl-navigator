@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AllSessionsService } from '../all-sessions.service';
 import { Subscription } from 'rxjs';
@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './session.component.html',
   styleUrls: ['./session.component.css']
 })
-export class SessionComponent implements OnInit {
+export class SessionComponent implements OnInit, OnDestroy {
   public session_uuid: string;
   private sessionSubscription: Subscription;
   session: Object;
@@ -23,9 +23,14 @@ export class SessionComponent implements OnInit {
     this.allSessionsService.retrieveSessions({'session_uuid': this.session_uuid});
     this.sessionSubscription = this.allSessionsService.getNewSessionsLoadedListener()
     .subscribe((session: any) => {
-      console.log(typeof session);
       this.session = session[0];
     });
+  }
+
+  ngOnDestroy() {
+    if (this.sessionSubscription) {
+      this.sessionSubscription.unsubscribe();
+    }
   }
 
 

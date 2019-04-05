@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
 import { MouseInfoService } from '../mouse-info.service';
 import { Subscription } from 'rxjs';
 
@@ -15,13 +15,16 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   private mouseWeightSubscription: Subscription;
   private mouseWaterIntakeSubscription: Subscription;
 
+  @Input('mouseInfo') mouseInfo: Object;
   constructor(public mouseInfoService: MouseInfoService) { }
 
   @ViewChild('waterIntake_weight_plot') el: ElementRef;
 
   ngOnInit() {
     const element = this.el.nativeElement;
-    const subjectInfo = { 'lab_name': 'churchlandlab', 'subject_nickname': 'CSHL_009' };
+    console.log('mouseINfo is');
+    console.log(this.mouseInfo);
+    const subjectInfo = { 'lab_name': this.mouseInfo['lab_name'], 'subject_nickname': this.mouseInfo['subject_nickname'] };
     this.mouseInfoService.getWeight(subjectInfo);
     this.mouseWeightSubscription = this.mouseInfoService.getWeightLoadedListener()
      .subscribe((weightInfo: any) => {
@@ -63,14 +66,14 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
 
            this.plotInfo['data'] = this.plotData;
            this.plotInfo['layout'] = {
-             barmode: 'stack',
-             yaxis: {
-               title: 'Water intake (mL)'
+             'barmode': 'stack',
+             'yaxis': {
+               'title': 'Water intake (mL)'
              },
-             yaxis2: {
-               title: 'Weight (g)',
-               overlaying: 'y',
-               side: 'right'
+             'yaxis2': {
+               'title': 'Weight (g)',
+               'overlaying': 'y',
+               'side': 'right'
              }
            };
            console.log(this.plotInfo);

@@ -5,7 +5,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
 import { MatSelectModule,
          MatAutocompleteModule,
+         MatIconModule,
          MatInputModule,
+         MatCheckboxModule,
+         MatRadioModule,
          MatNativeDateModule,
          MatDatepickerModule,
          MatCardModule } from '@angular/material';
@@ -94,7 +97,7 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
-    MatSelectModule, MatAutocompleteModule, MatInputModule, MatNativeDateModule, MatDatepickerModule, MatCardModule,
+    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule, MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatCardModule,
     ReactiveFormsModule
   ],
   providers: [AuthService, AuthGuard, PlotsService],

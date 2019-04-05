@@ -1,12 +1,78 @@
 <h4>
   List of Subjects
 </h4>
+<form [formGroup]="mouse_filter_form">
+  <mat-form-field>
+    <label>Labs</label>
+    <input matInput type="text" name="lab_name" formControlName="lab_name_control"
+      [matAutocomplete]="autoCompLN">
+    <mat-autocomplete #autoCompLN="matAutocomplete">
+      <mat-option *ngFor="let lab of filteredLabNameOptions | async" [value]="lab">
+        {{ lab }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+    <label>Nickname</label>
+    <input matInput type="text" name="subject_nickname" formControlName="subject_nickname_control"
+      [matAutocomplete]="autoCompSN">
+    <mat-autocomplete #autoCompSN="matAutocomplete">
+      <mat-option *ngFor="let nickname of filteredSubjectNicknameOptions | async" [value]="nickname">
+        {{ nickname }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+    <label>Mouse UUID</label>
+    <input matInput type="text" name="subject_uuid" formControlName="subject_uuid_control"
+      [matAutocomplete]="autoCompSUUID">
+    <mat-autocomplete #autoCompSUUID="matAutocomplete">
+      <mat-option *ngFor="let uuid of filteredSubjectUuidOptions | async" [value]="uuid">
+        {{ uuid }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+    <label>DOB</label>
+    <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker" [matDatepickerFilter]="miceBirthdayFilter">
+    <mat-datepicker-toggle matSuffix [for]="DOBPicker"></mat-datepicker-toggle>
+    <mat-datepicker #DOBPicker></mat-datepicker>
+  </mat-form-field>
+
+  <div class="mouse_gender_menu">
+    <label>Gender</label>
+    <mat-checkbox class="mouse_gender_menu_button" formControlName="sex_control" *ngFor="let gender of mice_menu['sex']"
+      [value]="gender">{{ gender }}</mat-checkbox>
+  </div>
+
+  <mat-form-field>
+    <label>Line</label>
+    <input matInput type="text" name="subject_line" formControlName="subject_line_control"
+      [matAutocomplete]="autoCompSL">
+    <mat-autocomplete #autoCompSL="matAutocomplete">
+      <mat-option *ngFor="let line of filteredSubjectLineOptions | async" [value]="line">
+        {{ line }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+    <label>User</label>
+    <input matInput type="text" name="responsible_user" formControlName="responsible_user_control" [matAutocomplete]="autoCompRU">
+    <mat-autocomplete #autoCompRU="matAutocomplete">
+      <mat-option *ngFor="let responsible_user of filteredResponsibleUserOptions | async" [value]="responsible_user">{{ responsible_user }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+
+
+</form>
 <hr>
 <div *ngFor="let mouse of mice">
   <a routerLink="/mouse/{{mouse['subject_uuid']}}">
     <mat-card class="mouse-card">
       <mat-card-title>{{ mouse.subject_nickname }}</mat-card-title>
       <mat-card-subtitle>{{ mouse.lab_name }}</mat-card-subtitle>
+      
     </mat-card>
   </a>
 </div>

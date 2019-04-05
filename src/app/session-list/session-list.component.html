@@ -12,7 +12,8 @@
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput formControlName="session_date_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" placeholder="Choose date">
+    <label for="">Session Start</label>
+    <input matInput formControlName="session_date_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter">
     <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
     <mat-datepicker #datePicker></mat-datepicker>
   </mat-form-field>
