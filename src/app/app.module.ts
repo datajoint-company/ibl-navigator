@@ -11,7 +11,8 @@ import { MatSelectModule,
          MatRadioModule,
          MatNativeDateModule,
          MatDatepickerModule,
-         MatCardModule } from '@angular/material';
+         MatCardModule,
+         MatButtonModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AuthGuard } from './auth/auth-guard.service';
@@ -97,7 +98,7 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
-    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule, MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatCardModule,
+    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule, MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatCardModule, MatButtonModule,
     ReactiveFormsModule
   ],
   providers: [AuthService, AuthGuard, PlotsService],

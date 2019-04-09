@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { AllMiceService } from './all-mice.service';
 
@@ -14,22 +14,15 @@ export class MouseListComponent implements OnInit, OnDestroy {
     lab_name_control: new FormControl(),
     subject_nickname_control : new FormControl(),
     subject_uuid_control : new FormControl(),
-    sex_control : new FormControl(),
+    sex_control : new FormArray([]),
     subject_birth_date_control : new FormControl(),
     subject_line_control : new FormControl(),
     responsible_user_control : new FormControl()
   });
   mice;
-  allmice;
+  allMice;
   miceBirthdayFilter: Function;
   mice_menu = {};
-  lab_name_menu = [];
-  subject_birth_date_menu = [];
-  subject_line_menu = [];
-  subject_uuid_menu = [];
-  sex_menu = [];
-  subject_nickname_menu = [];
-  responsible_user_menu = [];
 
   filteredLabNameOptions: Observable<string[]>;
   filteredSubjectNicknameOptions: Observable<string[]>;
@@ -46,7 +39,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.miceSubscription = this.allMiceService.getMiceLoadedListener()
       .subscribe((mice: any) => {
         this.mice = mice;
-        this.updateMenu(mice);
+        this.allMice = mice;
+        this.createMenu(mice);
       });
   }
 
@@ -57,52 +51,56 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
 
-  private updateMenu(mice) {
+  private createMenu(mice) {
     this.mice_menu = {};
-    this.lab_name_menu = [];
-    this.subject_birth_date_menu = [];
-    this.subject_line_menu = [];
-    this.subject_uuid_menu = [];
-    this.sex_menu = [];
-    this.subject_nickname_menu = [];
-    this.responsible_user_menu = [];
-    for (const mouse of mice) {
-      if (!this.lab_name_menu.includes(mouse['lab_name'])) {
-        this.lab_name_menu.push(mouse['lab_name']);
-      }
-      this.mice_menu['lab_name'] = this.lab_name_menu;
 
-      if (!this.subject_birth_date_menu.includes(mouse['subject_birth_date'])) {
-        this.subject_birth_date_menu.push(mouse['subject_birth_date']);
-      }
-      this.mice_menu['subject_birth_date'] = this.subject_birth_date_menu;
 
-      if (!this.subject_line_menu.includes(mouse['subject_line'])) {
-        this.subject_line_menu.push(mouse['subject_line']);
-      }
-      this.mice_menu['subject_line'] = this.subject_line_menu;
+    const keys = ['lab_name', 'subject_birth_date', 'subject_line', 'subject_uuid', 'sex', 'subject_nickname', 'responsible_user'];
 
-      if (!this.subject_uuid_menu.includes(mouse['subject_uuid'])) {
-        this.subject_uuid_menu.push(mouse['subject_uuid']);
-      }
-      this.mice_menu['subject_uuid'] = this.subject_uuid_menu;
 
-      if (!this.sex_menu.includes(mouse['sex'])) {
-        this.sex_menu.push(mouse['sex']);
-      }
-      this.mice_menu['sex'] = this.sex_menu;
-
-      if (!this.subject_nickname_menu.includes(mouse['subject_nickname'])) {
-        this.subject_nickname_menu.push(mouse['subject_nickname']);
-      }
-      this.mice_menu['subject_nickname'] = this.subject_nickname_menu;
-
-      if (!this.responsible_user_menu.includes(mouse['responsible_user'])) {
-        this.responsible_user_menu.push(mouse['responsible_user']);
-      }
-        this.mice_menu['responsible_user'] = this.responsible_user_menu;
+    // initialize all entries into an empty list
+    for (const key of keys) {
+      this.mice_menu[key] = [];
     }
 
+
+  // find unique entries for each key
+  for (const mouse of mice) {
+
+    for (const key of keys) {
+      if (!this.mice_menu[key].includes(mouse[key])) {
+        this.mice_menu[key].push(mouse[key]);
+      }
+    }
+
+  }
+
+    // create formcontrol for item in menus
+    const sex_control_array = <FormArray>this.mouse_filter_form.controls['sex_control'];
+    console.log('sex_control_array length: ', sex_control_array.length);
+    sex_control_array.controls.length = 0;
+    for (const item of this.mice_menu['sex']) {
+      sex_control_array.push(new FormControl(false));
+    }
+    console.log('formarray.controls');
+    console.log(sex_control_array.controls);
+
+    // for autocomplete search bar
+    // const autoCompleteList = ['lab_name', 'subject_nickname', 'subject_uuid', 'subject_line', 'responsible_user'];
+
+    // for (const field of autoCompleteList) {
+    //   const word = [];
+    //   field.split('_').forEach((item) => {
+    //     word.push(item.charAt(0).toUpperCase() + item.slice(1));
+    //   });
+    //   let filterName = 'filtered' + word.join('') + 'Options'; // filteredLabNameOptions
+    //   console.log(filterName);
+    //   this.`${filterName}` = this.mouse_filter_form.controls[field + '_control'].valueChanges
+    //     .pipe(
+    //       startWith(''),
+    //       map(value => this._filter(value, field))
+    //     );
+    // }
     this.filteredLabNameOptions = this.mouse_filter_form.controls.lab_name_control.valueChanges
       .pipe(
         startWith(''),
@@ -151,4 +149,64 @@ export class MouseListComponent implements OnInit, OnDestroy {
     return result;
   }
 
+  applyFilter() {
+    const request = this.filterRequests();
+
+    if (Object.entries(request).length > 0) {
+      this.allMiceService.retrieveMice(request);
+      this.allMiceService.getRequestedMiceLoadedListener()
+        .subscribe((mice: any) => {
+          this.mice = mice;
+      });
+    }
+  }
+
+  updateMenu() {
+    const newMiceList = [];
+    console.log('detected click/blur in mouse list menu');
+    console.log(this.mouse_filter_form.value);
+    const menuRequest = this.filterRequests();
+    if (Object.entries(menuRequest).length > 0) {
+      this.allMiceService.retrieveMice(menuRequest);
+      this.allMiceService.getRequestedMiceLoadedListener()
+        .subscribe((mice: any) => {
+          this.createMenu(mice);
+        });
+    }
+  }
+
+  genderSelected(genderForm) {
+    return genderForm.includes(true);
+  }
+
+  filterRequests() {
+    const filterList = Object.entries(this.mouse_filter_form.value);
+    const requestFilter = {};
+    filterList.forEach(filter => {
+      // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
+      if (filter[1]) {
+        const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
+        if (filterKey === 'sex' && this.genderSelected(filter[1])) {
+          // only accepts single selection - this case the last selection. TODO:coordinate with API for multi-selection
+          let requestedGender: string;
+          for (const index in filter[1]) {
+            if (filter[1][index]) {
+              requestedGender = this.mice_menu['sex'][index];
+            }
+          }
+          requestFilter[filterKey] = requestedGender;
+        } else if (filterKey !== 'sex') {
+          // making sure gender filter gets removed from the request
+
+          if (filterKey === 'subject_birth_date') {
+            // Tue Dec 11 2018 00:00:00 GMT-0600 (Central Standard Time) => 2018-12-11T06:00:00.000Z => 2018-12-11
+            requestFilter[filterKey] = filter[1].toISOString().split('T')[0];
+          } else {
+            requestFilter[filterKey] = filter[1];
+          }
+        }
+      }
+    });
+    return requestFilter;
+  }
 }

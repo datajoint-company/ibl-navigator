@@ -8,9 +8,11 @@ import { HttpClient } from '@angular/common/http';
 export class MouseInfoService {
   private waterIntake;
   private weight;
+  private weightWaterIntake;
 
   private waterIntakeLoaded = new Subject();
   private weightLoaded = new Subject();
+  private WWILoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -45,6 +47,22 @@ export class MouseInfoService {
       );
   }
 
+  getWeightWIplot(subjectInfo) {
+    this.http.post(`http://localhost:3000/api/plot/mouse-w-wi-plotData`, subjectInfo, { responseType: 'json' })
+      .subscribe(
+        (plotData) => {
+          this.weightWaterIntake = plotData;
+
+          this.WWILoaded.next(this.weightWaterIntake);
+        },
+        (err: any) => {
+          console.log('error in retrieving weight & waterIntake plot data');
+          console.error(err);
+          this.WWILoaded.next(this.weightWaterIntake);
+        }
+      );
+  }
+
   getWaterIntakeLoadedListener() {
     return this.waterIntakeLoaded.asObservable();
   }
@@ -53,4 +71,7 @@ export class MouseInfoService {
     return this.weightLoaded.asObservable();
   }
 
+  getWWILoadedListener() {
+    return this.WWILoaded.asObservable();
+  }
 }

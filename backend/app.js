@@ -235,9 +235,9 @@ app.post('/api/mice', (req, res) => {
     for (filter in req.body) {
         console.log(filter, ": ", req.body[filter])
         if (count == 0) {
-            query = query + filter + '=' + req.body[filter]
+            query += filter + '=' + req.body[filter]
         } else {
-            query = query + '&' + filter + '=' + req.body[filter]
+            query += '&' + filter + '=' + req.body[filter]
         }
         count += 1;
     }

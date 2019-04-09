@@ -14,6 +14,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   plotData = [];
   private mouseWeightSubscription: Subscription;
   private mouseWaterIntakeSubscription: Subscription;
+  private mouseWWISubscription: Subscription;
 
   @Input('mouseInfo') mouseInfo: Object;
   constructor(public mouseInfoService: MouseInfoService) { }

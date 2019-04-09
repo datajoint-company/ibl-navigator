@@ -50,9 +50,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
       .subscribe((sessions: any) => {
         console.log('got all sessions ---');
         console.log('total session length: ' + sessions.length);
-        this.sessions = sessions;
-        this.allSessions = sessions;
-        this.updateMenu(sessions);
+        this.sessions = sessions.slice(0, 50);
+        this.allSessions = this.sessions;
+        this.updateMenu(this.sessions);
     });
   }
 
