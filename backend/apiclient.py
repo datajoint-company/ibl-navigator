@@ -4,7 +4,7 @@ import sys
 
 from code import interact
 
-from requests import get as http_get
+from requests import post as http_post
 
 from iblapi import API_VERSION
 
@@ -12,8 +12,8 @@ from iblapi import API_VERSION
 api_endpoint = 'http://localhost:5000/v' + API_VERSION
 
 
-def get(subpath='/'):
-    r = http_get('{}{}'.format(api_endpoint, subpath))
+def post(subpath='/', data={}):
+    r = http_post('{}{}'.format(api_endpoint, subpath), data=data)
     return r.json()
 
 
@@ -21,5 +21,5 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         api_endpiont = sys.argv[1]
 
-    print("apiclient - use 'get(/'subpath')' to test get requests")
+    print("apiclient - use 'post(/'subpath', data={})' to test get requests")
     interact('apiclient', local=locals())

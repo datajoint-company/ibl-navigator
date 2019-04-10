@@ -53,9 +53,9 @@ def mkpath(path):
     return '{}{}'.format(API_PREFIX, path)
 
 
-@app.route(mkpath('/<path:subpath>'))
-def do_req(subpath, methods=['GET', 'POST']):
-    app.logger.debug("method: '{}', path: {}, values: {}".format(
+@app.route(mkpath('/<path:subpath>'), methods=['GET', 'POST'])
+def do_req(subpath):
+    app.logger.info("method: '{}', path: {}, values: {}".format(
         request.method, request.path, request.values))
 
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
