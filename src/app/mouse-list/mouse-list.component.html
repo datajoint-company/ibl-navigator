@@ -5,7 +5,7 @@
   <mat-form-field>
     <label>Labs</label>
     <input matInput type="text" name="lab_name" formControlName="lab_name_control"
-      [matAutocomplete]="autoCompLN">
+      [matAutocomplete]="autoCompLN" (focus)="stepBackMenu($event)">
     <mat-autocomplete #autoCompLN="matAutocomplete">
       <mat-option *ngFor="let lab of filteredLabNameOptions | async" [value]="lab" (click)="updateMenu()">
         {{ lab }}</mat-option>
@@ -15,7 +15,7 @@
   <mat-form-field>
     <label>Nickname</label>
     <input matInput type="text" name="subject_nickname" formControlName="subject_nickname_control"
-      [matAutocomplete]="autoCompSN">
+      [matAutocomplete]="autoCompSN" (focus)="stepBackMenu($event)">
     <mat-autocomplete #autoCompSN="matAutocomplete">
       <mat-option *ngFor="let nickname of filteredSubjectNicknameOptions | async" [value]="nickname" (click)="updateMenu()">
         {{ nickname }}</mat-option>
@@ -25,7 +25,7 @@
   <mat-form-field>
     <label>Mouse UUID</label>
     <input matInput type="text" name="subject_uuid" formControlName="subject_uuid_control"
-      [matAutocomplete]="autoCompSUUID">
+      [matAutocomplete]="autoCompSUUID" (focus)="stepBackMenu($event)">
     <mat-autocomplete #autoCompSUUID="matAutocomplete">
       <mat-option *ngFor="let uuid of filteredSubjectUuidOptions | async" [value]="uuid" (click)="updateMenu()">
         {{ uuid }}</mat-option>
@@ -34,23 +34,23 @@
 
   <mat-form-field>
     <label>DOB</label>
-    <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker" [matDatepickerFilter]="miceBirthdayFilter" (blur)="updateMenu()">
+    <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker" [matDatepickerFilter]="miceBirthdayFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)" placeholder="DOB - i.e. 10/23/2018">
     <mat-datepicker-toggle matSuffix [for]="DOBPicker"></mat-datepicker-toggle>
     <mat-datepicker #DOBPicker></mat-datepicker>
   </mat-form-field>
 
   <div class="mouse_gender_menu" formArrayName="sex_control">
-    <label>Gender</label>
+    <label (dblclick)="stepBackMenu($event)">Gender</label>
     <!-- <div *ngFor="let gender of mouse_filter_form.controls.sex_control.controls; let i=index"> -->
       <mat-checkbox class="mouse_gender_menu_button" [name]="mice_menu.sex[i]" [formControlName]="i" *ngFor="let gender of mouse_filter_form.controls.sex_control.controls; let i=index"
-        [value]="gender.value" (click)="updateMenu()">{{ mice_menu.sex[i] }}</mat-checkbox>
+        [value]="gender.value" (change)="updateMenu()">{{ mice_menu.sex[i] }}</mat-checkbox>
     <!-- </div> -->
   </div>
 
   <mat-form-field>
     <label>Line</label>
     <input matInput type="text" name="subject_line" formControlName="subject_line_control"
-      [matAutocomplete]="autoCompSL">
+      [matAutocomplete]="autoCompSL" (focus)="stepBackMenu($event)">
     <mat-autocomplete #autoCompSL="matAutocomplete">
       <mat-option *ngFor="let line of filteredSubjectLineOptions | async" [value]="line" (click)="updateMenu()">
         {{ line }}</mat-option>
@@ -60,7 +60,7 @@
   <mat-form-field>
     <label>User</label>
     <input matInput type="text" name="responsible_user" formControlName="responsible_user_control" [matAutocomplete]="autoCompRU">
-    <mat-autocomplete #autoCompRU="matAutocomplete">
+    <mat-autocomplete #autoCompRU="matAutocomplete" (focus)="stepBackMenu($event)">
       <mat-option *ngFor="let responsible_user of filteredResponsibleUserOptions | async" [value]="responsible_user" (click)="updateMenu()">{{ responsible_user }}</mat-option>
     </mat-autocomplete>
   </mat-form-field>

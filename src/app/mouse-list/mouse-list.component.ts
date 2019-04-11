@@ -72,18 +72,14 @@ export class MouseListComponent implements OnInit, OnDestroy {
         this.mice_menu[key].push(mouse[key]);
       }
     }
-
   }
 
     // create formcontrol for item in menus
     const sex_control_array = <FormArray>this.mouse_filter_form.controls['sex_control'];
-    console.log('sex_control_array length: ', sex_control_array.length);
     sex_control_array.controls.length = 0;
     for (const item of this.mice_menu['sex']) {
       sex_control_array.push(new FormControl(false));
     }
-    console.log('formarray.controls');
-    console.log(sex_control_array.controls);
 
     // for autocomplete search bar
     // const autoCompleteList = ['lab_name', 'subject_nickname', 'subject_uuid', 'subject_line', 'responsible_user'];
@@ -162,9 +158,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
   updateMenu() {
-    const newMiceList = [];
-    console.log('detected click/blur in mouse list menu');
-    console.log(this.mouse_filter_form.value);
+    console.log('detected selection in mouse list menu');
+    // console.log(this.mouse_filter_form.value);
     const menuRequest = this.filterRequests();
     if (Object.entries(menuRequest).length > 0) {
       this.allMiceService.retrieveMice(menuRequest);
@@ -175,17 +170,31 @@ export class MouseListComponent implements OnInit, OnDestroy {
     }
   }
 
+  stepBackMenu(event) {
+    console.log('detected focus in menu');
+    console.log(event.target.name);
+    const referenceMenuReq = this.filterRequests(event.target.name);
+    if (Object.entries(referenceMenuReq).length > 0) {
+      // this.allMiceService.retrieveMice(referenceMenuReq);
+      // this.allMiceService.getRequestedMiceLoadedListener()
+      //   .subscribe((mice: any) => {
+      //     this.createMenu(mice);
+      //   });
+    }
+
+  }
+
   genderSelected(genderForm) {
     return genderForm.includes(true);
   }
 
-  filterRequests() {
+  filterRequests(focusedField?: string) {
     const filterList = Object.entries(this.mouse_filter_form.value);
     const requestFilter = {};
     filterList.forEach(filter => {
       // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
-      if (filter[1]) {
-        const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
+      const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
+      if (filter[1] && filterKey !== focusedField) {
         if (filterKey === 'sex' && this.genderSelected(filter[1])) {
           // only accepts single selection - this case the last selection. TODO:coordinate with API for multi-selection
           let requestedGender: string;
@@ -200,7 +209,9 @@ export class MouseListComponent implements OnInit, OnDestroy {
 
           if (filterKey === 'subject_birth_date') {
             // Tue Dec 11 2018 00:00:00 GMT-0600 (Central Standard Time) => 2018-12-11T06:00:00.000Z => 2018-12-11
-            requestFilter[filterKey] = filter[1].toISOString().split('T')[0];
+            const mouseDOB = new Date(filter[1].toString());
+            console.log(mouseDOB.toISOString());
+            requestFilter[filterKey] = mouseDOB.toISOString().split('T')[0];
           } else {
             requestFilter[filterKey] = filter[1];
           }

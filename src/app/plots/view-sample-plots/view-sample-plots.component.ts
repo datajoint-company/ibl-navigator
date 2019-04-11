@@ -15,24 +15,35 @@ declare var Plotly: any;
 export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
   id = 'test';
   plots;
+  samplePlot;
   loading: boolean;
   // plotInfo = { type: 'water_administration', id: 1 };
   plotInfo = { type: 'raster_test_data', id: 0 };
   testRaster;
 
   private plotsSubscription: Subscription;
+  private samplePlotSubscription: Subscription;
 
 
   @ViewChild('samplePlot2') el: ElementRef;
+  @ViewChild('samplePlot_psych') el2: ElementRef;
 
   @ViewChild(PlotMenuToggleComponent) PMTComp: PlotMenuToggleComponent;
   @Input() selectedPlotChange: PlotMenuToggleComponent;
   constructor(public plotsService: PlotsService) { }
 
   ngOnInit() {
-    // console.log(this.el);
+    console.log(this.el2);
     console.log('inside view-sample-plots comp');
-    console.log(this.PMTComp.selectedPlot);
+    // console.log(this.PMTComp.selectedPlot);
+    this.plotsService.getSamplePlot();
+    this.samplePlotSubscription = this.plotsService.getSamplePlotUpdateListener()
+      .subscribe((psychplot: any) => {
+        console.log('retrieved psych plot- now plotting');
+        console.log(typeof psychplot);
+        this.samplePlot = psychplot;
+        this.plotSamplePsychPlot(psychplot);
+      });
   }
 
   ngOnDestroy() {
@@ -114,6 +125,13 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
   //   Plotly.newPlot(element, plot, layout, config); // for testing raster json
 
   // }
+
+  plotSamplePsychPlot(plot) {
+    console.log('plotting sample psych plot');
+    const element2 = this.el2.nativeElement;
+    Plotly.newPlot(element2, plot.data, plot.layout);
+  }
+
 
   plotSampleRaster(plot) {
     const element = this.el.nativeElement;

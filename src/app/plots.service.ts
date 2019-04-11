@@ -5,7 +5,9 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({providedIn: 'root'})
 export class PlotsService {
     private plots;
+    private psychPlot;
     private plotsUpdated = new Subject();
+    private samplePlotUpdated = new Subject();
 
     constructor(private http: HttpClient) {}
 
@@ -39,5 +41,20 @@ export class PlotsService {
 
     getPlotUpdateListener() {
         return this.plotsUpdated.asObservable();
+    }
+
+    getSamplePlot() {
+        this.http.get(`http://localhost:3000/api/plots/testPlot`)
+        .subscribe((plotData) => {
+            this.psychPlot = plotData;
+            console.log('psych sample plots (in service getPlots) are: ');
+            console.log(this.psychPlot);
+            this.samplePlotUpdated.next(this.psychPlot);
+        });
+    }
+
+    getSamplePlotUpdateListener() {
+        console.log('listening for sample psych plot...');
+        return this.samplePlotUpdated.asObservable();
     }
 }

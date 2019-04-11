@@ -340,25 +340,27 @@ app.post('/api/plot/mouse-waterIntake-plotData', (req, res) => {
         end: true
     });
 })
-// app.use('/api/plots/scatter/:id', (req, res, next) => {
 
-//     async function readThis() {
-//         // let plot;
-//         try {
-//             return await readFile(`./src/assets/plotData/data_dateTime_weight${ req.params.id }.json`, 'utf-8');
-//         } catch(e) {
-//             console.log('e', e);
-//         }
-//     }
-//     readThis()
-//     .then((plot)=> {
-//         setTimeout(() => {
-//             res.status(200).send(plot);
-//         }, 5000);
+app.get('/api/plots/testPlot', (req, res, next) => {
+
+    async function readThis() {
+        // let plot;
+        try {
+            // return await readFile(`./src/assets/plotData/data_dateTime_weight${ req.params.id }.json`, 'utf-8');
+            return await readFile(`./src/assets/plotData/psych_results_sized.json`, 'utf-8');
+        } catch(e) {
+            console.log('e', e);
+        }
+    }
+    readThis()
+    .then((plot)=> {
+        setTimeout(() => {
+            res.status(200).send(plot);
+        }, 5000);
          
-//     });
+    });
     
-// });
+});
 
 // ============================================================= //
 
