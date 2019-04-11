@@ -6,9 +6,19 @@ iblapi
 REST Data API for IBL Web UI
 Python/Datajoint/Flask
 
-usage::
+usage - flask internal dev server::
 
   FLASK_APP=./iblapi.py flask run
+  or
+  ./run-api  # shell script of above
+  or
+  ./run-api development  # prints extra debug information
+
+usage - gunicorn multiprocess server::
+
+  $ gunicorn -w 4 -b 0.0.0.0:5000 iblapi-gunicorn
+  or
+  $ ./run-api-gunicorn
 
 api specification
 =================
