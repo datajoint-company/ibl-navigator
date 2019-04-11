@@ -19,6 +19,10 @@ usage - gunicorn multiprocess server::
   $ gunicorn -w 4 -b 0.0.0.0:5000 iblapi-gunicorn
   or
   $ ./run-api-gunicorn
+  devel logs:
+  $ gunicorn -w 4 -b 0.0.0.0:5000 iblapi-gunicorn --log-level=debug
+  or
+  $ ./run-api-gunicorn development
 
 api specification
 =================
