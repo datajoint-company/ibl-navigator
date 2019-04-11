@@ -1,7 +1,9 @@
 # iblapi.py: ibl data api for ibl-navigator
 
-
+import os
 import json
+import logging
+
 from datetime import date
 from datetime import datetime
 
@@ -21,6 +23,10 @@ from ibl_pipeline import acquisition
 API_VERSION = '0'
 app = Flask(__name__)
 API_PREFIX = '/v{}'.format(API_VERSION)
+is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
+
+
+
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -66,6 +72,11 @@ def do_req(subpath):
     else:
         return dumps((reqmap[obj] & request.values).fetch(as_dict=True))
 
+
+if is_gunicorn:
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
