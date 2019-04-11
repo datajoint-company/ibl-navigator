@@ -65,3 +65,7 @@ def do_req(subpath):
         abort(404)
     else:
         return dumps((reqmap[obj] & request.values).fetch(as_dict=True))
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
