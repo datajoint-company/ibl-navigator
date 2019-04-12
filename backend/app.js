@@ -241,9 +241,19 @@ app.post('/api/mice', (req, res) => {
         }
         count += 1;
     }
-    console.log('query path is:')
-    console.log(sessionPath + query)
-    // setup for proxy server
+    // console.log('query path is:')
+    // console.log(sessionPath + query)
+    // console.log('req.body is:');
+    // console.log(req.body);
+    //// setup for proxy server
+    var options0 = {
+        // hostname: '127.0.0.1/',
+        port: 5000,
+        path: 'v0/subject',
+        method: req.method,
+        body: req.body,
+        headers: req.headers
+    };
     var options = {
         // hostname: '127.0.0.1/',
         port: 5000,
@@ -264,6 +274,7 @@ app.post('/api/mice', (req, res) => {
     req.pipe(proxy, {
         end: true
     });
+    // console.log(req);
 })
 
 app.post('/api/plot/mouse-weight-plotData', (req, res) => {
@@ -356,7 +367,7 @@ app.get('/api/plots/testPlot', (req, res, next) => {
     .then((plot)=> {
         setTimeout(() => {
             res.status(200).send(plot);
-        }, 5000);
+        }, 10);
          
     });
     

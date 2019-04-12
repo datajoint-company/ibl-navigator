@@ -59,8 +59,8 @@
 
   <mat-form-field>
     <label>User</label>
-    <input matInput type="text" name="responsible_user" formControlName="responsible_user_control" [matAutocomplete]="autoCompRU">
-    <mat-autocomplete #autoCompRU="matAutocomplete" (focus)="stepBackMenu($event)">
+    <input matInput type="text" name="responsible_user" formControlName="responsible_user_control" [matAutocomplete]="autoCompRU" (focus)="stepBackMenu($event)">
+    <mat-autocomplete #autoCompRU="matAutocomplete">
       <mat-option *ngFor="let responsible_user of filteredResponsibleUserOptions | async" [value]="responsible_user" (click)="updateMenu()">{{ responsible_user }}</mat-option>
     </mat-autocomplete>
   </mat-form-field>

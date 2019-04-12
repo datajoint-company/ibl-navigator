@@ -175,11 +175,11 @@ export class MouseListComponent implements OnInit, OnDestroy {
     console.log(event.target.name);
     const referenceMenuReq = this.filterRequests(event.target.name);
     if (Object.entries(referenceMenuReq).length > 0) {
-      // this.allMiceService.retrieveMice(referenceMenuReq);
-      // this.allMiceService.getRequestedMiceLoadedListener()
-      //   .subscribe((mice: any) => {
-      //     this.createMenu(mice);
-      //   });
+      this.allMiceService.retrieveMice(referenceMenuReq);
+      this.allMiceService.getRequestedMiceLoadedListener()
+        .subscribe((mice: any) => {
+          this.createMenu(mice);
+        });
     }
 
   }
