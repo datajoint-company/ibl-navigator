@@ -11,11 +11,18 @@ from flask import Flask
 from flask import request
 from flask import abort
 
-from ibl_pipeline import subject
-from ibl_pipeline import reference
-from ibl_pipeline import action
+import datajoint as dj
+
+subject = dj.create_virtual_module(
+    'subject', dj.config.get('database.prefix', '') + 'ibl_subject')
+reference = dj.create_virtual_module(
+    'reference', dj.config.get('database.prefix', '') + 'ibl_reference')
+action = dj.create_virtual_module(
+    'action', dj.config.get('database.prefix', '') + 'ibl_action')
+acquisition = dj.create_virtual_module(
+    'acquisition', dj.config.get('database.prefix', '') + 'ibl_acquisition')
+
 # from ibl_pipeline import behavior
-from ibl_pipeline import acquisition
 # from ibl_pipeline import data
 # from ibl_pipeline import ephys
 
