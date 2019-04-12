@@ -6,9 +6,8 @@ from code import interact
 
 from requests import post as http_post
 
-from iblapi import API_VERSION
 
-
+API_VERSION = '0'
 api_endpoint = 'http://localhost:5000/v' + API_VERSION
 
 
