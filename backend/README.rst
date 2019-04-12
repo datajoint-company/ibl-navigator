@@ -30,10 +30,38 @@ api specification
 All API endpoints documented here are under a version prefix; currently '/v0',
 so, if an endpoint is documented as '/stuff', the real URL would be '/v0/stuff'.
 
+Special facilities are provided via the following special arguments:
+
+  *'__json'*
+
+  If the `__json` attribute is present, the result of decoding its
+  value via `json.loads()` will be used instead of other query arguments.
+
+  This facillitates use of list values (dj.AndList), multiple restrictions,
+  and query-by-string.
+
+  *'__limit'*
+
+  If the `__limit` attribute is present, its decoded integer value `N` will
+  be passed into the DatajointQuery as a `limit=N` argument.
+
+  *'__order'*
+
+  If the `__order` attribute is present, its string value `S` will
+  be passed into the DatajointQuery as a `order_by=S` argument.
+
+  *'__proj'*
+
+  If the `__proj` attribute is present, the result of decoding its value via
+  `json.loads()` into `args` will be used to project out the query results as
+  `.proj(*args)` before they are returned to the client.
+
 WIP draft v0.1 api spec::
 
   Requests
-  currently support 'GET' and 'POST' methods; documented as GET urlparams
+  currently support 'POST' methods; documented here as GET urlparams
+
+  base tables::
   
     /labmember:                         list of lab members
     /labmember/?user_name=...:          specific user
@@ -44,6 +72,10 @@ WIP draft v0.1 api spec::
     /session:                           list of subjects
     /session/?subject_nickname:         specific subject
     /session/?subject_uuid:             specific subject
+
+  special queries (under '_q' prefix)::
+
+    /_q/sessionpage:                    session * subject * lab * labmember
 
 todo?::
 
