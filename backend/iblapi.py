@@ -100,8 +100,7 @@ def do_req(subpath):
         if proj:
             q = q.proj(*proj)
 
-        else:
-            return dumps(q.fetch(**kwargs))
+        return dumps(q.fetch(**kwargs))
 
 
 def handle_q(subpath, args, proj, **kwargs):
