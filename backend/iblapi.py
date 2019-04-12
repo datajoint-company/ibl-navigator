@@ -115,7 +115,7 @@ def handle_q(subpath, args, proj, **kwargs):
         else:
             ret = q.fetch(**kwargs)
 
-    return json.dumps(ret)
+    return dumps(ret)
 
 
 if is_gunicorn:
