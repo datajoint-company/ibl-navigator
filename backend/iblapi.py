@@ -2,6 +2,7 @@
 
 import os
 import json
+import uuid
 import logging
 
 from datetime import date
@@ -40,6 +41,8 @@ class DateTimeEncoder(json.JSONEncoder):
             return o.isoformat()
         if isinstance(o, datetime):
             return o.isoformat()
+        if isinstance(o, uuid.UUID):
+            return str(o)
         return json.JSONEncoder.default(self, o)
 
     @classmethod
