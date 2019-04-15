@@ -124,19 +124,21 @@ def handle_q(subpath, args, proj, **kwargs):
 
     ret = []
     if subpath == 'sessionpage':
-        q = (acquisition.Session() * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+        q = (acquisition.Session()
+             * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & ((reference.Lab() * reference.LabMember())
-                & reference.LabMembership().proj('lab_name', 'user_name')))
-        if proj:
-            ret = q.proj(*proj).fetch(**kwargs)
-        else:
-            ret = q.fetch(**kwargs)
+                & reference.LabMembership().proj('lab_name', 'user_name'))
+             & args)
     elif subpath == 'subjpage':
-        q = subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
-        if proj:
-            ret = q.proj(*proj).fetch(**kwargs)
-        else:
-            ret = q.fetch(**kwargs)
+        q = (subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+             & args)
+    else:
+        abort(404)
+
+    if proj:
+        ret = q.proj(*proj).fetch(**kwargs)
+    else:
+        ret = q.fetch(**kwargs)
 
     return dumps(ret)
 
