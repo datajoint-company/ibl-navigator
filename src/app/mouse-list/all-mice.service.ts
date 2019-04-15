@@ -22,6 +22,16 @@ export class AllMiceService {
       });
   }
 
+  // getAllMice() {
+  //   console.log('sending GET request directly to flask api');
+  //   this.http.get(`http://localhost:5000/v0/subject/`)
+  //     .subscribe((allMiceData) => {
+  //       this.allMice = allMiceData;
+  //       console.log(this.allMice);
+  //       this.miceLoaded.next(this.allMice);
+  //     });
+  // }
+
   retrieveMice(miceFilter) {
     console.log('POSTing for:', miceFilter);
     this.http.post(`http://localhost:3000/api/mice/`, miceFilter)
@@ -38,6 +48,22 @@ export class AllMiceService {
         }
       );
   }
+
+  // retrieveMice(miceFilter) {
+  //   console.log('POSTing directly to Flask side for:', miceFilter);
+  //   this.http.post(`http://localhost:5000/v0/subject/`, miceFilter, { headers: { 'Content-Type': 'application/json' }})
+  //     .subscribe(
+  //       (filteredMiceData) => {
+  //         this.retrievedMice = filteredMiceData;
+  //         console.log(this.retrievedMice);
+  //         this.requestedMiceLoaded.next(this.retrievedMice);
+  //       },
+  //       (err: any) => {
+  //         console.log('err in http.post subscription - sending back data anyways');
+  //         console.log(err);
+  //       }
+  //     );
+  // }
 
   getMiceLoadedListener() {
     return this.miceLoaded.asObservable();

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({providedIn: 'root'})
 export class PlotsService {
@@ -8,6 +8,9 @@ export class PlotsService {
     private psychPlot;
     private plotsUpdated = new Subject();
     private samplePlotUpdated = new Subject();
+
+    private somePost;
+    private somePostUpdated = new Subject();
 
     constructor(private http: HttpClient) {}
 
@@ -37,6 +40,34 @@ export class PlotsService {
                     this.plotsUpdated.next(this.plots);
                 }
             );
+    }
+
+    testPost(someData) {
+        console.log('inside plots.service - in testPost()');
+        console.log('posting: ', someData);
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json'
+            })
+        };
+        this.http.post('http://localhost:3000/api/mice/', someData, httpOptions)
+            .subscribe(
+                (x) => {
+                    this.somePost = x;
+                    console.log('plots (in service retrievePlot) are: ');
+                    console.log(this.somePost);
+                    this.somePostUpdated.next(this.somePost);
+                },
+                (err: any) => {
+                    console.log('err in posting to firebase');
+                    console.log(err);
+                    this.somePostUpdated.next(err);
+                }
+            );
+    }
+    getSomePostUpdateListener() {
+        console.log('listening for random post response...');
+        return this.somePostUpdated.asObservable();
     }
 
     getPlotUpdateListener() {

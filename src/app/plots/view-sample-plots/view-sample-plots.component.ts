@@ -23,6 +23,7 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
 
   private plotsSubscription: Subscription;
   private samplePlotSubscription: Subscription;
+  private somePostSubscription: Subscription;
 
 
   @ViewChild('samplePlot2') el: ElementRef;
@@ -212,6 +213,19 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
     Plotly.newPlot(element, dummyplot.data, layout2, config2);
 
   }
+  testPost() {
+    console.log('posting...?');
+    const someData = {
+      'labname': 'labA',
+      'tester': 'Lauren'
+    };
+    this.plotsService.testPost(someData);
+    this.somePostSubscription = this.plotsService.getSomePostUpdateListener()
+      .subscribe((x: any) => {
+        console.log('response from firebase');
+        console.log(x);
+      });
 
+  }
 }
 

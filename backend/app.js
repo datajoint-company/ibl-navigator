@@ -241,40 +241,48 @@ app.post('/api/mice', (req, res) => {
         }
         count += 1;
     }
-    // console.log('query path is:')
-    // console.log(sessionPath + query)
-    // console.log('req.body is:');
-    // console.log(req.body);
     //// setup for proxy server
-    var options0 = {
-        // hostname: '127.0.0.1/',
-        port: 5000,
-        path: 'v0/subject',
-        method: req.method,
-        body: req.body,
-        headers: req.headers
-    };
-    var options = {
-        // hostname: '127.0.0.1/',
-        port: 5000,
-        path: sessionPath + query,
-        method: 'GET',
-        // method: req.method,
-        // body: req.body,
-        headers: req.headers
-    };
+    console.log('inside post mice');
+    console.log('body is: ', typeof req.body)
+    var requestBody = JSON.stringify(req.body)
+    console.log('request body after stringify: ', typeof requestBody)
+    request.post('http://localhost:5000/v0/subject', {form: requestBody}, function(error, httpResponse, body) {
+        console.error('error: ', error);
+        console.log('body: ', body)
+    })
 
-    var proxy = http.request(options, function (proxy_res) {
-        res.writeHead(proxy_res.statusCode, proxy_res.headers)
-        proxy_res.pipe(res, {
-            end: true
-        });
-    });
+    // var options = {
+    //     // hostname: '127.0.0.1/',
+    //     port: 5000,
+    //     path: 'https://not-even-a-test.firebaseio.com/test2.json', //'v0/subject',
+    //     method: req.method,
+    //     body: requestBody,
+    //     headers: req.headers
+    // };
+    
+    // var options0 = {
+    //     // hostname: '127.0.0.1/',
+    //     port: 5000,
+    //     path: sessionPath + query,
+    //     method: 'GET',
+    //     // method: req.method,
+    //     // body: req.body,
+    //     headers: req.headers
+    // };
 
-    req.pipe(proxy, {
-        end: true
-    });
-    // console.log(req);
+    // var proxy = http.request(options, function (proxy_res) {
+    //     res.writeHead(proxy_res.statusCode, proxy_res.headers)
+    //     console.log('what is inside proxy_res?');
+    //     console.log(proxy_res);
+    //     proxy_res.pipe(res, {
+    //         end: true
+    //     });
+    // });
+    
+    // // proxy.write(requestBody);
+    // req.pipe(proxy, {
+    //     end: true
+    // });
 })
 
 app.post('/api/plot/mouse-weight-plotData', (req, res) => {
@@ -346,7 +354,7 @@ app.post('/api/plot/mouse-waterIntake-plotData', (req, res) => {
             end: true
         });
     });
-
+    
     req.pipe(proxy, {
         end: true
     });
