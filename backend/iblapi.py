@@ -117,7 +117,7 @@ def handle_q(subpath, args, proj, **kwargs):
 
     ret = []
     if subpath == 'sessionpage':
-        q = (acquisition.Session() * subject.Subject()
+        q = (acquisition.Session() * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name')))
         if proj:
