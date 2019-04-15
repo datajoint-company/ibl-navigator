@@ -163,12 +163,13 @@ app.get('/api/sessions', (req, res) => {
 app.post('/api/sessions', (req, res) => {
     console.log('posting to filter session page');
     
-    var requestBody = JSON.stringify(req.body)
-    console.log('request body after stringify: ', typeof requestBody)
-    request.post('http://localhost:5000/v0/_q/sessionpage', { form: requestBody }, function (error, httpResponse, body) {
+    request.post('http://localhost:5000/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
+        console.log('response body is');
+        console.log(body)
+        res.send(body);
     })
 
     // setup for proxy server before using request module
@@ -251,13 +252,27 @@ app.post('/api/mice', (req, res) => {
     }
     //// setup for proxy server
     console.log('inside post mice');
-    console.log('body is: ', typeof req.body)
+    // console.log('body is: ', typeof req.body)
     var requestBody = JSON.stringify(req.body)
-    console.log('request body after stringify: ', typeof requestBody)
-    request.post('http://localhost:5000/v0/_q/subjpage', {form: requestBody}, function(error, httpResponse, body) {
+    console.log('requestBody is...');
+    console.log(requestBody);
+    console.log('req.body is...');
+    console.log(req.body);
+    // console.log('request body after stringify: ', typeof requestBody)
+    // request.post('https://not-even-a-test.firebaseio.com/test3.json', { form: requestBody }, function (error, httpResponse, body) {
+    //     if (error) {
+    //         console.error('error: ', error);
+    //     }
+    //     console.log('response body is');
+    //     console.log(body)
+    // });
+    request.post('http://localhost:5000/v0/_q/subjpage', {form: req.body}, function(error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
+        console.log('response body is');
+        console.log(body)
+        res.send(body);
     })
 
     // var options = {

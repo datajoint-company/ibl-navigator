@@ -42,9 +42,8 @@ export class AllMiceService {
           this.requestedMiceLoaded.next(this.retrievedMice);
         },
         (err: any) => {
-          console.log('err in http.post subscription - sending back data anyways');
-          console.log(err);
-          this.requestedMiceLoaded.next(this.retrievedMice);
+          console.log('err in http.post subscription');
+          console.error(err);
         }
       );
   }
