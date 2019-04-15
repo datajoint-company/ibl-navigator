@@ -8,6 +8,7 @@ services:
     ports:
       - "5000:5000"
     entrypoint: ["/src/iblapi/run-ibl-api.prod.sh"]
+    # entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
   iblapi-dj:
     build: ./backend
     env_file: ./backend/.env
