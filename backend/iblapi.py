@@ -5,6 +5,7 @@ import json
 import uuid
 import logging
 
+from uuid import UUID
 from datetime import date
 from datetime import datetime
 
@@ -77,18 +78,24 @@ def do_req(subpath):
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
 
-    args, limit, order, proj = request.values, None, None, None
+    special_fields = ['__json', '__limit', '__order', '__proj']
+    values, limit, order, proj = request.values, None, None, None
 
-    if '__json' in request.values:
+    args = {}
+    if '__json' not in values:
+        # HACK: encode all attributes called 'uuid' into UUID type
+        for a in (v for v in values if v not in special_fields):
+            args[a] = UUID(values[a]) if 'uuid' in a else values[a]
+    else:
         args = json.loads(request.values['__json'])
 
-    if '__limit' in request.values:
+    if '__limit' in values:
         limit = int(request.values['__limit'])
 
-    if '__order' in request.values:
+    if '__order' in values:
         order = request.values['__order']
 
-    if '__proj' in request.values:
+    if '__proj' in values:
         proj = json.loads(request.values['__proj'])
 
     kwargs = {i[0]: i[1] for i in (('as_dict', True,),
@@ -117,19 +124,21 @@ def handle_q(subpath, args, proj, **kwargs):
 
     ret = []
     if subpath == 'sessionpage':
-        q = (acquisition.Session() * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+        q = (acquisition.Session()
+             * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & ((reference.Lab() * reference.LabMember())
-                & reference.LabMembership().proj('lab_name', 'user_name')))
-        if proj:
-            ret = q.proj(*proj).fetch(**kwargs)
-        else:
-            ret = q.fetch(**kwargs)
+                & reference.LabMembership().proj('lab_name', 'user_name'))
+             & args)
     elif subpath == 'subjpage':
-        q = subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
-        if proj:
-            ret = q.proj(*proj).fetch(**kwargs)
-        else:
-            ret = q.fetch(**kwargs)
+        q = (subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+             & args)
+    else:
+        abort(404)
+
+    if proj:
+        ret = q.proj(*proj).fetch(**kwargs)
+    else:
+        ret = q.fetch(**kwargs)
 
     return dumps(ret)
 
