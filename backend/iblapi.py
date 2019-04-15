@@ -60,6 +60,7 @@ reqmap = {
     'subject': subject.Subject,
     'session': acquisition.Session,
     'weighing': action.Weighing,
+    'wateradmin': action.WaterAdministration
 }
 dumps = DateTimeEncoder.dumps
 
@@ -116,9 +117,15 @@ def handle_q(subpath, args, proj, **kwargs):
 
     ret = []
     if subpath == 'sessionpage':
-        q = (acquisition.Session() * subject.Subject()
+        q = (acquisition.Session() * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name')))
+        if proj:
+            ret = q.proj(*proj).fetch(**kwargs)
+        else:
+            ret = q.fetch(**kwargs)
+    elif subpath == 'subjpage':
+        q = subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
         if proj:
             ret = q.proj(*proj).fetch(**kwargs)
         else:

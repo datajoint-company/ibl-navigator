@@ -1,9 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectModule,
+         MatAutocompleteModule,
+         MatIconModule,
+         MatInputModule,
+         MatCheckboxModule,
+         MatRadioModule,
+         MatNativeDateModule,
+         MatDatepickerModule,
+         MatCardModule,
+         MatButtonModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AuthGuard } from './auth/auth-guard.service';
@@ -22,31 +31,45 @@ import { MouseComponent } from './mouse-list/mouse/mouse.component';
 import { CellListComponent } from './cell-list/cell-list.component';
 import { CellComponent } from './cell-list/cell/cell.component';
 import { OverviewComponent } from './overview/overview.component';
+import { WaterWeightPlotComponent } from './mouse-list/mouse/water-weight-plot/water-weight-plot.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent },
   { path: 'login', component: LoginComponent },
   { path: 'plot', component: ViewSamplePlotsComponent },
   { path: 'cells', component: CellListComponent },
+  { path: 'water-weight', component: WaterWeightPlotComponent},
   {
-    path: 'subjects',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+    path: 'mouse/:mouseUUID',
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
+    component: MouseComponent
+  },
+  {
+    path: 'mice',
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: MouseListComponent,
       children: [
         { path: ':lab/:mousename', component: MouseComponent }
       ]
   },
   {
+    path: 'session/:sessionID',
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
+    component: SessionComponent
+  },
+  {
     path: 'sessions',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: SessionListComponent,
       children: [
-        { path: ':sessionID/', component: SessionComponent },
+        { path: ':sessionID', component: SessionComponent },
         { path: ':sessionID/:batchname', component: EachBatchComponent }
       ]
-  }
+  },
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
   // { path: '**', redirectTo: '/not-found' }
 ];
@@ -66,15 +89,17 @@ const appRoutes: Routes = [
     MouseComponent,
     CellListComponent,
     CellComponent,
-    OverviewComponent
+    OverviewComponent,
+    WaterWeightPlotComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
-    MatSelectModule,
-    BrowserAnimationsModule
+    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule, MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatCardModule, MatButtonModule,
+    ReactiveFormsModule
   ],
   providers: [AuthService, AuthGuard, PlotsService],
   bootstrap: [AppComponent]
