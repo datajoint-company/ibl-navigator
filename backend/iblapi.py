@@ -9,11 +9,13 @@ from uuid import UUID
 from datetime import date
 from datetime import datetime
 
+import numpy as np
+import datajoint as dj
+
 from flask import Flask
 from flask import request
 from flask import abort
 
-import datajoint as dj
 
 subject = dj.create_virtual_module(
     'subject', dj.config.get('database.prefix', '') + 'ibl_subject')
@@ -23,6 +25,8 @@ action = dj.create_virtual_module(
     'action', dj.config.get('database.prefix', '') + 'ibl_action')
 acquisition = dj.create_virtual_module(
     'acquisition', dj.config.get('database.prefix', '') + 'ibl_acquisition')
+plotting_behavior = dj.create_virtual_module('plotting_behavior', dj.config.get('database.prefix', '') + 'ibl_plotting_behavior')
+
 
 # from ibl_pipeline import behavior
 # from ibl_pipeline import data
@@ -37,6 +41,21 @@ is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
 
 class DateTimeEncoder(json.JSONEncoder):
     ''' teach json to dump datetimes, etc '''
+
+    npmap = {
+        np.bool_: str,
+        np.uint8: str,
+        np.uint16: str,
+        np.uint32: str,
+        np.uint64: str,
+        np.int8: str,
+        np.int16: str,
+        np.int32: str,
+        np.int64: str,
+        np.float32: str,
+        np.float64: str,
+    }
+
     def default(self, o):
         if isinstance(o, date):
             return o.isoformat()
@@ -44,6 +63,8 @@ class DateTimeEncoder(json.JSONEncoder):
             return o.isoformat()
         if isinstance(o, uuid.UUID):
             return str(o)
+        if type(o) in self.npmap:
+            return self.npmap[type(o)](o)
         return json.JSONEncoder.default(self, o)
 
     @classmethod
@@ -61,7 +82,8 @@ reqmap = {
     'subject': subject.Subject,
     'session': acquisition.Session,
     'weighing': action.Weighing,
-    'wateradmin': action.WaterAdministration
+    'wateradmin': action.WaterAdministration,
+    'sessionpsych': plotting_behavior.SessionPsychCurve
 }
 dumps = DateTimeEncoder.dumps
 
