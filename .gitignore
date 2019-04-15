@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+*.egg-info
 
 # dependencies
 /node_modules
@@ -20,6 +21,10 @@ speed-measure-plugin.json
 *.launch
 .settings/
 *.sublime-workspace
+.ipynb_checkpoints
+**/*~
+**/#*#
+**/.#*
 
 # IDE - VSCode
 .vscode/*
@@ -43,6 +48,9 @@ testem.log
 Thumbs.db
 dj_local_conf.json
 __pycache__
+
+# DataJoint
+dj_local_conf.json*
 
 # docker
 docker-compose.yml
