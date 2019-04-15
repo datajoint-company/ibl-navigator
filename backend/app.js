@@ -3,6 +3,8 @@ const fs = require('fs');
 const util = require('util');
 const bodyParser = require('body-parser');
 const request = require('request');
+const http = require('http');
+const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
@@ -17,6 +19,11 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
     next();
 })
+
+
+
+
+
 
 app.post('/api/plot', (req, res) =>{
     console.log(req.body);
@@ -109,11 +116,9 @@ app.post('/api/plot', (req, res) =>{
 
                 res.status(500).send(errorInfo);
             });
-
     }
-
-    
 })
+
 app.get('/api/plots/:type/:id', (req, res, next) => {
 
     async function readThis() {
@@ -129,29 +134,256 @@ app.get('/api/plots/:type/:id', (req, res, next) => {
         setTimeout(() => {
             res.status(200).contentType('image/png').send(plot);
         }, 10);
-
     });
-
 });
 
-// app.use('/api/plots/scatter/:id', (req, res, next) => {
+app.get('/api/sessions', (req, res) => {
+    console.log('req.headers is', req.headers)
+    // setup for proxy server
+    var options = {
+        // hostname: '127.0.0.1/',
+        port: 5000,
+        path: 'v0/session',
+        method: req.method,
+        headers: req.headers
+    };
 
-//     async function readThis() {
-//         // let plot;
-//         try {
-//             return await readFile(`./src/assets/plotData/data_dateTime_weight${ req.params.id }.json`, 'utf-8');
-//         } catch(e) {
-//             console.log('e', e);
-//         }
-//     }
-//     readThis()
-//     .then((plot)=> {
-//         setTimeout(() => {
-//             res.status(200).send(plot);
-//         }, 5000);
-         
-//     });
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+
+    req.pipe(proxy, {
+        end: true
+    });
+})
+
+app.post('/api/sessions', (req, res) => {
+    console.log('req.headers is', req.headers)
+    // console.log(req.body);
+    let sessionPath = 'v0/session/?'
+    let query =''
+    let count = 0
+    console.log('filter in filterValues are: ')
+    for (filter in req.body) {
+        console.log(filter, ": ", req.body[filter])
+        if (count == 0) {
+            query = query + filter + '=' + req.body[filter]
+        } else {
+            query = query + '&' + filter + '=' + req.body[filter]
+        }
+        count += 1;
+    }
+    console.log('query path is:')
+    console.log(sessionPath + query)
+    // setup for proxy server
+    var options = {
+        // hostname: '127.0.0.1/',
+        port: 5000,
+        path: sessionPath + query,
+        method: 'GET',
+        // method: req.method,
+        // body: req.body,
+        headers: req.headers
+    };
+
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+
+    req.pipe(proxy, {
+        end: true
+    });
+})
+
+
+
+app.get('/api/mice', (req, res) => {
+    // setup for proxy server
+    var options = {
+        // hostname: '127.0.0.1/',
+        port: 5000,
+        path: 'v0/subject',
+        method: req.method,
+        headers: req.headers
+    };
+
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+
+    req.pipe(proxy, {
+        end: true
+    });
+})
+
+app.post('/api/mice', (req, res) => {
+    console.log('req.headers is', req.headers)
+    // console.log(req.body);
+    let sessionPath = 'v0/subject/?'
+    let query = ''
+    let count = 0
+    console.log('filter in filterValues are: ')
+    for (filter in req.body) {
+        console.log(filter, ": ", req.body[filter])
+        if (count == 0) {
+            query += filter + '=' + req.body[filter]
+        } else {
+            query += '&' + filter + '=' + req.body[filter]
+        }
+        count += 1;
+    }
+    //// setup for proxy server
+    console.log('inside post mice');
+    console.log('body is: ', typeof req.body)
+    var requestBody = JSON.stringify(req.body)
+    console.log('request body after stringify: ', typeof requestBody)
+    request.post('http://localhost:5000/v0/subject', {form: requestBody}, function(error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        // console.log('httpResponse: ', httpResponse);
+    })
+
+    // var options = {
+    //     // hostname: '127.0.0.1/',
+    //     port: 5000,
+    //     path: 'https://not-even-a-test.firebaseio.com/test2.json', //'v0/subject',
+    //     method: req.method,
+    //     body: requestBody,
+    //     headers: req.headers
+    // };
     
-// });
+    // var options0 = {
+    //     // hostname: '127.0.0.1/',
+    //     port: 5000,
+    //     path: sessionPath + query,
+    //     method: 'GET',
+    //     // method: req.method,
+    //     // body: req.body,
+    //     headers: req.headers
+    // };
+
+    // var proxy = http.request(options, function (proxy_res) {
+    //     res.writeHead(proxy_res.statusCode, proxy_res.headers)
+    //     console.log('what is inside proxy_res?');
+    //     console.log(proxy_res);
+    //     proxy_res.pipe(res, {
+    //         end: true
+    //     });
+    // });
+    
+    // // proxy.write(requestBody);
+    // req.pipe(proxy, {
+    //     end: true
+    // });
+})
+
+app.post('/api/plot/mouse-weight-plotData', (req, res) => {
+    let sessionPath = 'v0/weighing?'
+    let query = ''
+    let count = 0
+    console.log('filter in filterValues are: ')
+    for (filter in req.body) {
+        console.log(filter, ": ", req.body[filter])
+        if (count == 0) {
+            query = query + filter + '=' + req.body[filter]
+        } else {
+            query = query + '&' + filter + '=' + req.body[filter]
+        }
+        count += 1;
+    }
+    console.log('query path is:')
+    console.log(sessionPath + query)
+    // setup for proxy server
+    var options = {
+        // hostname: '127.0.0.1/',
+        port: 5000,
+        path: sessionPath + query,
+        method: 'GET',
+        // method: req.method,
+        // body: req.body,
+        headers: req.headers
+    };
+
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+
+    req.pipe(proxy, {
+        end: true
+    });
+})
+
+app.post('/api/plot/mouse-waterIntake-plotData', (req, res) => {
+    let sessionPath = 'v0/wateradmin?'
+    let query = ''
+    let count = 0
+    console.log('filter in filterValues are: ')
+    for (filter in req.body) {
+        console.log(filter, ": ", req.body[filter])
+        if (count == 0) {
+            query = query + filter + '=' + req.body[filter]
+        } else {
+            query = query + '&' + filter + '=' + req.body[filter]
+        }
+        count += 1;
+    }
+    console.log('query path is:')
+    console.log(sessionPath + query)
+    // setup for proxy server
+    var options = {
+        port: 5000,
+        path: sessionPath + query,
+        method: 'GET',
+        headers: req.headers
+    };
+
+    var proxy = http.request(options, function (proxy_res) {
+        res.writeHead(proxy_res.statusCode, proxy_res.headers)
+        proxy_res.pipe(res, {
+            end: true
+        });
+    });
+    
+    req.pipe(proxy, {
+        end: true
+    });
+})
+
+app.get('/api/plots/testPlot', (req, res, next) => {
+
+    async function readThis() {
+        // let plot;
+        try {
+            // return await readFile(`./src/assets/plotData/data_dateTime_weight${ req.params.id }.json`, 'utf-8');
+            return await readFile(`./src/assets/plotData/psych_results_sized.json`, 'utf-8');
+        } catch(e) {
+            console.log('e', e);
+        }
+    }
+    readThis()
+    .then((plot)=> {
+        setTimeout(() => {
+            res.status(200).send(plot);
+        }, 10);
+         
+    });
+    
+});
+
+// ============================================================= //
+
 
 module.exports = app;
