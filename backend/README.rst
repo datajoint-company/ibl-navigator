@@ -92,3 +92,18 @@ todo?::
     /plot/<plotname>/<session>:         data for plotting
   
 currently, API is read-only.
+
+A Note On UUID's
+================
+
+Currently, DataJoint does not support transparaent handling of UUID string
+representation. This means that UUID fields must be converted to uuid.UUID
+instances querying/fetching/inserting to/from DataJoint.
+
+Rather than manually keeping a list of all fields where this conversion
+is required, we currently attempt to automatically convert all attributes
+with the string 'uuid' in their name, and ignore the remaining arguments.
+
+This conversion currently only happens for queries issued with 'direct'
+arguments and not for queries where the `__json` special query mechanism
+is used.
