@@ -10,19 +10,19 @@ usage - flask internal dev server::
 
   FLASK_APP=./iblapi.py flask run
   or
-  ./run-api  # shell script of above
+  ./run-ibl-api.dev.sh  # shell script of above
   or
-  ./run-api development  # prints extra debug information
+  ./run-ibl-api.dev.sh development  # prints extra debug information
 
 usage - gunicorn multiprocess server::
 
   $ gunicorn -w 4 -b 0.0.0.0:5000 iblapi-gunicorn
   or
-  $ ./run-api-gunicorn
+  $ ./run-ibl-api.prod.sh
   devel logs:
   $ gunicorn -w 4 -b 0.0.0.0:5000 iblapi-gunicorn --log-level=debug
   or
-  $ ./run-api-gunicorn development
+  $ ./run-ibl-api.prod.sh development
 
 api specification
 =================

@@ -1,0 +1,5 @@
+#! /bin/sh
+set -x;
+dir=${0%/*} && cd $dir \
+&& export PATH="${PWD}/node_modules/.bin/:$PATH" \
+&& npm i . && ng serve --host=0.0.0.0

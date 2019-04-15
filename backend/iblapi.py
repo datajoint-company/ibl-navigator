@@ -2,6 +2,7 @@
 
 import os
 import json
+import uuid
 import logging
 
 from datetime import date
@@ -11,11 +12,18 @@ from flask import Flask
 from flask import request
 from flask import abort
 
-from ibl_pipeline import subject
-from ibl_pipeline import reference
-from ibl_pipeline import action
+import datajoint as dj
+
+subject = dj.create_virtual_module(
+    'subject', dj.config.get('database.prefix', '') + 'ibl_subject')
+reference = dj.create_virtual_module(
+    'reference', dj.config.get('database.prefix', '') + 'ibl_reference')
+action = dj.create_virtual_module(
+    'action', dj.config.get('database.prefix', '') + 'ibl_action')
+acquisition = dj.create_virtual_module(
+    'acquisition', dj.config.get('database.prefix', '') + 'ibl_acquisition')
+
 # from ibl_pipeline import behavior
-from ibl_pipeline import acquisition
 # from ibl_pipeline import data
 # from ibl_pipeline import ephys
 
@@ -33,6 +41,8 @@ class DateTimeEncoder(json.JSONEncoder):
             return o.isoformat()
         if isinstance(o, datetime):
             return o.isoformat()
+        if isinstance(o, uuid.UUID):
+            return str(o)
         return json.JSONEncoder.default(self, o)
 
     @classmethod
@@ -93,8 +103,7 @@ def do_req(subpath):
         if proj:
             q = q.proj(*proj)
 
-        else:
-            return dumps(q.fetch(**kwargs))
+        return dumps(q.fetch(**kwargs))
 
 
 def handle_q(subpath, args, proj, **kwargs):
@@ -115,7 +124,7 @@ def handle_q(subpath, args, proj, **kwargs):
         else:
             ret = q.fetch(**kwargs)
 
-    return json.dumps(ret)
+    return dumps(ret)
 
 
 if is_gunicorn:

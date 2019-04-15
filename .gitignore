@@ -43,3 +43,7 @@ testem.log
 Thumbs.db
 dj_local_conf.json
 __pycache__
+
+# docker
+docker-compose.yml
+.env
