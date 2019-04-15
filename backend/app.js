@@ -143,7 +143,7 @@ app.get('/api/sessions', (req, res) => {
     var options = {
         // hostname: '127.0.0.1/',
         port: 5000,
-        path: 'v0/session',
+        path: 'v0/_q/sessionpage', //'v0/session',
         method: req.method,
         headers: req.headers
     };
@@ -161,44 +161,52 @@ app.get('/api/sessions', (req, res) => {
 })
 
 app.post('/api/sessions', (req, res) => {
-    console.log('req.headers is', req.headers)
-    // console.log(req.body);
-    let sessionPath = 'v0/session/?'
-    let query =''
-    let count = 0
-    console.log('filter in filterValues are: ')
-    for (filter in req.body) {
-        console.log(filter, ": ", req.body[filter])
-        if (count == 0) {
-            query = query + filter + '=' + req.body[filter]
-        } else {
-            query = query + '&' + filter + '=' + req.body[filter]
+    console.log('posting to filter session page');
+    
+    var requestBody = JSON.stringify(req.body)
+    console.log('request body after stringify: ', typeof requestBody)
+    request.post('http://localhost:5000/v0/_q/sessionpage', { form: requestBody }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
         }
-        count += 1;
-    }
-    console.log('query path is:')
-    console.log(sessionPath + query)
-    // setup for proxy server
-    var options = {
-        // hostname: '127.0.0.1/',
-        port: 5000,
-        path: sessionPath + query,
-        method: 'GET',
-        // method: req.method,
-        // body: req.body,
-        headers: req.headers
-    };
+    })
 
-    var proxy = http.request(options, function (proxy_res) {
-        res.writeHead(proxy_res.statusCode, proxy_res.headers)
-        proxy_res.pipe(res, {
-            end: true
-        });
-    });
+    // setup for proxy server before using request module
+    // let sessionPath = 'v0/session/?'
+    // let query =''
+    // let count = 0
+    // console.log('filter in filterValues are: ')
+    // for (filter in req.body) {
+    //     console.log(filter, ": ", req.body[filter])
+    //     if (count == 0) {
+    //         query = query + filter + '=' + req.body[filter]
+    //     } else {
+    //         query = query + '&' + filter + '=' + req.body[filter]
+    //     }
+    //     count += 1;
+    // }
+    // console.log('query path is:')
+    // console.log(sessionPath + query)
 
-    req.pipe(proxy, {
-        end: true
-    });
+    // var options = {
+    //     // hostname: '127.0.0.1/',
+    //     port: 5000,
+    //     path: sessionPath + query,
+    //     method: 'GET',
+    //     // method: req.method,
+    //     headers: req.headers
+    // };
+
+    // var proxy = http.request(options, function (proxy_res) {
+    //     res.writeHead(proxy_res.statusCode, proxy_res.headers)
+    //     proxy_res.pipe(res, {
+    //         end: true
+    //     });
+    // });
+
+    // req.pipe(proxy, {
+    //     end: true
+    // });
 })
 
 
@@ -208,7 +216,7 @@ app.get('/api/mice', (req, res) => {
     var options = {
         // hostname: '127.0.0.1/',
         port: 5000,
-        path: 'v0/subject',
+        path: 'v0/_q/subjpage',//'v0/subject',
         method: req.method,
         headers: req.headers
     };
@@ -246,11 +254,10 @@ app.post('/api/mice', (req, res) => {
     console.log('body is: ', typeof req.body)
     var requestBody = JSON.stringify(req.body)
     console.log('request body after stringify: ', typeof requestBody)
-    request.post('http://localhost:5000/v0/subject', {form: requestBody}, function(error, httpResponse, body) {
+    request.post('http://localhost:5000/v0/_q/subjpage', {form: requestBody}, function(error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
-        // console.log('httpResponse: ', httpResponse);
     })
 
     // var options = {

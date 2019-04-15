@@ -30,9 +30,18 @@
   <div class="col">
     <a routerLink="/session/{{session['session_uuid']}}">
       <mat-card (click)="sessionSelected(session)">
-        <mat-card-title>{{ session['session_start_time'] | date}}</mat-card-title>
-        <mat-card-subtitle>{{ session['subject_nickname'] }}/{{ session['lab_name'] }}</mat-card-subtitle>
+        <h6>Session UUID</h6>
+        <mat-card-subtitle>{{ session['session_uuid'] }}</mat-card-subtitle>
+        <h6>Session Date</h6>
+        <mat-card-subtitle>{{ session['session_start_time'] | date}}</mat-card-subtitle>
+        <h6>Mouse Nickname</h6>
+        <mat-card-subtitle>{{ session['subject_nickname'] }}</mat-card-subtitle>
+        <h6>Lab Name</h6>
+        <mat-card-subtitle>{{ session['lab_name'] }}</mat-card-subtitle>
+        <h6>Task Protocol</h6>
         <mat-card-subtitle>{{ session['task_protocol'] }}</mat-card-subtitle>
+        <h6>Mouse DOB</h6>
+        <mat-card-subtitle>{{ session['subject_birth_date'] }}</mat-card-subtitle>
       </mat-card>
     </a>
   </div>

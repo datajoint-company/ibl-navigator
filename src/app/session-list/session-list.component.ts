@@ -23,16 +23,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filteredTaskProtocolOptions: Observable<string[]>;
   filteredSessionUuidOptions: Observable<string[]>;
   session_menu = {};
-  task_protocol_menu = [];
-  session_start_time_menu = [];
-  session_end_time_menu = [];
-  session_uuid_menu = [];
-  lab_name_menu = [];
-  subject_nickname_menu = [];
 
   queryValues = {
-    'subject_nickname': 'IBL-T1',
-    'session_uuid': 'b5433979-abbc-4ff3-90c0-09ea7b3f8198'
+    'task_protocol': '_iblrig_tasks_habituationChoiceWorld3.7.6',
+    // '__order': 'session_start_time'
   };
 
   selectedSession = {};
@@ -45,7 +39,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     console.log('onInit');
     this.allSessionsService.getAllSessions();
     // this.allSessionsService.retrieveSessions(this.queryValues);
-
+    // this.sessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener()
     this.sessionsSubscription = this.allSessionsService.getSessionsLoadedListener()
       .subscribe((sessions: any) => {
         console.log('got all sessions ---');
@@ -63,43 +57,18 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
   private updateMenu(sessions) {
     this.session_menu = {};
-    this.task_protocol_menu = [];
-    this.session_start_time_menu = [];
-    this.session_end_time_menu = [];
-    this.session_uuid_menu = [];
-    this.lab_name_menu = [];
-    this.subject_nickname_menu = [];
-    for (const session of sessions) {
-      if (!this.task_protocol_menu.includes(session['task_protocol'])) {
-        this.task_protocol_menu.push(session['task_protocol']);
-      }
-      this.session_menu['task_protocol'] = this.task_protocol_menu;
-
-      if (!this.session_start_time_menu.includes(session['session_start_time'])) {
-        this.session_start_time_menu.push(session['session_start_time']);
-      }
-      this.session_menu['session_start_time'] = this.session_start_time_menu;
-
-      if (!this.session_end_time_menu.includes(session['session_end_time'])) {
-        this.session_end_time_menu.push(session['session_end_time']);
-      }
-      this.session_menu['session_end_time'] = this.session_end_time_menu;
-
-      if (!this.session_uuid_menu.includes(session['session_uuid'])) {
-        this.session_uuid_menu.push(session['session_uuid']);
-      }
-      this.session_menu['session_uuid'] = this.session_uuid_menu;
-
-      if (!this.lab_name_menu.includes(session['lab_name'])) {
-        this.lab_name_menu.push(session['lab_name']);
-      }
-      this.session_menu['lab_name'] = this.lab_name_menu;
-
-      if (!this.subject_nickname_menu.includes(session['subject_nickname'])) {
-        this.subject_nickname_menu.push(session['subject_nickname']);
-      }
-      this.session_menu['subject_nickname'] = this.subject_nickname_menu;
+    const keys = ['task_protocol', 'session_start_time', 'session_uuid'];
+    for (const key of keys) {
+      this.session_menu[key] = [];
     }
+    for (const session of sessions) {
+      for (const key of keys) {
+        if (!this.session_menu[key].includes(session[key])) {
+          this.session_menu[key].push(session[key]);
+        }
+      }
+    }
+
 
     this.filteredTaskProtocolOptions = this.session_filter_form.controls.task_protocol_control.valueChanges
       .pipe(
