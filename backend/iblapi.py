@@ -83,9 +83,9 @@ def do_req(subpath):
 
     args = {}
     if '__json' not in values:
-        # encode all attributes called 'uuid' into UUID type
+        # HACK: encode all attributes called 'uuid' into UUID type
         for a in (v for v in values if v not in special_fields):
-            args[a] = UUID(values[a]) if 'uuid' in a else a
+            args[a] = UUID(values[a]) if 'uuid' in a else values[a]
     else:
         args = json.loads(request.values['__json'])
 
