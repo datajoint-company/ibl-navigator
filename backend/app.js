@@ -247,8 +247,10 @@ app.post('/api/mice', (req, res) => {
     var requestBody = JSON.stringify(req.body)
     console.log('request body after stringify: ', typeof requestBody)
     request.post('http://localhost:5000/v0/subject', {form: requestBody}, function(error, httpResponse, body) {
-        console.error('error: ', error);
-        console.log('body: ', body)
+        if (error) {
+            console.error('error: ', error);
+        }
+        // console.log('httpResponse: ', httpResponse);
     })
 
     // var options = {

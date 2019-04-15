@@ -124,6 +124,12 @@ def handle_q(subpath, args, proj, **kwargs):
             ret = q.proj(*proj).fetch(**kwargs)
         else:
             ret = q.fetch(**kwargs)
+    elif subpath == 'subjpage':
+        q = subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+        if proj:
+            ret = q.proj(*proj).fetch(**kwargs)
+        else:
+            ret = q.fetch(**kwargs)
 
     return dumps(ret)
 
