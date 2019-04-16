@@ -32,6 +32,7 @@ import { CellListComponent } from './cell-list/cell-list.component';
 import { CellComponent } from './cell-list/cell/cell.component';
 import { OverviewComponent } from './overview/overview.component';
 import { WaterWeightPlotComponent } from './mouse-list/mouse/water-weight-plot/water-weight-plot.component';
+import { SessionPsychPlotComponent } from './session-list/session/session-psych-plot/session-psych-plot.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent },
@@ -90,7 +91,8 @@ const appRoutes: Routes = [
     CellListComponent,
     CellComponent,
     OverviewComponent,
-    WaterWeightPlotComponent
+    WaterWeightPlotComponent,
+    SessionPsychPlotComponent
   ],
   imports: [
     BrowserModule,

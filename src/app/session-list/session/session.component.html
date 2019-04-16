@@ -3,3 +3,7 @@
   {{ item.key}} : {{ item.value }}
 </div>
 <hr>
+<h5>Session Plots</h5>
+<div *ngIf="session">
+  <app-session-psych-plot [sessionData]="session"></app-session-psych-plot>
+</div>

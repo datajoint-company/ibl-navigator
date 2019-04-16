@@ -274,39 +274,17 @@ app.post('/api/mice', (req, res) => {
         console.log(body)
         res.send(body);
     })
+})
 
-    // var options = {
-    //     // hostname: '127.0.0.1/',
-    //     port: 5000,
-    //     path: 'https://not-even-a-test.firebaseio.com/test2.json', //'v0/subject',
-    //     method: req.method,
-    //     body: requestBody,
-    //     headers: req.headers
-    // };
-    
-    // var options0 = {
-    //     // hostname: '127.0.0.1/',
-    //     port: 5000,
-    //     path: sessionPath + query,
-    //     method: 'GET',
-    //     // method: req.method,
-    //     // body: req.body,
-    //     headers: req.headers
-    // };
-
-    // var proxy = http.request(options, function (proxy_res) {
-    //     res.writeHead(proxy_res.statusCode, proxy_res.headers)
-    //     console.log('what is inside proxy_res?');
-    //     console.log(proxy_res);
-    //     proxy_res.pipe(res, {
-    //         end: true
-    //     });
-    // });
-    
-    // // proxy.write(requestBody);
-    // req.pipe(proxy, {
-    //     end: true
-    // });
+app.post('/api/plot/session-psych-plotData', (req, res) => {
+    request.post('http://localhost:5000/v0/sessionpsych', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        console.log('response body is');
+        console.log(body)
+        res.send(body);
+    })
 })
 
 app.post('/api/plot/mouse-weight-plotData', (req, res) => {
