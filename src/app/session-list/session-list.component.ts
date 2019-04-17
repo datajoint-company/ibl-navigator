@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { PageEvent } from '@angular/material';
+import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
 
 @Component({
@@ -44,11 +44,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
                               'taskProtocol', 'subjectLine', 'responsibleUser',
                               'sessionUUID', 'gender', 'subjectUUID'];
 
-  // setup for the paginator
-  totalLength: number;
+  // // setup for the paginator
+  // totalLength: number;
+  dataSource;
   pageSize = 25;
   pageSizeOptions: number[] = [10, 25, 50, 100];
-  pageEvent: PageEvent;
+  // pageEvent: PageEvent;
 
   queryValues = {
     'task_protocol': '_iblrig_tasks_habituationChoiceWorld3.7.6',
@@ -61,6 +62,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   constructor(public allSessionsService: AllSessionsService) { }
 
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     console.log('onInit');
     this.allSessionsService.getAllSessions();
@@ -71,8 +73,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
         console.log('got all sessions ---');
         console.log('total session length: ' + sessions.length);
         this.allSessions = sessions;
+        this.dataSource = new MatTableDataSource(sessions);
+        this.dataSource.paginator = this.paginator;
         this.sessions = sessions.slice(0, 50);
-        this.totalLength = sessions.length;
         this.createMenu(this.allSessions);
     });
   }
@@ -82,8 +85,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.sessionsSubscription.unsubscribe();
     }
   }
+
   private createMenu(sessions) {
     this.session_menu = {};
+    console.log('pageEvent is: ', this.pageEvent);
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'lab_name', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user'];
@@ -186,14 +191,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   updateMenu() {
-    console.log('detected selection in mouse list menu');
-    // console.log(this.mouse_filter_form.value);
     const menuRequest = this.filterRequests();
     if (Object.entries(menuRequest).length > 0) {
       this.allSessionsService.retrieveSessions(menuRequest);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
-          this.totalLength = sessions.length;
           this.createMenu(sessions);
         });
     }
@@ -257,6 +259,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
           this.sessions = sessions;
+          this.dataSource = new MatTableDataSource(this.sessions);
+          this.dataSource.paginator = this.paginator;
         });
     }
   }

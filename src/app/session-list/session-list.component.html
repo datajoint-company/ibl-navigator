@@ -101,7 +101,7 @@
 </form>
 
 
-<table mat-table class="col-12" [dataSource]="sessions">
+<table mat-table class="col-12" [dataSource]="dataSource">
 
   <ng-container matColumnDef="labName">
     <th mat-header-cell *matHeaderCellDef> Lab </th>
@@ -157,11 +157,9 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns; let session" routerLink="/session/{{session?.session_uuid}}">
   </tr>
 </table>
-<mat-paginator [length]="totalLength"
-            [pageSize]="pageSize"
+<mat-paginator [pageSize]="pageSize"
             [pageSizeOptions]="pageSizeOptions"
-            [showFirstLastButtons]=true
-            (page)="pageEvent = $event"></mat-paginator>
+            showFirstLastButtons></mat-paginator>
 <!-- <div class="sessionsList row">
   <div *ngFor="let session of sessions">
     <a routerLink="/session/{{session['session_uuid']}}">
