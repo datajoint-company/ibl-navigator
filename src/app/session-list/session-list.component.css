@@ -1,12 +1,49 @@
+.filters {
+    float: left
+}
+
+td.mat-cell, 
+td.mat-footer-cell, 
+th.mat-header-cell {
+    padding-right: 15px;
+}
+
 mat-form-field {
-    width: 350px;
     margin: 10px;
+    width: 220px;
+    float: left;
+}
+
+mat-form-field.long {
+    width: 350px;
+}
+
+mat-form-field.short {
+    width: 190px;
 }
 
 mat-card {
     border: solid 1px rgb(194, 193, 193);
     background-color: rgb(252, 252, 252);
     margin: 2px;
-    /* width: 200px; */
     float: left;
 }
+
+button {
+    float: left;
+}
+
+.sessionsList {
+    float: left;
+}
+
+
+.mouse_gender_menu{
+    display: flex;
+    flex-direction: column;
+};
+
+
+
+
+

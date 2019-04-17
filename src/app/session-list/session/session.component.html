@@ -1,7 +1,7 @@
 <h4>Session Info</h4>
-<div *ngFor="let item of session | keyvalue">
-  {{ item.key}} : {{ item.value }}
-</div>
+<span *ngFor="let item of session | keyvalue">
+  {{ item.key}} : {{ item.value }} /
+</span>
 <hr>
 <h5>Session Plots</h5>
 <div *ngIf="session">

@@ -24,10 +24,10 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
     console.log(this.sessionData);
     this.sessionPlotsService.getSessionPsychPlot(sessionInfo);
     this.sessionPsychPlotSubscription = this.sessionPlotsService.getSessionPsychPlotLoadedListener()
-      .subscribe((psychPlotData: []) => {
+      .subscribe((psychPlotData: any) => {
         console.log('retrieved session psych plot for...');
         console.log(psychPlotData);
-        if (psychPlotData.length > 0) {
+        if (psychPlotData[0]) {
           console.log('subject_uuid: ', psychPlotData[0]['subject_uuid']);
           console.log('session_start_time: ', psychPlotData[0]['session_start_time']);
           this.plotInfo = psychPlotData[0]['plotting_data'];
