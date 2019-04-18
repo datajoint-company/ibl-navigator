@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { MatPaginator, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
 
 @Component({
@@ -40,16 +40,19 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filteredResponsibleUserOptions: Observable<string[]>;
   session_menu = {};
   // setup for the table columns
-  displayedColumns: string[] = ['labName', 'subjectNickname', 'subjectDOB', 'sessionStart',
-                              'taskProtocol', 'subjectLine', 'responsibleUser',
-                              'sessionUUID', 'gender', 'subjectUUID'];
+  displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date', 'session_start_time',
+                              'task_protocol', 'subject_line', 'responsible_user',
+                              'session_uuid', 'sex', 'subject_uuid'];
 
-  // // setup for the paginator
-  // totalLength: number;
+  // setup for the paginator
   dataSource;
   pageSize = 25;
   pageSizeOptions: number[] = [10, 25, 50, 100];
-  // pageEvent: PageEvent;
+
+  // setup for sorting table
+  sortedSessions: [];
+
+
 
   queryValues = {
     'task_protocol': '_iblrig_tasks_habituationChoiceWorld3.7.6',
@@ -60,8 +63,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   private sessionsSubscription: Subscription;
 
-  constructor(public allSessionsService: AllSessionsService) { }
+  constructor(public allSessionsService: AllSessionsService) {
+    // if (this.sessions) {
+    //   this.sortedSessions = this.sessions.slice();
+    // }
+  }
 
+  @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     console.log('onInit');
@@ -74,6 +82,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
         console.log('total session length: ' + sessions.length);
         this.allSessions = sessions;
         this.dataSource = new MatTableDataSource(sessions);
+        this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.sessions = sessions.slice(0, 50);
         this.createMenu(this.allSessions);
@@ -88,7 +97,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   private createMenu(sessions) {
     this.session_menu = {};
-    console.log('pageEvent is: ', this.pageEvent);
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'lab_name', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user'];
@@ -262,6 +270,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
         .subscribe((sessions: any) => {
           this.sessions = sessions;
           this.dataSource = new MatTableDataSource(this.sessions);
+          this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
         });
     }
@@ -271,4 +280,36 @@ export class SessionListComponent implements OnInit, OnDestroy {
     console.log(session);
     this.selectedSession = session;
   }
+
+  // sortData(sort: Sort) {
+  //   if (this.sessions) {
+  //     const data = this.sessions.slice();
+  //     if (!sort.active || sort.direction === '') {
+  //       this.sortedSessions = data;
+  //       return;
+  //     }
+
+  //     this.sortedSessions = data.sort((a, b) => {
+  //       const isAsc = sort.direction === 'asc';
+  //       switch (sort.active) {
+  //         case 'labName': return compare(a.ab_name, b.ab_name, isAsc);
+  //         case 'subjectNickname': return compare(a.subject_nickname, b.subject_nickname, isAsc);
+  //         case 'sessionStart': return compare(a.session_start_time, b.session_start_time, isAsc);
+  //         case 'subjectLine': return compare(a.subject_line, b.subject_line, isAsc);
+  //         case 'responsibleUser': return compare(a.responsible_user, b.responsible_user, isAsc);
+  //         case 'subjectDOB': return compare(a.subject_birth_date, b.subject_birth_date, isAsc);
+  //         case 'taskProtocol': return compare(a.task_protocol, b.task_protocol, isAsc);
+  //         case 'gender': return compare(a.sex, b.sex, isAsc);
+  //         default: return 0;
+  //       }
+  //     });
+  //   }
+
+
+  //   function compare(a: Date | string, b: Date | string, isAsc: boolean) {
+  //     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  //   }
+  // }
+
+
 }
