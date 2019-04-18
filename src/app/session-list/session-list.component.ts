@@ -211,6 +211,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
         .subscribe((sessions: any) => {
           this.createMenu(sessions);
         });
+    } else {
+      this.createMenu(this.allSessions);
     }
 
   }

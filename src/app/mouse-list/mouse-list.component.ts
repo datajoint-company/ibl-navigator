@@ -180,6 +180,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
         .subscribe((mice: any) => {
           this.createMenu(mice);
         });
+    } else {
+      this.createMenu(this.allMice);
     }
 
   }
