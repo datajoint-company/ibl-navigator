@@ -1,9 +1,9 @@
 <h4>Mouse <{{ mouse?.subject_nickname }}> Info :</h4>
 <span *ngFor="let item of mouse | keyvalue">
-<b>{{ item.key }}</b>: {{ item.value }} /
+<b>{{ item.key }}</b>: {{ item.value }} &nbsp;
 </span>
 <hr>
-<h5>Water Intake / Weight Plot</h5>
+<h5>Mouse Plots</h5>
 <div *ngIf="mouse">
   <app-water-weight-plot [mouseInfo]="mouse"></app-water-weight-plot>
 </div>

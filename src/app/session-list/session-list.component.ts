@@ -82,6 +82,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       .subscribe((sessions: any) => {
         console.log('got all sessions ---');
         console.log('total session length: ' + sessions.length);
+        sessions = sessions.reverse();
         this.allSessions = sessions;
         this.dataSource = new MatTableDataSource(sessions);
         this.dataSource.sort = this.sort;
@@ -265,11 +266,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   applyFilter() {
     const request = this.filterRequests();
+    request['__order'] = 'session_start_time';
 
     if (Object.entries(request).length > 0) {
       this.allSessionsService.retrieveSessions(request);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
+          sessions.reverse();
           this.sessions = sessions;
           this.dataSource = new MatTableDataSource(this.sessions);
           this.dataSource.sort = this.sort;
@@ -284,11 +287,19 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.allSessionsService.getAllSessions();
     this.allSessionsService.getSessionsLoadedListener()
       .subscribe((sessions: any) => {
+        sessions.reverse();
         this.sessions = sessions;
         this.dataSource = new MatTableDataSource(this.sessions);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       });
+  }
+
+  applyResetFilter() {
+    this.sessions = [];
+    this.sessions = this.allSessions;
+    this.createMenu(this.allSessions);
+
   }
   sessionSelected(session) {
     console.log('sessionSelected in list-component ran!');

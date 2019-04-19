@@ -143,7 +143,7 @@ app.get('/api/sessions', (req, res) => {
     var options = {
         // hostname: '127.0.0.1/',
         port: 5000,
-        path: 'v0/_q/sessionpage', //'v0/session',
+        path: 'v0/_q/sessionpage/?__order=session_start_time', //'v0/session',
         method: req.method,
         headers: req.headers
     };
@@ -167,47 +167,8 @@ app.post('/api/sessions', (req, res) => {
         if (error) {
             console.error('error: ', error);
         }
-        console.log('response body is');
-        console.log(body)
         res.send(body);
     })
-
-    // setup for proxy server before using request module
-    // let sessionPath = 'v0/session/?'
-    // let query =''
-    // let count = 0
-    // console.log('filter in filterValues are: ')
-    // for (filter in req.body) {
-    //     console.log(filter, ": ", req.body[filter])
-    //     if (count == 0) {
-    //         query = query + filter + '=' + req.body[filter]
-    //     } else {
-    //         query = query + '&' + filter + '=' + req.body[filter]
-    //     }
-    //     count += 1;
-    // }
-    // console.log('query path is:')
-    // console.log(sessionPath + query)
-
-    // var options = {
-    //     // hostname: '127.0.0.1/',
-    //     port: 5000,
-    //     path: sessionPath + query,
-    //     method: 'GET',
-    //     // method: req.method,
-    //     headers: req.headers
-    // };
-
-    // var proxy = http.request(options, function (proxy_res) {
-    //     res.writeHead(proxy_res.statusCode, proxy_res.headers)
-    //     proxy_res.pipe(res, {
-    //         end: true
-    //     });
-    // });
-
-    // req.pipe(proxy, {
-    //     end: true
-    // });
 })
 
 
@@ -281,85 +242,17 @@ app.post('/api/plot/session-psych-plotData', (req, res) => {
         if (error) {
             console.error('error: ', error);
         }
-        console.log('response body is');
-        console.log(body)
         res.send(body);
     })
 })
 
-app.post('/api/plot/mouse-weight-plotData', (req, res) => {
-    let sessionPath = 'v0/weighing?'
-    let query = ''
-    let count = 0
-    console.log('filter in filterValues are: ')
-    for (filter in req.body) {
-        console.log(filter, ": ", req.body[filter])
-        if (count == 0) {
-            query = query + filter + '=' + req.body[filter]
-        } else {
-            query = query + '&' + filter + '=' + req.body[filter]
+app.post('/api/plot/waterWeightPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/waterweight', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
         }
-        count += 1;
-    }
-    console.log('query path is:')
-    console.log(sessionPath + query)
-    // setup for proxy server
-    var options = {
-        // hostname: '127.0.0.1/',
-        port: 5000,
-        path: sessionPath + query,
-        method: 'GET',
-        // method: req.method,
-        // body: req.body,
-        headers: req.headers
-    };
-
-    var proxy = http.request(options, function (proxy_res) {
-        res.writeHead(proxy_res.statusCode, proxy_res.headers)
-        proxy_res.pipe(res, {
-            end: true
-        });
-    });
-
-    req.pipe(proxy, {
-        end: true
-    });
-})
-
-app.post('/api/plot/mouse-waterIntake-plotData', (req, res) => {
-    let sessionPath = 'v0/wateradmin?'
-    let query = ''
-    let count = 0
-    console.log('filter in filterValues are: ')
-    for (filter in req.body) {
-        console.log(filter, ": ", req.body[filter])
-        if (count == 0) {
-            query = query + filter + '=' + req.body[filter]
-        } else {
-            query = query + '&' + filter + '=' + req.body[filter]
-        }
-        count += 1;
-    }
-    console.log('query path is:')
-    console.log(sessionPath + query)
-    // setup for proxy server
-    var options = {
-        port: 5000,
-        path: sessionPath + query,
-        method: 'GET',
-        headers: req.headers
-    };
-
-    var proxy = http.request(options, function (proxy_res) {
-        res.writeHead(proxy_res.statusCode, proxy_res.headers)
-        proxy_res.pipe(res, {
-            end: true
-        });
-    });
-    
-    req.pipe(proxy, {
-        end: true
-    });
+        res.send(body);
+    })
 })
 
 app.get('/api/plots/testPlot', (req, res, next) => {
