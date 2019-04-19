@@ -1,1 +1,4 @@
 <div #session_psych_plot></div>
+<div *ngIf="psychPlotIsAvailable !== null && !psychPlotIsAvailable">
+    <p>Psychometric Plot Not Available for this session</p>
+</div>

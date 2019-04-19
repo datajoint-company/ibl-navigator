@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AllSessionsService } from '../all-sessions.service';
 import { Subscription } from 'rxjs';
+// import { SessionPsychPlotComponent } from './session-psych-plot/session-psych-plot.component';
 
 
 @Component({
@@ -13,9 +14,11 @@ export class SessionComponent implements OnInit, OnDestroy {
   public session_uuid: string;
   private sessionSubscription: Subscription;
   session: Object;
+  sessionPlotInfo: Object;
 
   constructor(private route: ActivatedRoute, public allSessionsService: AllSessionsService) { }
 
+  // @ViewChild(SessionPsychPlotComponent) SPPComp: SessionPsychPlotComponent;
   ngOnInit() {
     console.log('inside session component');
     this.session_uuid = this.route.snapshot.paramMap.get('sessionID');
@@ -24,6 +27,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.sessionSubscription = this.allSessionsService.getNewSessionsLoadedListener()
     .subscribe((session: any) => {
       this.session = session[0];
+      // console.log('logging session psych plot component stuff');
+      // console.log(this.SPPComp.psychPlotAvailability);
     });
   }
 
@@ -32,6 +37,5 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.sessionSubscription.unsubscribe();
     }
   }
-
 
 }

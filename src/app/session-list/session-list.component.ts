@@ -4,6 +4,7 @@ import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
+import { SessionComponent } from './session/session.component';
 
 @Component({
   selector: 'app-session-list',
@@ -69,6 +70,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // }
   }
 
+  @ViewChild(SessionComponent) sessionComponent: SessionComponent;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
@@ -273,7 +275,20 @@ export class SessionListComponent implements OnInit, OnDestroy {
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
         });
+    } else {
+      this.resetFilter();
     }
+  }
+
+  resetFilter() {
+    this.allSessionsService.getAllSessions();
+    this.allSessionsService.getSessionsLoadedListener()
+      .subscribe((sessions: any) => {
+        this.sessions = sessions;
+        this.dataSource = new MatTableDataSource(this.sessions);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      });
   }
   sessionSelected(session) {
     console.log('sessionSelected in list-component ran!');

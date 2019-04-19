@@ -1,7 +1,8 @@
 <h4>Session Info</h4>
-<span *ngFor="let item of session | keyvalue">
-  {{ item.key}} : {{ item.value }} /
-</span>
+<p><b>Lab Name: </b>{{ session?.lab_name }} <b>Session Start Time: </b>{{ session?.session_start_time.split("T")[0] }} {{ session?.session_start_time.split("T")[1] }} <b>Session UUID: </b>{{ session?.session_uuid }}</p>
+<p><b>Mouse Nickname: </b>{{ session?.subject_nickname }} <b>Mouse UUID: </b>{{ session?.subject_uuid }}</p>
+<p><b>Mouse DOB: </b>{{ session?.subject_birth_date }} <b>Mouse Line: </b>{{ session?.subject_line }} <b>Mouse Gender: </b>{{ session?.sex }}</p>
+<p><b>Task Protocol: </b>{{ session?.task_protocol }} <b>User: </b>{{ session?.responsible_user }}</p>
 <hr>
 <h5>Session Plots</h5>
 <div *ngIf="session">
