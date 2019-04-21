@@ -30,7 +30,20 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
           console.log('water weight plot retrieved');
           console.log(plotsInfo);
           const WIWplot = plotsInfo[0]['plotting_data'];
-          Plotly.newPlot(element, WIWplot['data'], WIWplot['layout']);
+          WIWplot['layout']['height'] = '';
+          WIWplot['layout']['width'] = '';
+          for (const item of WIWplot['data']) {
+            if (item['type'] === 'bar') {
+              console.log('inside WIWplot bar - logging item');
+              console.log(item);
+              // item['width'] = 1;
+              // item['marker'] = { line: {width: 0.9}};
+            } else {
+              console.log('inside WIWplot not a bar plot- logging item');
+              console.log(item);
+            }
+          }
+          Plotly.newPlot(element, WIWplot['data'], WIWplot['layout'], {responsive: true});
         } else {
           console.log('plot data missing...?');
         }
