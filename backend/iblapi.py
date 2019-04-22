@@ -105,6 +105,7 @@ def do_req(subpath):
     special_fields = ['__json', '__limit', '__order', '__proj']
     values, limit, order, proj = request.values, None, None, None
 
+    # HACK: 'uuid' attrs -> UUID type (see also: datajoint-python #594)
     for a in (v for v in values if v not in special_fields):
         postargs[a] = UUID(values[a]) if 'uuid' in a else values[a]
 
