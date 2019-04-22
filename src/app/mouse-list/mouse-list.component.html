@@ -1,3 +1,4 @@
+<div class="col-10 offset-1">
 <h4>
   List of Subjects
 </h4>
@@ -111,6 +112,7 @@
     routerLink="/mouse/{{mouse?.subject_uuid}}"></tr>
 </table>
 <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
+</div>
 <!-- <hr>
 <div *ngFor="let mouse of mice">
   <a routerLink="/mouse/{{mouse['subject_uuid']}}">

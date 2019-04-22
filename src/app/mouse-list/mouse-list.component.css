@@ -1,6 +1,19 @@
+form { 
+    margin-bottom: 5px;
+    padding-bottom: 25px;
+    border-bottom: 3px solid rgb(209, 209, 209);
+    font-size: 80%;
+    display: inline-block;
+    width: 100%;
+} 
+
 mat-form-field {
-    /* width: 350px; */
+    float:left;
     margin: 10px;
+}
+
+button.mat-raised-button {
+    background-color: rgb(255, 244, 245);
 }
 
 mat-card {
@@ -18,5 +31,7 @@ tr.mat-row:hover {
 .mouse_gender_menu{
     display: flex;
     flex-direction: column;
-    float: right;
 };
+
+
+
