@@ -4,11 +4,17 @@ import sys
 
 from code import interact
 
+import datajoint as dj
 from requests import post as http_post
 
 
 API_VERSION = '0'
 api_endpoint = 'http://localhost:5000/v' + API_VERSION
+
+
+def vmod(mod):
+    dbname = dj.config.get('database.prefix', '') + 'ibl_{}'.format(mod)
+    return dj.create_virtual_module(mod, dbname)
 
 
 def post(subpath='/', data={}):
