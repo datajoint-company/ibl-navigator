@@ -15,7 +15,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   session_filter_form = new FormGroup({
     task_protocol_control : new FormControl(),
     session_uuid_control : new FormControl(),
-    session_date_control : new FormControl(),
+    session_start_time_control : new FormControl(),
 
     lab_name_control: new FormControl(),
     subject_nickname_control: new FormControl(),

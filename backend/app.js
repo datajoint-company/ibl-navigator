@@ -167,6 +167,7 @@ app.post('/api/sessions', (req, res) => {
         if (error) {
             console.error('error: ', error);
         }
+        console.log(body);
         res.send(body);
     })
 })

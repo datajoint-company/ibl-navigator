@@ -13,7 +13,7 @@
 
     <mat-form-field class="short">
       <label for="">Session Start</label>
-      <input matInput formControlName="session_date_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)">
+      <input matInput formControlName="session_start_time_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)">
       <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
       <mat-datepicker #datePicker></mat-datepicker>
     </mat-form-field>
