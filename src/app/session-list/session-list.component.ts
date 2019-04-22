@@ -50,8 +50,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
   pageSize = 25;
   pageSizeOptions: number[] = [10, 25, 50, 100];
 
-  // setup for sorting table
-  sortedSessions: [];
+  // //setup for sorting table
+  // sortedSessions: [];
 
 
 
@@ -70,7 +70,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // }
   }
 
-  @ViewChild(SessionComponent) sessionComponent: SessionComponent;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
@@ -87,7 +86,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.dataSource = new MatTableDataSource(sessions);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-        this.sessions = sessions.slice(0, 50);
         this.createMenu(this.allSessions);
     });
   }

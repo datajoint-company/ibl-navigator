@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
+import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllMiceService } from './all-mice.service';
 
 @Component({
@@ -23,6 +24,15 @@ export class MouseListComponent implements OnInit, OnDestroy {
   allMice;
   miceBirthdayFilter: Function;
   mice_menu = {};
+  // setup for the table columns
+  displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date',
+    'subject_line', 'responsible_user', 'sex', 'subject_uuid'];
+
+  // setup for the paginator
+  dataSource;
+  pageSize = 25;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
+
 
   filteredLabNameOptions: Observable<string[]>;
   filteredSubjectNicknameOptions: Observable<string[]>;
@@ -34,12 +44,17 @@ export class MouseListComponent implements OnInit, OnDestroy {
 
   constructor(public allMiceService: AllMiceService) { }
 
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     this.allMiceService.getAllMice();
     this.miceSubscription = this.allMiceService.getMiceLoadedListener()
       .subscribe((mice: any) => {
         this.mice = mice;
         this.allMice = mice;
+        this.dataSource = new MatTableDataSource(mice);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
         this.createMenu(mice);
       });
   }
@@ -135,6 +150,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
       return birthDates.includes(d.toISOString().split('T')[0]);
     };
   }
+
   private _filter(value: string, menuType: string): string[] {
     const filterValue = value.toLowerCase();
     const result = this.mice_menu[menuType].filter(menu_items => {
@@ -153,7 +169,12 @@ export class MouseListComponent implements OnInit, OnDestroy {
       this.allMiceService.getRequestedMiceLoadedListener()
         .subscribe((mice: any) => {
           this.mice = mice;
+          this.dataSource = new MatTableDataSource(this.mice);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
       });
+    } else {
+      this.resetFilter();
     }
   }
 
@@ -221,5 +242,16 @@ export class MouseListComponent implements OnInit, OnDestroy {
       }
     });
     return requestFilter;
+  }
+
+  resetFilter() {
+    this.allMiceService.getAllMice();
+    this.allMiceService.getMiceLoadedListener()
+      .subscribe((mice: any) => {
+        this.mice = mice;
+        this.dataSource = new MatTableDataSource(this.mice);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      });
   }
 }
