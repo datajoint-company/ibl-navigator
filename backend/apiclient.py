@@ -26,5 +26,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         api_endpiont = sys.argv[1]
 
-    print("apiclient - use 'post(/'subpath', data={})' to test get requests")
+    print("apiclient")
+    print("  - use 'post(/'subpath', data={})' to test get requests")
+    print("  - use 'vmod('dbmodule')' to return ibl pipeline virtual modules")
     interact('apiclient', local=locals())
