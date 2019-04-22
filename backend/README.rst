@@ -35,7 +35,7 @@ Special facilities are provided via the following special arguments:
   *'__json'*
 
   If the `__json` attribute is present, the result of decoding its
-  value via `json.loads()` will be used instead of other query arguments.
+  value via `json.loads()` will be used in addition to other query arguments.
 
   This facillitates use of list values (dj.AndList), multiple restrictions,
   and query-by-string.
