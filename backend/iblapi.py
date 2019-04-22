@@ -97,19 +97,23 @@ def do_req(subpath):
     app.logger.info("method: '{}', path: {}, values: {}".format(
         request.method, request.path, request.values))
 
+    # 1) parse request arguments
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
 
+    postargs, jsonargs = {}, None
     special_fields = ['__json', '__limit', '__order', '__proj']
     values, limit, order, proj = request.values, None, None, None
 
-    args = {}
-    if '__json' not in values:
-        # HACK: encode all attributes called 'uuid' into UUID type
-        for a in (v for v in values if v not in special_fields):
-            args[a] = UUID(values[a]) if 'uuid' in a else values[a]
+    for a in (v for v in values if v not in special_fields):
+        postargs[a] = UUID(values[a]) if 'uuid' in a else values[a]
+
+    args = [postargs] if len(postargs) else []
+    if '__json' in values:
+        jsonargs = json.loads(request.values['__json'])
+        args += jsonargs if type(jsonargs) == list else [jsonargs]
     else:
-        args = json.loads(request.values['__json'])
+        args = [args]
 
     if '__limit' in values:
         limit = int(request.values['__limit'])
@@ -124,6 +128,8 @@ def do_req(subpath):
                                    ('limit', limit,),
                                    ('order_by', order,)) if i[1] is not None}
 
+    # 2) and dispatch
+    app.logger.debug("args: '{}', kwargs: {}".format(args, kwargs))
     if obj not in reqmap:
         abort(404)
     elif obj == '_q':
