@@ -97,31 +97,27 @@ def do_req(subpath):
     app.logger.info("method: '{}', path: {}, values: {}".format(
         request.method, request.path, request.values))
 
-    # 1) parse request arguments
+    # 1) parse request & arguments
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
 
+    values = request.values
     postargs, jsonargs = {}, None
-    special_fields = ['__json', '__limit', '__order', '__proj']
-    values, limit, order, proj = request.values, None, None, None
 
-    # HACK: 'uuid' attrs -> UUID type (see also: datajoint-python #594)
+    limit = int(request.values['__limit']) if '__limit' in values else None
+    order = request.values['__order'] if '__order' in values else None
+    proj = json.loads(request.values['__proj']) if '__proj' in values else None
+
+    special_fields = ['__json', '__limit', '__order', '__proj']
     for a in (v for v in values if v not in special_fields):
+        # HACK: 'uuid' attrs -> UUID type (see also: datajoint-python #594)
         postargs[a] = UUID(values[a]) if 'uuid' in a else values[a]
 
     args = [postargs] if len(postargs) else []
     if '__json' in values:
         jsonargs = json.loads(request.values['__json'])
         args += jsonargs if type(jsonargs) == list else [jsonargs]
-
-    if '__limit' in values:
-        limit = int(request.values['__limit'])
-
-    if '__order' in values:
-        order = request.values['__order']
-
-    if '__proj' in values:
-        proj = json.loads(request.values['__proj'])
+    args = {} if not args else args
 
     kwargs = {i[0]: i[1] for i in (('as_dict', True,),
                                    ('limit', limit,),
