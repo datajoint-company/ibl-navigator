@@ -113,8 +113,6 @@ def do_req(subpath):
     if '__json' in values:
         jsonargs = json.loads(request.values['__json'])
         args += jsonargs if type(jsonargs) == list else [jsonargs]
-    else:
-        args = [args]
 
     if '__limit' in values:
         limit = int(request.values['__limit'])
