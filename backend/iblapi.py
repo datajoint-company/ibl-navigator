@@ -118,8 +118,8 @@ def do_req(subpath):
     if '__json' in values:
         jsonargs = json.loads(request.values['__json'])
         args += jsonargs if type(jsonargs) == list else [jsonargs]
-    args = {} if not args else args
 
+    args = {} if not args else dj.AndList(args)
     kwargs = {i[0]: i[1] for i in (('as_dict', True,),
                                    ('limit', limit,),
                                    ('order_by', order,)) if i[1] is not None}
