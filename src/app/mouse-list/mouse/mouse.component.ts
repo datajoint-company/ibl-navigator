@@ -35,4 +35,9 @@ export class MouseComponent implements OnInit, OnDestroy {
     }
   }
 
+  getSessions(mouse) {
+    console.log('show session button clicked!');
+    console.log(mouse);
+  }
+
 }

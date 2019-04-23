@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
@@ -50,11 +51,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
   pageSize = 25;
   pageSizeOptions: number[] = [10, 25, 50, 100];
 
-  // //setup for sorting table
-  // sortedSessions: [];
-
-
-
   queryValues = {
     'task_protocol': '_iblrig_tasks_habituationChoiceWorld3.7.6',
     // '__order': 'session_start_time'
@@ -64,30 +60,42 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   private sessionsSubscription: Subscription;
 
-  constructor(public allSessionsService: AllSessionsService) {
-    // if (this.sessions) {
-    //   this.sortedSessions = this.sessions.slice();
-    // }
-  }
-
+  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService) {}
+  @Input('preRestriction') preRestrictedMouseInfo: Object;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     console.log('onInit');
+    this.route.queryParams
+      .subscribe(params => {
+        for (const key in params) {
+          const controlName = key + '_control';
+          if (this.session_filter_form.controls[controlName] && controlName !== 'sex_control') {
+            const toPatch = {};
+            toPatch[controlName] = params[key];
+            this.session_filter_form.patchValue(toPatch)
+            // this.session_filter_form.controls[controlName].value = params[key]; //what displays on the filter
+            // this.session_filter_form.value[controlName] = params[key]; // the actual value of the filter
+          };
+        };
+        this.applyFilter();
+        // console.log(this.session_filter_form.controls);
+        // this.allSessionsService.retrieveSessions(params);
+        // this.sessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener()
+        //   .subscribe((sessions: any) => {
+        //     this.sessions = sessions.reverse();
+        //     this.dataSource = new MatTableDataSource(this.sessions);
+        //     this.dataSource.sort = this.sort;
+        //     this.dataSource.paginator = this.paginator;
+        //     this.createMenu(this.sessions);
+        //   });
+      });
+    // TODO: create menu content using separate api designated for menu instead of getting all session info
     this.allSessionsService.getAllSessions();
-    // this.allSessionsService.retrieveSessions(this.queryValues);
-    // this.sessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener()
-    this.sessionsSubscription = this.allSessionsService.getSessionsLoadedListener()
-      .subscribe((sessions: any) => {
-        console.log('got all sessions ---');
-        console.log('total session length: ' + sessions.length);
-        sessions = sessions.reverse();
-        this.allSessions = sessions;
-        this.dataSource = new MatTableDataSource(sessions);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-        this.createMenu(this.allSessions);
-    });
+        this.sessionsSubscription = this.allSessionsService.getSessionsLoadedListener()
+          .subscribe((sessions: any) => {
+            this.allSessions = sessions;
+          });
   }
 
   ngOnDestroy() {
@@ -231,6 +239,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   filterRequests(focusedField?: string) {
     const filterList = Object.entries(this.session_filter_form.value);
+    console.log(this.session_filter_form.value);
     const requestFilter = {};
     filterList.forEach(filter => {
       // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
@@ -263,10 +272,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
+    this.sessions = [];
     const request = this.filterRequests();
     request['__order'] = 'session_start_time';
-
-    if (Object.entries(request).length > 0) {
+    console.log('requesting', request);
+    if (Object.entries(request).length > 1) {
       this.allSessionsService.retrieveSessions(request);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
@@ -293,47 +303,43 @@ export class SessionListComponent implements OnInit, OnDestroy {
       });
   }
 
-  applyResetFilter() {
-    this.sessions = [];
-    this.sessions = this.allSessions;
-    this.createMenu(this.allSessions);
-
+  clearControl() {
+    console.log('control cleared');
+    for (const control in this.session_filter_form.controls) {
+      console.log(control);
+      const toReset = {}
+      
+      console.log(toReset);
+      if (control !== 'sex_control') {
+        toReset[control] = '';
+      } else {
+        toReset[control] = [false, false, false];
+      }
+      this.session_filter_form.patchValue(toReset);
+    }
+    console.log(this.route.queryParams);
+    this.route.queryParams.subscribe(param => {
+      console.log('queryParams', param);
+      console.log(Object.keys(param).length);
+      if (Object.keys(param).length > 0) {
+        console.log('route params exist');
+        this.router.navigate(
+          [],
+          {
+            relativeTo: this.route,
+            queryParams: null
+          });
+      } else {
+        console.log('queryParam not there');
+        this.applyFilter();
+      }
+     });
   }
   sessionSelected(session) {
     console.log('sessionSelected in list-component ran!');
     console.log(session);
     this.selectedSession = session;
   }
-
-  // sortData(sort: Sort) {
-  //   if (this.sessions) {
-  //     const data = this.sessions.slice();
-  //     if (!sort.active || sort.direction === '') {
-  //       this.sortedSessions = data;
-  //       return;
-  //     }
-
-  //     this.sortedSessions = data.sort((a, b) => {
-  //       const isAsc = sort.direction === 'asc';
-  //       switch (sort.active) {
-  //         case 'labName': return compare(a.ab_name, b.ab_name, isAsc);
-  //         case 'subjectNickname': return compare(a.subject_nickname, b.subject_nickname, isAsc);
-  //         case 'sessionStart': return compare(a.session_start_time, b.session_start_time, isAsc);
-  //         case 'subjectLine': return compare(a.subject_line, b.subject_line, isAsc);
-  //         case 'responsibleUser': return compare(a.responsible_user, b.responsible_user, isAsc);
-  //         case 'subjectDOB': return compare(a.subject_birth_date, b.subject_birth_date, isAsc);
-  //         case 'taskProtocol': return compare(a.task_protocol, b.task_protocol, isAsc);
-  //         case 'gender': return compare(a.sex, b.sex, isAsc);
-  //         default: return 0;
-  //       }
-  //     });
-  //   }
-
-
-  //   function compare(a: Date | string, b: Date | string, isAsc: boolean) {
-  //     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-  //   }
-  // }
 
 
 }
