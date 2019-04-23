@@ -1,7 +1,54 @@
-<h4>Mouse <{{ mouse?.subject_nickname }}> Info :</h4>
-<span *ngFor="let item of mouse | keyvalue">
-<b>{{ item.key }}</b>: {{ item.value }} &nbsp;
-</span>
+<h5>Mouse <{{ mouse?.subject_nickname }}> Info :</h5>
+<div class="row">
+  <table class="table col-4 table-striped table-bordered table-sm">
+    <tr>
+      <th>Mouse Nickname</th>
+      <td>{{ mouse?.subject_nickname }}</td>
+    </tr>
+    <tr>
+      <th>Mouse UUID</th>
+      <td>{{ mouse?.subject_uuid }}</td>
+    </tr>
+    <tr>
+      <th>Mouse DOB</th>
+      <td>{{ mouse?.subject_birth_date }}</td>
+    </tr>
+    <tr>
+      <th>Lab</th>
+      <td>{{ mouse?.lab_name }}</td>
+    </tr>
+    <tr>
+      <th>Gender</th>
+      <td>{{ mouse?.sex }}</td>
+    </tr>
+    <tr>
+      <th>Mouse Line</th>
+      <td>{{ mouse?.subject_line }}</td>
+    </tr>
+    <tr>
+      <th>User</th>
+      <td>{{ mouse?.responsible_user }}</td>
+    </tr>
+  </table>
+  <table class="table col-3 table-striped table-bordered table-sm">
+    <tr>
+      <th>Ear Mark</th>
+      <td>{{ mouse?.ear_mark }}</td>
+    </tr>
+    <tr>
+      <th>Source</th>
+      <td>{{ mouse?.subject_source }}</td>
+    </tr>
+    <tr>
+      <th>Protocol Number</th>
+      <td>{{ mouse?.protocol_number }}</td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td>{{ mouse?.subject_description }}</td>
+    </tr>
+  </table>
+</div>
 <hr>
 <h5>Mouse Plots</h5>
 <div *ngIf="mouse">

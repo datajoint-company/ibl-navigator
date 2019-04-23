@@ -1,10 +1,49 @@
-<h4>Session Info</h4>
-<p><b>Lab Name: </b>{{ session?.lab_name }} <b>Session Start Time: </b>{{ session?.session_start_time.split("T")[0] }} {{ session?.session_start_time.split("T")[1] }} <b>Session UUID: </b>{{ session?.session_uuid }}</p>
-<p><b>Mouse Nickname: </b>{{ session?.subject_nickname }} <b>Mouse UUID: </b>{{ session?.subject_uuid }}</p>
-<p><b>Mouse DOB: </b>{{ session?.subject_birth_date }} <b>Mouse Line: </b>{{ session?.subject_line }} <b>Mouse Gender: </b>{{ session?.sex }}</p>
-<p><b>Task Protocol: </b>{{ session?.task_protocol }} <b>User: </b>{{ session?.responsible_user }}</p>
-<hr>
-<h5>Session Plots</h5>
-<div *ngIf="session">
-  <app-session-psych-plot [sessionData]="session"></app-session-psych-plot>
+<div class="" >  
+  <h5>Session Info</h5>
+  <div class="row">
+    <table class="table col-4 table-striped table-bordered table-sm" >
+      <tr>
+        <th>Lab Name</th><td>{{ session?.lab_name }}</td>
+      </tr>
+      <tr>
+        <th>Session Start Time</th><td>{{ session?.session_start_time.split("T")[0] }} {{ session?.session_start_time.split("T")[1] }}</td>
+      </tr>
+      <tr>
+        <th>Task Protocol</th><td>{{ session?.task_protocol }}</td>
+      </tr>
+      <tr>
+        <th>Session UUID</th><td>{{ session?.session_uuid }}</td>
+      </tr>
+      <tr>
+        <th>User</th><td>{{ session?.responsible_user }}</td>
+      </tr>
+    </table>
+    <table class="table col-4 table-striped table-bordered table-sm">
+      <tr>
+        <th>Mouse Nickame</th>
+        <td>{{ session?.subject_nickname }}</td>
+      </tr>
+      <tr>
+        <th>Mouse DOB</th>
+        <td>{{ session?.subject_birth_date }}</td>
+      </tr>
+      <tr>
+        <th>Mouse Line</th>
+        <td>{{ session?.subject_line }}</td>
+      </tr>
+      <tr>
+        <th>Mouse Gender</th>
+        <td>{{ session?.sex }}</td>
+      </tr>
+      <tr>
+        <th>Mouse UUID</th>
+        <td>{{ session?.subject_uuid }}</td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <h5>Session Plots</h5>
+  <div *ngIf="session">
+    <app-session-psych-plot [sessionData]="session"></app-session-psych-plot>
+  </div>
 </div>
