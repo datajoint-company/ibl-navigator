@@ -88,14 +88,12 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
           this.plotInfo = psychPlotData[0]['plotting_data'];
           this.psychPlotIsAvailable = true;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
-          console.log(this.psychPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = psychPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_psych_plot'
           Plotly.newPlot(element, this.plotInfo['data'], this.plotInfo['layout'], this.plotConfig);
         } else {
           console.log('psych plot not available for this session');
           this.psychPlotIsAvailable = false;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
-          console.log(this.psychPlotIsAvailable);
         }
       });
   }
