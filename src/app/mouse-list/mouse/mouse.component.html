@@ -53,11 +53,19 @@
 <hr>
 <h5>Mouse Plots</h5>
 <div *ngIf="mouse">
-  <app-water-weight-plot [mouseInfo]="mouse"></app-water-weight-plot>
-  <app-trial-counts-session-duration [mouseInfo]="mouse"></app-trial-counts-session-duration>
-  <app-performance-reaction-time-plot [mouseInfo]="mouse"></app-performance-reaction-time-plot>
-  <app-contrast-heatmap-plot [mouseInfo]="mouse"></app-contrast-heatmap-plot>
+    <app-water-weight-plot [mouseInfo]="mouse"></app-water-weight-plot>
+  <div class="short-plots-container">
+    <app-trial-counts-session-duration [mouseInfo]="mouse"></app-trial-counts-session-duration>
+    <app-performance-reaction-time-plot [mouseInfo]="mouse"></app-performance-reaction-time-plot>
+    <app-contrast-heatmap-plot [mouseInfo]="mouse"></app-contrast-heatmap-plot>
+  </div>
+  <div class="v-long-plot-container">
+    <app-fit-par-plots [mouseInfo]="mouse"></app-fit-par-plots>
+  </div>
 </div>
+<i>&‌gamma;</i>
+<span>&gamma;</span>
+<p>&mu;</p> 
 <div>
   <button routerLink="/sessions" [queryParams]="mouse" mat-raised-button (click)="getSessions(mouse)">See Sessions</button>
 </div>

@@ -1,0 +1,10 @@
+.short-plots-container {
+    float: left;
+    width: 60%;
+    overflow: scroll;
+}
+
+.v-long-plot-container {
+    float: left;
+    width: 40%;
+}

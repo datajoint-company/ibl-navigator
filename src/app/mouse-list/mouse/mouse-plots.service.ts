@@ -10,11 +10,13 @@ export class MousePlotsService {
   private TCSessionDuration;
   private performanceRT;
   private contrastHeatmap;
+  private fitPars;
 
   private waterWeightPlotLoaded = new Subject();
   private TCSessionDurationPlotLoaded = new Subject();
   private performanceRTPlotLoaded = new Subject();
   private contrastHeatmapPlotLoaded = new Subject();
+  private fitParPlotsLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -75,6 +77,28 @@ export class MousePlotsService {
       );
   }
 
+  getFitParametersPlot(subjectInfo) {
+    this.http.post(`http://localhost:3000/api/plot/fitParametersPlot`, subjectInfo)
+      .subscribe(
+        (plotData) => {
+          console.log('type of fitPar data is:', typeof plotData);
+          const plotDataString = JSON.stringify(plotData);
+          console.log('type of fitPar data is:', typeof plotDataString);
+          console.log(plotDataString);
+          const plotDataObj = JSON.parse(plotDataString);
+          console.log('type of fitPar data is:', typeof plotDataObj);
+          console.log(plotDataObj);
+          this.fitPars = plotDataObj;
+
+          this.fitParPlotsLoaded.next(this.fitPars);
+        },
+        (err: any) => {
+          console.log('error in retrieving contrast heatmap plot data');
+          console.error(err);
+        }
+      );
+  }
+
   getWaterWeightPlotLoadedListener() {
     return this.waterWeightPlotLoaded.asObservable();
   }
@@ -86,5 +110,8 @@ export class MousePlotsService {
   }
   getContrastHeatmapPlotLoadedListener() {
     return this.contrastHeatmapPlotLoaded.asObservable();
+  }
+  getFitParPlotsLoadedListener() {
+    return this.fitParPlotsLoaded.asObservable();
   }
 }

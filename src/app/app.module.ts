@@ -39,6 +39,7 @@ import { SessionPsychPlotComponent } from './session-list/session/session-psych-
 import { TrialCountsSessionDurationComponent } from './mouse-list/mouse/trial-counts-session-duration/trial-counts-session-duration.component';
 import { PerformanceReactionTimePlotComponent } from './mouse-list/mouse/performance-reaction-time-plot/performance-reaction-time-plot.component';
 import { ContrastHeatmapPlotComponent } from './mouse-list/mouse/contrast-heatmap-plot/contrast-heatmap-plot.component';
+import { FitParPlotsComponent } from './mouse-list/mouse/fit-par-plots/fit-par-plots.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent },
@@ -101,7 +102,8 @@ const appRoutes: Routes = [
     SessionPsychPlotComponent,
     TrialCountsSessionDurationComponent,
     PerformanceReactionTimePlotComponent,
-    ContrastHeatmapPlotComponent
+    ContrastHeatmapPlotComponent,
+    FitParPlotsComponent
   ],
   imports: [
     BrowserModule,

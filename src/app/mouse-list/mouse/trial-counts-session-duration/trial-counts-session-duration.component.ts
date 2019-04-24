@@ -27,9 +27,11 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
         if (plotInfo && plotInfo[0]) {
           console.log('trial counts session duration plot retrieved');
           const TCSDplot = plotInfo[0]['plotting_data'];
+          TCSDplot['layout']['height'] = '';
+          TCSDplot['layout']['width'] = '650';
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
-          Plotly.newPlot(element, TCSDplot['data'], TCSDplot['layout']);
+          Plotly.newPlot(element, TCSDplot['data'], TCSDplot['layout'], { responsive: true });
         } else {
           console.log('trial counts session duration plot unavailable for this mouse');
           this.TCSDPlotIsAvailable = false;

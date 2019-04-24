@@ -1,0 +1,51 @@
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { MousePlotsService } from '../mouse-plots.service';
+
+declare var Plotly: any;
+
+@Component({
+  selector: 'app-fit-par-plots',
+  templateUrl: './fit-par-plots.component.html',
+  styleUrls: ['./fit-par-plots.component.css']
+})
+export class FitParPlotsComponent implements OnInit, OnDestroy {
+  fitParPlotsAreAvailable: boolean;
+  private fitParPlotsSubscription: Subscription;
+
+  @Input('mouseInfo') mouseInfo: Object;
+  constructor(public mousePlotsService: MousePlotsService) { }
+  @ViewChild('fitParPlots') elem: ElementRef;
+  ngOnInit() {
+    const element = this.elem.nativeElement;
+    this.mousePlotsService.getFitParametersPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
+    this.fitParPlotsSubscription = this.mousePlotsService.getFitParPlotsLoadedListener()
+    .subscribe((plotsInfo: any) => {
+        if (plotsInfo && plotsInfo[0]) {
+          console.log('fit parameters plots retrieved');
+          const fitParPlots = plotsInfo[0]['plotting_data'];
+          // for (const item of fitParPlots['data']) {
+          //   console.log(item);
+          //   if (item['showlegend'] === 'False') {
+          //     console.log('False found');
+          //     item['showlegend'] = false;
+          //   }
+          // }
+          fitParPlots['layout']['yaxis']['title']['text'] = '<span>&mu;</span>';
+          fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (&‌gamma;)</i>';
+          fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';
+          fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (&lambda;)</i>';
+          Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], { responsive: true });
+        } else {
+          console.log('fit parameters plots not available');
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    if (this.fitParPlotsSubscription) {
+      this.fitParPlotsSubscription.unsubscribe();
+    }
+  }
+
+}

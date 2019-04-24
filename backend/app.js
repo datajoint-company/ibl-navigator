@@ -284,6 +284,17 @@ app.post('/api/plot/contrastHeatmapPlot', (req, res) => {
     })
 })
 
+app.post('/api/plot/fitParametersPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/fitpars', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        console.log('printing json for fitPars')
+        console.log(body)
+        res.send(body);
+    })
+})
+
 app.get('/api/plots/testPlot', (req, res, next) => {
 
     async function readThis() {
