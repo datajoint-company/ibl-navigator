@@ -70,30 +70,15 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const element = this.el.nativeElement;
-    console.log('mouseINfo is');
-    console.log(this.mouseInfo);
     const subjectInfo = { 'subject_uuid': this.mouseInfo['subject_uuid'] };
-    console.log(subjectInfo);
     this.mousePlotsService.getWaterWeightPlot(subjectInfo);
     this.mouseWaterWeightSubscription = this.mousePlotsService.getWaterWeightPlotLoadedListener()
       .subscribe((plotsInfo: any) => {
         if (plotsInfo && plotsInfo[0]) {
           console.log('water weight plot retrieved');
-          console.log(plotsInfo);
           const WIWplot = plotsInfo[0]['plotting_data'];
           WIWplot['layout']['height'] = '';
           WIWplot['layout']['width'] = '';
-          for (const item of WIWplot['data']) {
-            if (item['type'] === 'bar') {
-              console.log('inside WIWplot bar - logging item');
-              console.log(item);
-              // item['width'] = 1;
-              // item['marker'] = { line: {width: 0.9}};
-            } else {
-              console.log('inside WIWplot not a bar plot- logging item');
-              console.log(item);
-            }
-          }
           this.WIWPlotIsAvailable = true;
           this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_water_intake_weight_plot';

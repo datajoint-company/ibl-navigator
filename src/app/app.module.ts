@@ -36,6 +36,9 @@ import { CellComponent } from './cell-list/cell/cell.component';
 import { OverviewComponent } from './overview/overview.component';
 import { WaterWeightPlotComponent } from './mouse-list/mouse/water-weight-plot/water-weight-plot.component';
 import { SessionPsychPlotComponent } from './session-list/session/session-psych-plot/session-psych-plot.component';
+import { TrialCountsSessionDurationComponent } from './mouse-list/mouse/trial-counts-session-duration/trial-counts-session-duration.component';
+import { PerformanceReactionTimePlotComponent } from './mouse-list/mouse/performance-reaction-time-plot/performance-reaction-time-plot.component';
+import { ContrastHeatmapPlotComponent } from './mouse-list/mouse/contrast-heatmap-plot/contrast-heatmap-plot.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent },
@@ -95,7 +98,10 @@ const appRoutes: Routes = [
     CellComponent,
     OverviewComponent,
     WaterWeightPlotComponent,
-    SessionPsychPlotComponent
+    SessionPsychPlotComponent,
+    TrialCountsSessionDurationComponent,
+    PerformanceReactionTimePlotComponent,
+    ContrastHeatmapPlotComponent
   ],
   imports: [
     BrowserModule,

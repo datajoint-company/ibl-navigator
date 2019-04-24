@@ -84,7 +84,10 @@ reqmap = {
     'weighing': action.Weighing,
     'wateradmin': action.WaterAdministration,
     'sessionpsych': plotting_behavior.SessionPsychCurve,
-    'waterweight': plotting_behavior.WaterWeight
+    'waterweight': plotting_behavior.WaterWeight,
+    'TCsessionduration': plotting_behavior.TrialCountsSessionDuration,
+    'performanceRT': plotting_behavior.PerformanceReactionTime,
+    'contrastheatmap': plotting_behavior.ContrastHeatmap
 }
 dumps = DateTimeEncoder.dumps
 

@@ -256,6 +256,34 @@ app.post('/api/plot/waterWeightPlot', (req, res) => {
     })
 })
 
+app.post('/api/plot/trialCountsSessionDurationPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/TCsessionduration', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        // let info = JSON.parse(body)
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/performanceReactionTimePlot', (req, res) => {
+    request.post('http://localhost:5000/v0/performanceRT', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/contrastHeatmapPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/contrastheatmap', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
 app.get('/api/plots/testPlot', (req, res, next) => {
 
     async function readThis() {
