@@ -41,9 +41,10 @@ is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
 
 class DateTimeEncoder(json.JSONEncoder):
     ''' teach json to dump datetimes, etc '''
-
+    
     npmap = {
         np.bool_: str,
+        np.bool_: lambda x: bool(1) if x else bool(0),
         np.uint8: str,
         np.uint16: str,
         np.uint32: str,

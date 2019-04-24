@@ -26,7 +26,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           console.log('performance reaction time plot retrieved');
           const performanceRTplot = plotInfo[0]['plotting_data'];
           performanceRTplot['layout']['height'] = '';
-          performanceRTplot['layout']['width'] = '670';
+          performanceRTplot['layout']['width'] = '650';
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           Plotly.newPlot(element, performanceRTplot['data'], performanceRTplot['layout'], {responsive: true});

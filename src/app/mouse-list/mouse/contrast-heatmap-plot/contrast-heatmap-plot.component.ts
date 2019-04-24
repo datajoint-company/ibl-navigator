@@ -25,7 +25,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
         if (plotInfo && plotInfo[0]) {
           const contrastHeatmapPlot = plotInfo[0]['plotting_data'];
           contrastHeatmapPlot['layout']['height'] = '';
-          contrastHeatmapPlot['layout']['width'] = '600';
+          contrastHeatmapPlot['layout']['width'] = '650';
           this.contrastHeatmapPlotIsAvailable = true;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
           Plotly.newPlot(element, contrastHeatmapPlot['data'], contrastHeatmapPlot['layout'], { responsive: true });
