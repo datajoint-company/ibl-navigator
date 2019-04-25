@@ -1,33 +1,62 @@
-<div class="row">
-  <div *ngFor="let dog of testList; index as i">
-    <p>{{ dog }}{{ i + 1 }}</p>
-    <!-- <div #datePsychCurvePlot></div>
-    <div #dateRTContrastPlot></div>
-    <div #dateRTTrialNumPlot></div> -->
+<table class="byDatePlotsTable col-10 table-bordered">
+  <tr>
+    <th>{{ recent3dates[0] }}</th>
+    <th>{{ recent3dates[1] }}</th>
+    <th>{{ recent3dates[2] }}</th>
+  </tr>
+  <tr>
+    <td #datePsychCurvePlot1></td>
+    <td #datePsychCurvePlot2></td>
+    <td #datePsychCurvePlot3></td>
+  </tr>
+  <tr>
+    <td>
+      <div #dateRTContrastPlot1></div>
+    </td>
+    <td>
+      <div #dateRTContrastPlot2></div>
+    </td>
+    <td>
+      <div #dateRTContrastPlot3></div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div #dateRTTrialNumPlot1></div>
+    </td>
+    <td>
+      <div #dateRTTrialNumPlot2></div>
+    </td>
+    <td>
+      <div #dateRTTrialNumPlot3></div>
+    </td>
+  </tr>
+  
+</table>
+
+<!-- <div class="showListofPlots">
+
+  <div class="col-4 byDatePlotColumn">
+    <h6>{{ recent3dates[0] }}</h6>
+    <div #datePsychCurvePlot1></div>
+    <div #dateRTContrastPlot1></div>
+    <div #dateRTTrialNumPlot1></div>
   </div>
-</div>
-<!-- <div #datePsychCurvePlot></div>
-<div #dateRTContrastPlot></div>
-<div #dateRTTrialNumPlot></div> -->
-<div>
-  {{ recent3dates[0] }}
-  <div #datePsychCurvePlot1></div>
-  <div #dateRTContrastPlot1></div>
-  <div #dateRTTrialNumPlot1></div>
-</div>
-<div>
-  <p>{{ recent3dates[1] }}</p>
-  <div #datePsychCurvePlot2></div>
-  <div #dateRTContrastPlot2></div>
-  <div #dateRTTrialNumPlot2></div>
-</div>
-<div>
-  <p>{{ recent3dates[2] }}</p>
-  <div #datePsychCurvePlot3></div>
-  <div #dateRTContrastPlot3></div>
-  <div #dateRTTrialNumPlot3></div>
-</div>
-<span class="showListofPlots">
+  <div class="col-4 byDatePlotColumn">
+    <h6>{{ recent3dates[1] }}</h6>
+    <div #datePsychCurvePlot2></div>
+    <div #dateRTContrastPlot2></div>
+    <div #dateRTTrialNumPlot2></div>
+  </div>
+  <div class="col-4 byDatePlotColumn">
+    <h6>{{ recent3dates[2] }}</h6>
+    <div #datePsychCurvePlot3></div>
+    <div #dateRTContrastPlot3></div>
+    <div #dateRTTrialNumPlot3></div>
+  </div>
+</div> -->
+
+<!-- <span class="showListofPlots">
   <div *ngIf="datePsychPlotList">
     <p>Date Psych Curve</p>
     <div *ngFor="let dpcplot of datePsychPlotList; index as i">
@@ -46,4 +75,4 @@
       {{ drttplot['session_date'] }} ({{ i + 1 }})
     </div>
   </div>
-</span>
+</span> -->

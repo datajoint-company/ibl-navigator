@@ -60,7 +60,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             console.log('evaluating psych Curve plot:', plot);
             this.recent3dates.push(plot['session_date']);
             const datePsychPlot = plot['plotting_data'];
-            Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout']);
+            datePsychPlot['layout']['width'] = '500';
+            Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout'], { responsive: true} );
           });
           this.recent3datesLoaded.next(this.recent3dates);
         } else {
@@ -87,7 +88,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   RTCmatchFound = true;
                   console.log('session date match in contrast!!', plot['session_date'], 'at index', index);
                   const dateRTCPlot = plot['plotting_data'];
-                  Plotly.newPlot(elementList[idx].elRTContrast, dateRTCPlot['data'], dateRTCPlot['layout']);
+                  dateRTCPlot['layout']['width'] = '450';
+                  Plotly.newPlot(elementList[idx].elRTContrast, dateRTCPlot['data'], dateRTCPlot['layout'], { responsive: true } );
                 }
               });
               if (!RTCmatchFound) {
@@ -114,7 +116,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   RTTNmatchFound = true;
                   console.log('session date match in trialNum!', plot['session_date'], 'at index:', index, '& at idx:', idx);
                   const dateRTTPlot = plot['plotting_data'];
-                  Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout']);
+                  dateRTTPlot['layout']['width'] = '500';
+                  Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], { responsive: true } );
                 }
               });
               console.log('match has been found:', RTTNmatchFound, ' at round', idx);

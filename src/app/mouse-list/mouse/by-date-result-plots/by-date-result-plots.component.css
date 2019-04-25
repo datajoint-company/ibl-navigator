@@ -1,3 +1,14 @@
 .showListofPlots {
     display: inline-flex;
+
+}
+
+.byDatePlotColumn {
+    /* width: 70%; */
+    text-align: center;
+}
+
+.byDatePlotsTable {
+    text-align: center;
+    margin-left: -10%;
 }
