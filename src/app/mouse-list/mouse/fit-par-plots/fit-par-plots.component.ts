@@ -24,17 +24,11 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
         if (plotsInfo && plotsInfo[0]) {
           console.log('fit parameters plots retrieved');
           const fitParPlots = plotsInfo[0]['plotting_data'];
-          // for (const item of fitParPlots['data']) {
-          //   console.log(item);
-          //   if (item['showlegend'] === 'False') {
-          //     console.log('False found');
-          //     item['showlegend'] = false;
-          //   }
-          // }
-          fitParPlots['layout']['yaxis']['title']['text'] = '<i>Lapse High (\u03BB)</i>'; // lambda
-          fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (\u03B3)</i>'; // gamma
-          fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';
-          fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (\u03BB)</i>';
+          // fitParPlots['layout']['yaxis']['title']['text'] = '<i>Lapse High (\u03BB)</i>'; // lambda
+          // fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (\u03B3)</i>'; // gamma
+          // fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';
+          // fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (\u03BB)</i>';
+          fitParPlots['layout']['width'] = '';
           Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], { responsive: true });
         } else {
           console.log('fit parameters plots not available');
