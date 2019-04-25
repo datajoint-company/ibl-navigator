@@ -29,6 +29,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           // fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';
           // fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (\u03BB)</i>';
           fitParPlots['layout']['width'] = '';
+          fitParPlots['layout']['height'] = 1200;
           Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], { responsive: true });
         } else {
           console.log('fit parameters plots not available');

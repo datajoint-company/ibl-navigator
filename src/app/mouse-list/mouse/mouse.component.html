@@ -62,6 +62,9 @@
   <div class="v-long-plot-container">
     <app-fit-par-plots [mouseInfo]="mouse"></app-fit-par-plots>
   </div>
+  <div class="by-date-plots-container">
+    <app-by-date-result-plots [mouseInfo]="mouse"></app-by-date-result-plots>
+  </div>
 </div>
 <div>
   <button routerLink="/sessions" [queryParams]="mouse" mat-raised-button (click)="getSessions(mouse)">See Sessions</button>

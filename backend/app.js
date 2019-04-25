@@ -289,8 +289,33 @@ app.post('/api/plot/fitParametersPlot', (req, res) => {
         if (error) {
             console.error('error: ', error);
         }
-        console.log('printing json for fitPars')
-        console.log(body)
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/datePsychCurvePlot', (req, res) => {
+    request.post('http://localhost:5000/v0/datepsych', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/dateReactionTimeContrastPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/dateRTcontrast', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/dateReactionTimeTrialNumberPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/dateRTtrial', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
         res.send(body);
     })
 })

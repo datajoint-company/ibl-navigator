@@ -1,10 +1,14 @@
 .short-plots-container {
     float: left;
-    width: 60%;
+    width: 50%;
     overflow: scroll;
 }
 
 .v-long-plot-container {
     float: left;
-    width: 40%;
+    width: 50%;
+}
+
+.by-date-plots-container {
+    float: left;
 }

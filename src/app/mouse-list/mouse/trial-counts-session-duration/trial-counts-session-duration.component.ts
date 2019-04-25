@@ -28,7 +28,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           console.log('trial counts session duration plot retrieved');
           const TCSDplot = plotInfo[0]['plotting_data'];
           TCSDplot['layout']['height'] = '';
-          TCSDplot['layout']['width'] = '650';
+          TCSDplot['layout']['width'] = '';
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
           Plotly.newPlot(element, TCSDplot['data'], TCSDplot['layout'], { responsive: true });

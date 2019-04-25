@@ -81,14 +81,15 @@ reqmap = {
     'labmembership': reference.LabMembership,
     'subject': subject.Subject,
     'session': acquisition.Session,
-    'weighing': action.Weighing,
-    'wateradmin': action.WaterAdministration,
     'sessionpsych': plotting_behavior.SessionPsychCurve,
     'waterweight': plotting_behavior.WaterWeight,
     'TCsessionduration': plotting_behavior.TrialCountsSessionDuration,
     'performanceRT': plotting_behavior.PerformanceReactionTime,
     'contrastheatmap': plotting_behavior.ContrastHeatmap,
-    'fitpars': plotting_behavior.FitPars
+    'fitpars': plotting_behavior.FitPars,
+    'datepsych': plotting_behavior.DatePsychCurve,
+    'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
+    'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber
 }
 dumps = DateTimeEncoder.dumps
 

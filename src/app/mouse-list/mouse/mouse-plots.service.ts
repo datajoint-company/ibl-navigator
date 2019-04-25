@@ -10,13 +10,16 @@ export class MousePlotsService {
   private TCSessionDuration;
   private performanceRT;
   private contrastHeatmap;
-  private fitPars;
+  // private fitPars;
 
   private waterWeightPlotLoaded = new Subject();
   private TCSessionDurationPlotLoaded = new Subject();
   private performanceRTPlotLoaded = new Subject();
   private contrastHeatmapPlotLoaded = new Subject();
   private fitParPlotsLoaded = new Subject();
+  private datePsychPlotLoaded = new Subject();
+  private dateRTContrastPlotLoaded = new Subject();
+  private dateRTTrialPlotLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -81,19 +84,49 @@ export class MousePlotsService {
     this.http.post(`http://localhost:3000/api/plot/fitParametersPlot`, subjectInfo)
       .subscribe(
         (plotData) => {
-          console.log('type of fitPar data is:', typeof plotData);
-          const plotDataString = JSON.stringify(plotData);
-          console.log('type of fitPar data is:', typeof plotDataString);
-          console.log(plotDataString);
-          const plotDataObj = JSON.parse(plotDataString);
-          console.log('type of fitPar data is:', typeof plotDataObj);
-          console.log(plotDataObj);
-          this.fitPars = plotDataObj;
-
-          this.fitParPlotsLoaded.next(this.fitPars);
+          this.fitParPlotsLoaded.next(plotData);
         },
         (err: any) => {
-          console.log('error in retrieving contrast heatmap plot data');
+          console.log('error in retrieving fit parameters plot data');
+          console.error(err);
+        }
+      );
+  }
+
+  getDatePsychPlot(subjectInfo) {
+    this.http.post(`http://localhost:3000/api/plot/datePsychCurvePlot`, subjectInfo)
+      .subscribe(
+        (plotData) => {
+          this.datePsychPlotLoaded.next(plotData);
+        },
+        (err: any) => {
+          console.log('error in retrieving fit parameters plot data');
+          console.error(err);
+        }
+      );
+  }
+
+  getDateRTContrastPlot(subjectInfo) {
+    this.http.post(`http://localhost:3000/api/plot/dateReactionTimeContrastPlot`, subjectInfo)
+      .subscribe(
+        (plotData) => {
+          this.dateRTContrastPlotLoaded.next(plotData);
+        },
+        (err: any) => {
+          console.log('error in retrieving fit parameters plot data');
+          console.error(err);
+        }
+      );
+  }
+
+  getDateRTTrialNumPlot(subjectInfo) {
+    this.http.post(`http://localhost:3000/api/plot/dateReactionTimeTrialNumberPlot`, subjectInfo)
+      .subscribe(
+        (plotData) => {
+          this.dateRTTrialPlotLoaded.next(plotData);
+        },
+        (err: any) => {
+          console.log('error in retrieving fit parameters plot data');
           console.error(err);
         }
       );
@@ -113,5 +146,14 @@ export class MousePlotsService {
   }
   getFitParPlotsLoadedListener() {
     return this.fitParPlotsLoaded.asObservable();
+  }
+  getDatePsychPlotLoadedListener() {
+    return this.datePsychPlotLoaded.asObservable();
+  }
+  getDateRTContrastPlotLoadedListener() {
+    return this.dateRTContrastPlotLoaded.asObservable();
+  }
+  getDateRTTrialNumPlotLoadedListener() {
+    return this.dateRTTrialPlotLoaded.asObservable();
   }
 }
