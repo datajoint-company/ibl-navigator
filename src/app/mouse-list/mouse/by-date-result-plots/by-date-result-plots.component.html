@@ -1,4 +1,6 @@
 <h6>Most Recent Result Plots</h6>
+<img style="position: absolute; z-index: 100; margin-bottom: 10px; margin-left: 50%; transform: translateX(-50%);" *ngIf="loading"
+  src="assets/images/loading_icon.gif" width="180px">
 <div class="table-container">
 <table class="table byDatePlotsTable col-12 table-bordered">
   <tr>
@@ -33,7 +35,6 @@
       <div #dateRTTrialNumPlot3></div>
     </td>
   </tr>
-  
 </table>
 </div>
 

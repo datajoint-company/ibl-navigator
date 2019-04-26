@@ -11,6 +11,7 @@ declare var Plotly: any;
 })
 export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   byDateResultPlotsAreAvailable: boolean;
+  loading = true;
   recent3dates = [];
   datePsychPlotList = [];
   dateRTCPlotList = [];
@@ -40,6 +41,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     elementList.push({ elPsych: this.elPsych1.nativeElement, elRTContrast: this.elRTContrast1.nativeElement, elRTTrialNum: this.elRTTrialNum1.nativeElement });
     elementList.push({ elPsych: this.elPsych2.nativeElement, elRTContrast: this.elRTContrast2.nativeElement, elRTTrialNum: this.elRTTrialNum2.nativeElement });
     elementList.push({ elPsych: this.elPsych3.nativeElement, elRTContrast: this.elRTContrast3.nativeElement, elRTTrialNum: this.elRTTrialNum3.nativeElement });
+
     // const elPsych1 = this.elPsych1.nativeElement;
     // const elRTContrast1 = this.elRTContrast1.nativeElement;
     // const elRTTrialNum1 = this.elRTTrialNum1.nativeElement;
@@ -69,6 +71,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           });
           this.recent3datesLoaded.next(this.recent3dates);
         } else {
+          this.loading = false;
           this.byDateResultPlotsAreAvailable = false;
           this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           console.log('date psychometric curve unavailable');
@@ -126,16 +129,19 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   const dateRTTPlot = plot['plotting_data'];
                   dateRTTPlot['layout']['width'] = '500';
                   dateRTTPlot['layout']['height'] = '350';
+                  this.loading = false;
                   Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], { responsive: true } );
                 }
               });
               console.log('match has been found:', RTTNmatchFound, ' at round', idx);
               if (!RTTNmatchFound) {
+                this.loading = false;
                 Plotly.newPlot(elementList[idx].elRTTrialNum, [],
                   { title: { text: 'Reaction time - trial number plot unavailable' }, width: '', height: '350' }, { responsive: true });
               }
             });
           } else {
+            this.loading = false;
             console.log('date reaction time trial number plot unavailable');
           }
         });

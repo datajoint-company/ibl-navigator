@@ -11,7 +11,7 @@ declare var Plotly: any;
 })
 export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   TCSDPlotIsAvailable: boolean;
-
+  loading = true;
   private TCSDPlotSubscription: Subscription;
   @Output() TCSDPlotAvailability: EventEmitter<any> = new EventEmitter();
   @Input('mouseInfo') mouseInfo: Object;
@@ -31,10 +31,12 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           TCSDplot['layout']['width'] = '';
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
+          this.loading = false;
           Plotly.newPlot(element, TCSDplot['data'], TCSDplot['layout'], { responsive: true });
         } else {
           console.log('trial counts session duration plot unavailable for this mouse');
           this.TCSDPlotIsAvailable = false;
+          this.loading = false;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
         }
       });
