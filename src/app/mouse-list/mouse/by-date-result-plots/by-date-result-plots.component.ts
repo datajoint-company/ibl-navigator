@@ -10,6 +10,7 @@ declare var Plotly: any;
   styleUrls: ['./by-date-result-plots.component.css']
 })
 export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
+  byDateResultPlotsAreAvailable: boolean;
   recent3dates = [];
   datePsychPlotList = [];
   dateRTCPlotList = [];
@@ -19,7 +20,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   private dateRTTrialNumPlotSubscription: Subscription;
 
   private recent3datesLoaded = new Subject();
-
+  @Output() byDateResultPlotsAvailability: EventEmitter<any> = new EventEmitter();
   @Input('mouseInfo') mouseInfo: Object;
   constructor(public mousePlotsService: MousePlotsService) { }
   // @ViewChild('datePsychCurvePlot') elPsych: ElementRef;
@@ -52,6 +53,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     this.datePsychPlotSubscription = this.mousePlotsService.getDatePsychPlotLoadedListener()
       .subscribe((psychCurveInfo: any) => {
         if (psychCurveInfo && psychCurveInfo.length > 0) {
+          this.byDateResultPlotsAreAvailable = true;
+          this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           this.datePsychPlotList = psychCurveInfo;
           psychCurveInfo.reverse();
           const recent3 = psychCurveInfo.slice(0, 3);
@@ -66,6 +69,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           });
           this.recent3datesLoaded.next(this.recent3dates);
         } else {
+          this.byDateResultPlotsAreAvailable = false;
+          this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           console.log('date psychometric curve unavailable');
         }
       });
@@ -96,7 +101,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               });
               if (!RTCmatchFound) {
                 Plotly.newPlot(elementList[idx].elRTContrast, [],
-                  { title: { text: 'plot unavailable' }, width: '', height: '350' }, { responsive: true });
+                  { title: { text: 'Reaction time - contrast plot unavailable' }, width: '', height: '350' }, { responsive: true });
               }
             });
           } else {
@@ -127,7 +132,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               console.log('match has been found:', RTTNmatchFound, ' at round', idx);
               if (!RTTNmatchFound) {
                 Plotly.newPlot(elementList[idx].elRTTrialNum, [],
-                  { title: { text: 'plot unavailable' }, width: '', height: '350' }, { responsive: true });
+                  { title: { text: 'Reaction time - trial number plot unavailable' }, width: '', height: '350' }, { responsive: true });
               }
             });
           } else {
