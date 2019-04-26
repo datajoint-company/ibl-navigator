@@ -12,7 +12,7 @@ declare var Plotly: any;
 export class FitParPlotsComponent implements OnInit, OnDestroy {
   fitParPlotsAreAvailable: boolean;
   private fitParPlotsSubscription: Subscription;
-
+  @Output() fitParPlotsAvailability: EventEmitter<any> = new EventEmitter();
   @Input('mouseInfo') mouseInfo: Object;
   constructor(public mousePlotsService: MousePlotsService) { }
   @ViewChild('fitParPlots') elem: ElementRef;
@@ -30,8 +30,12 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           // fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (\u03BB)</i>';
           fitParPlots['layout']['width'] = '';
           fitParPlots['layout']['height'] = 1200;
+          this.fitParPlotsAreAvailable = true;
+          this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
           Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], { responsive: true });
         } else {
+          this.fitParPlotsAreAvailable = false;
+          this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
           console.log('fit parameters plots not available');
         }
       });
