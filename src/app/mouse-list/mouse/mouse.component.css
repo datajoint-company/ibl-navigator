@@ -1,3 +1,11 @@
+.mouse-info-container {
+    padding-top: 20px;
+}
+
+h5 {
+    font-weight: 300;
+}
+
 .short-plots-container {
     float: left;
     width: 50%;

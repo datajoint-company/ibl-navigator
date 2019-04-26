@@ -1,3 +1,11 @@
+.subject-list-container {
+    padding-top: 20px;
+}
+
+h4 {
+    font-weight: 300;
+}
+
 form { 
     margin-bottom: 5px;
     padding-bottom: 25px;

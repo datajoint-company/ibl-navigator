@@ -1,5 +1,6 @@
+<div class="session-list-container">
 <h4>
-  List of Sessions:
+  Filter Sessions
 </h4>
 <form [formGroup]="session_filter_form">
   <div class="filters">
@@ -163,6 +164,7 @@
 <mat-paginator [pageSize]="pageSize"
             [pageSizeOptions]="pageSizeOptions"
             showFirstLastButtons></mat-paginator>
+</div>
 <!-- <div class="sessionsList row">
   <div *ngFor="let session of sessions">
     <a routerLink="/session/{{session['session_uuid']}}">
