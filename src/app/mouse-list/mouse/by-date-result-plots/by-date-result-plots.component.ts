@@ -61,6 +61,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             this.recent3dates.push(plot['session_date']);
             const datePsychPlot = plot['plotting_data'];
             datePsychPlot['layout']['width'] = '500';
+            datePsychPlot['layout']['height'] = '350';
             Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout'], { responsive: true} );
           });
           this.recent3datesLoaded.next(this.recent3dates);
@@ -88,12 +89,14 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   RTCmatchFound = true;
                   console.log('session date match in contrast!!', plot['session_date'], 'at index', index);
                   const dateRTCPlot = plot['plotting_data'];
-                  dateRTCPlot['layout']['width'] = '450';
+                  dateRTCPlot['layout']['width'] = '';
+                  dateRTCPlot['layout']['height'] = '350';
                   Plotly.newPlot(elementList[idx].elRTContrast, dateRTCPlot['data'], dateRTCPlot['layout'], { responsive: true } );
                 }
               });
               if (!RTCmatchFound) {
-                Plotly.newPlot(elementList[idx].elRTContrast, []);
+                Plotly.newPlot(elementList[idx].elRTContrast, [],
+                  { title: { text: 'plot unavailable' }, width: '', height: '350' }, { responsive: true });
               }
             });
           } else {
@@ -117,12 +120,14 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   console.log('session date match in trialNum!', plot['session_date'], 'at index:', index, '& at idx:', idx);
                   const dateRTTPlot = plot['plotting_data'];
                   dateRTTPlot['layout']['width'] = '500';
+                  dateRTTPlot['layout']['height'] = '350';
                   Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], { responsive: true } );
                 }
               });
               console.log('match has been found:', RTTNmatchFound, ' at round', idx);
               if (!RTTNmatchFound) {
-                Plotly.newPlot(elementList[idx].elRTTrialNum, []);
+                Plotly.newPlot(elementList[idx].elRTTrialNum, [],
+                  { title: { text: 'plot unavailable' }, width: '', height: '350' }, { responsive: true });
               }
             });
           } else {

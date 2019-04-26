@@ -1,14 +1,101 @@
+/* testing purpose - text list of plots */
 .showListofPlots {
     display: inline-flex;
-
 }
-
 .byDatePlotColumn {
-    /* width: 70%; */
     text-align: center;
 }
 
+/* setting the size of table by screen size */
 .byDatePlotsTable {
     text-align: center;
-    margin-left: -10%;
+}
+
+/* XS (600px and down) */
+/* @media only screen and (max-width: 600px) {...}  */
+
+/* S (600px and up) */
+/* @media only screen and (min-width: 600px) {...}  */
+
+/* M (768px and up) */
+@media only screen and (min-width: 768px) {
+  .byDatePlotsTable {
+    table-layout: auto; 
+  }
+ 
+  .table-container {
+      width: 768px;
+      overflow-x: scroll;
+      border: 2px solid rgb(219, 219, 219);
+      border-right: 1px solid transparent;   
+  }
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: rgba(112, 112, 112, 0.5);
+    -webkit-box-shadow: 0 0 1px rgba(228, 226, 226, 0.5);
+  }
+} 
+
+/* L (992px and up) */
+@media only screen and (min-width: 992px) {
+  /* .byDatePlotsTable {
+    table-layout: auto; 
+  } */
+ 
+  .table-container {
+      width: 992px;
+      /* overflow-x: scroll;
+      border: 2px solid rgb(219, 219, 219);
+      border-right: 1px solid transparent;    */
+  }
+  /* ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+  } */
+} 
+
+/* XL (1200px and up) */
+@media only screen and (min-width: 1200px) {
+  .byDatePlotsTable {
+    table-layout: fixed;
+    width: 1160px;
+  }
+ 
+  table tr td {
+      overflow-x: scroll;
+  }
+
+  .table-container {
+      width: 100%;
+  }
+}
+
+/* XXL (1600px and up) */
+@media only screen and (min-width: 1600px) {
+  .byDatePlotsTable {
+    width: 1560px;
+  }
+  /* table > tr > td {
+      width: 33%;
+      height: 300px;
+      background-color: blue;
+  } */
+}
+
+/* XXXL (2200px and up) */
+@media only screen and (min-width: 2200px) {
+  .byDatePlotsTable {
+      width: 2160px;
+  }
 }
