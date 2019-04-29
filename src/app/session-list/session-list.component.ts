@@ -6,6 +6,8 @@ import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
 import { SessionComponent } from './session/session.component';
+import { NullInjector } from '@angular/core/src/di/injector';
+import { reference } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-session-list',
@@ -21,7 +23,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     lab_name_control: new FormControl(),
     subject_nickname_control: new FormControl(),
     subject_uuid_control: new FormControl(),
-    sex_control: new FormArray([]),
+    sex_control: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
     subject_birth_date_control: new FormControl(),
     subject_line_control: new FormControl(),
     responsible_user_control: new FormControl()
@@ -61,11 +63,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
   private sessionsSubscription: Subscription;
 
   constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService) {}
-  @Input('preRestriction') preRestrictedMouseInfo: Object;
+  // @Input('preRestriction') preRestrictedMouseInfo: Object;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     console.log('onInit');
+    this.session_menu['sex'] = { F: null, M: null, U: null };
     this.route.queryParams
       .subscribe(params => {
         for (const key in params) {
@@ -79,16 +82,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
           };
         };
         this.applyFilter();
-        // console.log(this.session_filter_form.controls);
-        // this.allSessionsService.retrieveSessions(params);
-        // this.sessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener()
-        //   .subscribe((sessions: any) => {
-        //     this.sessions = sessions.reverse();
-        //     this.dataSource = new MatTableDataSource(this.sessions);
-        //     this.dataSource.sort = this.sort;
-        //     this.dataSource.paginator = this.paginator;
-        //     this.createMenu(this.sessions);
-        //   });
+
       });
     // TODO: create menu content using separate api designated for menu instead of getting all session info
     this.allSessionsService.getAllSessions();
@@ -110,21 +104,36 @@ export class SessionListComponent implements OnInit, OnDestroy {
     'session_uuid', 'lab_name', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user'];
     for (const key of keys) {
-      this.session_menu[key] = [];
+      if (key !== 'sex') {
+        this.session_menu[key] = [];
+      } else {
+        this.session_menu[key] = { F: false, M: false, U: false };
+      }
     }
     for (const session of sessions) {
       for (const key of keys) {
-        if (!this.session_menu[key].includes(session[key])) {
+        if (key !== 'sex' && !this.session_menu[key].includes(session[key])) {
           this.session_menu[key].push(session[key]);
+        } else if (key === 'sex') {
+          // console.log('creating sex menu - looking at ', this.session_menu[key], ' and ', session[key]);
+          if (Object.keys(this.session_menu[key]).includes(session[key]) && !this.session_menu[key][session[key]]) {
+            this.session_menu[key][session[key]] = true;
+          }
         }
       }
     }
 
     // create formcontrol for item in menus
     const sex_control_array = <FormArray>this.session_filter_form.controls['sex_control'];
-    sex_control_array.controls.length = 0;
-    for (const item of this.session_menu['sex']) {
-      sex_control_array.push(new FormControl(false));
+
+    const genderForm2MenuMap = {F: 0, M: 1, U: 2};
+    for (const item in this.session_menu['sex']) {
+      if (!this.session_menu['sex'][item]) {
+        this.session_filter_form.controls.sex_control.controls[genderForm2MenuMap[item]].patchValue(false);
+        this.session_filter_form.controls.sex_control.controls[genderForm2MenuMap[item]].disable();
+      } else {
+        this.session_filter_form.controls.sex_control.controls[genderForm2MenuMap[item]].enable();
+      }
     }
 
     const sessionSeconds = [];
@@ -209,7 +218,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   updateMenu() {
     const menuRequest = this.filterRequests();
-    if (Object.entries(menuRequest).length > 0) {
+    if (Object.entries(menuRequest).length > 1) {
       this.allSessionsService.retrieveSessions(menuRequest);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
@@ -219,10 +228,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   stepBackMenu(event) {
-    console.log('detected focus in menu');
-    console.log(event.target.name);
     const referenceMenuReq = this.filterRequests(event.target.name);
-    if (Object.entries(referenceMenuReq).length > 0) {
+    if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
       this.allSessionsService.retrieveSessions(referenceMenuReq);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
@@ -238,21 +245,27 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   filterRequests(focusedField?: string) {
-    const filterList = Object.entries(this.session_filter_form.value);
-    console.log(this.session_filter_form.value);
+    const filterList = Object.entries(this.session_filter_form.getRawValue());
     const requestFilter = {};
     filterList.forEach(filter => {
+      console.log(filter);
       // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
       const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
       if (filter[1] && filterKey !== focusedField) {
         if (filterKey === 'sex' && this.genderSelected(filter[1])) {
-          // only accepts single selection - this case the last selection. TODO:coordinate with API for multi-selection
+          console.log('session_menu[sex] keys are, ', Object.keys(this.session_menu['sex']));
+          console.log('filter[1]: ', filter[1]);
+          // only accepts single selection - this case the last selection.
+          // TODO:coordinate with API for multi-selection
           let requestedGender: string;
           for (const index in filter[1]) {
             if (filter[1][index]) {
-              requestedGender = this.session_menu['sex'][index];
+              console.log('logging filter[1][', index, ']', filter[1][index]);
+              requestedGender = Object.keys(this.session_menu['sex'])[index];
+              // requestedGender = this.session_menu['sex'][index];
             }
           }
+          console.log('requestedGender is...: ', requestedGender);
           requestFilter[filterKey] = requestedGender;
         } else if (filterKey !== 'sex') {
           // making sure gender filter gets removed from the request
@@ -275,8 +288,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.sessions = [];
     const request = this.filterRequests();
     request['__order'] = 'session_start_time';
-    console.log('requesting', request);
-    if (Object.entries(request).length > 1) {
+    if (Object.entries(request) && Object.entries(request).length > 1) {
       this.allSessionsService.retrieveSessions(request);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
@@ -309,13 +321,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
       console.log(control);
       const toReset = {}
       
-      console.log(toReset);
       if (control !== 'sex_control') {
         toReset[control] = '';
       } else {
         toReset[control] = [false, false, false];
+        for (const index in this.session_filter_form.controls[control].controls) {
+          this.session_filter_form.controls[control].controls[index].enable();
+        }
       }
       this.session_filter_form.patchValue(toReset);
+      
     }
     console.log(this.route.queryParams);
     this.route.queryParams.subscribe(param => {
