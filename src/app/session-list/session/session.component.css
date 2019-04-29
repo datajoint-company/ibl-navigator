@@ -2,6 +2,11 @@
     padding-top: 20px;
 }
 
+.session-info-table {
+    font-size: 85%;
+    margin-left: 1%;
+}
+
 h5 {
     font-weight: 300;
 }

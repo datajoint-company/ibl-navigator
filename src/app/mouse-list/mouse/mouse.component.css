@@ -6,6 +6,11 @@ h5 {
     font-weight: 300;
 }
 
+.mouse-info-table {
+    font-size: 85%;
+    margin-left: 1%;
+}
+
 .short-plots-container {
     float: left;
     width: 50%;
