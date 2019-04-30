@@ -273,4 +273,23 @@ export class MouseListComponent implements OnInit, OnDestroy {
         this.dataSource.paginator = this.paginator;
       });
   }
+
+  clearFilter() {
+    console.log('control cleared');
+    for (const control in this.mouse_filter_form.controls) {
+      const toReset = {}
+
+      if (control !== 'sex_control') {
+        toReset[control] = '';
+      } else {
+        toReset[control] = [false, false, false];
+        for (const index in this.mouse_filter_form.get(control)['controls']) {
+          this.mouse_filter_form.get(control).get([index]).enable();
+        }
+
+      }
+      this.mouse_filter_form.patchValue(toReset);
+    }
+    this.applyFilter();
+  }
 }
