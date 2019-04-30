@@ -16,12 +16,29 @@ form {
 } 
 
 mat-form-field {
+    width: 220px;
     float:left;
     margin: 10px;
 }
 
+mat-form-field.long {
+    width: 350px;
+}
+
+mat-form-field.short {
+    width: 190px;
+}
+
 button.mat-raised-button {
-    background-color: rgb(255, 244, 245);
+    float: left;
+    margin-left: 5px;
+    border: 2px solid rgb(101, 152, 184);
+}
+
+button.mat-raised-button:hover {
+    border: 2px solid rgb(0, 124, 183);
+    background-color: rgb(0, 124, 183);
+    color: white;
 }
 
 mat-card {

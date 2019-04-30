@@ -15,7 +15,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     lab_name_control: new FormControl(),
     subject_nickname_control : new FormControl(),
     subject_uuid_control : new FormControl(),
-    sex_control : new FormArray([]),
+    sex_control: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
     subject_birth_date_control : new FormControl(),
     subject_line_control : new FormControl(),
     responsible_user_control : new FormControl()
@@ -47,6 +47,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    this.mice_menu['sex'] = { F: null, M: null, U: null };
     this.allMiceService.getAllMice();
     this.miceSubscription = this.allMiceService.getMiceLoadedListener()
       .subscribe((mice: any) => {
@@ -75,25 +76,41 @@ export class MouseListComponent implements OnInit, OnDestroy {
 
     // initialize all entries into an empty list
     for (const key of keys) {
-      this.mice_menu[key] = [];
+      if (key === 'sex') {
+        this.mice_menu[key] = { F: false, M: false, U: false };
+      } else {
+        this.mice_menu[key] = [];
+      }
     }
 
 
   // find unique entries for each key
   for (const mouse of mice) {
-
     for (const key of keys) {
-      if (!this.mice_menu[key].includes(mouse[key])) {
+      if (key !== 'sex' && !this.mice_menu[key].includes(mouse[key])) {
         this.mice_menu[key].push(mouse[key]);
+      } else if (key === 'sex') {
+        if (Object.keys(this.mice_menu[key]).includes(mouse[key]) && !this.mice_menu[key][mouse[key]]) {
+          this.mice_menu[key][mouse[key]] = true;
+        }
       }
     }
   }
 
     // create formcontrol for item in menus
-    const sex_control_array = <FormArray>this.mouse_filter_form.controls['sex_control'];
-    sex_control_array.controls.length = 0;
-    for (const item of this.mice_menu['sex']) {
-      sex_control_array.push(new FormControl(false));
+    // const sex_control_array = <FormArray>this.mouse_filter_form.controls['sex_control'];
+    // sex_control_array.controls.length = 0;
+    // for (const item of this.mice_menu['sex']) {
+    //   sex_control_array.push(new FormControl(false));
+    // }
+    const genderMenu2ControlMap = { F: 0, M: 1, U: 2 };
+    for (const item in this.mice_menu['sex']) {
+      if (!this.mice_menu['sex'][item]) {
+        this.mouse_filter_form.controls.sex_control['controls'][genderMenu2ControlMap[item]].patchValue(false);
+        this.mouse_filter_form.controls.sex_control['controls'][genderMenu2ControlMap[item]].disable();
+      } else {
+        this.mouse_filter_form.controls.sex_control['controls'][genderMenu2ControlMap[item]].enable();
+      }
     }
 
     // for autocomplete search bar
@@ -212,7 +229,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
   filterRequests(focusedField?: string) {
-    const filterList = Object.entries(this.mouse_filter_form.value);
+    const filterList = Object.entries(this.mouse_filter_form.getRawValue());
     const requestFilter = {};
     filterList.forEach(filter => {
       // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
@@ -221,12 +238,14 @@ export class MouseListComponent implements OnInit, OnDestroy {
         if (filterKey === 'sex' && this.genderSelected(filter[1])) {
           // only accepts single selection - this case the last selection. TODO:coordinate with API for multi-selection
           let requestedGender: string;
+          const requestGenderArray = [];
           for (const index in filter[1]) {
             if (filter[1][index]) {
-              requestedGender = this.mice_menu['sex'][index];
+              requestedGender = Object.keys(this.mice_menu['sex'])[index];
+              requestGenderArray.push(JSON.stringify({ 'sex': requestedGender }));
             }
           }
-          requestFilter[filterKey] = requestedGender;
+          requestFilter['__json'] = '[' + requestGenderArray + ']';
         } else if (filterKey !== 'sex') {
           // making sure gender filter gets removed from the request
 

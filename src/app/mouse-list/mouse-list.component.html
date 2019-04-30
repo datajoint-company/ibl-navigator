@@ -23,7 +23,7 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field class="long">
     <label>Mouse UUID</label>
     <input matInput type="text" name="subject_uuid" formControlName="subject_uuid_control"
       [matAutocomplete]="autoCompSUUID" (focus)="stepBackMenu($event)">
@@ -33,20 +33,12 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field class="short">
     <label>DOB</label>
     <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker" [matDatepickerFilter]="miceBirthdayFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)" placeholder="DOB - i.e. 10/23/2018">
     <mat-datepicker-toggle matSuffix [for]="DOBPicker"></mat-datepicker-toggle>
     <mat-datepicker #DOBPicker></mat-datepicker>
   </mat-form-field>
-
-  <div class="mouse_gender_menu" formArrayName="sex_control">
-    <label (dblclick)="stepBackMenu($event)">Gender</label>
-    <!-- <div *ngFor="let gender of mouse_filter_form.controls.sex_control.controls; let i=index"> -->
-      <mat-checkbox class="mouse_gender_menu_button" [name]="mice_menu.sex[i]" [formControlName]="i" *ngFor="let gender of mouse_filter_form.controls.sex_control.controls; let i=index"
-        [value]="gender.value" (change)="updateMenu()">{{ mice_menu.sex[i] }}</mat-checkbox>
-    <!-- </div> -->
-  </div>
 
   <mat-form-field>
     <label>Line</label>
@@ -65,8 +57,19 @@
       <mat-option *ngFor="let responsible_user of filteredResponsibleUserOptions | async" [value]="responsible_user" (click)="updateMenu()">{{ responsible_user }}</mat-option>
     </mat-autocomplete>
   </mat-form-field>
+
+  <div class="mouse_gender_menu" formArrayName="sex_control">
+    <label (dblclick)="stepBackMenu($event)">Gender</label>
+    <mat-checkbox class="mouse_gender_menu_button" [name]="mice_menu.sex" [formControlName]="i"
+      *ngFor="let gender of mice_menu.sex | keyvalue; let i=index" [value]="gender.key" (change)="updateMenu()">
+      {{ gender.key }}</mat-checkbox>
+  </div>
+
   <div>
     <button mat-raised-button (click)="applyFilter()">Apply Filter</button>
+  </div>
+  <div>
+    <button mat-raised-button (click)="clearFilter()">Reset Filter</button>
   </div>
 
 </form>

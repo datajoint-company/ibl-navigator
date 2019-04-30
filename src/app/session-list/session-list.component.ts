@@ -52,10 +52,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
   pageSize = 25;
   pageSizeOptions: number[] = [10, 25, 50, 100];
 
-  queryValues = {
-    'task_protocol': '_iblrig_tasks_habituationChoiceWorld3.7.6',
-    // '__order': 'session_start_time'
-  };
+  // queryValues = {
+  //   'task_protocol': '_iblrig_tasks_habituationChoiceWorld3.7.6',
+  //   // '__order': 'session_start_time'
+  // };
+
+  genderForm2MenuMap = { F: 0, M: 1, U: 2 };
 
   selectedSession = {};
 
@@ -72,12 +74,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
       .subscribe(params => {
         for (const key in params) {
           const controlName = key + '_control';
-          if (this.session_filter_form.controls[controlName] && controlName !== 'sex_control') {
-            const toPatch = {};
-            toPatch[controlName] = params[key];
-            this.session_filter_form.patchValue(toPatch)
-            // this.session_filter_form.controls[controlName].value = params[key]; //what displays on the filter
-            // this.session_filter_form.value[controlName] = params[key]; // the actual value of the filter
+          if (this.session_filter_form.controls[controlName]) {
+            if (controlName !== 'sex_control') {
+              const toPatch = {};
+              toPatch[controlName] = params[key];
+              this.session_filter_form.patchValue(toPatch)
+            } else {
+              this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+            }
           };
         };
         this.applyFilter();
@@ -123,15 +127,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
 
     // create formcontrol for item in menus
-    const sex_control_array = <FormArray>this.session_filter_form.controls['sex_control'];
+    // const sex_control_array = <FormArray>this.session_filter_form.controls['sex_control'];
 
-    const genderForm2MenuMap = {F: 0, M: 1, U: 2};
+   
     for (const item in this.session_menu['sex']) {
       if (!this.session_menu['sex'][item]) {
-        this.session_filter_form.controls.sex_control['controls'][genderForm2MenuMap[item]].patchValue(false);
-        this.session_filter_form.controls.sex_control['controls'][genderForm2MenuMap[item]].disable();
+        this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[item]].patchValue(false);
+        this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[item]].disable();
       } else {
-        this.session_filter_form.controls.sex_control['controls'][genderForm2MenuMap[item]].enable();
+        this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[item]].enable();
       }
     }
 

@@ -27,14 +27,6 @@
       </mat-autocomplete>
     </mat-form-field> 
 
-    <div class="mouse_gender_menu" formArrayName="sex_control">
-      <label>Gender</label>
-      <mat-checkbox class="mouse_gender_menu_button" [name]="session_menu.sex" [formControlName]="i"
-          *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" 
-          (change)="updateMenu()">{{ sex.key }}
-      </mat-checkbox>
-    </div>
-    
     <mat-form-field>
       <label>Labs</label>
       <input matInput type="text" name="lab_name" formControlName="lab_name_control" [matAutocomplete]="autoCompLN"
@@ -44,6 +36,14 @@
           {{ lab }}</mat-option>
       </mat-autocomplete>
     </mat-form-field>
+
+    <div class="mouse_gender_menu" formArrayName="sex_control">
+      <label>Gender</label>
+      <mat-checkbox class="mouse_gender_menu_button" [name]="session_menu.sex" [formControlName]="i"
+          *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" 
+          (change)="updateMenu()">{{ sex.key }}
+      </mat-checkbox>
+    </div>
     
     <mat-form-field>
       <label>Mouse Nickname</label>

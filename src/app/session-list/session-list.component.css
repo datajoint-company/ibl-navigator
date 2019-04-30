@@ -57,6 +57,12 @@ tr.mat-row:hover {
 button {
     float: left;
     margin-left: 5px;
+    border: 2px solid rgb(101, 152, 184);
+}
+button:hover {
+    border: 2px solid rgb(0, 124, 183);
+    background-color: rgb(0, 124, 183);
+    color: white;
 }
 
 .sessionsList {
