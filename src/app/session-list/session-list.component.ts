@@ -92,6 +92,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.sessionsSubscription = this.allSessionsService.getSessionsLoadedListener()
           .subscribe((sessions: any) => {
             this.allSessions = sessions;
+            this.createMenu(sessions);
           });
   }
 
@@ -250,6 +251,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filterRequests(focusedField?: string) {
     const filterList = Object.entries(this.session_filter_form.getRawValue());
     const requestFilter = {};
+    let requestJSONstring = '';
     filterList.forEach(filter => {
       console.log(filter);
       // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
@@ -272,8 +274,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
             }
           }
           console.log('requestGenderArray is...: ', requestGenderArray);
-          requestFilter['__json'] = '[' + requestGenderArray + ']';
-          // requestFilter[filterKey] = requestedGender;
+          console.log('requestJSONString before adding genderArray is: ', requestJSONstring);
+          if (requestJSONstring.length > 0) {
+            requestJSONstring += ',' + requestGenderArray;
+          } else {
+            requestJSONstring += requestGenderArray;
+          }
+          
+          console.log('requestJSONString after adding genderArray is: ', requestJSONstring);
+          // requestFilter['__json'] = '[' + requestGenderArray + ']';
         } else if (filterKey !== 'sex') {
           // making sure gender filter gets removed from the request
 
@@ -282,9 +291,37 @@ export class SessionListComponent implements OnInit, OnDestroy {
             const mouseDOB = new Date(filter[1].toString());
             console.log(mouseDOB.toISOString());
             requestFilter[filterKey] = mouseDOB.toISOString().split('T')[0];
+          } else if (filterKey === 'session_start_time') {
+
+            const sessionST = new Date(filter[1].toString());
+            const rangeStartTime = '00:00:00';
+            const rangeEndTime = '23:59:59';
+            const startString = sessionST.toISOString().split('T')[0] + 'T' + rangeStartTime;
+            const endString = sessionST.toISOString().split('T')[0] + 'T' + rangeEndTime;
+            const rangeStart = '"' + 'session_start_time>' + '\'' + startString + '\'' + '"';
+            const rangeEnd = '"' + 'session_start_time<' + '\'' + endString + '\'' + '"';
+            console.log('requestJSONString before adding ranges is: ', requestJSONstring);
+            if (requestJSONstring.length > 0) {
+              requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
+            } else {
+              requestJSONstring += rangeStart + ',' + rangeEnd;
+            }
+            console.log('requestJSONString after adding ranges is: ', requestJSONstring);
+
+            // requestFilter[filterKey] = sessionST.toISOString().split('T')[0];
+
           } else {
             requestFilter[filterKey] = filter[1];
           }
+        }
+        // if ((requestGenderArray && requestGenderArray.length > 0) || (rangeStart && rangeStart.length > 0)) {
+        //   console.log('gender or session start time restricted');
+        //   requestFilter['__json'] = '[' + requestGenderArray + rangeStart + ',' + rangeEnd + ']';
+        // }
+
+        if (requestJSONstring.length > 0) {
+          console.log('requestJSONstring is : ', requestJSONstring);
+          requestFilter['__json'] = '[' + requestJSONstring + ']';
         }
       }
     });
