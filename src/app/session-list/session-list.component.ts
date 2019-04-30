@@ -6,8 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
 import { SessionComponent } from './session/session.component';
-import { NullInjector } from '@angular/core/src/di/injector';
-import { reference } from '@angular/core/src/render3';
+
 
 @Component({
   selector: 'app-session-list',
@@ -129,10 +128,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const genderForm2MenuMap = {F: 0, M: 1, U: 2};
     for (const item in this.session_menu['sex']) {
       if (!this.session_menu['sex'][item]) {
-        this.session_filter_form.controls.sex_control.controls[genderForm2MenuMap[item]].patchValue(false);
-        this.session_filter_form.controls.sex_control.controls[genderForm2MenuMap[item]].disable();
+        this.session_filter_form.controls.sex_control['controls'][genderForm2MenuMap[item]].patchValue(false);
+        this.session_filter_form.controls.sex_control['controls'][genderForm2MenuMap[item]].disable();
       } else {
-        this.session_filter_form.controls.sex_control.controls[genderForm2MenuMap[item]].enable();
+        this.session_filter_form.controls.sex_control['controls'][genderForm2MenuMap[item]].enable();
       }
     }
 
@@ -258,15 +257,19 @@ export class SessionListComponent implements OnInit, OnDestroy {
           // only accepts single selection - this case the last selection.
           // TODO:coordinate with API for multi-selection
           let requestedGender: string;
+          const requestGenderArray = [];
           for (const index in filter[1]) {
             if (filter[1][index]) {
               console.log('logging filter[1][', index, ']', filter[1][index]);
               requestedGender = Object.keys(this.session_menu['sex'])[index];
+              console.log('type of JSON.stringify({sex: requestedGender}) is: ', typeof JSON.stringify({ 'sex': requestedGender}));
+              requestGenderArray.push(JSON.stringify({ 'sex': requestedGender}));
               // requestedGender = this.session_menu['sex'][index];
             }
           }
-          console.log('requestedGender is...: ', requestedGender);
-          requestFilter[filterKey] = requestedGender;
+          console.log('requestGenderArray is...: ', requestGenderArray);
+          requestFilter['__json'] = '[' + requestGenderArray + ']';
+          // requestFilter[filterKey] = requestedGender;
         } else if (filterKey !== 'sex') {
           // making sure gender filter gets removed from the request
 
@@ -281,6 +284,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
         }
       }
     });
+    console.log('requestFilter is: ', requestFilter);
     return requestFilter;
   }
 
@@ -325,9 +329,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
         toReset[control] = '';
       } else {
         toReset[control] = [false, false, false];
-        for (const index in this.session_filter_form.controls[control].controls) {
-          this.session_filter_form.controls[control].controls[index].enable();
+        // for (const index in this.session_filter_form.controls[control].controls) {
+        //   this.session_filter_form.controls[control].controls[index].enable();
+        // }
+      
+        for (const index in this.session_filter_form.get(control)['controls']) {
+          this.session_filter_form.get(control).get([index]).enable();
         }
+         
       }
       this.session_filter_form.patchValue(toReset);
       
