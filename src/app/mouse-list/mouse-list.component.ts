@@ -210,8 +210,13 @@ export class MouseListComponent implements OnInit, OnDestroy {
 
   stepBackMenu(event) {
     console.log('detected focus in menu');
-    console.log(event.target.name);
-    const referenceMenuReq = this.filterRequests(event.target.name);
+    let focusOn: string;
+    if (event.checked) {
+      focusOn = 'sex';
+    } else {
+      focusOn = event.target.name;
+    }
+    const referenceMenuReq = this.filterRequests(focusOn);
     if (Object.entries(referenceMenuReq).length > 0) {
       this.allMiceService.retrieveMice(referenceMenuReq);
       this.allMiceService.getRequestedMiceLoadedListener()
@@ -245,7 +250,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
               requestGenderArray.push(JSON.stringify({ 'sex': requestedGender }));
             }
           }
-          requestFilter['__json'] = '[' + requestGenderArray + ']';
+          requestFilter['__json'] = '[[' + requestGenderArray + ']]';
         } else if (filterKey !== 'sex') {
           // making sure gender filter gets removed from the request
 

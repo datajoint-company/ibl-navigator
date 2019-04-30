@@ -59,9 +59,9 @@
   </mat-form-field>
 
   <div class="mouse_gender_menu" formArrayName="sex_control">
-    <label (dblclick)="stepBackMenu($event)">Gender</label>
+    <label>Gender</label>
     <mat-checkbox class="mouse_gender_menu_button" [name]="mice_menu.sex" [formControlName]="i"
-      *ngFor="let gender of mice_menu.sex | keyvalue; let i=index" [value]="gender.key" (change)="updateMenu()">
+      *ngFor="let gender of mice_menu.sex | keyvalue; let i=index" [value]="gender.key" (change)="stepBackMenu($event)">
       {{ gender.key }}</mat-checkbox>
   </div>
 

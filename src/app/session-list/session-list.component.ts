@@ -268,7 +268,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
             if (filter[1][index]) {
               console.log('logging filter[1][', index, ']', filter[1][index]);
               requestedGender = Object.keys(this.session_menu['sex'])[index];
-              console.log('type of JSON.stringify({sex: requestedGender}) is: ', typeof JSON.stringify({ 'sex': requestedGender}));
+              // console.log('type of JSON.stringify({sex: requestedGender}) is: ', typeof JSON.stringify({ 'sex': requestedGender}));
               requestGenderArray.push(JSON.stringify({ 'sex': requestedGender}));
               // requestedGender = this.session_menu['sex'][index];
             }
@@ -276,9 +276,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
           console.log('requestGenderArray is...: ', requestGenderArray);
           console.log('requestJSONString before adding genderArray is: ', requestJSONstring);
           if (requestJSONstring.length > 0) {
-            requestJSONstring += ',' + requestGenderArray;
+            requestJSONstring += ',' + '[' + requestGenderArray + ']';
           } else {
-            requestJSONstring += requestGenderArray;
+            requestJSONstring += '[' + requestGenderArray + ']';
           }
           
           console.log('requestJSONString after adding genderArray is: ', requestJSONstring);
