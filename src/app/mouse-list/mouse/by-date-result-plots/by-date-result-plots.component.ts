@@ -12,6 +12,40 @@ declare var Plotly: any;
 export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   byDateResultPlotsAreAvailable: boolean;
   loading = true;
+  plotConfig = {
+    responsive: true,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
   recent3dates = [];
   datePsychPlotList = [];
   dateRTCPlotList = [];
@@ -67,7 +101,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             const datePsychPlot = plot['plotting_data'];
             datePsychPlot['layout']['width'] = '500';
             datePsychPlot['layout']['height'] = '350';
-            Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout'], { responsive: true} );
+            Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout'], this.plotConfig );
           });
           this.recent3datesLoaded.next(this.recent3dates);
         } else {
@@ -99,12 +133,12 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   const dateRTCPlot = plot['plotting_data'];
                   dateRTCPlot['layout']['width'] = '';
                   dateRTCPlot['layout']['height'] = '350';
-                  Plotly.newPlot(elementList[idx].elRTContrast, dateRTCPlot['data'], dateRTCPlot['layout'], { responsive: true } );
+                  Plotly.newPlot(elementList[idx].elRTContrast, dateRTCPlot['data'], dateRTCPlot['layout'], this.plotConfig );
                 }
               });
               if (!RTCmatchFound) {
                 Plotly.newPlot(elementList[idx].elRTContrast, [],
-                  { title: { text: 'Reaction time - contrast plot unavailable' }, width: '', height: '350' }, { responsive: true });
+                  { title: { text: 'Reaction time - contrast plot unavailable' }, width: '', height: '350' }, this.plotConfig);
               }
             });
           } else {
@@ -130,14 +164,14 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   dateRTTPlot['layout']['width'] = '500';
                   dateRTTPlot['layout']['height'] = '350';
                   this.loading = false;
-                  Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], { responsive: true } );
+                  Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], this.plotConfig );
                 }
               });
               console.log('match has been found:', RTTNmatchFound, ' at round', idx);
               if (!RTTNmatchFound) {
                 this.loading = false;
                 Plotly.newPlot(elementList[idx].elRTTrialNum, [],
-                  { title: { text: 'Reaction time - trial number plot unavailable' }, width: '', height: '350' }, { responsive: true });
+                  { title: { text: 'Reaction time - trial number plot unavailable' }, width: '', height: '350' }, this.plotConfig );
               }
             });
           } else {

@@ -36,9 +36,7 @@ label {
     /* font-family: 'Roboto Condensed', sans-serif; */
 }
 
-mat-form-field input {
-    /* font-family: 'Roboto Condensed', sans-serif; */
-}
+
 
 td.mat-cell, 
 td.mat-footer-cell, 
@@ -50,6 +48,10 @@ mat-form-field {
     margin: 10px;
     width: 220px;
     float: left;
+}
+
+mat-form-field input {
+    /* font-family: 'Roboto Condensed', sans-serif; */
 }
 
 mat-form-field.long {

@@ -11,6 +11,41 @@ declare var Plotly: any;
 })
 export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   PRTPlotIsAvailable: boolean;
+  plotConfig = {
+    responsive: true,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
+
   private PRTPlotSubscription: Subscription;
   @Input('mouseInfo') mouseInfo: Object;
   @Output() PRPPlotAvailability: EventEmitter<any> = new EventEmitter();
@@ -29,7 +64,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           performanceRTplot['layout']['width'] = '';
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
-          Plotly.newPlot(element, performanceRTplot['data'], performanceRTplot['layout'], {responsive: true});
+          Plotly.newPlot(element, performanceRTplot['data'], performanceRTplot['layout'], this.plotConfig);
         } else {
           console.log('performance reaction time plot not available');
           this.PRTPlotIsAvailable = false;

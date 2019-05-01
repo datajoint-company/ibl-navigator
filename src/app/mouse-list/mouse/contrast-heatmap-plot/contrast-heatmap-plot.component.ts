@@ -10,6 +10,41 @@ declare var Plotly: any;
 })
 export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   contrastHeatmapPlotIsAvailable: boolean;
+  plotConfig = {
+    responsive: true,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
+
   private contrastHeatmapPlotSubscription: Subscription;
 
   @Output() contrastHeatmapPlotAvailability: EventEmitter<any> = new EventEmitter();
@@ -28,7 +63,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           contrastHeatmapPlot['layout']['width'] = '';
           this.contrastHeatmapPlotIsAvailable = true;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
-          Plotly.newPlot(element, contrastHeatmapPlot['data'], contrastHeatmapPlot['layout'], { responsive: true });
+          Plotly.newPlot(element, contrastHeatmapPlot['data'], contrastHeatmapPlot['layout'], this.plotConfig);
         } else {
           console.log('contrast heatmap plot unavailable');
           this.contrastHeatmapPlotIsAvailable = false;

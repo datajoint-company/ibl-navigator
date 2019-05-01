@@ -11,6 +11,41 @@ declare var Plotly: any;
 })
 export class FitParPlotsComponent implements OnInit, OnDestroy {
   fitParPlotsAreAvailable: boolean;
+  plotConfig = {
+    responsive: true,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
+
   private fitParPlotsSubscription: Subscription;
   @Output() fitParPlotsAvailability: EventEmitter<any> = new EventEmitter();
   @Input('mouseInfo') mouseInfo: Object;
@@ -32,7 +67,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           fitParPlots['layout']['height'] = 1200;
           this.fitParPlotsAreAvailable = true;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
-          Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], { responsive: true });
+          Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], this.plotConfig);
         } else {
           this.fitParPlotsAreAvailable = false;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
