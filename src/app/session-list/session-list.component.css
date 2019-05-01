@@ -12,10 +12,11 @@ form {
     border-bottom: 3px solid rgb(209, 209, 209);
     display: inline-block;
     font-size: 80%;
+    width: 100%;
 } 
 
 .filters {
-    float: left
+    float: left;
 }
 
 td.mat-cell, 

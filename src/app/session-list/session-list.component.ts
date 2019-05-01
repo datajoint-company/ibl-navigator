@@ -18,7 +18,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
     task_protocol_control : new FormControl(),
     session_uuid_control : new FormControl(),
     session_start_time_control : new FormControl(),
-
+    session_range_filter: new FormGroup({
+      session_range_start_control: new FormControl(),
+      session_range_end_control: new FormControl()
+    }),
     lab_name_control: new FormControl(),
     subject_nickname_control: new FormControl(),
     subject_uuid_control: new FormControl(),
@@ -34,6 +37,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   miceBirthdayFilter: Function;
   sessionMinDate: Date;
   sessionMaxDate: Date;
+  dateRangeToggle: boolean;
   filteredTaskProtocolOptions: Observable<string[]>;
   filteredSessionUuidOptions: Observable<string[]>;
   filteredLabNameOptions: Observable<string[]>;
@@ -250,6 +254,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   filterRequests(focusedField?: string) {
     const filterList = Object.entries(this.session_filter_form.getRawValue());
+    console.log('filterList is...');
+    console.log(filterList);
     const requestFilter = {};
     let requestJSONstring = '';
     filterList.forEach(filter => {
@@ -274,7 +280,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
             }
           }
           console.log('requestGenderArray is...: ', requestGenderArray);
-          console.log('requestJSONString before adding genderArray is: ', requestJSONstring);
           if (requestJSONstring.length > 0) {
             requestJSONstring += ',' + '[' + requestGenderArray + ']';
           } else {
@@ -292,24 +297,43 @@ export class SessionListComponent implements OnInit, OnDestroy {
             console.log(mouseDOB.toISOString());
             requestFilter[filterKey] = mouseDOB.toISOString().split('T')[0];
           } else if (filterKey === 'session_start_time') {
-
-            const sessionST = new Date(filter[1].toString());
-            const rangeStartTime = '00:00:00';
-            const rangeEndTime = '23:59:59';
-            const startString = sessionST.toISOString().split('T')[0] + 'T' + rangeStartTime;
-            const endString = sessionST.toISOString().split('T')[0] + 'T' + rangeEndTime;
-            const rangeStart = '"' + 'session_start_time>' + '\'' + startString + '\'' + '"';
-            const rangeEnd = '"' + 'session_start_time<' + '\'' + endString + '\'' + '"';
-            console.log('requestJSONString before adding ranges is: ', requestJSONstring);
-            if (requestJSONstring.length > 0) {
-              requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
-            } else {
-              requestJSONstring += rangeStart + ',' + rangeEnd;
-            }
-            console.log('requestJSONString after adding ranges is: ', requestJSONstring);
-
-            // requestFilter[filterKey] = sessionST.toISOString().split('T')[0];
-
+              if (!this.dateRangeToggle) {
+                const sessionST = new Date(filter[1].toString());
+                const rangeStartTime = '00:00:00';
+                const rangeEndTime = '23:59:59';
+                const startString = sessionST.toISOString().split('T')[0] + 'T' + rangeStartTime;
+                const endString = sessionST.toISOString().split('T')[0] + 'T' + rangeEndTime;
+                const rangeStart = '"' + 'session_start_time>' + '\'' + startString + '\'' + '"';
+                const rangeEnd = '"' + 'session_start_time<' + '\'' + endString + '\'' + '"';
+                console.log('requestJSONString before adding ranges is: ', requestJSONstring);
+                if (requestJSONstring.length > 0) {
+                  requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
+                } else {
+                  requestJSONstring += rangeStart + ',' + rangeEnd;
+                }
+                console.log('requestJSONString after adding ranges is: ', requestJSONstring);
+              }
+          } else if (filterKey === 'session_range_filter') {
+            console.log('inside from/to selector - filterKey is: ', filterKey);
+            // filter = ["session_range_filter", { session_range_start_control: null, session_range_end_control: null }]
+            if (this.dateRangeToggle && filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
+                console.log('range requested!');
+                const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
+                const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
+                const rangeStartTime = '00:00:00';
+                const rangeEndTime = '23:59:59';
+                const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
+                const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
+                const rangeStart = '"' + 'session_start_time>' + '\'' + startString + '\'' + '"';
+                const rangeEnd = '"' + 'session_start_time<' + '\'' + endString + '\'' + '"';
+                console.log('requestJSONString before adding ranges is: ', requestJSONstring);
+                if (requestJSONstring.length > 0) {
+                  requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
+                } else {
+                  requestJSONstring += rangeStart + ',' + rangeEnd;
+                }
+                console.log('requestJSONString after adding ranges is: ', requestJSONstring);
+              }
           } else {
             requestFilter[filterKey] = filter[1];
           }
@@ -366,18 +390,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
       console.log(control);
       const toReset = {}
       
-      if (control !== 'sex_control') {
-        toReset[control] = '';
-      } else {
+      if (control === 'session_range_filter') {
+        toReset[control] = { 'session_range_start_control': null, 'session_range_end_control': null}
+        
+      } else if (control === 'sex_control') {
         toReset[control] = [false, false, false];
-        // for (const index in this.session_filter_form.controls[control].controls) {
-        //   this.session_filter_form.controls[control].controls[index].enable();
-        // }
-      
         for (const index in this.session_filter_form.get(control)['controls']) {
           this.session_filter_form.get(control).get([index]).enable();
         }
-         
+      } else {
+        toReset[control] = '';
       }
       this.session_filter_form.patchValue(toReset);
       
@@ -405,6 +427,5 @@ export class SessionListComponent implements OnInit, OnDestroy {
     console.log(session);
     this.selectedSession = session;
   }
-
 
 }
