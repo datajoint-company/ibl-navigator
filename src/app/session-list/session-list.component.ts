@@ -315,7 +315,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
               }
           } else if (filterKey === 'session_range_filter') {
             console.log('inside from/to selector - filterKey is: ', filterKey);
-            // filter = ["session_range_filter", { session_range_start_control: null, session_range_end_control: null }]
+            //// Note: filter =
+            ////      ["session_range_filter", { session_range_start_control: null, session_range_end_control: null }]
             if (this.dateRangeToggle && filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
                 console.log('range requested!');
                 const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
@@ -326,14 +327,34 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
                 const rangeStart = '"' + 'session_start_time>' + '\'' + startString + '\'' + '"';
                 const rangeEnd = '"' + 'session_start_time<' + '\'' + endString + '\'' + '"';
-                console.log('requestJSONString before adding ranges is: ', requestJSONstring);
                 if (requestJSONstring.length > 0) {
                   requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
                 } else {
                   requestJSONstring += rangeStart + ',' + rangeEnd;
                 }
-                console.log('requestJSONString after adding ranges is: ', requestJSONstring);
-              }
+            } else if (this.dateRangeToggle && filter[1]['session_range_start_control'] && !filter[1]['session_range_end_control']) {
+                console.log('all session from ', filter[1]['session_range_start_control'], ' requested!');
+                const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
+                const rangeStartTime = '00:00:00';
+                const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
+                const rangeStart = '"' + 'session_start_time>' + '\'' + startString + '\'' + '"';
+                if (requestJSONstring.length > 0) {
+                  requestJSONstring += ',' + rangeStart;
+                } else {
+                  requestJSONstring += rangeStart;
+                }
+            } else if (this.dateRangeToggle && !filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
+                console.log('all session up to ', filter[1]['session_range_end_control'], ' requested!');
+                const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
+                const rangeEndTime = '23:59:59';
+                const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
+                const rangeEnd = '"' + 'session_start_time<' + '\'' + endString + '\'' + '"';
+                if (requestJSONstring.length > 0) {
+                  requestJSONstring += ',' + rangeEnd;
+                } else {
+                  requestJSONstring += rangeEnd;
+                }
+            }
           } else {
             requestFilter[filterKey] = filter[1];
           }
