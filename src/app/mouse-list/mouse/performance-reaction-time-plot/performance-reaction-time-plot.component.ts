@@ -58,8 +58,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
     this.PRTPlotSubscription = this.mousePlotsService.getPerformanceRTPlotLoadedListener()
       .subscribe((plotInfo) => {
         if (plotInfo && plotInfo[0]) {
-          console.log('performance reaction time plot retrieved');
-          const performanceRTplot = plotInfo[0]['plotting_data'];
+          const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
+          const performanceRTplot = toPlot['plotting_data'];
           performanceRTplot['layout']['height'] = '';
           performanceRTplot['layout']['width'] = '';
           this.PRTPlotIsAvailable = true;

@@ -75,10 +75,11 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
     const subjectInfo = { 'subject_uuid': this.mouseInfo['subject_uuid'] };
     this.mousePlotsService.getWaterWeightPlot(subjectInfo);
     this.mouseWaterWeightSubscription = this.mousePlotsService.getWaterWeightPlotLoadedListener()
-      .subscribe((plotsInfo: any) => {
-        if (plotsInfo && plotsInfo[0]) {
+      .subscribe((plotInfo: any) => {
+        if (plotInfo && plotInfo[0]) {
+          const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           console.log('water weight plot retrieved');
-          const WIWplot = plotsInfo[0]['plotting_data'];
+          const WIWplot = toPlot['plotting_data'];
           WIWplot['layout']['height'] = '';
           WIWplot['layout']['width'] = '';
           this.WIWPlotIsAvailable = true;

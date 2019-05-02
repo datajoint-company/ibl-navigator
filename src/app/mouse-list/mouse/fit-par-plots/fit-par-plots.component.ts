@@ -57,8 +57,9 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     this.fitParPlotsSubscription = this.mousePlotsService.getFitParPlotsLoadedListener()
     .subscribe((plotsInfo: any) => {
         if (plotsInfo && plotsInfo[0]) {
+          const toPlot = plotsInfo[Object.entries(plotsInfo).length - 1];
           console.log('fit parameters plots retrieved');
-          const fitParPlots = plotsInfo[0]['plotting_data'];
+          const fitParPlots = toPlot['plotting_data'];
           // fitParPlots['layout']['yaxis']['title']['text'] = '<i>Lapse High (\u03BB)</i>'; // lambda
           // fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (\u03B3)</i>'; // gamma
           // fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';

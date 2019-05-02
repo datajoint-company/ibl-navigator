@@ -57,10 +57,10 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     this.mousePlotsService.getTCSessionDurationPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
     this.TCSDPlotSubscription = this.mousePlotsService.getTCSessionDurationPlotLoadedListener()
       .subscribe((plotInfo: any) => {
-        // one plot per subject with daily updated plot points
+        // getting the newest plot entry
         if (plotInfo && plotInfo[0]) {
-          console.log('trial counts session duration plot retrieved');
-          const TCSDplot = plotInfo[0]['plotting_data'];
+          const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
+          const TCSDplot = toPlot['plotting_data'];
           TCSDplot['layout']['height'] = '';
           TCSDplot['layout']['width'] = '';
           this.TCSDPlotIsAvailable = true;

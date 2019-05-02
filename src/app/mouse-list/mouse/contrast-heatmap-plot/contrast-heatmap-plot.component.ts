@@ -58,7 +58,8 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
     this.contrastHeatmapPlotSubscription = this.mousePlotsService.getContrastHeatmapPlotLoadedListener()
       .subscribe((plotInfo) => {
         if (plotInfo && plotInfo[0]) {
-          const contrastHeatmapPlot = plotInfo[0]['plotting_data'];
+          const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
+          const contrastHeatmapPlot = toPlot['plotting_data'];
           contrastHeatmapPlot['layout']['height'] = '';
           contrastHeatmapPlot['layout']['width'] = '';
           this.contrastHeatmapPlotIsAvailable = true;
