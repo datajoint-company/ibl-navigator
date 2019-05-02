@@ -114,15 +114,9 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns; let mouse"
     routerLink="/mouse/{{mouse?.subject_uuid}}"></tr>
 </table>
+<div class="loading-icon" *ngIf="loading">
+  <img src="assets/images/loading_icon.gif">
+</div>
 <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
 </div>
-<!-- <hr>
-<div *ngFor="let mouse of mice">
-  <a routerLink="/mouse/{{mouse['subject_uuid']}}">
-    <mat-card class="mouse-card">
-      <mat-card-title>{{ mouse.subject_nickname }}</mat-card-title>
-      <mat-card-subtitle>{{ mouse.lab_name }}</mat-card-subtitle>
-      
-    </mat-card>
-  </a>
-</div> -->
+

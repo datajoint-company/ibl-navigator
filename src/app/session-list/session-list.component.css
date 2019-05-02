@@ -36,7 +36,13 @@ label {
     /* font-family: 'Roboto Condensed', sans-serif; */
 }
 
+.loading-icon {
+    text-align: center;
+}
 
+.loading-icon img {
+    width: 100px;
+}
 
 td.mat-cell, 
 td.mat-footer-cell, 
@@ -93,6 +99,7 @@ button:hover {
     display: flex;
     flex-direction: column;
 };
+
 
 
 

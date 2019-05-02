@@ -20,6 +20,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     subject_line_control : new FormControl(),
     responsible_user_control : new FormControl()
   });
+  loading = true;
   mice;
   allMice;
   miceBirthdayFilter: Function;
@@ -51,6 +52,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.allMiceService.getAllMice();
     this.miceSubscription = this.allMiceService.getMiceLoadedListener()
       .subscribe((mice: any) => {
+        this.loading = false;
         this.mice = mice;
         this.allMice = mice;
         this.dataSource = new MatTableDataSource(mice);
@@ -179,12 +181,13 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
+    this.loading = true;
     const request = this.filterRequests();
-
     if (Object.entries(request).length > 0) {
       this.allMiceService.retrieveMice(request);
       this.allMiceService.getRequestedMiceLoadedListener()
         .subscribe((mice: any) => {
+          this.loading = false;
           this.mice = mice;
           this.dataSource = new MatTableDataSource(this.mice);
           this.dataSource.sort = this.sort;

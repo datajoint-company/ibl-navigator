@@ -195,8 +195,10 @@
   
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns; let session" routerLink="/session/{{session?.session_uuid}}"></tr>
-
 </table>
+<div class="loading-icon" *ngIf="loading">
+  <img src="assets/images/loading_icon.gif">
+</div>
 <mat-paginator [pageSize]="pageSize"
             [pageSizeOptions]="pageSizeOptions"
             showFirstLastButtons></mat-paginator>

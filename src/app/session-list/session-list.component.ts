@@ -30,7 +30,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     subject_line_control: new FormControl(),
     responsible_user_control: new FormControl()
   });
-
+  loading = true;
   sessions;
   allSessions;
   sessionDateFilter: Function;
@@ -72,6 +72,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    this.loading = true;
     console.log('onInit');
     this.session_menu['sex'] = { F: null, M: null, U: null };
     this.route.queryParams
@@ -375,6 +376,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
+    this.loading = true;
     this.sessions = [];
     const request = this.filterRequests();
     request['__order'] = 'session_start_time';
@@ -382,6 +384,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.allSessionsService.retrieveSessions(request);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
+          this.loading = false;
           sessions.reverse();
           this.sessions = sessions;
           this.dataSource = new MatTableDataSource(this.sessions);
@@ -397,6 +400,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.allSessionsService.getAllSessions();
     this.allSessionsService.getSessionsLoadedListener()
       .subscribe((sessions: any) => {
+        this.loading = false;
         sessions.reverse();
         this.sessions = sessions;
         this.dataSource = new MatTableDataSource(this.sessions);
