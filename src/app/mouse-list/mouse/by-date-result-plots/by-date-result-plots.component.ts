@@ -11,7 +11,7 @@ declare var Plotly: any;
 })
 export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   byDateResultPlotsAreAvailable: boolean;
-  loading = true;
+  loadingPlots = [true, true, true, true, true, true, true, true, true];
   plotConfig = {
     responsive: true,
     showLink: false,
@@ -101,11 +101,12 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             const datePsychPlot = plot['plotting_data'];
             datePsychPlot['layout']['width'] = '500';
             datePsychPlot['layout']['height'] = '350';
+            this.loadingPlots[index] = false;
             Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout'], this.plotConfig );
           });
           this.recent3datesLoaded.next(this.recent3dates);
         } else {
-          this.loading = false;
+          this.loadingPlots = [false, false, false, false, false, false, false, false, false];
           this.byDateResultPlotsAreAvailable = false;
           this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           console.log('date psychometric curve unavailable');
@@ -127,7 +128,9 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               let RTCmatchFound = false;
               console.log(date);
               recent3.forEach((plot, index) => {
+                this.loadingPlots[3 + index] = false;
                 if (plot['session_date'] === date) {
+
                   RTCmatchFound = true;
                   console.log('session date match in contrast!!', plot['session_date'], 'at index', index);
                   const dateRTCPlot = plot['plotting_data'];
@@ -155,6 +158,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             this.recent3dates.forEach((date, idx) => {
               let RTTNmatchFound = false;
               recent3.forEach((plot, index) => {
+                this.loadingPlots[6 + index] = false;
                 console.log('evaluating TrialNum plot:', plot);
                 console.log('date:', date, 'idx:', idx);
                 if (plot['session_date'] === date) {
@@ -163,19 +167,22 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   const dateRTTPlot = plot['plotting_data'];
                   dateRTTPlot['layout']['width'] = '500';
                   dateRTTPlot['layout']['height'] = '350';
-                  this.loading = false;
                   Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], this.plotConfig );
                 }
               });
               console.log('match has been found:', RTTNmatchFound, ' at round', idx);
               if (!RTTNmatchFound) {
-                this.loading = false;
+                this.loadingPlots[3] = false;
+                this.loadingPlots[4] = false;
+                this.loadingPlots[5] = false;
                 Plotly.newPlot(elementList[idx].elRTTrialNum, [],
                   { title: { text: 'Reaction time - trial number plot unavailable' }, width: '', height: '350' }, this.plotConfig );
               }
             });
           } else {
-            this.loading = false;
+            this.loadingPlots[5] = false;
+            this.loadingPlots[6] = false;
+            this.loadingPlots[7] = false;
             console.log('date reaction time trial number plot unavailable');
           }
         });

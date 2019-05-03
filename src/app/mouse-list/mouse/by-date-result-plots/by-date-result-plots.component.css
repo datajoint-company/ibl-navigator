@@ -1,16 +1,31 @@
 /* testing purpose - text list of plots */
 .showListofPlots {
-    display: inline-flex;
+  display: inline-flex;
 }
 .byDatePlotColumn {
-    text-align: center;
+  text-align: center;
 }
 
 /* setting the size of table by screen size */
 .byDatePlotsTable {
-    text-align: center;
+  text-align: center;
 }
 
+.loading-icon-small {
+  width: 80px;
+  z-index: 1003; 
+  position: absolute; 
+  margin-top: -225px; 
+  transform: translateX(-50%);
+}
+
+.loading-overlay-small {
+  z-index: 1002; 
+  position: relative; 
+  width: 100%;
+  height: 350px;
+  background-color: rgba(255, 255, 255, 0.7)
+}
 /* XS (600px and down) */
 /* @media only screen and (max-width: 600px) {...}  */
 

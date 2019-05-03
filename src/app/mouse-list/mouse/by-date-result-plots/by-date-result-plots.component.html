@@ -1,6 +1,4 @@
 <h6>Most Recent Result Plots</h6>
-<img style="position: absolute; z-index: 100; margin-bottom: 10px; margin-left: 50%; transform: translateX(-50%);" *ngIf="loading"
-  src="assets/images/loading_icon.gif" width="180px">
 <div class="table-container">
 <table class="table byDatePlotsTable col-12 table-bordered">
   <tr>
@@ -9,30 +7,70 @@
     <th>{{ recent3dates[2] }}</th>
   </tr>
   <tr>
-    <td #datePsychCurvePlot1></td>
-    <td #datePsychCurvePlot2></td>
-    <td #datePsychCurvePlot3></td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[0]"></div>
+      <div #datePsychCurvePlot1>
+        <img class="loading-icon-small" *ngIf="loadingPlots[0]"
+          src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[1]"></div>
+      <div #datePsychCurvePlot2>
+        <img class="loading-icon-small" *ngIf="loadingPlots[1]" src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[2]"></div>
+      <div #datePsychCurvePlot3>
+        <img class="loading-icon-small" *ngIf="loadingPlots[2]" src="assets/images/loading_icon.gif">
+      </div>
+    </td>
   </tr>
   <tr>
     <td>
-      <div #dateRTContrastPlot1></div>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[3]"></div>
+      <div #dateRTContrastPlot1>
+        <img class="loading-icon-small" *ngIf="loadingPlots[3]"
+          src="assets/images/loading_icon.gif">
+      </div>
     </td>
     <td>
-      <div #dateRTContrastPlot2></div>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[4]"></div>
+      <div #dateRTContrastPlot2>
+        <img class="loading-icon-small" *ngIf="loadingPlots[4]"
+          src="assets/images/loading_icon.gif">
+      </div>
     </td>
     <td>
-      <div #dateRTContrastPlot3></div>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[5]"></div>
+      <div #dateRTContrastPlot3>
+        <img class="loading-icon-small" *ngIf="loadingPlots[5]"
+          src="assets/images/loading_icon.gif">
+      </div>
     </td>
   </tr>
   <tr>
     <td>
-      <div #dateRTTrialNumPlot1></div>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[6]"></div>
+      <div #dateRTTrialNumPlot1>
+        <img class="loading-icon-small" *ngIf="loadingPlots[6]"
+          src="assets/images/loading_icon.gif">
+      </div>
     </td>
     <td>
-      <div #dateRTTrialNumPlot2></div>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[7]"></div>
+      <div #dateRTTrialNumPlot2>
+        <img class="loading-icon-small" *ngIf="loadingPlots[7]"
+          src="assets/images/loading_icon.gif">
+      </div>
     </td>
     <td>
-      <div #dateRTTrialNumPlot3></div>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[8]"></div>
+      <div #dateRTTrialNumPlot3> 
+        <img class="loading-icon-small" *ngIf="loadingPlots[8]"
+          src="assets/images/loading_icon.gif">
+      </div>
     </td>
   </tr>
 </table>
