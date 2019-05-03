@@ -1,5 +1,9 @@
 <div class="mouse-info-container">
-<h5>Mouse <{{ mouse?.subject_nickname }}> Info</h5>
+  <div class="mouse-title">
+    <h5>Mouse <{{ mouse?.subject_nickname }}> Info</h5>
+    <button routerLink="/sessions" [queryParams]="mouse" mat-raised-button (click)="getSessions(mouse)">
+      See Sessions</button>
+    </div>
 <div class="row mouse-info-table">
   <table class="table col-lg-4 col-sm-6 col-xs-12 table-striped table-bordered table-sm">
     <tr>
@@ -50,6 +54,7 @@
     </tr>
   </table>
 </div>
+</div>
 <hr>
 <h5>Mouse Plots</h5>
 <div *ngIf="mouse">
@@ -73,4 +78,3 @@
 
 <!-- <app-session-list *ngIf="mouse" [preRestriction]="mouse"></app-session-list> -->
 
-</div>  

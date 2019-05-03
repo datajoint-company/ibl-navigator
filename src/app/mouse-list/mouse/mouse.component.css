@@ -2,13 +2,19 @@
     padding-top: 20px;
 }
 
+.mouse-title button {
+    margin-left: 1%;
+}
+
 h5 {
+    display: inline-block;
     font-weight: 300;
 }
 
 .mouse-info-table {
     font-size: 85%;
     margin-left: 1%;
+    margin-top: 1%;
 }
 
 .mouse-info-table table {
@@ -40,6 +46,8 @@ h5 {
     margin-left: 50%;
     transform: translateX(-50%);
 }
-.fetch-sessions button:hover {
+.fetch-sessions button:hover, 
+.mouse-title button:hover {
     background-color: rgb(241, 240, 240);
 }
+
