@@ -22,26 +22,18 @@ form {
     margin-top: -20px;
 }
 
-
-
-
-
-
 .filters {
-    /* float: left; */
     display: flex;
     flex-direction: column;
 }
 
 .form-section {
-    /* display: inline-block; */
     width: 100%;
 }
 
-
 .session-date-filter {
     float: left;
-    width: 40%;
+    width: 440px;
     margin-top: 9px;
     display: inline-flex;
 }
@@ -69,8 +61,6 @@ form {
     transform: translateY(-25%);
 }
 
-
-
 label {
     font-weight: 500;
     /* font-family: 'Roboto Condensed', sans-serif; */
@@ -84,6 +74,10 @@ label {
     width: 100px;
 }
 
+.table-container {
+    width: 100%;
+    overflow-x: scroll;
+}
 td.mat-cell, 
 td.mat-footer-cell, 
 th.mat-header-cell {
@@ -109,7 +103,6 @@ mat-form-field.short {
 }
 
 
-
 tr.mat-row {
     /* border-bottom: 1px solid rgba(0,0,0,.12); */
 }
@@ -132,15 +125,15 @@ button:hover {
 
 .mouse_gender_filter {
     padding-top: 12px;
-    padding-bottom: 3px;
+    padding-bottom: 2px;
     margin-top: 11px;
     margin-left: 10px;
+    margin-bottom: 8px;
     width: 150px;
     float: left;
-    
 }
 mat-checkbox.mouse_gender_menu_chbox {
-    margin-left: 12px;
+    margin-right: 12px;
 
 }
 .mouse_gender_menu{
@@ -148,8 +141,58 @@ mat-checkbox.mouse_gender_menu_chbox {
     flex-direction: row;
 };
 
-/* note - screenwidth 1632 - 1823 stacks the fields funny */
+/* for different screen sizes */
+/* XS and S (768px and down) */
+/* @media only screen and (max-width: 768px) {...}  */
+
+/* M (768px and up) */
+@media only screen and (min-width: 768px) {
+ 
+} 
+
+/* L (992px and up) */
+@media only screen and (min-width: 992px) {
+
+} 
+
+/* XL (1200px and up) */
+@media only screen and (min-width: 1200px) {
+}
+
+@media only screen and (max-width: 1383px) {
+    table {
+        overflow-x: scroll;
+    }
+}
+
+/* XXL (1600px and up) */
+@media only screen and (min-width: 1600px) {
+}
+/* note - to make sure the filter folds smoothly without getting stuck */
+/* problem folding areas */
+/* 1056px-1091px and 1632px-1822px  and  1824px-2111px  */
+@media only screen and (min-width: 1824px) and (max-width: 2111px) {
+    .mouse_gender_filter {
+        margin-bottom: 0px;
+    }
+}
+/* 1536px is where the gender menu drops to the line below */
+@media only screen and (min-width: 1536px) and (max-width: 1822px) {
+    .mouse_gender_filter {
+        margin-bottom: 20px;
+    }
+}
+/* 960px is where the gender menu jumps to the line above */
+@media only screen and (min-width: 960px) and (max-width: 1091px) {
+    .mouse_gender_filter {
+        margin-bottom: 20px;
+    }
+}
 
 
+/* XXXL (2200px and up) */
+@media only screen and (min-width: 2200px) {
+
+}
 
 

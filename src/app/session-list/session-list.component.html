@@ -140,7 +140,7 @@
   </div>
 </form>
 
-
+<div class="table-container">
 <table mat-table class="col-12" [dataSource]="dataSource" matSort>
 
   <ng-container matColumnDef="lab_name">
@@ -196,6 +196,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns; let session" routerLink="/session/{{session?.session_uuid}}"></tr>
 </table>
+</div>
 <div class="loading-icon" *ngIf="loading">
   <img src="assets/images/loading_icon.gif">
 </div>
