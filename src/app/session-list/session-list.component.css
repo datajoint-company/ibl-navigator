@@ -15,6 +15,18 @@ form {
     width: 100%;
 } 
 
+.mat-datepicker-toggle{
+    position:absolute;
+    font-size: 3em;
+    margin-left: -50px;
+    margin-top: -20px;
+}
+
+
+
+
+
+
 .filters {
     /* float: left; */
     display: flex;
@@ -137,12 +149,6 @@ mat-checkbox.mouse_gender_menu_chbox {
 };
 
 /* note - screenwidth 1632 - 1823 stacks the fields funny */
-
-
-
-
-
-
 
 
 
