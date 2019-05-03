@@ -15,6 +15,12 @@ form {
     width: 100%;
 } 
 
+label {
+    font-weight: 500;
+}
+
+
+
 mat-form-field {
     width: 220px;
     float:left;
@@ -41,6 +47,21 @@ button.mat-raised-button:hover {
     color: white;
 }
 
+mat-checkbox.mouse_gender_menu_button {
+    margin-left: 5px;
+}
+
+.mouse_gender_menu{
+    display: flex;
+    flex-direction: column;
+};
+
+
+tr.mat-row:hover {
+    background-color: rgba(0, 83, 145, .05);
+    cursor: pointer;
+}
+
 .loading-icon {
     text-align: center;
 }
@@ -49,15 +70,7 @@ button.mat-raised-button:hover {
     width: 100px;
 }
 
-tr.mat-row:hover {
-    background-color: rgba(0, 83, 145, .05);
-    cursor: pointer;
-}
 
-.mouse_gender_menu{
-    display: flex;
-    flex-direction: column;
-};
 
 
 

@@ -19,6 +19,7 @@
 
 /* M (768px and up) */
 @media only screen and (min-width: 768px) {
+  /*  For fixed table cell size, scroll whole table */
   .byDatePlotsTable {
     table-layout: auto; 
   }
@@ -29,6 +30,21 @@
       border: 2px solid rgb(219, 219, 219);
       border-right: 1px solid transparent;   
   }
+  /* For each-cell scroll */
+  /* .byDatePlotsTable {
+    table-layout: fixed;
+    width: 800px;
+    width: 100%;
+  }
+ 
+  table tr td {
+      overflow-x: scroll;
+  }
+
+  .table-container {
+      width: 100%;
+  } */
+
   ::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 10px;
@@ -48,7 +64,7 @@
   } */
  
   .table-container {
-      width: 992px;
+      /* width: 992px; */
   }
 } 
 
@@ -56,7 +72,7 @@
 @media only screen and (min-width: 1200px) {
   .byDatePlotsTable {
     table-layout: fixed;
-    width: 1160px;
+    /* width: 1160px; */
   }
  
   table tr td {

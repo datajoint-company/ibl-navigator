@@ -26,14 +26,13 @@
       </mat-form-field>
 
       <div class="session-date-filter">
-        <label for="dateRangeToggler">Session Start Date</label>
-        <div>
+        <div class="date-range-toggler">
+          <label for="dateRangeToggler">Session Start Date</label>
           <div>
             On&nbsp;<mat-slide-toggle name="dateRangeToggler" (change)="dateRangeToggle=!dateRangeToggle">From/To
             </mat-slide-toggle>
           </div>
         </div>
-        
         <mat-form-field class="short" *ngIf="!dateRangeToggle">
           <label for="">Sessions On</label>
           <input matInput formControlName="session_start_time_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)">
@@ -41,7 +40,7 @@
           <mat-datepicker #datePicker></mat-datepicker>
         </mat-form-field>
 
-        <div formGroupName="session_range_filter" *ngIf="dateRangeToggle">
+        <div formGroupName="session_range_filter" *ngIf="dateRangeToggle" class="range-filter-inputs">
           <mat-form-field class="short">
             <label for="">Sessions From</label>
             <input matInput formControlName="session_range_start_control" [matDatepicker]="datePickerSRS" [min]="sessionMinDate"
@@ -98,19 +97,21 @@
         <label>DOB</label>
         <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker"
           [matDatepickerFilter]="miceBirthdayFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)"
-          placeholder="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- i.e. 10/23/2018">
+          placeholder="DOB - i.e. 10/23/2018">
         <mat-datepicker-toggle matSuffix [for]="DOBPicker"></mat-datepicker-toggle>
         <mat-datepicker #DOBPicker></mat-datepicker>
       </mat-form-field>
-      
-      <div class="mouse_gender_menu" formArrayName="sex_control">
+
+      <div class="mouse_gender_filter">
         <label>Gender</label>
-        <mat-checkbox class="mouse_gender_menu_button" [name]="session_menu.sex" [formControlName]="i"
-          *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()">
-          {{ sex.key }}
-        </mat-checkbox>
+        <div class="mouse_gender_menu" formArrayName="sex_control"> 
+          <mat-checkbox class="mouse_gender_menu_chbox" [name]="session_menu.sex" [formControlName]="i"
+            *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()">
+            {{ sex.key }}
+          </mat-checkbox>
+        </div>
       </div>
-      
+
       <mat-form-field>
         <label>Line</label>
         <input matInput type="text" name="subject_line" formControlName="subject_line_control" [matAutocomplete]="autoCompSL"
