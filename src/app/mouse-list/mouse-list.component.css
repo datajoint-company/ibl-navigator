@@ -11,9 +11,21 @@ form {
     padding-bottom: 25px;
     border-bottom: 3px solid rgb(209, 209, 209);
     font-size: 80%;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     width: 100%;
 } 
+
+.mat-datepicker-toggle{
+    position:absolute;
+    font-size: 3em;
+    margin-left: -50px;
+    margin-top: -20px;
+}
+
+.filters {
+    width: 100%;
+}
 
 label {
     font-weight: 500;
@@ -35,6 +47,12 @@ mat-form-field.short {
     width: 190px;
 }
 
+.filter-buttons {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
 button.mat-raised-button {
     float: left;
     margin-left: 5px;
@@ -47,13 +65,22 @@ button.mat-raised-button:hover {
     color: white;
 }
 
-mat-checkbox.mouse_gender_menu_button {
-    margin-left: 5px;
+.mouse_gender_filter {
+    padding-top: 12px;
+    padding-bottom: 3px;
+    margin-top: 11px;
+    margin-left: 10px;
+    width: 150px;
+    float: left;  
+}
+
+mat-checkbox.mouse_gender_menu_chbox {
+    margin-left: 12px;
 }
 
 .mouse_gender_menu{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 };
 
 
