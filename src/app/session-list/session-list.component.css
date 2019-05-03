@@ -170,7 +170,7 @@ mat-checkbox.mouse_gender_menu_chbox {
 }
 /* note - to make sure the filter folds smoothly without getting stuck */
 /* problem folding areas */
-/* 1056px-1091px and 1632px-1822px  and  1824px-2111px  */
+/* 510-639px and 880px-909px and 1632px-1822px  and  1824px-2111px  */
 @media only screen and (min-width: 1824px) and (max-width: 2111px) {
     .mouse_gender_filter {
         margin-bottom: 0px;
@@ -182,8 +182,14 @@ mat-checkbox.mouse_gender_menu_chbox {
         margin-bottom: 20px;
     }
 }
-/* 960px is where the gender menu jumps to the line above */
-@media only screen and (min-width: 960px) and (max-width: 1091px) {
+/* 800px is where the gender menu jumps to the line above */
+@media only screen and (min-width: 800px) and (max-width: 1091px) {
+    .mouse_gender_filter {
+        margin-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width: 639px) {
     .mouse_gender_filter {
         margin-bottom: 20px;
     }
