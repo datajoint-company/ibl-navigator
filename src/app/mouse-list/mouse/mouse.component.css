@@ -11,6 +11,10 @@ h5 {
     margin-left: 1%;
 }
 
+.mouse-info-table table {
+    margin-left: 1%;
+}
+
 .short-plots-container {
     float: left;
     width: 50%;
