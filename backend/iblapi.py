@@ -143,7 +143,10 @@ def handle_q(subpath, args, proj, **kwargs):
 
     ret = []
     if subpath == 'sessionpage':
-        q = (acquisition.Session()
+        q = (acquisition.Session().aggr(
+             plotting_behavior.SessionPsychCurve(),
+             nplot='count(distinct(concat(subject_uuid, session_start_time)))',
+             keep_all_rows=True)
              * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name'))

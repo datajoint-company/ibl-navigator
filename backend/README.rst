@@ -76,6 +76,7 @@ WIP draft v0.1 api spec::
   special queries (under '_q' prefix)::
 
     /_q/sessionpage:                    session * subject * lab * labmember
+                                        with availibility of psych curve plot.
 
 todo?::
 
