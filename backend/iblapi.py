@@ -37,7 +37,7 @@ analyses_behavior = mkvmod('analyses_behavior')
 
 class DateTimeEncoder(json.JSONEncoder):
     ''' teach json to dump datetimes, etc '''
-    
+
     npmap = {
         np.bool_: bool,
         np.uint8: str,
