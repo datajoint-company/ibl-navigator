@@ -6,6 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
 import { SessionComponent } from './session/session.component';
+import { noComponentFactoryError } from '@angular/core/src/linker/component_factory_resolver';
 
 
 @Component({
@@ -49,8 +50,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
-                              'session_uuid', 'sex', 'subject_uuid'];
-
+                              'session_uuid', 'sex', 'subject_uuid', 'nplot'];
+  nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
   pageSize = 25;

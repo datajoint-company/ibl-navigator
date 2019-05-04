@@ -190,7 +190,13 @@
 
   <ng-container matColumnDef="sex">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
-    <td mat-cell *matCellDef="let session"> {{session.sex}} </td>
+    <td mat-cell *matCellDef="let session"class="to-center"> {{session.sex}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="nplot">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Plot Availability </th>
+    <!-- <td mat-cell *matCellDef="let session"> {{ session.nplot }} </td> -->
+    <td mat-cell *matCellDef="let session" class="to-center"> {{session.nplot.toString() | i18nSelect: nplotMap}} </td>
   </ng-container>
   
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
