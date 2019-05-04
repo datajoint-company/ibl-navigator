@@ -1,18 +1,107 @@
+.subject-list-container {
+    padding-top: 20px;
+}
+
+h4 {
+    font-weight: 300;
+}
+
+form { 
+    margin-bottom: 5px;
+    padding-bottom: 25px;
+    border-bottom: 3px solid rgb(209, 209, 209);
+    font-size: 80%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+} 
+
+.mat-datepicker-toggle{
+    position:absolute;
+    font-size: 3em;
+    margin-left: -50px;
+    margin-top: -20px;
+}
+
+.filters {
+    width: 100%;
+}
+
+label {
+    font-weight: 500;
+}
+
+
+
 mat-form-field {
-    /* width: 350px; */
+    width: 220px;
+    float:left;
     margin: 10px;
 }
 
-mat-card {
-    border: solid 1px rgb(194, 193, 193);
-    background-color: rgb(252, 252, 252);
-    margin: 2px;
-    /* width: 200px; */
+mat-form-field.long {
+    width: 350px;
+}
+
+mat-form-field.short {
+    width: 190px;
+}
+
+.filter-buttons {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+button.mat-raised-button {
     float: left;
+    margin-left: 5px;
+    border: 2px solid rgb(101, 152, 184);
+}
+
+button.mat-raised-button:hover {
+    border: 2px solid rgb(0, 124, 183);
+    background-color: rgb(0, 124, 183);
+    color: white;
+}
+
+.mouse_gender_filter {
+    padding-top: 12px;
+    padding-bottom: 3px;
+    margin-top: 11px;
+    margin-left: 10px;
+    width: 150px;
+    float: left;  
+}
+
+mat-checkbox.mouse_gender_menu_chbox {
+    margin-right: 12px;
 }
 
 .mouse_gender_menu{
     display: flex;
-    flex-direction: column;
-    float: right;
+    flex-direction: row;
 };
+
+
+tr.mat-row:hover {
+    background-color: rgba(0, 83, 145, .05);
+    cursor: pointer;
+}
+.table-container {
+    width: 100%;
+    overflow-x: scroll;
+}
+
+.loading-icon {
+    text-align: center;
+}
+
+.loading-icon img {
+    width: 100px;
+}
+
+
+
+
+
