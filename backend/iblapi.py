@@ -43,7 +43,7 @@ class DateTimeEncoder(json.JSONEncoder):
     ''' teach json to dump datetimes, etc '''
 
     npmap = {
-        np.bool_: str,
+        np.bool_: bool,
         np.uint8: str,
         np.uint16: str,
         np.uint32: str,
