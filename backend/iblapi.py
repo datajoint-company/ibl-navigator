@@ -37,7 +37,7 @@ analyses_behavior = mkvmod('analyses_behavior')
 
 class DateTimeEncoder(json.JSONEncoder):
     ''' teach json to dump datetimes, etc '''
-
+    
     npmap = {
         np.bool_: bool,
         np.uint8: str,
@@ -77,9 +77,15 @@ reqmap = {
     'labmembership': reference.LabMembership,
     'subject': subject.Subject,
     'session': acquisition.Session,
-    'weighing': action.Weighing,
-    'wateradmin': action.WaterAdministration,
-    'sessionpsych': plotting_behavior.SessionPsychCurve
+    'sessionpsych': plotting_behavior.SessionPsychCurve,
+    'waterweight': plotting_behavior.WaterWeight,
+    'TCsessionduration': plotting_behavior.TrialCountsSessionDuration,
+    'performanceRT': plotting_behavior.PerformanceReactionTime,
+    'contrastheatmap': plotting_behavior.ContrastHeatmap,
+    'fitpars': plotting_behavior.FitPars,
+    'datepsych': plotting_behavior.DatePsychCurve,
+    'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
+    'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber
 }
 dumps = DateTimeEncoder.dumps
 

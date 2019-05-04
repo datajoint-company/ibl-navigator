@@ -143,7 +143,7 @@ app.get('/api/sessions', (req, res) => {
     var options = {
         // hostname: '127.0.0.1/',
         port: 5000,
-        path: 'v0/session',
+        path: 'v0/_q/sessionpage/?__order=session_start_time', //'v0/session',
         method: req.method,
         headers: req.headers
     };
@@ -161,44 +161,15 @@ app.get('/api/sessions', (req, res) => {
 })
 
 app.post('/api/sessions', (req, res) => {
-    console.log('req.headers is', req.headers)
-    // console.log(req.body);
-    let sessionPath = 'v0/session/?'
-    let query =''
-    let count = 0
-    console.log('filter in filterValues are: ')
-    for (filter in req.body) {
-        console.log(filter, ": ", req.body[filter])
-        if (count == 0) {
-            query = query + filter + '=' + req.body[filter]
-        } else {
-            query = query + '&' + filter + '=' + req.body[filter]
+    console.log('posting to filter session page');
+    
+    request.post('http://localhost:5000/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
         }
-        count += 1;
-    }
-    console.log('query path is:')
-    console.log(sessionPath + query)
-    // setup for proxy server
-    var options = {
-        // hostname: '127.0.0.1/',
-        port: 5000,
-        path: sessionPath + query,
-        method: 'GET',
-        // method: req.method,
-        // body: req.body,
-        headers: req.headers
-    };
-
-    var proxy = http.request(options, function (proxy_res) {
-        res.writeHead(proxy_res.statusCode, proxy_res.headers)
-        proxy_res.pipe(res, {
-            end: true
-        });
-    });
-
-    req.pipe(proxy, {
-        end: true
-    });
+        // console.log(body);
+        res.send(body);
+    })
 })
 
 
@@ -208,7 +179,7 @@ app.get('/api/mice', (req, res) => {
     var options = {
         // hostname: '127.0.0.1/',
         port: 5000,
-        path: 'v0/subject',
+        path: 'v0/_q/subjpage',//'v0/subject',
         method: req.method,
         headers: req.headers
     };
@@ -243,123 +214,110 @@ app.post('/api/mice', (req, res) => {
     }
     //// setup for proxy server
     console.log('inside post mice');
-    console.log('body is: ', typeof req.body)
+    // console.log('body is: ', typeof req.body)
     var requestBody = JSON.stringify(req.body)
-    console.log('request body after stringify: ', typeof requestBody)
-    request.post('http://localhost:5000/v0/subject', {form: requestBody}, function(error, httpResponse, body) {
+    console.log('requestBody is...');
+    console.log(requestBody);
+    console.log('req.body is...');
+    console.log(req.body);
+    // console.log('request body after stringify: ', typeof requestBody)
+    // request.post('https://not-even-a-test.firebaseio.com/test3.json', { form: requestBody }, function (error, httpResponse, body) {
+    //     if (error) {
+    //         console.error('error: ', error);
+    //     }
+    //     console.log('response body is');
+    //     console.log(body)
+    // });
+    request.post('http://localhost:5000/v0/_q/subjpage', {form: req.body}, function(error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
-        // console.log('httpResponse: ', httpResponse);
+        console.log('response body is');
+        console.log(body)
+        res.send(body);
     })
-
-    // var options = {
-    //     // hostname: '127.0.0.1/',
-    //     port: 5000,
-    //     path: 'https://not-even-a-test.firebaseio.com/test2.json', //'v0/subject',
-    //     method: req.method,
-    //     body: requestBody,
-    //     headers: req.headers
-    // };
-    
-    // var options0 = {
-    //     // hostname: '127.0.0.1/',
-    //     port: 5000,
-    //     path: sessionPath + query,
-    //     method: 'GET',
-    //     // method: req.method,
-    //     // body: req.body,
-    //     headers: req.headers
-    // };
-
-    // var proxy = http.request(options, function (proxy_res) {
-    //     res.writeHead(proxy_res.statusCode, proxy_res.headers)
-    //     console.log('what is inside proxy_res?');
-    //     console.log(proxy_res);
-    //     proxy_res.pipe(res, {
-    //         end: true
-    //     });
-    // });
-    
-    // // proxy.write(requestBody);
-    // req.pipe(proxy, {
-    //     end: true
-    // });
 })
 
-app.post('/api/plot/mouse-weight-plotData', (req, res) => {
-    let sessionPath = 'v0/weighing?'
-    let query = ''
-    let count = 0
-    console.log('filter in filterValues are: ')
-    for (filter in req.body) {
-        console.log(filter, ": ", req.body[filter])
-        if (count == 0) {
-            query = query + filter + '=' + req.body[filter]
-        } else {
-            query = query + '&' + filter + '=' + req.body[filter]
+app.post('/api/plot/session-psych-plotData', (req, res) => {
+    request.post('http://localhost:5000/v0/sessionpsych', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
         }
-        count += 1;
-    }
-    console.log('query path is:')
-    console.log(sessionPath + query)
-    // setup for proxy server
-    var options = {
-        // hostname: '127.0.0.1/',
-        port: 5000,
-        path: sessionPath + query,
-        method: 'GET',
-        // method: req.method,
-        // body: req.body,
-        headers: req.headers
-    };
-
-    var proxy = http.request(options, function (proxy_res) {
-        res.writeHead(proxy_res.statusCode, proxy_res.headers)
-        proxy_res.pipe(res, {
-            end: true
-        });
-    });
-
-    req.pipe(proxy, {
-        end: true
-    });
+        res.send(body);
+    })
 })
 
-app.post('/api/plot/mouse-waterIntake-plotData', (req, res) => {
-    let sessionPath = 'v0/wateradmin?'
-    let query = ''
-    let count = 0
-    console.log('filter in filterValues are: ')
-    for (filter in req.body) {
-        console.log(filter, ": ", req.body[filter])
-        if (count == 0) {
-            query = query + filter + '=' + req.body[filter]
-        } else {
-            query = query + '&' + filter + '=' + req.body[filter]
+app.post('/api/plot/waterWeightPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/waterweight', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
         }
-        count += 1;
-    }
-    console.log('query path is:')
-    console.log(sessionPath + query)
-    // setup for proxy server
-    var options = {
-        port: 5000,
-        path: sessionPath + query,
-        method: 'GET',
-        headers: req.headers
-    };
+        res.send(body);
+    })
+})
 
-    var proxy = http.request(options, function (proxy_res) {
-        res.writeHead(proxy_res.statusCode, proxy_res.headers)
-        proxy_res.pipe(res, {
-            end: true
-        });
-    });
-    
-    req.pipe(proxy, {
-        end: true
-    });
+app.post('/api/plot/trialCountsSessionDurationPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/TCsessionduration', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        // let info = JSON.parse(body)
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/performanceReactionTimePlot', (req, res) => {
+    request.post('http://localhost:5000/v0/performanceRT', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/contrastHeatmapPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/contrastheatmap', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/fitParametersPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/fitpars', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/datePsychCurvePlot', (req, res) => {
+    request.post('http://localhost:5000/v0/datepsych', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/dateReactionTimeContrastPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/dateRTcontrast', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/dateReactionTimeTrialNumberPlot', (req, res) => {
+    request.post('http://localhost:5000/v0/dateRTtrial', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
 })
 
 app.get('/api/plots/testPlot', (req, res, next) => {

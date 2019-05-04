@@ -1,16 +1,17 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { MousePlotsService } from '../mouse-plots.service';
+import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
+import { SessionPlotsService } from '../session-plots.service';
 import { Subscription } from 'rxjs';
 
 declare var Plotly: any;
 
 @Component({
-  selector: 'app-water-weight-plot',
-  templateUrl: './water-weight-plot.component.html',
-  styleUrls: ['./water-weight-plot.component.css']
+  selector: 'app-session-psych-plot',
+  templateUrl: './session-psych-plot.component.html',
+  styleUrls: ['./session-psych-plot.component.css']
 })
-export class WaterWeightPlotComponent implements OnInit, OnDestroy {
-  WIWPlotIsAvailable: boolean;
+export class SessionPsychPlotComponent implements OnInit, OnDestroy {
+  plotInfo = [];
+  psychPlotIsAvailable: boolean;
   // svgDownloadIcon = {
   //   'width': 1000,
   //   'height': 1000,
@@ -27,77 +28,75 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   // };
 
   plotConfig = {
-    responsive: true,
-    showLink: false,
-    showSendToCloud: false,
-    displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
-    modeBarButtonsToAdd: [
-      {
-        name: 'toPngImage',
-        title: 'download plot as png',
-        // icon: this.pngDownloadIcon,
-        icon: Plotly.Icons.download_png,
-        click: function (gd) {
-          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
-          toPngImageButtonOptions.format = 'png';
-          Plotly.downloadImage(gd, toPngImageButtonOptions);
+      showLink: false,
+      showSendToCloud: false,
+      displaylogo: false,
+      modeBarButtonsToRemove: ['toImage'],
+      modeBarButtonsToAdd: [
+        {
+          name: 'toPngImage',
+          title: 'download plot as png',
+          // icon: this.pngDownloadIcon,
+          icon: Plotly.Icons.download_png,
+          click: function (gd) {
+              var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+              toPngImageButtonOptions.format = 'png';
+              Plotly.downloadImage(gd, toPngImageButtonOptions);
+          }
+        },
+        {
+          name: 'toSVGImage',
+          title: 'download plot as svg',
+          icon: Plotly.Icons.download_svg,
+          // icon: this.svgDownloadIcon,
+          format: 'svg',
+          click: function (gd) {
+            var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+            toSvgImageButtonOptions.format = 'svg';
+            Plotly.downloadImage(gd, toSvgImageButtonOptions);
+          }
         }
-      },
-      {
-        name: 'toSVGImage',
-        title: 'download plot as svg',
-        // icon: this.svgDownloadIcon,
-        icon: Plotly.Icons.download_svg,
-        format: 'svg',
-        click: function (gd) {
-          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
-          toSvgImageButtonOptions.format = 'svg';
-          Plotly.downloadImage(gd, toSvgImageButtonOptions);
-        }
+      ],
+      toImageButtonOptions: {
+        filename: '',
+        scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
       }
-    ],
-    toImageButtonOptions: {
-      filename: '',
-      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
-    }
   };
-  private mouseWaterWeightSubscription: Subscription;
+  private sessionPsychPlotSubscription: Subscription;
+  @Input('sessionData') sessionData: Object;
+  @Output() psychPlotAvailability: EventEmitter<any> = new EventEmitter();
+  constructor(public sessionPlotsService: SessionPlotsService) { }
 
-  @Input('mouseInfo') mouseInfo: Object;
-  @Output() WIWPlotAvailability: EventEmitter<any> = new EventEmitter();
-  constructor(public mousePlotsService: MousePlotsService) { }
-
-  @ViewChild('waterIntake_weight_plot') el: ElementRef;
-
+  @ViewChild('session_psych_plot') el: ElementRef;
   ngOnInit() {
     const element = this.el.nativeElement;
-    const subjectInfo = { 'subject_uuid': this.mouseInfo['subject_uuid'] };
-    this.mousePlotsService.getWaterWeightPlot(subjectInfo);
-    this.mouseWaterWeightSubscription = this.mousePlotsService.getWaterWeightPlotLoadedListener()
-      .subscribe((plotInfo: any) => {
-        if (plotInfo && plotInfo[0]) {
-          const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
-          console.log('water weight plot retrieved');
-          const WIWplot = toPlot['plotting_data'];
-          WIWplot['layout']['height'] = '';
-          WIWplot['layout']['width'] = '';
-          this.WIWPlotIsAvailable = true;
-          this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
-          this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_water_intake_weight_plot';
-          Plotly.newPlot(element, WIWplot['data'], WIWplot['layout'], this.plotConfig);
+    // const sessionInfo = { 'subject_uuid': '1a8fa9b4-399b-4175-8c32-e552aaa2541b', 'session_start_time': '2019-03-25T15:51:10'};
+    const sessionInfo = { 'subject_uuid': this.sessionData['subject_uuid'], 'session_start_time': this.sessionData['session_start_time'] };
+    
+    this.sessionPlotsService.getSessionPsychPlot(sessionInfo);
+    this.sessionPsychPlotSubscription = this.sessionPlotsService.getSessionPsychPlotLoadedListener()
+      .subscribe((psychPlotData: any) => {
+        console.log('retrieved session psych plot for...');
+        console.log(psychPlotData);
+        if (psychPlotData[0]) {
+          console.log('subject_uuid: ', psychPlotData[0]['subject_uuid']);
+          console.log('session_start_time: ', psychPlotData[0]['session_start_time']);
+          this.plotInfo = psychPlotData[0]['plotting_data'];
+          this.psychPlotIsAvailable = true;
+          this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
+          this.plotConfig['toImageButtonOptions']['filename'] = psychPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_psych_plot'
+          Plotly.newPlot(element, this.plotInfo['data'], this.plotInfo['layout'], this.plotConfig);
         } else {
-          console.log('water intake and weight plot not available for this mouse');
-          this.WIWPlotIsAvailable = false;
-          this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
+          console.log('psych plot not available for this session');
+          this.psychPlotIsAvailable = false;
+          this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
         }
       });
-
   }
 
   ngOnDestroy() {
-    if (this.mouseWaterWeightSubscription) {
-      this.mouseWaterWeightSubscription.unsubscribe();
+    if (this.sessionPsychPlotSubscription) {
+      this.sessionPsychPlotSubscription.unsubscribe();
     }
   }
 

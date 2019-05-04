@@ -11,8 +11,12 @@ import { MatSelectModule,
          MatRadioModule,
          MatNativeDateModule,
          MatDatepickerModule,
+         MatSlideToggleModule,
          MatCardModule,
-         MatButtonModule } from '@angular/material';
+         MatButtonModule,
+         MatTableModule,
+         MatPaginatorModule,
+         MatSortModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AuthGuard } from './auth/auth-guard.service';
@@ -32,6 +36,12 @@ import { CellListComponent } from './cell-list/cell-list.component';
 import { CellComponent } from './cell-list/cell/cell.component';
 import { OverviewComponent } from './overview/overview.component';
 import { WaterWeightPlotComponent } from './mouse-list/mouse/water-weight-plot/water-weight-plot.component';
+import { SessionPsychPlotComponent } from './session-list/session/session-psych-plot/session-psych-plot.component';
+import { TrialCountsSessionDurationComponent } from './mouse-list/mouse/trial-counts-session-duration/trial-counts-session-duration.component';
+import { PerformanceReactionTimePlotComponent } from './mouse-list/mouse/performance-reaction-time-plot/performance-reaction-time-plot.component';
+import { ContrastHeatmapPlotComponent } from './mouse-list/mouse/contrast-heatmap-plot/contrast-heatmap-plot.component';
+import { FitParPlotsComponent } from './mouse-list/mouse/fit-par-plots/fit-par-plots.component';
+import { ByDateResultPlotsComponent } from './mouse-list/mouse/by-date-result-plots/by-date-result-plots.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent },
@@ -90,7 +100,13 @@ const appRoutes: Routes = [
     CellListComponent,
     CellComponent,
     OverviewComponent,
-    WaterWeightPlotComponent
+    WaterWeightPlotComponent,
+    SessionPsychPlotComponent,
+    TrialCountsSessionDurationComponent,
+    PerformanceReactionTimePlotComponent,
+    ContrastHeatmapPlotComponent,
+    FitParPlotsComponent,
+    ByDateResultPlotsComponent
   ],
   imports: [
     BrowserModule,
@@ -98,7 +114,9 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
-    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule, MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatCardModule, MatButtonModule,
+    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule,
+    MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatSlideToggleModule,
+    MatCardModule, MatButtonModule, MatTableModule, MatPaginatorModule, MatSortModule,
     ReactiveFormsModule
   ],
   providers: [AuthService, AuthGuard, PlotsService],
