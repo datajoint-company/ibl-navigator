@@ -16,27 +16,23 @@ from flask import Flask
 from flask import request
 from flask import abort
 
-
-subject = dj.create_virtual_module(
-    'subject', dj.config.get('database.prefix', '') + 'ibl_subject')
-reference = dj.create_virtual_module(
-    'reference', dj.config.get('database.prefix', '') + 'ibl_reference')
-action = dj.create_virtual_module(
-    'action', dj.config.get('database.prefix', '') + 'ibl_action')
-acquisition = dj.create_virtual_module(
-    'acquisition', dj.config.get('database.prefix', '') + 'ibl_acquisition')
-plotting_behavior = dj.create_virtual_module('plotting_behavior', dj.config.get('database.prefix', '') + 'ibl_plotting_behavior')
-
-
-# from ibl_pipeline import behavior
-# from ibl_pipeline import data
-# from ibl_pipeline import ephys
-
-
 API_VERSION = '0'
 app = Flask(__name__)
 API_PREFIX = '/v{}'.format(API_VERSION)
 is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
+
+
+def mkvmod(mod):
+    return dj.create_virtual_module(
+        mod, dj.config.get('database.prefix', '') + 'ibl_{}'.format(mod))
+
+
+subject = mkvmod('subject')
+reference = mkvmod('reference')
+action = mkvmod('action')
+acquisition = mkvmod('acquisition')
+plotting_behavior = mkvmod('plotting_behavior')
+analyses_behavior = mkvmod('analyses_behavior')
 
 
 class DateTimeEncoder(json.JSONEncoder):
