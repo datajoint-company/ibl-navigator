@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import sys
+import json
 
 from code import interact
 
@@ -12,9 +13,13 @@ API_VERSION = '0'
 api_endpoint = 'http://localhost:5000/v' + API_VERSION
 
 
-def vmod(mod):
-    dbname = dj.config.get('database.prefix', '') + 'ibl_{}'.format(mod)
-    return dj.create_virtual_module(mod, dbname)
+def mkvmod(mod):
+    return dj.create_virtual_module(
+        mod, dj.config.get('database.prefix', '') + 'ibl_{}'.format(mod))
+
+
+def postdbg(subpath='/', data={}):
+    return http_post('{}{}'.format(api_endpoint, subpath), data=data)
 
 
 def post(subpath='/', data={}):
@@ -27,6 +32,6 @@ if __name__ == '__main__':
         api_endpiont = sys.argv[1]
 
     print("apiclient")
-    print("  - use 'post(/'subpath', data={})' to test get requests")
+    print("  - use 'post('/subpath', data={})' to test get requests")
     print("  - use 'vmod('dbmodule')' to return ibl pipeline virtual modules")
     interact('apiclient', local=locals())
