@@ -29,7 +29,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     sex_control: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
     subject_birth_date_control: new FormControl(),
     subject_line_control: new FormControl(),
-    responsible_user_control: new FormControl()
+    responsible_user_control: new FormControl(),
+    nplot_control: new FormControl()
   });
   loading = true;
   sessions;
@@ -357,6 +358,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
                   requestJSONstring += rangeEnd;
                 }
             }
+          } else if (filterKey === 'nplot') {
+              filter[1] ? requestFilter[filterKey] = 1 : requestFilter[filterKey] = 0;
           } else {
             requestFilter[filterKey] = filter[1];
           }

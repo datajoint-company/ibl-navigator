@@ -130,6 +130,8 @@
             (click)="updateMenu()">{{ responsible_user }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
+
+      
     </div>
   </div>
   <div>
@@ -137,6 +139,11 @@
   </div>
   <div>
     <button mat-raised-button (click)="clearControl()">Reset Filter</button>
+  </div>
+  <div class="nplot_filter">
+    <mat-checkbox class="nplot_chbox" name="nplot" formControlName="nplot_control" (change)="updateMenu()">
+      Only show sessions with plots available
+    </mat-checkbox>
   </div>
 </form>
 
