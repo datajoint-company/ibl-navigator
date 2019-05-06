@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-overview',
@@ -7,11 +8,18 @@ import { AuthService } from '../auth/auth.service';
   styleUrls: ['./overview.component.css']
 })
 export class OverviewComponent implements OnInit {
-  isLoggedIn = this.authService.isLoggedIn;
+  isLoggedIn = false;
+  userIsAuthenticated;
+  authListenerSubscription = new Subscription();
 
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
+    this.isLoggedIn = this.authService.isAuthenticated();
+    this.authListenerSubscription = this.authService.getAuthStatusListener()
+      .subscribe(loginStatus => {
+        this.userIsAuthenticated = loginStatus;
+      });
   }
 
 }

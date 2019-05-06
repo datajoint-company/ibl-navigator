@@ -1,8 +1,7 @@
-<div class="login-container">
-  <h4>
-    Login
-  </h4>
+<div class="login-container" *ngIf="!userIsAuthenticated">
   <app-login></app-login>
 </div>
-
+<div *ngIf="userIsAuthenticated">
+  <p>You are now logged in!</p>
+</div>
 

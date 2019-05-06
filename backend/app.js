@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const http = require('http');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const checkAuth = require('./middleware/check-auth');
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,7 +17,7 @@ const writeFile = util.promisify(fs.writeFile)
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
     next();
 })
@@ -24,7 +26,7 @@ app.use((req, res, next) => {
 
 
 
-
+// ======================== for testing/developing purpose - keep till raster plots are done ========================== //
 app.post('/api/plot', (req, res) =>{
     console.log(req.body);
     if (req.body.type == 'raster_test_data') {
@@ -137,7 +139,22 @@ app.get('/api/plots/:type/:id', (req, res, next) => {
     });
 });
 
-app.get('/api/sessions', (req, res) => {
+// =============================== login logic ================================= //
+app.post('/login', (req, res) => {
+    console.log('logging in user: ', req.body.username);
+    if (req.body.username === 'test' && req.body.password === '1234') {
+        const token = jwt.sign({username: req.body.username},
+                                'some-secret-value-needs-to-be-changed',
+                                { expiresIn: "24h"});
+        res.status(200).send({ message: 'successful login', token: token, expiresIn: 24 * 60 * 60 * 1000}); //return in millisec
+    } else {
+        res.status(401).send({message : 'failed login'})
+    }
+    
+});
+
+// ======================== getting info from flask server ========================== //
+app.get('/api/sessions', checkAuth, (req, res) => {
     console.log('req.headers is', req.headers)
     // setup for proxy server
     var options = {
@@ -160,7 +177,7 @@ app.get('/api/sessions', (req, res) => {
     });
 })
 
-app.post('/api/sessions', (req, res) => {
+app.post('/api/sessions', checkAuth, (req, res) => {
     console.log('posting to filter session page');
     
     request.post('http://localhost:5000/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {

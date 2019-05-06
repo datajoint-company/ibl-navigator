@@ -10,14 +10,20 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
     canActivate(route: ActivatedRouteSnapshot,
                 state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        return this.authService.isAuthenticated()
-            .then(((isLoggedIn: boolean) => {
-                if (isLoggedIn) {
-                    return true;
-                } else {
-                    this.router.navigate(['/login']);
-                }
-            }));
+        // return this.authService.isAuthenticated()
+        //     .then(((isLoggedIn: boolean) => {
+        //         if (isLoggedIn) {
+        //             return true;
+        //         } else {
+        //             this.router.navigate(['/login']);
+        //         }
+        //     }));
+        const isAuth = this.authService.isAuthenticated();
+        if (isAuth) {
+            return isAuth;
+        } else {
+            this.router.navigate(['/']);
+        }
     }
     canActivateChild(route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {

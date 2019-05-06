@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
 import { MatSelectModule,
          MatAutocompleteModule,
@@ -42,6 +42,7 @@ import { PerformanceReactionTimePlotComponent } from './mouse-list/mouse/perform
 import { ContrastHeatmapPlotComponent } from './mouse-list/mouse/contrast-heatmap-plot/contrast-heatmap-plot.component';
 import { FitParPlotsComponent } from './mouse-list/mouse/fit-par-plots/fit-par-plots.component';
 import { ByDateResultPlotsComponent } from './mouse-list/mouse/by-date-result-plots/by-date-result-plots.component';
+import { AuthInterceptor } from './auth/auth-interceptor';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent },
@@ -66,14 +67,14 @@ const appRoutes: Routes = [
   },
   {
     path: 'session/:sessionID',
-    // canActivate: [AuthGuard],
-    // canActivateChild: [AuthGuard],
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     component: SessionComponent
   },
   {
     path: 'sessions',
-      // canActivate: [AuthGuard],
-      // canActivateChild: [AuthGuard],
+      canActivate: [AuthGuard],
+      canActivateChild: [AuthGuard],
       component: SessionListComponent,
       children: [
         { path: ':sessionID', component: SessionComponent },
@@ -119,7 +120,7 @@ const appRoutes: Routes = [
     MatCardModule, MatButtonModule, MatTableModule, MatPaginatorModule, MatSortModule,
     ReactiveFormsModule
   ],
-  providers: [AuthService, AuthGuard, PlotsService],
+  providers: [AuthService, AuthGuard, PlotsService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
