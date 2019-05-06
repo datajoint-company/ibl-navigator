@@ -383,13 +383,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.sessions = [];
     const request = this.filterRequests();
-    request['__order'] = 'session_start_time';
+    request['__order'] = 'session_start_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
       this.allSessionsService.retrieveSessions(request);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
           this.loading = false;
-          sessions.reverse();
           this.sessions = sessions;
           this.dataSource = new MatTableDataSource(this.sessions);
           this.dataSource.sort = this.sort;
@@ -401,11 +400,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   resetFilter() {
-    this.allSessionsService.getAllSessions();
-    this.allSessionsService.getSessionsLoadedListener()
+    this.allSessionsService.retrieveSessions({'__order': 'session_start_time DESC'});
+    this.allSessionsService.getNewSessionsLoadedListener()
       .subscribe((sessions: any) => {
         this.loading = false;
-        sessions.reverse();
         this.sessions = sessions;
         this.dataSource = new MatTableDataSource(this.sessions);
         this.dataSource.sort = this.sort;
@@ -452,7 +450,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
      });
   }
   sessionSelected(session) {
-    console.log('sessionSelected in list-component ran!');
     console.log(session);
     this.selectedSession = session;
   }
