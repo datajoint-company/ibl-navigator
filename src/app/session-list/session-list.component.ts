@@ -6,7 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
 import { SessionComponent } from './session/session.component';
-import { noComponentFactoryError } from '@angular/core/src/linker/component_factory_resolver';
+import { FilterStoreService } from '../filter-store.service';
 
 
 @Component({
@@ -69,7 +69,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   private sessionsSubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService) {}
+  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {}
   // @Input('preRestriction') preRestrictedMouseInfo: Object;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -79,6 +79,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.session_menu['sex'] = { F: null, M: null, U: null };
     this.route.queryParams
       .subscribe(params => {
+        console.log('params loading sessions: ', params);
+        if (Object.entries(params).length === 0) {
+          console.log('no parameter found');
+          params = this.filterStoreService.retrieveSessionFilter();
+        }
         for (const key in params) {
           const controlName = key + '_control';
           if (this.session_filter_form.controls[controlName]) {
@@ -385,6 +390,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const request = this.filterRequests();
     request['__order'] = 'session_start_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
+      this.filterStoreService.storeSessionFilter(request);
       this.allSessionsService.retrieveSessions(request);
       this.allSessionsService.getNewSessionsLoadedListener()
         .subscribe((sessions: any) => {
@@ -401,6 +407,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   resetFilter() {
     this.allSessionsService.retrieveSessions({'__order': 'session_start_time DESC'});
+    this.filterStoreService.clearSessionFilter();
     this.allSessionsService.getNewSessionsLoadedListener()
       .subscribe((sessions: any) => {
         this.loading = false;
