@@ -85,14 +85,13 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     // const elPsych3 = this.elPsych3.nativeElement;
     // const elRTContrast3 = this.elRTContrast3.nativeElement;
     // const elRTTrialNum3 = this.elRTTrialNum3.nativeElement;
-    this.mousePlotsService.getDatePsychPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date'});
+    this.mousePlotsService.getDatePsychPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC'});
     this.datePsychPlotSubscription = this.mousePlotsService.getDatePsychPlotLoadedListener()
       .subscribe((psychCurveInfo: any) => {
         if (psychCurveInfo && psychCurveInfo.length > 0) {
           this.byDateResultPlotsAreAvailable = true;
           this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           this.datePsychPlotList = psychCurveInfo;
-          psychCurveInfo.reverse();
           const recent3 = psychCurveInfo.slice(0, 3);
           console.log('going through datepsychcurve');
           recent3.forEach((plot, index) => {
@@ -115,13 +114,12 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     this.getRecent3DatesLoadedListener().subscribe((dates) => {
       console.log('recent 3 dates ready', dates);
       console.log(typeof dates);
-      this.mousePlotsService.getDateRTContrastPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date' });
+      this.mousePlotsService.getDateRTContrastPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC' });
       this.dateRTContrastPlotSubscription = this.mousePlotsService.getDateRTContrastPlotLoadedListener()
         .subscribe((DRTCplotInfo: any) => {
           console.log('date RT contrast plot data here...?');
           if (DRTCplotInfo && DRTCplotInfo.length > 0) {
             this.dateRTCPlotList = DRTCplotInfo;
-            DRTCplotInfo.reverse();
             const recent3 = DRTCplotInfo.slice(0, 3);
             console.log('going through dateRTContrast');
             this.recent3dates.forEach((date, idx) => {
@@ -148,12 +146,11 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             console.log('date reaction time contrast plot unavailable');
           }
         });
-      this.mousePlotsService.getDateRTTrialNumPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date' });
+      this.mousePlotsService.getDateRTTrialNumPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC' });
       this.dateRTTrialNumPlotSubscription = this.mousePlotsService.getDateRTTrialNumPlotLoadedListener()
         .subscribe((plotInfo: any) => {
           if (plotInfo && plotInfo.length > 0) {
             this.dateRTTPlotList = plotInfo;
-            plotInfo.reverse();
             const recent3 = plotInfo.slice(0, 3);
             this.recent3dates.forEach((date, idx) => {
               let RTTNmatchFound = false;
