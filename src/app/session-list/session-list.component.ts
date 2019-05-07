@@ -83,19 +83,38 @@ export class SessionListComponent implements OnInit, OnDestroy {
         if (Object.entries(params).length === 0) {
           console.log('no parameter found');
           params = this.filterStoreService.retrieveSessionFilter();
+          console.log('pringint content of session store');
+          console.log(params);
         }
         for (const key in params) {
-          const controlName = key + '_control';
-          if (this.session_filter_form.controls[controlName]) {
-            if (controlName !== 'sex_control') {
+          if (key === '__json') {
+            const JSONcontent = JSON.parse(params[key]);
+            console.log(JSON.parse(params[key]));
+            console.log(typeof JSON.parse(params[key]));
+            for (const item of JSONcontent) {
+              if (typeof item === 'string') {
+                console.log('looking at item: ', item);
+                console.log('probably the session start time field');
+              } else {
+                for (const gender of item) {
+                  // console.log(gender); // gender = { sex: "F"}
+                  this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[gender['sex']]].patchValue(true);
+                }
+              }
+            }
+            const toPatchVal = {};
+            toPatchVal['__json'] = params[key];
+          } else if (key === 'sex') {
+            this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+          } else if (key !== 'sex') {
+            const controlName = key + '_control';
+            if (this.session_filter_form.controls[controlName]) {
               const toPatch = {};
               toPatch[controlName] = params[key];
-              this.session_filter_form.patchValue(toPatch)
-            } else {
-              this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+              this.session_filter_form.patchValue(toPatch);
             }
-          };
-        };
+          }
+        }
         this.applyFilter();
 
       });
