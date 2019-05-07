@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class FilterStoreService {
   sessionFilter: Object;
+  mouseFilter: Object;
   constructor() { }
 
   storeSessionFilter(filterForm) {
@@ -18,5 +19,18 @@ export class FilterStoreService {
 
   clearSessionFilter() {
     this.sessionFilter = {};
+  }
+
+  storeMouseFilter(filterForm) {
+    this.mouseFilter = filterForm;
+  }
+
+  retrieveMouseFilter() {
+    // return {sex: 'F'};
+    return this.mouseFilter;
+  }
+
+  clearMouseFilter() {
+    this.mouseFilter = {};
   }
 }

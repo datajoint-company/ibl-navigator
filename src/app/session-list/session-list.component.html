@@ -215,5 +215,5 @@
 </div>
 <mat-paginator [pageSize]="pageSize"
             [pageSizeOptions]="pageSizeOptions"
-            showFirstLastButtons></mat-paginator>
+            showFirstLastButtons (page)="updatePageInfo($event)"></mat-paginator>
 </div>

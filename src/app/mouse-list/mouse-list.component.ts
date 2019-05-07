@@ -4,6 +4,7 @@ import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllMiceService } from './all-mice.service';
+import { FilterStoreService } from '../filter-store.service';
 
 @Component({
   selector: 'app-mouse-list',
@@ -34,30 +35,61 @@ export class MouseListComponent implements OnInit, OnDestroy {
   pageSize = 25;
   pageSizeOptions: number[] = [10, 25, 50, 100];
 
-
   filteredLabNameOptions: Observable<string[]>;
   filteredSubjectNicknameOptions: Observable<string[]>;
   filteredSubjectUuidOptions: Observable<string[]>;
   filteredSubjectLineOptions: Observable<string[]>;
   filteredResponsibleUserOptions: Observable<string[]>;
+  genderMenu2ControlMap = { F: 0, M: 1, U: 2 };
 
   private miceSubscription: Subscription;
 
-  constructor(public allMiceService: AllMiceService) { }
+  constructor(public allMiceService: AllMiceService, public filterStoreService: FilterStoreService) { }
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    // this.loading = true;
     this.mice_menu['sex'] = { F: null, M: null, U: null };
+
+    const filters = this.filterStoreService.retrieveMouseFilter();
+    for (const key in filters) {
+      if (key === '__json') {
+        const JSONcontent = JSON.parse(filters[key]);
+        for (const item of JSONcontent) {
+          if (typeof item === 'string') {
+          } else {
+            console.log('type of gender array: ', typeof item);
+            for (const gender of item) {
+              this.mouse_filter_form.controls.sex_control['controls'][this.genderMenu2ControlMap[gender['sex']]].patchValue(true);
+            }
+          }
+        }
+      } else if (key === 'sex') {
+        this.mouse_filter_form.controls.sex_control['controls'][this.genderMenu2ControlMap[filters[key]]].patchValue(true);
+      } else if (key === 'subject_birth_date') {
+        this.mouse_filter_form.controls.subject_birth_date_control.patchValue(new Date(filters[key] + ' (UTC)'));
+      } else {
+        const controlName = key + '_control';
+        if (this.mouse_filter_form.controls[controlName]) {
+          const toPatch = {};
+          toPatch[controlName] = filters[key];
+          this.mouse_filter_form.patchValue(toPatch);
+        }
+      }
+    }
+
+    this.applyFilter();
+    // for creating the menu
     this.allMiceService.getAllMice();
     this.miceSubscription = this.allMiceService.getMiceLoadedListener()
       .subscribe((mice: any) => {
-        this.loading = false;
-        this.mice = mice;
+        // this.loading = false;
+        // this.mice = mice;
         this.allMice = mice;
-        this.dataSource = new MatTableDataSource(mice);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+        // this.dataSource = new MatTableDataSource(mice);
+        // this.dataSource.sort = this.sort;
+        // this.dataSource.paginator = this.paginator;
         this.createMenu(mice);
       });
   }
@@ -105,13 +137,13 @@ export class MouseListComponent implements OnInit, OnDestroy {
     // for (const item of this.mice_menu['sex']) {
     //   sex_control_array.push(new FormControl(false));
     // }
-    const genderMenu2ControlMap = { F: 0, M: 1, U: 2 };
+    
     for (const item in this.mice_menu['sex']) {
       if (!this.mice_menu['sex'][item]) {
-        this.mouse_filter_form.controls.sex_control['controls'][genderMenu2ControlMap[item]].patchValue(false);
-        this.mouse_filter_form.controls.sex_control['controls'][genderMenu2ControlMap[item]].disable();
+        this.mouse_filter_form.controls.sex_control['controls'][this.genderMenu2ControlMap[item]].patchValue(false);
+        this.mouse_filter_form.controls.sex_control['controls'][this.genderMenu2ControlMap[item]].disable();
       } else {
-        this.mouse_filter_form.controls.sex_control['controls'][genderMenu2ControlMap[item]].enable();
+        this.mouse_filter_form.controls.sex_control['controls'][this.genderMenu2ControlMap[item]].enable();
       }
     }
 
@@ -184,6 +216,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.loading = true;
     const request = this.filterRequests();
     if (Object.entries(request).length > 0) {
+      this.filterStoreService.storeMouseFilter(request);
       this.allMiceService.retrieveMice(request);
       this.allMiceService.getRequestedMiceLoadedListener()
         .subscribe((mice: any) => {
@@ -272,9 +305,12 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
   resetFilter() {
+    this.loading = true;
     this.allMiceService.getAllMice();
+    this.filterStoreService.clearMouseFilter();
     this.allMiceService.getMiceLoadedListener()
       .subscribe((mice: any) => {
+        this.loading = false;
         this.mice = mice;
         this.dataSource = new MatTableDataSource(this.mice);
         this.dataSource.sort = this.sort;

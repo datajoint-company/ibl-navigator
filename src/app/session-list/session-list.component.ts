@@ -83,11 +83,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
         if (Object.entries(params).length === 0) {
           console.log('no parameter found');
           params = this.filterStoreService.retrieveSessionFilter();
-          console.log('pringint content of session store');
+          console.log('printing content of session store');
           console.log(params);
         }
         for (const key in params) {
           if (key === '__json') {
+            console.log('inside __json filter');
+            console.log('params[key] is', params[key]);
             const JSONcontent = JSON.parse(params[key]);
             const dateRange = ['', ''];
             for (const item of JSONcontent) {
@@ -107,20 +109,25 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 }
               }
             }
-            console.log('dateRange requested:', dateRange);
-            if (dateRange[0] === dateRange[1]) {
+            if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
+              console.log('specific date requested:', dateRange);
               this.dateRangeToggle = false;
               this.session_filter_form.controls.session_start_time_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
-            } else {
+            } else if (dateRange[0] !== '') {
+              console.log('date rangerequested:', dateRange);
               this.dateRangeToggle = true;
               this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
               this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(new Date(dateRange[1] + ' (UTC)'));
             }
-
-            
           } else if (key === 'sex') {
             this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
-          } else if (key !== 'sex') {
+          } else if (key === 'subject_birth_date') {
+            console.log('subject birthdate in storage');
+            console.log(params[key]);
+            // console.log(new Date(params[key] + ' (UTC)'));
+            this.session_filter_form.controls.subject_birth_date_control.patchValue(new Date(params[key] + ' (UTC)'));
+          } else if ( key !== 'session_start_time' && key !== '__json' && key !== '__order') {
+            console.log('retrieving ', key, ' from storage');
             const controlName = key + '_control';
             if (this.session_filter_form.controls[controlName]) {
               const toPatch = {};
@@ -277,7 +284,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   stepBackMenu(event) {
-    const referenceMenuReq = this.filterRequests(event.target.name);
+    let focusOn: string;
+    if (event.checked) {
+      focusOn = 'sex';
+    } else {
+      focusOn = event.target.name;
+    }
+    const referenceMenuReq = this.filterRequests(focusOn);
     if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
       this.allSessionsService.retrieveSessions(referenceMenuReq);
       this.allSessionsService.getNewSessionsLoadedListener()
@@ -300,20 +313,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const requestFilter = {};
     let requestJSONstring = '';
     filterList.forEach(filter => {
-      console.log(filter);
       // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
       const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
       if (filter[1] && filterKey !== focusedField) {
         if (filterKey === 'sex' && this.genderSelected(filter[1])) {
-          console.log('session_menu[sex] keys are, ', Object.keys(this.session_menu['sex']));
-          console.log('filter[1]: ', filter[1]);
           // only accepts single selection - this case the last selection.
           // TODO:coordinate with API for multi-selection
           let requestedGender: string;
           const requestGenderArray = [];
           for (const index in filter[1]) {
             if (filter[1][index]) {
-              console.log('logging filter[1][', index, ']', filter[1][index]);
               requestedGender = Object.keys(this.session_menu['sex'])[index];
               // console.log('type of JSON.stringify({sex: requestedGender}) is: ', typeof JSON.stringify({ 'sex': requestedGender}));
               requestGenderArray.push(JSON.stringify({ 'sex': requestedGender}));
@@ -335,7 +344,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
           if (filterKey === 'subject_birth_date') {
             // Tue Dec 11 2018 00:00:00 GMT-0600 (Central Standard Time) => 2018-12-11T06:00:00.000Z => 2018-12-11
             const mouseDOB = new Date(filter[1].toString());
-            console.log(mouseDOB.toISOString());
             requestFilter[filterKey] = mouseDOB.toISOString().split('T')[0];
           } else if (filterKey === 'session_start_time') {
               if (!this.dateRangeToggle) {
@@ -346,20 +354,17 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 const endString = sessionST.toISOString().split('T')[0] + 'T' + rangeEndTime;
                 const rangeStart = '"' + 'session_start_time>' + '\'' + startString + '\'' + '"';
                 const rangeEnd = '"' + 'session_start_time<' + '\'' + endString + '\'' + '"';
-                console.log('requestJSONString before adding ranges is: ', requestJSONstring);
                 if (requestJSONstring.length > 0) {
                   requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
                 } else {
                   requestJSONstring += rangeStart + ',' + rangeEnd;
                 }
-                console.log('requestJSONString after adding ranges is: ', requestJSONstring);
               }
           } else if (filterKey === 'session_range_filter') {
-            console.log('inside from/to selector - filterKey is: ', filterKey);
             //// Note: filter =
             ////      ["session_range_filter", { session_range_start_control: null, session_range_end_control: null }]
             if (this.dateRangeToggle && filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
-                console.log('range requested!');
+
                 const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
                 const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
                 const rangeStartTime = '00:00:00';
@@ -374,7 +379,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
                   requestJSONstring += rangeStart + ',' + rangeEnd;
                 }
             } else if (this.dateRangeToggle && filter[1]['session_range_start_control'] && !filter[1]['session_range_end_control']) {
-                console.log('all session from ', filter[1]['session_range_start_control'], ' requested!');
+                // console.log('all session from ', filter[1]['session_range_start_control'], ' requested!');
                 const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
                 const rangeStartTime = '00:00:00';
                 const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
@@ -385,7 +390,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
                   requestJSONstring += rangeStart;
                 }
             } else if (this.dateRangeToggle && !filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
-                console.log('all session up to ', filter[1]['session_range_end_control'], ' requested!');
+                // console.log('all session up to ', filter[1]['session_range_end_control'], ' requested!');
                 const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
                 const rangeEndTime = '23:59:59';
                 const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
@@ -439,6 +444,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   resetFilter() {
+    this.loading = true;
     this.allSessionsService.retrieveSessions({'__order': 'session_start_time DESC'});
     this.filterStoreService.clearSessionFilter();
     this.allSessionsService.getNewSessionsLoadedListener()
@@ -484,10 +490,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
             queryParams: null
           });
       } else {
-        console.log('queryParam not there');
         this.applyFilter();
       }
      });
+  }
+
+  updatePageInfo(event) {
+    console.log('page update');
+    console.log(event);
   }
   sessionSelected(session) {
     console.log(session);
