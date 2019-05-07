@@ -89,12 +89,17 @@ export class SessionListComponent implements OnInit, OnDestroy {
         for (const key in params) {
           if (key === '__json') {
             const JSONcontent = JSON.parse(params[key]);
-            console.log(JSON.parse(params[key]));
-            console.log(typeof JSON.parse(params[key]));
+            const dateRange = ['', ''];
             for (const item of JSONcontent) {
               if (typeof item === 'string') {
-                console.log('looking at item: ', item);
-                console.log('probably the session start time field');
+                 // item = "session_start_time>'2019-04-24T00:00:00'"
+                if (item.split('>')[1]) {
+                  dateRange[0] = item.split('>')[1].split('T')[0].split('\'')[1];
+                }
+                if (item.split('<')[1]) {
+                  dateRange[1] = item.split('<')[1].split('T')[0].split('\'')[1];
+                }
+
               } else {
                 for (const gender of item) {
                   // console.log(gender); // gender = { sex: "F"}
@@ -102,8 +107,17 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 }
               }
             }
-            const toPatchVal = {};
-            toPatchVal['__json'] = params[key];
+            console.log('dateRange requested:', dateRange);
+            if (dateRange[0] === dateRange[1]) {
+              this.dateRangeToggle = false;
+              this.session_filter_form.controls.session_start_time_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
+            } else {
+              this.dateRangeToggle = true;
+              this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
+              this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(new Date(dateRange[1] + ' (UTC)'));
+            }
+
+            
           } else if (key === 'sex') {
             this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
           } else if (key !== 'sex') {

@@ -29,7 +29,7 @@
         <div class="date-range-toggler">
           <label for="dateRangeToggler">Session Start Date</label>
           <div>
-            On&nbsp;<mat-slide-toggle name="dateRangeToggler" (change)="dateRangeToggle=!dateRangeToggle">From/To
+            On&nbsp;<mat-slide-toggle name="dateRangeToggler" [checked]="dateRangeToggle" (change)="dateRangeToggle=!dateRangeToggle">From/To
             </mat-slide-toggle>
           </div>
         </div>
