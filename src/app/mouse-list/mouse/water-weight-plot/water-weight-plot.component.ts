@@ -79,7 +79,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           console.log('water weight plot retrieved');
-          const WIWplot = toPlot['plotting_data'];
+          const WIWplot = toPlot['water_weight'];
           WIWplot['layout']['height'] = '';
           WIWplot['layout']['width'] = '';
           this.WIWPlotIsAvailable = true;

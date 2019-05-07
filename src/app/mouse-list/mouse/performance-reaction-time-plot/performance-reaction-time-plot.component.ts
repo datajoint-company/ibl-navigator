@@ -59,7 +59,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
       .subscribe((plotInfo) => {
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
-          const performanceRTplot = toPlot['plotting_data'];
+          const performanceRTplot = toPlot['performance_reaction_time'];
           performanceRTplot['layout']['height'] = '';
           performanceRTplot['layout']['width'] = '';
           this.PRTPlotIsAvailable = true;

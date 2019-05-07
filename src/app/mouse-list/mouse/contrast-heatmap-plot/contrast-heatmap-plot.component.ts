@@ -59,7 +59,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
       .subscribe((plotInfo) => {
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
-          const contrastHeatmapPlot = toPlot['plotting_data'];
+          const contrastHeatmapPlot = toPlot['contrast_heatmap'];
           contrastHeatmapPlot['layout']['height'] = '';
           contrastHeatmapPlot['layout']['width'] = '';
           this.contrastHeatmapPlotIsAvailable = true;

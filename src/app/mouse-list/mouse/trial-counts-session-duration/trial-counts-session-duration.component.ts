@@ -60,7 +60,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
         // getting the newest plot entry
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
-          const TCSDplot = toPlot['plotting_data'];
+          const TCSDplot = toPlot['trial_counts_session_duration'];
           TCSDplot['layout']['height'] = '';
           TCSDplot['layout']['width'] = '';
           this.TCSDPlotIsAvailable = true;
