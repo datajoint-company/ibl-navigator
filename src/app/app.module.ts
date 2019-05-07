@@ -43,9 +43,10 @@ import { ContrastHeatmapPlotComponent } from './mouse-list/mouse/contrast-heatma
 import { FitParPlotsComponent } from './mouse-list/mouse/fit-par-plots/fit-par-plots.component';
 import { ByDateResultPlotsComponent } from './mouse-list/mouse/by-date-result-plots/by-date-result-plots.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
+import { DailySummaryComponent } from './daily-summary/daily-summary.component';
 
 const appRoutes: Routes = [
-  { path: '', component: OverviewComponent },
+  { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'plot', component: ViewSamplePlotsComponent },
   { path: 'cells', component: CellListComponent },
@@ -81,6 +82,11 @@ const appRoutes: Routes = [
         { path: ':sessionID/:batchname', component: EachBatchComponent }
       ]
   },
+  {
+    path: 'summary',
+    // canActivate: [AuthGuard],
+    component: DailySummaryComponent
+  },
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
   // { path: '**', redirectTo: '/not-found' }
 ];
@@ -107,7 +113,8 @@ const appRoutes: Routes = [
     PerformanceReactionTimePlotComponent,
     ContrastHeatmapPlotComponent,
     FitParPlotsComponent,
-    ByDateResultPlotsComponent
+    ByDateResultPlotsComponent,
+    DailySummaryComponent
   ],
   imports: [
     BrowserModule,

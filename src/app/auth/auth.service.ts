@@ -75,6 +75,9 @@ export class AuthService {
                 this.setAuthTimer(expiresIn);
                 this.isLoggedIn = true;
                 this.authStatusListener.next(true);
+            } else {
+                this.isLoggedIn = false;
+                this.authStatusListener.next(false);
             }
         }
     }
