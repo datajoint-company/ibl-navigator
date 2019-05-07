@@ -64,6 +64,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           contrastHeatmapPlot['layout']['width'] = '';
           this.contrastHeatmapPlotIsAvailable = true;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
+          this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot';
           Plotly.newPlot(element, contrastHeatmapPlot['data'], contrastHeatmapPlot['layout'], this.plotConfig);
         } else {
           console.log('contrast heatmap plot unavailable');

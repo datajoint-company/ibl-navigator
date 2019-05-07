@@ -64,6 +64,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           performanceRTplot['layout']['width'] = '';
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
+          this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';
           Plotly.newPlot(element, performanceRTplot['data'], performanceRTplot['layout'], this.plotConfig);
         } else {
           console.log('performance reaction time plot not available');

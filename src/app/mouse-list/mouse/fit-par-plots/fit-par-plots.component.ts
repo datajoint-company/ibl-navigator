@@ -68,6 +68,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           fitParPlots['layout']['height'] = 1200;
           this.fitParPlotsAreAvailable = true;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
+          this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_fit parameters_plot';
           Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], this.plotConfig);
         } else {
           this.fitParPlotsAreAvailable = false;

@@ -101,7 +101,11 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             datePsychPlot['layout']['width'] = '500';
             datePsychPlot['layout']['height'] = '350';
             this.loadingPlots[index] = false;
-            Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout'], this.plotConfig );
+            const plotConfig1 = Object.assign({}, this.plotConfig,
+              { toImageButtonOptions:
+                { filename: this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_psychometric_curve_plot'}});
+            // plotConfig1['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_psychometric_curve_plot';
+            Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout'], plotConfig1 );
           });
           this.recent3datesLoaded.next(this.recent3dates);
         } else {
@@ -134,7 +138,13 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   const dateRTCPlot = plot['plotting_data'];
                   dateRTCPlot['layout']['width'] = '';
                   dateRTCPlot['layout']['height'] = '350';
-                  Plotly.newPlot(elementList[idx].elRTContrast, dateRTCPlot['data'], dateRTCPlot['layout'], this.plotConfig );
+                  const plotConfig2 = Object.assign({}, this.plotConfig,
+                    {
+                      toImageButtonOptions:
+                        { filename: this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_RT_contrast_plot' }
+                    });
+                  // plotConfig2['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_RT_contrast_plot';
+                  Plotly.newPlot(elementList[idx].elRTContrast, dateRTCPlot['data'], dateRTCPlot['layout'],  plotConfig2 );
                 }
               });
               if (!RTCmatchFound) {
@@ -164,7 +174,13 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   const dateRTTPlot = plot['plotting_data'];
                   dateRTTPlot['layout']['width'] = '500';
                   dateRTTPlot['layout']['height'] = '350';
-                  Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], this.plotConfig );
+                  const plotConfig3 = Object.assign({}, this.plotConfig,
+                    {
+                      toImageButtonOptions:
+                        { filename: this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_RT_trial_number_plot' }
+                    });
+                  // plotConfig3['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_RT_trial_number_plot';
+                  Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], plotConfig3 );
                 }
               });
               console.log('match has been found:', RTTNmatchFound, ' at round', idx);
