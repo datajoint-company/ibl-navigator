@@ -142,7 +142,7 @@ app.get('/api/plots/:type/:id', (req, res, next) => {
 // =============================== login logic ================================= //
 app.post('/login', (req, res) => {
     console.log('logging in user: ', req.body.username);
-    if (req.body.username === 'test' && req.body.password === '1234') {
+    if (req.body.username === 'ibluser' && req.body.password === '111111') {
         const token = jwt.sign({username: req.body.username},
                                 'some-secret-value-needs-to-be-changed',
                                 { expiresIn: "24h"});
