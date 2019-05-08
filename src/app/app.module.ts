@@ -44,6 +44,7 @@ import { FitParPlotsComponent } from './mouse-list/mouse/fit-par-plots/fit-par-p
 import { ByDateResultPlotsComponent } from './mouse-list/mouse/by-date-result-plots/by-date-result-plots.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { DailySummaryComponent } from './daily-summary/daily-summary.component';
+import { SummaryPlotsComponent } from './daily-summary/summary-plots/summary-plots.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
@@ -114,7 +115,8 @@ const appRoutes: Routes = [
     ContrastHeatmapPlotComponent,
     FitParPlotsComponent,
     ByDateResultPlotsComponent,
-    DailySummaryComponent
+    DailySummaryComponent,
+    SummaryPlotsComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,43 @@
+.daily-summary-container {
+    padding-top: 20px;
+}
+
+h4 {
+    font-weight: 300;
+}
+
+table {
+    table-layout: auto; 
+    width: 100%;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: scroll;
+}
+
+tr.statRows {
+    width: 100%;
+    justify-content: space-around;
+}
+
+tr.headerRow,
+tr.statRows {
+    border-top: 2px solid rgb(151, 151, 151);
+}
+
+tr.plotRows {
+    /* width: 100%; */
+    /* overflow-x: scroll; */
+}
+
+.plotsCell {
+    /* width: 800px; */
+    /* overflow-x: scroll; */
+}
+
+tr.mat-row:hover {
+    background-color: rgba(0, 83, 145, .05);
+    cursor: pointer;
+}
+

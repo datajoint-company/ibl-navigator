@@ -173,7 +173,7 @@ def handle_q(subpath, args, proj, **kwargs):
 	    plotting_behavior.CumulativeSummary.TrialCountsSessionDuration * \
         plotting_behavior.CumulativeSummary.PerformanceReactionTime & plotting_behavior.SubjectLatestDate
 	    # find latest plots for mouse with summary
-	    q = plots * mouse_we_care
+	    q = plots * mouse_we_care & args
     else:
         abort(404)
 

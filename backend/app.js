@@ -255,6 +255,18 @@ app.post('/api/mice', (req, res) => {
     })
 })
 
+
+app.post('/api/summary', checkAuth, (req, res) => {
+
+    request.post('http://localhost:5000/v0/_q/dailysummary', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        // console.log(body);
+        res.send(body);
+    })
+})
+
 app.post('/api/plot/session-psych-plotData', (req, res) => {
     request.post('http://localhost:5000/v0/sessionpsych', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
