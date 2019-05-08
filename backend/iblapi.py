@@ -162,6 +162,18 @@ def handle_q(subpath, args, proj, **kwargs):
     elif subpath == 'subjpage':
         q = (subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & args)
+    elif subpath == 'dailysummary':
+	    # find the latest summary geneartion for each lab
+	    latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
+	    plotting_behavior.DailyLabSummary, latest_summary_date='max(last_session_time)') & 'last_session_time = latest_summary_date'
+	    # identify mouse summary corresponding to the latest lab summary
+	    mouse_we_care = plotting_behavior.DailyLabSummary.SubjectSummary & latest_summary
+	    # get the latest plots
+	    plots = plotting_behavior.CumulativeSummary.WaterWeight * plotting_behavior.CumulativeSummary.ContrastHeatmap * \
+	    plotting_behavior.CumulativeSummary.TrialCountsSessionDuration * \
+        plotting_behavior.CumulativeSummary.PerformanceReactionTime & plotting_behavior.SubjectLatestDate
+	    # find latest plots for mouse with summary
+	    q = plots * mouse_we_care
     else:
         abort(404)
 
