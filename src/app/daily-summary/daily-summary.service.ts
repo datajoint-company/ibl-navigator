@@ -18,10 +18,12 @@ export class DailySummaryService {
   constructor(private http: HttpClient) { }
 
   getSummary(summaryFilter) {
+    console.log('fetching for full summary');
     console.log('POSTing for:', summaryFilter);
     this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData) => {
+          console.log('length of SummaryData: ', Object.entries(filteredSummaryData).length);
           this.dailySummary = filteredSummaryData;
           // console.log('dailySummary data are: ');
           // console.log(this.dailySummary);
@@ -39,13 +41,17 @@ export class DailySummaryService {
   }
 
   getSummaryMenu(summaryFilter) {
+    console.log('fetching for menu');
+    this.dailySummaryMenu = '';
     this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData) => {
+          console.log('length of menu: ', Object.entries(filteredSummaryData).length);
+
           this.dailySummaryMenu = filteredSummaryData;
           // console.log('dailySummary data are: ');
           // console.log(this.dailySummary);
-          this.dailySummaryLoaded.next(this.dailySummaryMenu);
+          this.dailySummaryMenuLoaded.next(this.dailySummaryMenu);
         },
         (err: any) => {
           console.log('err in http.post subscription');
@@ -59,6 +65,7 @@ export class DailySummaryService {
   }
 
   getSummaryPlots(summaryFilter) {
+    console.log('fetching for summary plots');
     this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData) => {

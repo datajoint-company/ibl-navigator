@@ -205,17 +205,22 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   stepBackMenu(event) {
+    // if (this.summaryMenuSubscription) this.summaryMenuSubscription.unsubscribe();
     console.log('stepback event!');
     let focusOn: string;
     focusOn = event.target.name;
     const referenceMenuReq = this.filterRequests(focusOn);
     if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
+      console.log('reference menu great than one: ', referenceMenuReq);
       this.dailySummaryService.getSummaryMenu(referenceMenuReq);
-      this.dailySummaryService.getSummaryMenuLoadedListener()
+      this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
         .subscribe((summaryInfo: any) => {
+          console.log('retrieved Menu length!: ', Object.entries(summaryInfo).length);
+
           this.createMenu(summaryInfo);
         });
     } else {
+      console.log('reference menu empty - creating all menu');
       this.createMenu(this.allSummary);
     }
   }
