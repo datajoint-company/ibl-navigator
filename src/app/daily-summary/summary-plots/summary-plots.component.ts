@@ -8,7 +8,14 @@ declare var Plotly: any;
   templateUrl: './summary-plots.component.html',
   styleUrls: ['./summary-plots.component.css']
 })
-export class SummaryPlotsComponent implements OnInit {
+export class SummaryPlotsComponent implements OnInit, OnDestroy {
+  currentWWIplot;
+  currentTCSDplot;
+  currentPRTplot;
+  currentCHplot;
+  plotsInfo;
+
+  private summaryPlotsSubscription: Subscription;
   @Input('mouseInfo') mouseInfo: Object;
   constructor(public dailySummaryService: DailySummaryService) { }
 
@@ -22,10 +29,14 @@ export class SummaryPlotsComponent implements OnInit {
     const PRTplotElem = this.PRTplot.nativeElement;
     const CHplotElem = this.CHplot.nativeElement;
     this.dailySummaryService.getSummaryPlots({'subject_uuid': this.mouseInfo['subject_uuid']});
-    this.dailySummaryService.getSummaryPlotsLoadedListener()
+    this.summaryPlotsSubscription = this.dailySummaryService.getSummaryPlotsLoadedListener()
       .subscribe((plotsInfo: any) => {
+        this.plotsInfo = plotsInfo;
         if (plotsInfo && plotsInfo[0]) {
+          if (plotsInfo[0]['subject_uuid'] !== this.mouseInfo['subject_uuid']) return;
           console.log('printing daily summary plotsInfo for', plotsInfo[0]['subject_uuid']);
+          console.log('info returned in request for: ', this.mouseInfo['subject_uuid']);
+          console.log('=====================================');
           const WWIplotInfo = plotsInfo[0]['water_weight'];
           const TCSDplotInfo = plotsInfo[0]['trial_counts_session_duration'];
           const PRTplotInfo = plotsInfo[0]['performance_reaction_time'];
@@ -38,6 +49,10 @@ export class SummaryPlotsComponent implements OnInit {
           console.log('trouble loading daily summary info for:', plotsInfo);
         }
       });
+  }
+
+  ngOnDestroy() {
+    this.summaryPlotsSubscription.unsubscribe();
   }
 
 }

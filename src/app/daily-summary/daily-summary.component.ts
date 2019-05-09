@@ -43,7 +43,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     // const elementCH = this.elemCH.nativeElement;
 
     this.dailySummaryService.getSummary({'__order': 'last_session_time DESC'});
-    this.dailySummaryService.getSummaryLoadedListener()
+    this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
       .subscribe(summary => {
         this.summary = summary;
         this.dataSource = new MatTableDataSource(this.summary);
@@ -54,7 +54,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-
+    this.summarySubscription.unsubscribe();
   }
 
 }
