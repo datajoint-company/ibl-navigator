@@ -9,6 +9,9 @@ export class DailySummaryService {
   private dailySummary;
   private dailySummaryLoaded = new Subject();
 
+  private dailySummaryMenu;
+  private dailySummaryMenuLoaded = new Subject();
+
   private dailySummaryPlots;
   private dailySummaryPlotsLoaded = new Subject();
 
@@ -33,6 +36,26 @@ export class DailySummaryService {
 
   getSummaryLoadedListener() {
     return this.dailySummaryLoaded.asObservable();
+  }
+
+  getSummaryMenu(summaryFilter) {
+    this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
+      .subscribe(
+        (filteredSummaryData) => {
+          this.dailySummaryMenu = filteredSummaryData;
+          // console.log('dailySummary data are: ');
+          // console.log(this.dailySummary);
+          this.dailySummaryLoaded.next(this.dailySummaryMenu);
+        },
+        (err: any) => {
+          console.log('err in http.post subscription');
+          console.log(err);
+        }
+      );
+  }
+
+  getSummaryMenuLoadedListener() {
+    return this.dailySummaryMenuLoaded.asObservable();
   }
 
   getSummaryPlots(summaryFilter) {

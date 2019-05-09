@@ -1,7 +1,10 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
+import { FormControl, FormGroup, FormArray } from '@angular/forms';
+import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { DailySummaryService } from './daily-summary.service';
+import { FilterStoreService } from '../filter-store.service';
 
 declare var Plotly: any;
 @Component({
@@ -10,12 +13,40 @@ declare var Plotly: any;
   styleUrls: ['./daily-summary.component.css']
 })
 export class DailySummaryComponent implements OnInit, OnDestroy {
+  summary_filter_form = new FormGroup({
+    lab_name_control: new FormControl(),
+    subject_nickname_control: new FormControl(),
+    subject_uuid_control: new FormControl(),
+    latest_task_protocol_control: new FormControl(),
+    latest_training_status_control: new FormControl(),
+    latest_session_ingested_control: new FormControl(),
+    last_session_time_control: new FormControl(),
+    session_range_filter: new FormGroup({
+      session_range_start_control: new FormControl(),
+      session_range_end_control: new FormControl()
+    }),
+    n_sessions_current_protocol: new FormControl()
+  });
   summary;
+  allSummary;
   loading = true;
 
-  displayedColumns: string[] = ['subject_nickname', 'last_session_time', 'latest_task_protocol',
-    'latest_training_status', 'n_sessions_current_protocol', 'latest_session_ingested',
-    'latest_session_on_flatiron', 'lab_name', 'subject_uuid'];
+  sessionDateFilter: Function;
+  sessionMinDate: Date;
+  sessionMaxDate: Date;
+  nSessionsMin: number;
+  nSessionsMax: number;
+  dateRangeToggle: boolean;
+  filteredLatestTaskProtocolOptions: Observable<string[]>;
+  filteredLatestTrainingStatusOptions: Observable<string[]>;
+  filteredLabNameOptions: Observable<string[]>;
+  filteredSubjectNicknameOptions: Observable<string[]>;
+  filteredSubjectUuidOptions: Observable<string[]>;
+  daily_summary_menu = {};
+
+  displayedColumns: string[] = ['subject_nickname', 'last_session_time', 'lab_name', 'latest_training_status',
+    'latest_task_protocol', 'n_sessions_current_protocol', 'latest_session_ingested',
+    'latest_session_on_flatiron', 'subject_uuid'];
 
   displayedPlots: string[] = ['water_weight', 'performance_reaction_time',
     'trial_counts_session_duration', 'contrast_heatmap'];
@@ -28,33 +59,316 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   pageSizeOptions: number[] = [5, 10, 25, 50, 100];
 
   private summarySubscription: Subscription;
+  private summaryMenuSubscription: Subscription;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  // @ViewChild('waterWeightPlot') elemWWI: ElementRef;
-  // @ViewChild('trialCountsSessionDurationPlot') elemTCSD: ElementRef;
-  // @ViewChild('performanceReactionTimePlot') elemPRT: ElementRef;
-  // @ViewChild('contrastHeatmapPlot') elemCH: ElementRef;
-  constructor(public dailySummaryService: DailySummaryService) { }
+  constructor(public dailySummaryService: DailySummaryService, public filterStoreService: FilterStoreService) { }
 
   ngOnInit() {
-    // const elementWWI = this.elemWWI.nativeElement;
-    // const elementTCSD = this.elemTCSD.nativeElement;
-    // const elementPRT = this.elemPRT.nativeElement;
-    // const elementCH = this.elemCH.nativeElement;
-
-    this.dailySummaryService.getSummary({'__order': 'last_session_time DESC'});
-    this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
+    console.log('on init');
+    const filters = this.filterStoreService.retrieveSummaryFilter();
+    for (const key in filters) {
+      console.log('preApplied filters are: ', filters);
+      if (key === '__json') {
+        const JSONcontent = JSON.parse(filters[key]);
+        const dateRange = ['', ''];
+        for (const item of JSONcontent) {
+          if (typeof item === 'string') {
+            if (item.split('>')[1]) {
+              dateRange[0] = item.split('>')[1].split('T')[0].split('\'')[1];
+            }
+            if (item.split('<')[1]) {
+              dateRange[1] = item.split('<')[1].split('T')[0].split('\'')[1];
+            }
+          }
+        }
+        if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
+          console.log('specific date requested:', dateRange);
+          this.dateRangeToggle = false;
+          this.summary_filter_form.controls.last_session_time_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
+        } else if (dateRange[0] !== '') {
+          console.log('date rangerequested:', dateRange);
+          this.dateRangeToggle = true;
+          this.summary_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
+          this.summary_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(new Date(dateRange[1] + ' (UTC)'));
+        }
+      } else if (key !== 'last_session_time' && key !== '__json' && key !== '__order') {
+        const controlName = key + '_control';
+        if (this.summary_filter_form.controls[controlName]) {
+          const toPatch = {};
+          toPatch[controlName] = filters[key];
+          this.summary_filter_form.patchValue(toPatch);
+        }
+      }
+    }
+    this.applyFilter();
+    console.log('creating menu on init');
+    this.dailySummaryService.getSummaryMenu({'__order': 'last_session_time DESC'});
+    this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
-        this.summary = summary;
-        this.dataSource = new MatTableDataSource(this.summary);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+        this.allSummary = summary;
+        // this.dataSource = new MatTableDataSource(this.summary);
+        // this.dataSource.sort = this.sort;
+        // this.dataSource.paginator = this.paginator;
+        this.createMenu(summary);
         this.loading = false;
       });
   }
 
   ngOnDestroy() {
-    this.summarySubscription.unsubscribe();
+    console.log('component on destroy');
+    if (this.summarySubscription) {
+      this.summarySubscription.unsubscribe();
+    }
+  }
+
+  private createMenu(summaryInfo) {
+    this.daily_summary_menu = {};
+    const keys = ['latest_task_protocol', 'last_session_time', 'subject_uuid',
+      'latest_training_status', 'lab_name', 'latest_session_on_flatiron',
+      'latest_session_ingested', 'subject_nickname', 'n_sessions_current_protocol'];
+    for (const key of keys) {
+      this.daily_summary_menu[key] = [];
+    }
+    for (const summaryItem of summaryInfo) {
+      for (const key of keys) {
+        if (!this.daily_summary_menu[key].includes(summaryItem[key])) {
+          this.daily_summary_menu[key].push(summaryItem[key]);
+        }
+      }
+    }
+
+    // create formcontrol for item in menus
+    const sessionSeconds = [];
+    for (const date of this.daily_summary_menu['last_session_time']) {
+      sessionSeconds.push(new Date(date).getTime());
+    }
+    this.sessionMinDate = new Date(Math.min(...sessionSeconds));
+    this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
+
+    const sessionNumbers = [];
+    for (const num of this.daily_summary_menu['n_sessions_current_protocol']) {
+      sessionNumbers.push(num);
+    }
+    this.nSessionsMin = Math.min(...sessionNumbers);
+    this.nSessionsMax = Math.max(...sessionNumbers);
+
+    this.filteredLabNameOptions = this.summary_filter_form.controls.lab_name_control.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, 'lab_name'))
+      );
+
+    this.filteredSubjectNicknameOptions = this.summary_filter_form.controls.subject_nickname_control.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, 'subject_nickname'))
+      );
+
+    this.filteredSubjectUuidOptions = this.summary_filter_form.controls.subject_uuid_control.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, 'subject_uuid'))
+      );
+
+    this.filteredLatestTrainingStatusOptions = this.summary_filter_form.controls.latest_training_status_control.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, 'latest_training_status'))
+      );
+
+    this.filteredLatestTaskProtocolOptions = this.summary_filter_form.controls.latest_task_protocol_control.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, 'latest_task_protocol'))
+      );
+
+    this.sessionDateFilter = (d: Date): boolean => {
+      const sessionDates = [];
+      for (const date of this.daily_summary_menu['last_session_time']) {
+        sessionDates.push(date.split('T')[0]);
+      }
+
+      // filter out dates without any session
+      return sessionDates.includes(d.toISOString().split('T')[0]);
+    };
+  }
+
+  private _filter(value: string, menuType: string): string[] {
+    const filterValue = value.toLowerCase();
+    const result = this.daily_summary_menu[menuType].filter(menu_items => {
+      if (menu_items && menu_items.toLowerCase().includes(filterValue)) {
+        return true;
+      }
+    });
+    return result;
+  }
+
+  stepBackMenu(event) {
+    console.log('stepback event!');
+    let focusOn: string;
+    focusOn = event.target.name;
+    const referenceMenuReq = this.filterRequests(focusOn);
+    if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
+      this.dailySummaryService.getSummaryMenu(referenceMenuReq);
+      this.dailySummaryService.getSummaryMenuLoadedListener()
+        .subscribe((summaryInfo: any) => {
+          this.createMenu(summaryInfo);
+        });
+    } else {
+      this.createMenu(this.allSummary);
+    }
+  }
+
+  updateMenu() {
+    console.log('update menu');
+    const menuRequest = this.filterRequests();
+    if (Object.entries(menuRequest).length > 1) {
+      this.dailySummaryService.getSummaryMenu(menuRequest);
+      this.dailySummaryService.getSummaryMenuLoadedListener()
+        .subscribe((sessions: any) => {
+          this.createMenu(sessions);
+        });
+    }
+  }
+
+  filterRequests(focusedField?: string) {
+    console.log('filtering requests');
+    const filterList = Object.entries(this.summary_filter_form.getRawValue());
+    // console.log('filterList is...');
+    // console.log(filterList);
+    const requestFilter = {};
+    let requestJSONstring = '';
+    filterList.forEach(filter => {
+      // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
+      const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
+      if (filter[1] && filterKey !== focusedField) {
+        if (filterKey === 'last_session_time') {
+          if (!this.dateRangeToggle) {
+            const sessionST = new Date(filter[1].toString());
+            const rangeStartTime = '00:00:00';
+            const rangeEndTime = '23:59:59';
+            const startString = sessionST.toISOString().split('T')[0] + 'T' + rangeStartTime;
+            const endString = sessionST.toISOString().split('T')[0] + 'T' + rangeEndTime;
+            const rangeStart = '"' + 'last_session_time>' + '\'' + startString + '\'' + '"';
+            const rangeEnd = '"' + 'last_session_time<' + '\'' + endString + '\'' + '"';
+            if (requestJSONstring.length > 0) {
+              requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
+            } else {
+              requestJSONstring += rangeStart + ',' + rangeEnd;
+            }
+          }
+        } else if (filterKey === 'session_range_filter') {
+          //// Note: filter =
+          ////      ["session_range_filter", { session_range_start_control: null, session_range_end_control: null }]
+          if (this.dateRangeToggle && filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
+
+            const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
+            const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
+            const rangeStartTime = '00:00:00';
+            const rangeEndTime = '23:59:59';
+            const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
+            const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
+            const rangeStart = '"' + 'last_session_time>' + '\'' + startString + '\'' + '"';
+            const rangeEnd = '"' + 'last_session_time<' + '\'' + endString + '\'' + '"';
+            if (requestJSONstring.length > 0) {
+              requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
+            } else {
+              requestJSONstring += rangeStart + ',' + rangeEnd;
+            }
+          } else if (this.dateRangeToggle && filter[1]['session_range_start_control'] && !filter[1]['session_range_end_control']) {
+            // console.log('all session from ', filter[1]['session_range_start_control'], ' requested!');
+            const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
+            const rangeStartTime = '00:00:00';
+            const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
+            const rangeStart = '"' + 'last_session_time>' + '\'' + startString + '\'' + '"';
+            if (requestJSONstring.length > 0) {
+              requestJSONstring += ',' + rangeStart;
+            } else {
+              requestJSONstring += rangeStart;
+            }
+          } else if (this.dateRangeToggle && !filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
+            // console.log('all session up to ', filter[1]['session_range_end_control'], ' requested!');
+            const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
+            const rangeEndTime = '23:59:59';
+            const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
+            const rangeEnd = '"' + 'last_session_time<' + '\'' + endString + '\'' + '"';
+            if (requestJSONstring.length > 0) {
+              requestJSONstring += ',' + rangeEnd;
+            } else {
+              requestJSONstring += rangeEnd;
+            }
+          }
+        } else {
+          requestFilter[filterKey] = filter[1];
+        }
+
+        if (requestJSONstring.length > 0) {
+          // console.log('requestJSONstring is : ', requestJSONstring);
+          requestFilter['__json'] = '[' + requestJSONstring + ']';
+        }
+      }
+    });
+    console.log('requestFilter is: ', requestFilter);
+    return requestFilter;
+  }
+
+  applyFilter() {
+    console.log('applying filter');
+    this.loading = true;
+    this.summary = [];
+    const request = this.filterRequests();
+    request['__order'] = 'last_session_time DESC';
+    if (Object.entries(request) && Object.entries(request).length > 1) {
+      // if (this.summarySubscription) this.summarySubscription.unsubscribe();
+      this.filterStoreService.storeSummaryFilter(request);
+      this.dailySummaryService.getSummary(request);
+      this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
+        .subscribe((summaryInfo: any) => {
+          this.loading = false;
+          this.summary = summaryInfo;
+          this.dataSource = new MatTableDataSource(this.summary);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          
+        });
+      
+    } else {
+      this.resetFilter();
+    }
+  }
+
+  resetFilter() {
+    console.log('resetting filter');
+    this.loading = true;
+    this.dailySummaryService.getSummary({ '__order': 'last_session_time DESC' });
+    this.filterStoreService.clearSummaryFilter();
+    this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
+      .subscribe((summaryInfo: any) => {
+        this.loading = false;
+        this.summary = summaryInfo;
+        this.allSummary = summaryInfo;
+        this.dataSource = new MatTableDataSource(this.summary);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        
+      });
+    
+  }
+
+  clearControl() {
+    console.log('control cleared');
+    const toReset = {};
+    for (const control in this.summary_filter_form.controls) {
+      if (control === 'session_range_filter') {
+        toReset[control] = { 'session_range_start_control': null, 'session_range_end_control': null }
+
+      }  else {
+        toReset[control] = '';
+      }
+      this.summary_filter_form.patchValue(toReset);
+    }
+    this.applyFilter();
   }
 
 }

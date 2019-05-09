@@ -6,14 +6,107 @@ h4 {
     font-weight: 300;
 }
 
+form { 
+    margin-bottom: 5px;
+    padding-bottom: 25px;
+    border-bottom: 3px solid rgb(209, 209, 209);
+    display: inline-block;
+    font-size: 80%;
+    width: 100%;
+} 
+
+label {
+    font-weight: 500;
+}
+
+mat-form-field {
+    margin: 10px;
+    width: 220px;
+    float: left;
+}
+
+mat-form-field.long {
+    width: 350px;
+}
+
+mat-form-field.short {
+    width: 190px;
+}
+
+.session-date-filter {
+    float: left;
+    width: 440px;
+    margin-top: 9px;
+    display: inline-flex;
+}
+
+.session-date-filter mat-form-field {
+    margin: 0px;
+}
+
+.range-filter-inputs mat-form-field {
+    width: 50%;
+    padding-right: 2%;
+}
+
+.date-range-toggler + mat-form-field {
+    width: 35%;
+}
+
+.date-range-toggler {
+    margin-top: 14px;
+    margin-right: 13px;
+    width: 33%;
+}
+
+.date-range-toggler div {
+    transform: translateY(-25%);
+}
+
+.filter-buttons {
+    width: 100%;
+    margin-top: 10px;
+    display: inline-flex;
+    flex-direction: row;
+}
+
+button {
+    float: left;
+    margin-left: 5px;
+    border: 2px solid rgb(101, 152, 184);
+}
+button:hover {
+    border: 2px solid rgb(0, 124, 183);
+    background-color: rgb(0, 124, 183);
+    color: white;
+}
+
 table {
-    table-layout: auto; 
+    /* table-layout: auto; 
+    width: 100%; */
+    table-layout: fixed; 
     width: 100%;
 }
 
 .table-container {
     width: 100%;
     overflow-x: scroll;
+}
+
+td.mat-column-last_session_time,
+td.mat-column-latest_session_ingested,
+td.mat-column-latest_session_on_flatiron {
+}
+td.mat-column-latest_task_protocol {
+    overflow-wrap: break-word;
+    padding-right: 7px;
+}
+
+th.mat-column-n_sessions_current_protocol {
+    padding-left: 40px;
+}
+td.mat-column-n_sessions_current_protocol {
+    text-align: center;
 }
 
 tr.statRows {
@@ -33,11 +126,20 @@ tr.plotRows {
 
 .plotsCell {
     /* width: 800px; */
-    /* overflow-x: scroll; */
+    overflow-x: scroll;
+    width: 100%;
 }
 
-tr.mat-row:hover {
+tr.statRows:hover {
     background-color: rgba(0, 83, 145, .05);
     cursor: pointer;
+}
+
+.loading-icon {
+    text-align: center;
+}
+
+.loading-icon img {
+    width: 100px;
 }
 
