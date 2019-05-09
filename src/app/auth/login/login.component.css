@@ -2,6 +2,10 @@
     padding-top: 20px;
 }
 
+.login-sub-container {
+    float: right;
+}
+
 h4 {
     font-weight: 300;
 }
