@@ -54,14 +54,14 @@ const appRoutes: Routes = [
   { path: 'water-weight', component: WaterWeightPlotComponent},
   {
     path: 'mouse/:mouseUUID',
-    // canActivate: [AuthGuard],
-    // canActivateChild: [AuthGuard],
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     component: MouseComponent
   },
   {
     path: 'mice',
-      // canActivate: [AuthGuard],
-      // canActivateChild: [AuthGuard],
+      canActivate: [AuthGuard],
+      canActivateChild: [AuthGuard],
       component: MouseListComponent,
       children: [
         { path: ':lab/:mousename', component: MouseComponent }
@@ -85,7 +85,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'summary',
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: DailySummaryComponent
   },
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
