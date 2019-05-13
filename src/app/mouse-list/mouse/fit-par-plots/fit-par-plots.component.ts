@@ -10,7 +10,6 @@ declare var Plotly: any;
   styleUrls: ['./fit-par-plots.component.css']
 })
 export class FitParPlotsComponent implements OnInit, OnDestroy {
-  // MathJax;
   fitParPlotsAreAvailable: boolean;
   plotConfig = {
     responsive: true,
