@@ -63,6 +63,22 @@ mat-form-field.short {
     transform: translateY(-25%);
 }
 
+/* .n-sessions-since-field {
+    display: flex;
+    flex-direction: column;
+    float: left;
+}
+
+.n-sessions-since-field mat-slider {
+    width: 220px;
+}
+
+div.mat-slider-track-fill, 
+div.mat-slider-track-background {
+    background-color: #c3359d; 
+} */
+
+
 .filter-buttons {
     width: 100%;
     margin-top: 10px;

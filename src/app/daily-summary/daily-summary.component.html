@@ -77,6 +77,11 @@
         </mat-form-field>
       </div>
     </div>
+    <!-- <div class="n-sessions-since-field">
+      <label for="nSessions">N sessions</label>
+      <mat-slider formControlName="n_sessions_current_protocol_control" [max]="nSessionsMax" [min]="nSessionsMin" [invert]="sliderInverted" tickInterval="1" thumbLabel></mat-slider>
+      <mat-checkbox (change)="sliderInverted = !sliderInverted">Over n sessions</mat-checkbox>
+    </div> -->
     <mat-form-field class="long">
       <label>Mouse UUID</label>
       <input matInput type="text" name="subject_uuid" formControlName="subject_uuid_control"

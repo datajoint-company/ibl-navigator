@@ -25,7 +25,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       session_range_start_control: new FormControl(),
       session_range_end_control: new FormControl()
     }),
-    n_sessions_current_protocol: new FormControl()
+    // n_sessions_current_protocol_control: new FormControl()
   });
   summary;
   allSummary;
@@ -34,8 +34,10 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   sessionDateFilter: Function;
   sessionMinDate: Date;
   sessionMaxDate: Date;
-  nSessionsMin: number;
-  nSessionsMax: number;
+  // nSessionsMin: number;
+  // nSessionsMax: number;
+  sliderStep = 1;
+  sliderInverted = false;
   dateRangeToggle: boolean;
   filteredLatestTaskProtocolOptions: Observable<string[]>;
   filteredLatestTrainingStatusOptions: Observable<string[]>;
@@ -146,12 +148,12 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.sessionMinDate = new Date(Math.min(...sessionSeconds));
     this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
 
-    const sessionNumbers = [];
-    for (const num of this.daily_summary_menu['n_sessions_current_protocol']) {
-      sessionNumbers.push(num);
-    }
-    this.nSessionsMin = Math.min(...sessionNumbers);
-    this.nSessionsMax = Math.max(...sessionNumbers);
+    // const sessionNumbers = [];
+    // for (const num of this.daily_summary_menu['n_sessions_current_protocol']) {
+    //   sessionNumbers.push(num);
+    // }
+    // this.nSessionsMin = Math.min(...sessionNumbers);
+    // this.nSessionsMax = Math.max(...sessionNumbers);
 
     this.filteredLabNameOptions = this.summary_filter_form.controls.lab_name_control.valueChanges
       .pipe(
