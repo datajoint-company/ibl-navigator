@@ -93,9 +93,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           this.datePsychPlotList = psychCurveInfo;
           const recent3 = psychCurveInfo.slice(0, 3);
-          console.log('going through datepsychcurve');
           recent3.forEach((plot, index) => {
-            console.log('evaluating psych Curve plot:', plot);
             this.recent3dates.push(plot['session_date']);
             const datePsychPlot = plot['plotting_data'];
             datePsychPlot['layout']['width'] = '500';
@@ -104,9 +102,9 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             const plotConfig1 = Object.assign({}, this.plotConfig,
               { toImageButtonOptions:
                 { filename: this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_psychometric_curve_plot'}});
-            // plotConfig1['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_psychometric_curve_plot';
             Plotly.newPlot(elementList[index].elPsych, datePsychPlot['data'], datePsychPlot['layout'], plotConfig1 );
           });
+          // console.log('psych curve done loading: ', this.loadingPlots);
           this.recent3datesLoaded.next(this.recent3dates);
         } else {
           this.loadingPlots = [false, false, false, false, false, false, false, false, false];
@@ -116,25 +114,21 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
         }
       });
     this.getRecent3DatesLoadedListener().subscribe((dates) => {
-      console.log('recent 3 dates ready', dates);
-      console.log(typeof dates);
       this.mousePlotsService.getDateRTContrastPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC' });
       this.dateRTContrastPlotSubscription = this.mousePlotsService.getDateRTContrastPlotLoadedListener()
         .subscribe((DRTCplotInfo: any) => {
-          console.log('date RT contrast plot data here...?');
           if (DRTCplotInfo && DRTCplotInfo.length > 0) {
             this.dateRTCPlotList = DRTCplotInfo;
             const recent3 = DRTCplotInfo.slice(0, 3);
-            console.log('going through dateRTContrast');
             this.recent3dates.forEach((date, idx) => {
               let RTCmatchFound = false;
-              console.log(date);
               recent3.forEach((plot, index) => {
-                this.loadingPlots[3 + index] = false;
+
                 if (plot['session_date'] === date) {
 
                   RTCmatchFound = true;
-                  console.log('session date match in contrast!!', plot['session_date'], 'at index', index);
+                  // console.log('session date match in contrast!!', plot['session_date'], 'at index', index);
+                  this.loadingPlots[3 + idx] = false;
                   const dateRTCPlot = plot['plotting_data'];
                   dateRTCPlot['layout']['width'] = '';
                   dateRTCPlot['layout']['height'] = '350';
@@ -143,16 +137,19 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                       toImageButtonOptions:
                         { filename: this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_RT_contrast_plot' }
                     });
-                  // plotConfig2['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_RT_contrast_plot';
                   Plotly.newPlot(elementList[idx].elRTContrast, dateRTCPlot['data'], dateRTCPlot['layout'],  plotConfig2 );
                 }
               });
               if (!RTCmatchFound) {
+                this.loadingPlots[3 + idx] = false;
                 Plotly.newPlot(elementList[idx].elRTContrast, [],
                   { title: { text: 'Reaction time - contrast plot unavailable' }, width: '', height: '350' }, this.plotConfig);
               }
             });
           } else {
+            this.loadingPlots[3] = false;
+            this.loadingPlots[4] = false;
+            this.loadingPlots[5] = false;
             console.log('date reaction time contrast plot unavailable');
           }
         });
@@ -165,12 +162,9 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             this.recent3dates.forEach((date, idx) => {
               let RTTNmatchFound = false;
               recent3.forEach((plot, index) => {
-                this.loadingPlots[6 + index] = false;
-                console.log('evaluating TrialNum plot:', plot);
-                console.log('date:', date, 'idx:', idx);
                 if (plot['session_date'] === date) {
                   RTTNmatchFound = true;
-                  console.log('session date match in trialNum!', plot['session_date'], 'at index:', index, '& at idx:', idx);
+                  // console.log('session date match in trialNum!', plot['session_date'], 'at index:', index, '& at idx:', idx);
                   const dateRTTPlot = plot['plotting_data'];
                   dateRTTPlot['layout']['width'] = '500';
                   dateRTTPlot['layout']['height'] = '350';
@@ -179,15 +173,12 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                       toImageButtonOptions:
                         { filename: this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_RT_trial_number_plot' }
                     });
-                  // plotConfig3['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_' + plot['session_date'] + '_RT_trial_number_plot';
+                  this.loadingPlots[6 + idx] = false;
                   Plotly.newPlot(elementList[idx].elRTTrialNum, dateRTTPlot['data'], dateRTTPlot['layout'], plotConfig3 );
                 }
               });
-              console.log('match has been found:', RTTNmatchFound, ' at round', idx);
               if (!RTTNmatchFound) {
-                this.loadingPlots[3] = false;
-                this.loadingPlots[4] = false;
-                this.loadingPlots[5] = false;
+                this.loadingPlots[6 + idx] = false;
                 Plotly.newPlot(elementList[idx].elRTTrialNum, [],
                   { title: { text: 'Reaction time - trial number plot unavailable' }, width: '', height: '350' }, this.plotConfig );
               }
