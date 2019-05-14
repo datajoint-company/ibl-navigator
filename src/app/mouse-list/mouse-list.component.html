@@ -80,7 +80,7 @@
 </form>
 
 <div class="table-container">
-<table mat-table class="col-12" [dataSource]="dataSource" matSort>
+<table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
   <ng-container matColumnDef="lab_name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
     <td mat-cell *matCellDef="let mouse"> {{mouse.lab_name}} </td>
@@ -124,6 +124,6 @@
 <div class="loading-icon" *ngIf="loading">
   <img src="assets/images/loading_icon.gif">
 </div>
-<mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
+<mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>
 </div>
 

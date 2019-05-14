@@ -51,7 +51,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // this.loading = true;
     this.mice_menu['sex'] = { F: null, M: null, U: null };
-
+    const tableState: [number, number, Object] = this.filterStoreService.retrieveMouseTableState();
     const filters = this.filterStoreService.retrieveMouseFilter();
     for (const key in filters) {
       if (key === '__json') {
@@ -59,7 +59,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
         for (const item of JSONcontent) {
           if (typeof item === 'string') {
           } else {
-            console.log('type of gender array: ', typeof item);
             for (const gender of item) {
               this.mouse_filter_form.controls.sex_control['controls'][this.genderMenu2ControlMap[gender['sex']]].patchValue(true);
             }
@@ -78,7 +77,15 @@ export class MouseListComponent implements OnInit, OnDestroy {
         }
       }
     }
-
+    if (tableState[0] && tableState[1]) {
+      this.paginator.pageIndex = tableState[0];
+      this.pageSize = tableState[1];
+    }
+    if (tableState[2] && Object.entries(tableState[2]).length > 0 && this.sort) {
+      this.sort.active = Object.keys(tableState[2])[0];
+      this.sort.direction = Object.values(tableState[2])[0].direction;
+      // console.log(Object.keys(tableState[2])[0], ' => ',  Object.values(tableState[2])[0].direction);
+    }
     this.applyFilter();
     // for creating the menu
     this.allMiceService.getAllMice();
@@ -334,6 +341,32 @@ export class MouseListComponent implements OnInit, OnDestroy {
       }
       this.mouse_filter_form.patchValue(toReset);
     }
+    this.filterStoreService.clearMouseTableState();
+    this.paginator.pageSize = 25;
+    this.paginator.pageIndex = null;
+    // the below sort is to reset the arrow UI that doesn't go away after this.sort.active = '' 
+    this.sort.sortables.forEach(sortItem => {
+      this.sort.sort(sortItem);
+    });
+
+    this.sort.active = '';
     this.applyFilter();
+  }
+
+  storeTableInfo(event) {
+    let pageIndex;
+    let pageSize;
+    const sorter = {};
+    console.log('storing table info');
+    if (event.pageIndex && event.pageSize) {
+      pageIndex = event.pageIndex;
+      pageSize = event.pageSize;
+    }
+    if (event.active && event.direction) {
+      console.log(event);
+      sorter[event.active] = { 'direction': event.direction };
+    }
+    console.log(pageIndex, pageSize, sorter);
+    this.filterStoreService.storeMouseTableState(pageIndex, pageSize, sorter);
   }
 }
