@@ -77,6 +77,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.loading = true;
     console.log('onInit');
     this.session_menu['sex'] = { F: null, M: null, U: null };
+    const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState();
+    console.log('tableState: ', tableState);
     this.route.queryParams
       .subscribe(params => {
         console.log('params loading sessions: ', params);
@@ -135,6 +137,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
               this.session_filter_form.patchValue(toPatch);
             }
           }
+        }
+        if (tableState[1]) {
+          this.paginator.pageIndex = tableState[0];
+          this.pageSize = tableState[1];
+        }
+        if (tableState[2] && Object.entries(tableState[2]).length > 0 && this.sort) {
+          this.sort.active = Object.keys(tableState[2])[0];
+          this.sort.direction = Object.values(tableState[2])[0].direction;
         }
         this.applyFilter();
 
@@ -474,9 +484,18 @@ export class SessionListComponent implements OnInit, OnDestroy {
       } else {
         toReset[control] = '';
       }
-      this.session_filter_form.patchValue(toReset);
-      
+      this.session_filter_form.patchValue(toReset); 
     }
+    this.filterStoreService.clearSessionTableState();
+    this.paginator.pageSize = 25;
+    this.paginator.pageIndex = null;
+    // the below sort is to reset the arrow UI that doesn't go away after this.sort.active = '' 
+    this.sort.sortables.forEach(sortItem => {
+      this.sort.sort(sortItem);
+    });
+
+    this.sort.active = '';
+
     console.log(this.route.queryParams);
     this.route.queryParams.subscribe(param => {
       console.log('queryParams', param);
@@ -495,10 +514,26 @@ export class SessionListComponent implements OnInit, OnDestroy {
      });
   }
 
-  updatePageInfo(event) {
-    console.log('page update');
-    console.log(event);
+  storeTableInfo(event) {
+    let pageIndex;
+    let pageSize;
+    const sorter = {};
+    console.log('storing table info');
+    if (event.pageSize) {
+      pageIndex = event.pageIndex;
+      pageSize = event.pageSize;
+    }
+    if (event.active && event.direction) {
+      console.log(event);
+      if (event.active !== 'nplot') {
+        sorter[event.active] = { 'direction': event.direction };
+      }
+      
+    }
+    console.log(pageIndex, pageSize, sorter);
+    this.filterStoreService.storeSessionTableState(pageIndex, pageSize, sorter);
   }
+
   sessionSelected(session) {
     console.log(session);
     this.selectedSession = session;

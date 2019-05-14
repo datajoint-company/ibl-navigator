@@ -148,7 +148,7 @@
 </form>
 
 <div class="table-container">
-<table mat-table class="col-12" [dataSource]="dataSource" matSort>
+<table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
 
   <ng-container matColumnDef="lab_name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
@@ -215,5 +215,5 @@
 </div>
 <mat-paginator [pageSize]="pageSize"
             [pageSizeOptions]="pageSizeOptions"
-            showFirstLastButtons (page)="updatePageInfo($event)"></mat-paginator>
+            showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>
 </div>

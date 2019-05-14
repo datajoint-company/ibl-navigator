@@ -77,7 +77,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
         }
       }
     }
-    if (tableState[0] && tableState[1]) {
+    if (tableState[1]) {
       this.paginator.pageIndex = tableState[0];
       this.pageSize = tableState[1];
     }
@@ -358,7 +358,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     let pageSize;
     const sorter = {};
     console.log('storing table info');
-    if (event.pageIndex && event.pageSize) {
+    if (event.pageSize) {
       pageIndex = event.pageIndex;
       pageSize = event.pageSize;
     }
