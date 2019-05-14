@@ -68,6 +68,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log('on init');
+    const tableState: [number, number, Object] = this.filterStoreService.retrieveSummaryTableState();
     const filters = this.filterStoreService.retrieveSummaryFilter();
     for (const key in filters) {
       console.log('preApplied filters are: ', filters);
@@ -103,6 +104,15 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
         }
       }
     }
+    if (tableState[1]) {
+      this.paginator.pageIndex = tableState[0];
+      this.pageSize = tableState[1];
+    }
+    if (tableState[2] && Object.entries(tableState[2]).length > 0 && this.sort) {
+      this.sort.active = Object.keys(tableState[2])[0];
+      this.sort.direction = Object.values(tableState[2])[0].direction;
+    }
+
     this.applyFilter();
     console.log('creating menu on init');
     this.dailySummaryService.getSummaryMenu({'__order': 'last_session_time DESC'});
@@ -375,7 +385,34 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       }
       this.summary_filter_form.patchValue(toReset);
     }
+    this.filterStoreService.clearSummaryTableState();
+    this.paginator.pageSize = 5;
+    this.paginator.pageIndex = null;
+    // the below sort is to reset the arrow UI that doesn't go away after this.sort.active = '' 
+    this.sort.sortables.forEach(sortItem => {
+      this.sort.sort(sortItem);
+    });
+
+    this.sort.active = '';
+
     this.applyFilter();
+  }
+
+  storeTableInfo(event) {
+    let pageIndex;
+    let pageSize;
+    const sorter = {};
+    console.log('storing table info');
+    if (event.pageSize) {
+      pageIndex = event.pageIndex;
+      pageSize = event.pageSize;
+    }
+    if (event.active && event.direction) {
+      console.log(event);
+      sorter[event.active] = { 'direction': event.direction };
+    }
+    console.log(pageIndex, pageSize, sorter);
+    this.filterStoreService.storeSummaryTableState(pageIndex, pageSize, sorter);
   }
 
 }
