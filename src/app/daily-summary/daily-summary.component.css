@@ -160,3 +160,20 @@ tr.statRows:hover {
     width: 100px;
 }
 
+/* note - to make sure the filter folds smoothly without getting stuck */
+/* problem folding areas */
+@media only screen and (min-width: 1872px) and (max-width: 2316px) {
+    .session-date-filter {
+        margin-bottom: 11px;
+    }
+}
+@media only screen and (min-width: 1200px) and (max-width: 1296px) {
+    .session-date-filter {
+        margin-bottom: 11px;
+    }
+}
+@media only screen and (min-width: 880px) and (max-width: 1080px) {
+    .session-date-filter {
+        margin-bottom: 11px;
+    }
+}
