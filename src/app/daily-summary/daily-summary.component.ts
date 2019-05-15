@@ -67,11 +67,10 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   constructor(public dailySummaryService: DailySummaryService, public filterStoreService: FilterStoreService) { }
 
   ngOnInit() {
-    console.log('on init');
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSummaryTableState();
     const filters = this.filterStoreService.retrieveSummaryFilter();
     for (const key in filters) {
-      console.log('preApplied filters are: ', filters);
+      // console.log('preApplied filters are: ', filters);
       if (key === '__json') {
         const JSONcontent = JSON.parse(filters[key]);
         const dateRange = ['', ''];
@@ -86,11 +85,9 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
           }
         }
         if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
-          console.log('specific date requested:', dateRange);
           this.dateRangeToggle = false;
           this.summary_filter_form.controls.last_session_time_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
         } else if (dateRange[0] !== '') {
-          console.log('date rangerequested:', dateRange);
           this.dateRangeToggle = true;
           this.summary_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
           this.summary_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(new Date(dateRange[1] + ' (UTC)'));
@@ -114,7 +111,6 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     }
 
     this.applyFilter();
-    console.log('creating menu on init');
     this.dailySummaryService.getSummaryMenu({'__order': 'last_session_time DESC'});
     this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
@@ -128,9 +124,11 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('component on destroy');
     if (this.summarySubscription) {
       this.summarySubscription.unsubscribe();
+    }
+    if (this.summaryMenuSubscription) {
+      this.summaryMenuSubscription.unsubscribe();
     }
   }
 
@@ -217,28 +215,23 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   stepBackMenu(event) {
-    // if (this.summaryMenuSubscription) this.summaryMenuSubscription.unsubscribe();
-    console.log('stepback event!');
     let focusOn: string;
     focusOn = event.target.name;
     const referenceMenuReq = this.filterRequests(focusOn);
     if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
-      console.log('reference menu great than one: ', referenceMenuReq);
       this.dailySummaryService.getSummaryMenu(referenceMenuReq);
       this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
         .subscribe((summaryInfo: any) => {
-          console.log('retrieved Menu length!: ', Object.entries(summaryInfo).length);
 
           this.createMenu(summaryInfo);
         });
     } else {
-      console.log('reference menu empty - creating all menu');
+      // console.log('reference menu empty - creating all menu');
       this.createMenu(this.allSummary);
     }
   }
 
   updateMenu() {
-    console.log('update menu');
     const menuRequest = this.filterRequests();
     if (Object.entries(menuRequest).length > 1) {
       this.dailySummaryService.getSummaryMenu(menuRequest);
@@ -250,7 +243,6 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   filterRequests(focusedField?: string) {
-    console.log('filtering requests');
     const filterList = Object.entries(this.summary_filter_form.getRawValue());
     // console.log('filterList is...');
     // console.log(filterList);
@@ -326,12 +318,10 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
         }
       }
     });
-    console.log('requestFilter is: ', requestFilter);
     return requestFilter;
   }
 
   applyFilter() {
-    console.log('applying filter');
     this.loading = true;
     this.summary = [];
     const request = this.filterRequests();
@@ -374,7 +364,6 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   clearControl() {
-    console.log('control cleared');
     const toReset = {};
     for (const control in this.summary_filter_form.controls) {
       if (control === 'session_range_filter') {
@@ -402,16 +391,13 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     let pageIndex;
     let pageSize;
     const sorter = {};
-    console.log('storing table info');
     if (event.pageSize) {
       pageIndex = event.pageIndex;
       pageSize = event.pageSize;
     }
     if (event.active && event.direction) {
-      console.log(event);
       sorter[event.active] = { 'direction': event.direction };
     }
-    console.log(pageIndex, pageSize, sorter);
     this.filterStoreService.storeSummaryTableState(pageIndex, pageSize, sorter);
   }
 

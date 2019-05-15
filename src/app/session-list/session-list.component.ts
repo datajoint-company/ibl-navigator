@@ -68,6 +68,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   selectedSession = {};
 
   private sessionsSubscription: Subscription;
+  private sessionMenuSubscription: Subscription;
 
   constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {}
   // @Input('preRestriction') preRestrictedMouseInfo: Object;
@@ -75,23 +76,19 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     this.loading = true;
-    console.log('onInit');
     this.session_menu['sex'] = { F: null, M: null, U: null };
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState();
-    console.log('tableState: ', tableState);
+    // console.log('tableState: ', tableState);
     this.route.queryParams
       .subscribe(params => {
-        console.log('params loading sessions: ', params);
+        // console.log('params loading sessions: ', params);
         if (Object.entries(params).length === 0) {
-          console.log('no parameter found');
           params = this.filterStoreService.retrieveSessionFilter();
-          console.log('printing content of session store');
-          console.log(params);
         }
         for (const key in params) {
           if (key === '__json') {
-            console.log('inside __json filter');
-            console.log('params[key] is', params[key]);
+            // console.log('inside __json filter');
+            // console.log('params[key] is', params[key]);
             const JSONcontent = JSON.parse(params[key]);
             const dateRange = ['', ''];
             for (const item of JSONcontent) {
@@ -112,11 +109,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
               }
             }
             if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
-              console.log('specific date requested:', dateRange);
               this.dateRangeToggle = false;
               this.session_filter_form.controls.session_start_time_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
             } else if (dateRange[0] !== '') {
-              console.log('date rangerequested:', dateRange);
               this.dateRangeToggle = true;
               this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
               this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(new Date(dateRange[1] + ' (UTC)'));
@@ -124,12 +119,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
           } else if (key === 'sex') {
             this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
           } else if (key === 'subject_birth_date') {
-            console.log('subject birthdate in storage');
-            console.log(params[key]);
             // console.log(new Date(params[key] + ' (UTC)'));
             this.session_filter_form.controls.subject_birth_date_control.patchValue(new Date(params[key] + ' (UTC)'));
           } else if ( key !== 'session_start_time' && key !== '__json' && key !== '__order') {
-            console.log('retrieving ', key, ' from storage');
             const controlName = key + '_control';
             if (this.session_filter_form.controls[controlName]) {
               const toPatch = {};
@@ -150,8 +142,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
       });
     // TODO: create menu content using separate api designated for menu instead of getting all session info
-    this.allSessionsService.getAllSessions();
-        this.sessionsSubscription = this.allSessionsService.getSessionsLoadedListener()
+    this.allSessionsService.getSessionMenu({'__order': 'lab_name'});
+        this.sessionMenuSubscription = this.allSessionsService.getSessionMenuLoadedListener()
           .subscribe((sessions: any) => {
             this.allSessions = sessions;
             this.createMenu(sessions);
@@ -161,6 +153,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.sessionsSubscription) {
       this.sessionsSubscription.unsubscribe();
+    }
+    if (this.sessionMenuSubscription) {
+      this.sessionMenuSubscription.unsubscribe();
     }
   }
 
@@ -192,7 +187,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // create formcontrol for item in menus
     // const sex_control_array = <FormArray>this.session_filter_form.controls['sex_control'];
 
-   
+
     for (const item in this.session_menu['sex']) {
       if (!this.session_menu['sex'][item]) {
         this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[item]].patchValue(false);
@@ -285,8 +280,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
   updateMenu() {
     const menuRequest = this.filterRequests();
     if (Object.entries(menuRequest).length > 1) {
-      this.allSessionsService.retrieveSessions(menuRequest);
-      this.allSessionsService.getNewSessionsLoadedListener()
+      menuRequest['order__'] = 'lab_name';
+      this.allSessionsService.getSessionMenu(menuRequest);
+      this.allSessionsService.getSessionMenuLoadedListener()
         .subscribe((sessions: any) => {
           this.createMenu(sessions);
         });
@@ -302,8 +298,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
     const referenceMenuReq = this.filterRequests(focusOn);
     if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
-      this.allSessionsService.retrieveSessions(referenceMenuReq);
-      this.allSessionsService.getNewSessionsLoadedListener()
+      referenceMenuReq['order__'] = 'lab_name';
+      this.allSessionsService.getSessionMenu(referenceMenuReq);
+      this.allSessionsService.getSessionMenuLoadedListener()
         .subscribe((sessions: any) => {
           this.createMenu(sessions);
         });
@@ -318,8 +315,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   filterRequests(focusedField?: string) {
     const filterList = Object.entries(this.session_filter_form.getRawValue());
-    console.log('filterList is...');
-    console.log(filterList);
     const requestFilter = {};
     let requestJSONstring = '';
     filterList.forEach(filter => {
@@ -339,14 +334,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
               // requestedGender = this.session_menu['sex'][index];
             }
           }
-          console.log('requestGenderArray is...: ', requestGenderArray);
           if (requestJSONstring.length > 0) {
             requestJSONstring += ',' + '[' + requestGenderArray + ']';
           } else {
             requestJSONstring += '[' + requestGenderArray + ']';
           }
-          
-          console.log('requestJSONString after adding genderArray is: ', requestJSONstring);
+
           // requestFilter['__json'] = '[' + requestGenderArray + ']';
         } else if (filterKey !== 'sex') {
           // making sure gender filter gets removed from the request
@@ -423,12 +416,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
         // }
 
         if (requestJSONstring.length > 0) {
-          console.log('requestJSONstring is : ', requestJSONstring);
           requestFilter['__json'] = '[' + requestJSONstring + ']';
         }
       }
     });
-    console.log('requestFilter is: ', requestFilter);
     return requestFilter;
   }
 
@@ -461,6 +452,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       .subscribe((sessions: any) => {
         this.loading = false;
         this.sessions = sessions;
+        this.allSessions = sessions;
         this.dataSource = new MatTableDataSource(this.sessions);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -468,9 +460,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   clearControl() {
-    console.log('control cleared');
     for (const control in this.session_filter_form.controls) {
-      console.log(control);
       const toReset = {}
       
       if (control === 'session_range_filter') {
@@ -496,12 +486,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
     this.sort.active = '';
 
-    console.log(this.route.queryParams);
+    // console.log(this.route.queryParams);
     this.route.queryParams.subscribe(param => {
-      console.log('queryParams', param);
-      console.log(Object.keys(param).length);
       if (Object.keys(param).length > 0) {
-        console.log('route params exist');
         this.router.navigate(
           [],
           {
@@ -518,19 +505,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
     let pageIndex;
     let pageSize;
     const sorter = {};
-    console.log('storing table info');
     if (event.pageSize) {
       pageIndex = event.pageIndex;
       pageSize = event.pageSize;
     }
     if (event.active && event.direction) {
-      console.log(event);
       if (event.active !== 'nplot') {
         sorter[event.active] = { 'direction': event.direction };
       }
-      
     }
-    console.log(pageIndex, pageSize, sorter);
     this.filterStoreService.storeSessionTableState(pageIndex, pageSize, sorter);
   }
 

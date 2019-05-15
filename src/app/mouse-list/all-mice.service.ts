@@ -6,8 +6,11 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class AllMiceService {
+  private miceMenu;
   private allMice;
   private retrievedMice;
+
+  private miceMenuLoaded = new Subject();
   private miceLoaded = new Subject();
   private requestedMiceLoaded = new Subject();
 
@@ -17,52 +20,43 @@ export class AllMiceService {
     this.http.get(`http://localhost:3000/api/mice`)
       .subscribe((allMiceData) => {
         this.allMice = allMiceData;
-        console.log(this.allMice);
         this.miceLoaded.next(this.allMice);
       });
   }
 
-  // getAllMice() {
-  //   console.log('sending GET request directly to flask api');
-  //   this.http.get(`http://localhost:5000/v0/subject/`)
-  //     .subscribe((allMiceData) => {
-  //       this.allMice = allMiceData;
-  //       console.log(this.allMice);
-  //       this.miceLoaded.next(this.allMice);
-  //     });
-  // }
-
+  getMiceMenu(miceFilter) {
+    console.log('Requesting menu for:', miceFilter);
+    this.http.post(`http://localhost:3000/api/mice/`, miceFilter)
+      .subscribe(
+        (filteredMiceData) => {
+          this.miceMenu = filteredMiceData;
+          this.miceMenuLoaded.next(this.miceMenu);
+        },
+        (err: any) => {
+          console.log('error in fetching mice menu');
+          console.error(err);
+        }
+      );
+  }
   retrieveMice(miceFilter) {
     console.log('POSTing for:', miceFilter);
     this.http.post(`http://localhost:3000/api/mice/`, miceFilter)
       .subscribe(
         (filteredMiceData) => {
           this.retrievedMice = filteredMiceData;
-          console.log(this.retrievedMice);
           this.requestedMiceLoaded.next(this.retrievedMice);
         },
         (err: any) => {
-          console.log('err in http.post subscription');
+          console.log('err in fetching requested mice');
           console.error(err);
         }
       );
   }
 
-  // retrieveMice(miceFilter) {
-  //   console.log('POSTing directly to Flask side for:', miceFilter);
-  //   this.http.post(`http://localhost:5000/v0/subject/`, miceFilter, { headers: { 'Content-Type': 'application/json' }})
-  //     .subscribe(
-  //       (filteredMiceData) => {
-  //         this.retrievedMice = filteredMiceData;
-  //         console.log(this.retrievedMice);
-  //         this.requestedMiceLoaded.next(this.retrievedMice);
-  //       },
-  //       (err: any) => {
-  //         console.log('err in http.post subscription - sending back data anyways');
-  //         console.log(err);
-  //       }
-  //     );
-  // }
+
+  getMiceMenuLoadedListener() {
+    return this.miceMenuLoaded.asObservable();
+  }
 
   getMiceLoadedListener() {
     return this.miceLoaded.asObservable();

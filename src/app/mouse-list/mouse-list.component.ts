@@ -43,6 +43,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   genderMenu2ControlMap = { F: 0, M: 1, U: 2 };
 
   private miceSubscription: Subscription;
+  private miceMenuSubscription: Subscription;
 
   constructor(public allMiceService: AllMiceService, public filterStoreService: FilterStoreService) { }
 
@@ -88,8 +89,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
     }
     this.applyFilter();
     // for creating the menu
-    this.allMiceService.getAllMice();
-    this.miceSubscription = this.allMiceService.getMiceLoadedListener()
+    this.allMiceService.getMiceMenu({'__order': 'lab_name'});
+    this.miceMenuSubscription = this.allMiceService.getMiceMenuLoadedListener()
       .subscribe((mice: any) => {
         // this.loading = false;
         // this.mice = mice;
@@ -104,6 +105,9 @@ export class MouseListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.miceSubscription) {
       this.miceSubscription.unsubscribe();
+    }
+    if (this.miceMenuSubscription) {
+      this.miceMenuSubscription.unsubscribe();
     }
   }
 
@@ -239,12 +243,11 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
   updateMenu() {
-    console.log('detected selection in mouse list menu');
     // console.log(this.mouse_filter_form.value);
     const menuRequest = this.filterRequests();
     if (Object.entries(menuRequest).length > 0) {
-      this.allMiceService.retrieveMice(menuRequest);
-      this.allMiceService.getRequestedMiceLoadedListener()
+      this.allMiceService.getMiceMenu(menuRequest);
+      this.allMiceService.getMiceMenuLoadedListener()
         .subscribe((mice: any) => {
           this.createMenu(mice);
         });
@@ -261,8 +264,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
     }
     const referenceMenuReq = this.filterRequests(focusOn);
     if (Object.entries(referenceMenuReq).length > 0) {
-      this.allMiceService.retrieveMice(referenceMenuReq);
-      this.allMiceService.getRequestedMiceLoadedListener()
+      this.allMiceService.getMiceMenu(referenceMenuReq);
+      this.allMiceService.getMiceMenuLoadedListener()
         .subscribe((mice: any) => {
           this.createMenu(mice);
         });
@@ -300,7 +303,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
           if (filterKey === 'subject_birth_date') {
             // Tue Dec 11 2018 00:00:00 GMT-0600 (Central Standard Time) => 2018-12-11T06:00:00.000Z => 2018-12-11
             const mouseDOB = new Date(filter[1].toString());
-            console.log(mouseDOB.toISOString());
             requestFilter[filterKey] = mouseDOB.toISOString().split('T')[0];
           } else {
             requestFilter[filterKey] = filter[1];
@@ -319,6 +321,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
       .subscribe((mice: any) => {
         this.loading = false;
         this.mice = mice;
+        this.allMice = mice;
         this.dataSource = new MatTableDataSource(this.mice);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -326,7 +329,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
   clearFilter() {
-    console.log('control cleared');
     for (const control in this.mouse_filter_form.controls) {
       const toReset = {}
 
@@ -357,16 +359,13 @@ export class MouseListComponent implements OnInit, OnDestroy {
     let pageIndex;
     let pageSize;
     const sorter = {};
-    console.log('storing table info');
     if (event.pageSize) {
       pageIndex = event.pageIndex;
       pageSize = event.pageSize;
     }
     if (event.active && event.direction) {
-      console.log(event);
       sorter[event.active] = { 'direction': event.direction };
     }
-    console.log(pageIndex, pageSize, sorter);
     this.filterStoreService.storeMouseTableState(pageIndex, pageSize, sorter);
   }
 }
