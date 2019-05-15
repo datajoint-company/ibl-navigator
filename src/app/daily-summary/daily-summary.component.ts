@@ -30,7 +30,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   summary;
   allSummary;
   loading = true;
-
+  
   sessionDateFilter: Function;
   sessionMinDate: Date;
   sessionMaxDate: Date;
@@ -48,12 +48,15 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['subject_nickname', 'last_session_time', 'lab_name', 'latest_training_status',
     'latest_task_protocol', 'n_sessions_current_protocol', 'latest_session_ingested',
-    'latest_session_on_flatiron', 'subject_uuid'];
+    'latest_session_on_flatiron', 'subject_uuid', 'detail_link'];
 
   displayedPlots: string[] = ['water_weight', 'performance_reaction_time',
     'trial_counts_session_duration', 'contrast_heatmap'];
 
   displayedPlots2: string[] = ['daily_plots'];
+
+  plotsOpen = true;
+  plotViewStatus: Object;
 
   // setup for the paginator
   dataSource;
@@ -67,6 +70,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   constructor(public dailySummaryService: DailySummaryService, public filterStoreService: FilterStoreService) { }
 
   ngOnInit() {
+    this.plotViewStatus = {};
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSummaryTableState();
     const filters = this.filterStoreService.retrieveSummaryFilter();
     for (const key in filters) {
@@ -115,8 +119,9 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
         this.allSummary = summary;
+        this.plotViewStatus[summary['subject_uuid']] = true;
         // this.dataSource = new MatTableDataSource(this.summary);
-        // this.dataSource.sort = this.sort;
+        // this.dataSource.sort = tshis.sort;
         // this.dataSource.paginator = this.paginator;
         this.createMenu(summary);
         this.loading = false;
@@ -399,6 +404,13 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       sorter[event.active] = { 'direction': event.direction };
     }
     this.filterStoreService.storeSummaryTableState(pageIndex, pageSize, sorter);
+  }
+
+  openPlot(summaryId) {
+    console.log('trying to open plot for');
+    console.log(summaryId);
+    // this.plotsOpen = !this.plotsOpen;
+    this.plotViewStatus[summaryId] = false;
   }
 
 }

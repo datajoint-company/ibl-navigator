@@ -104,6 +104,7 @@
 </form>
 <div class="table-container">
   <table mat-table class="col-12" [dataSource]="dataSource" matSort multiTemplateDataRows (matSortChange)="storeTableInfo($event)">
+    
     <ng-container matColumnDef="lab_name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
       <td mat-cell *matCellDef="let summary"> {{summary.lab_name}} </td>
@@ -149,16 +150,49 @@
       <td mat-cell *matCellDef="let summary"> {{summary.n_sessions_current_protocol}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="detail_link">
+      <th mat-header-cell *matHeaderCellDef> See Mouse Details </th>
+      <td mat-cell *matCellDef="let summary"> <button mat-button routerLink="/mouse/{{summary?.subject_uuid}}">^ _
+          ^</button> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="summaryStats">
+      <td colspan="10" mat-cell class="" *matCellDef="let summary">
+        <mat-expansion-panel (opened)="plotsOpen=true"
+                                      (closed)="plotsOpen=false">
+          <mat-expansion-panel-header>
+            Plot Open?: {{ plotsOpen }}
+          </mat-expansion-panel-header>
+          <app-summary-plots [mouseInfo]="summary"></app-summary-plots>
+        </mat-expansion-panel>
+      </td>
+    </ng-container>
+    
     <ng-container matColumnDef="daily_plots">
-      <td colspan="9" mat-cell class="plotsCell" *matCellDef="let summary">
+        
+      <td colspan="10" mat-cell class="plotsCell" *matCellDef="let summary"> 
+        <!-- <mat-expansion-panel (opened)="plotsOpen=true"
+                              (closed)="plotsOpen=false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Daily Summary Plots</mat-panel-title>
+            <mat-panel-description>Click to {{ plotsOpen ? 'hide' : 'show' }} plots</mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-summary-plots [mouseInfo]="summary"></app-summary-plots>
+        </mat-expansion-panel> -->
         <app-summary-plots [mouseInfo]="summary"></app-summary-plots>
       </td>
+      
     </ng-container>
 
     <tr mat-header-row class="headerRow" *matHeaderRowDef="displayedColumns; sticky:true"></tr>
-    <tr mat-row class="statRows" *matRowDef="let row; columns: displayedColumns; let summary" routerLink="/mouse/{{summary?.subject_uuid}}"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedPlots2" class="plotRows"></tr>
-    <!-- <tr mat-row *matRowDef="let row; columns: displayedPlots;" class="plotRows"></tr> -->
+
+
+    <!-- <tr mat-row class="statRows" [style]="" *matRowDef="let row; columns: ['summaryStats']; let summary"></tr> -->
+
+    <tr mat-row class="statRows" *matRowDef="let row; columns: displayedColumns; let summary" (click)="openPlot(summary?.subject_uuid)"></tr>
+
+    <tr mat-row *matRowDef="let row; columns: displayedPlots2; let summary" class="plotRows" [style.display]="plotViewStatus[summary?.subject_uuid] ? '': 'none'"></tr>
+
   </table>
 </div>
 <div class="loading-icon" *ngIf="loading">
