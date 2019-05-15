@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AuthData } from './auth-data.model';
 
@@ -9,11 +9,13 @@ import { AuthData } from './auth-data.model';
     providedIn: 'root'
 })
 export class AuthService {
-    constructor(private http: HttpClient, private router: Router) {}
+    constructor(private http: HttpClient,
+                private router: Router) {}
     private token: string;
     private authStatusListener = new Subject<boolean>();
     private tokenTimer;
     isLoggedIn = false;
+
     isAuthenticated() {
         return this.isLoggedIn;
     }
@@ -22,7 +24,7 @@ export class AuthService {
         return this.authStatusListener.asObservable();
     }
 
-    login(username: string, password: string) {
+    login(username: string, password: string, returnUrl: string) {
         console.log('auth service loggin user in: ', username);
         const authData: AuthData = {username: username, password: password};
         // const authData = {username: username, password: password};
@@ -38,7 +40,7 @@ export class AuthService {
                     const expDate = new Date(now.getTime() + response['expiresIn']);
                     console.log('log in data expires on: ', expDate);
                     this.saveAuthData(response['token'], expDate);
-                    this.router.navigate(['/']);
+                    this.router.navigateByUrl(returnUrl);
                 } else {
                     console.log('wrong login combo');
                     this.router.navigate(['/']);
