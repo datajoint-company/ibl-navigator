@@ -3,6 +3,7 @@ import { Subscription, Observable } from 'rxjs';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DailySummaryService } from './daily-summary.service';
 import { FilterStoreService } from '../filter-store.service';
 
@@ -10,7 +11,26 @@ declare var Plotly: any;
 @Component({
   selector: 'app-daily-summary',
   templateUrl: './daily-summary.component.html',
-  styleUrls: ['./daily-summary.component.css']
+  styleUrls: ['./daily-summary.component.css'],
+  animations: [
+    trigger('expandCollapse', [
+      state('expanded', style({
+        // backgroundColor: 'pink',
+        // height: '400px',
+        opacity: '1'
+      })),
+      state('collapsed', style({
+        // backgroundColor: 'lavender',
+        // height: '0px',
+        display: 'none',
+        transform: 'translateY(-120%)',
+        opacity: '0'
+      })),
+      transition('collapsed <=> expanded', [
+        animate('0.5s')
+      ])
+    ])
+  ]
 })
 export class DailySummaryComponent implements OnInit, OnDestroy {
   summary_filter_form = new FormGroup({
@@ -48,14 +68,14 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['subject_nickname', 'last_session_time', 'lab_name', 'latest_training_status',
     'latest_task_protocol', 'n_sessions_current_protocol', 'latest_session_ingested',
-    'latest_session_on_flatiron', 'subject_uuid', 'detail_link'];
+    'latest_session_on_flatiron', 'subject_uuid', 'detail_link', 'expand_collapse'];
 
   displayedPlots: string[] = ['water_weight', 'performance_reaction_time',
     'trial_counts_session_duration', 'contrast_heatmap'];
 
   displayedPlots2: string[] = ['daily_plots'];
 
-  plotsOpen = true;
+  allPlotsOpen = true;
   plotViewStatus: Object;
 
   // setup for the paginator
@@ -119,7 +139,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
         this.allSummary = summary;
-        this.plotViewStatus[summary['subject_uuid']] = true;
+
         // this.dataSource = new MatTableDataSource(this.summary);
         // this.dataSource.sort = tshis.sort;
         // this.dataSource.paginator = this.paginator;
@@ -327,6 +347,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
+    console.log('applying filter');
     this.loading = true;
     this.summary = [];
     const request = this.filterRequests();
@@ -338,13 +359,14 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
         .subscribe((summaryInfo: any) => {
           this.loading = false;
+
           this.summary = summaryInfo;
+
           this.dataSource = new MatTableDataSource(this.summary);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
-          
+
         });
-      
     } else {
       this.resetFilter();
     }
@@ -358,8 +380,13 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
       .subscribe((summaryInfo: any) => {
         this.loading = false;
+        for (let info of summaryInfo) {
+          info['plotViewingStatus'] = true;
+        }
+
         this.summary = summaryInfo;
         this.allSummary = summaryInfo;
+
         this.dataSource = new MatTableDataSource(this.summary);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -409,8 +436,32 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   openPlot(summaryId) {
     console.log('trying to open plot for');
     console.log(summaryId);
-    // this.plotsOpen = !this.plotsOpen;
-    this.plotViewStatus[summaryId] = false;
+    for (let info of this.allSummary) {
+      if (info['subject_uuid'] === summaryId) {
+        console.log('before: ', info['plotViewingStatus']);
+        if (info['plotViewingStatus']) {
+          info['plotViewingStatus'] = false;
+        } else {
+          info['plotViewingStatus'] = true;
+        }
+        console.log('after: ', info['plotViewingStatus']);
+      }
+    }
   }
 
+  toggleAllPlotsView() {
+    // make all plotViewStatus open/closed regardless of their individual state
+    console.log('all plot view status toggled');
+    if (this.allPlotsOpen) {
+      this.allPlotsOpen = false;
+      for (const info of this.allSummary) {
+        info['plotViewingStatus'] = false;
+      }
+    } else {
+      this.allPlotsOpen = true;
+      for (const info of this.allSummary) {
+        info['plotViewingStatus'] = true;
+      }
+    }
+  }
 }
