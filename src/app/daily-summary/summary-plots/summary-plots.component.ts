@@ -53,7 +53,8 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
   };
 
   private summaryPlotsSubscription: Subscription;
-  @Input('mouseInfo') mouseInfo: Object;
+  @Input() mouseInfo: {};
+  @Input() plotsCollapsed: {};
   constructor(public dailySummaryService: DailySummaryService) { }
 
   @ViewChild('waterWeightPlot') WWIplot: ElementRef;

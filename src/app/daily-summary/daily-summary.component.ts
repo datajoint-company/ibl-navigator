@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, Subject } from 'rxjs';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
@@ -12,25 +12,21 @@ declare var Plotly: any;
   selector: 'app-daily-summary',
   templateUrl: './daily-summary.component.html',
   styleUrls: ['./daily-summary.component.css'],
-  animations: [
-    trigger('expandCollapse', [
-      state('expanded', style({
-        // backgroundColor: 'pink',
-        // height: '400px',
-        opacity: '1'
-      })),
-      state('collapsed', style({
-        // backgroundColor: 'lavender',
-        // height: '0px',
-        display: 'none',
-        transform: 'translateY(-120%)',
-        opacity: '0'
-      })),
-      transition('collapsed <=> expanded', [
-        animate('0.5s')
-      ])
-    ])
-  ]
+  // animations: [
+  //   trigger('expandCollapse', [
+  //     state('expanded', style({
+  //       opacity: '1'
+  //     })),
+  //     state('collapsed', style({
+  //       display: 'none',
+  //       transform: 'translateY(-120%)',
+  //       opacity: '0'
+  //     })),
+  //     transition('collapsed <=> expanded', [
+  //       animate('0.5s')
+  //     ])
+  //   ])
+  // ]
 })
 export class DailySummaryComponent implements OnInit, OnDestroy {
   summary_filter_form = new FormGroup({
@@ -50,14 +46,14 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   summary;
   allSummary;
   loading = true;
-  
+
   sessionDateFilter: Function;
   sessionMinDate: Date;
   sessionMaxDate: Date;
   // nSessionsMin: number;
   // nSessionsMax: number;
-  sliderStep = 1;
-  sliderInverted = false;
+  // sliderStep = 1;
+  // sliderInverted = false;
   dateRangeToggle: boolean;
   filteredLatestTaskProtocolOptions: Observable<string[]>;
   filteredLatestTrainingStatusOptions: Observable<string[]>;
@@ -82,6 +78,17 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   dataSource;
   pageSize = 5;
   pageSizeOptions: number[] = [5, 10, 25, 50, 100];
+
+  collapsedStyle = {
+    animationName: 'collapsing',
+    animationDuration: '0.75s',
+    height: '0'
+  };
+  expandedStyle = {
+    animationName: 'expanding',
+    animationDuration: '1s'
+  };
+  private viewStatusAdded = new Subject();
 
   private summarySubscription: Subscription;
   private summaryMenuSubscription: Subscription;
@@ -138,13 +145,17 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.dailySummaryService.getSummaryMenu({'__order': 'last_session_time DESC'});
     this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
-        this.allSummary = summary;
+        for (let info of summary) {
+          info['plotViewingStatus'] = true;
+        }
+        this.viewStatusAdded.next(summary);
+        const addViewStatus: Subscription = this.getViewStatusLoadedListener()
+        .subscribe(updatedSummary => {
+          this.allSummary = updatedSummary;
+          this.createMenu(updatedSummary);
+          this.loading = false;
+        });
 
-        // this.dataSource = new MatTableDataSource(this.summary);
-        // this.dataSource.sort = tshis.sort;
-        // this.dataSource.paginator = this.paginator;
-        this.createMenu(summary);
-        this.loading = false;
       });
   }
 
@@ -380,10 +391,9 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
       .subscribe((summaryInfo: any) => {
         this.loading = false;
-        for (let info of summaryInfo) {
-          info['plotViewingStatus'] = true;
-        }
-
+        // for (let info of summaryInfo) {
+        //   info['plotViewingStatus'] = true;
+        // }
         this.summary = summaryInfo;
         this.allSummary = summaryInfo;
 
@@ -463,5 +473,8 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
         info['plotViewingStatus'] = true;
       }
     }
+  }
+  getViewStatusLoadedListener() {
+    return this.viewStatusAdded.asObservable();
   }
 }

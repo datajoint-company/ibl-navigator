@@ -107,9 +107,12 @@ table {
     overflow-x: scroll;
 }
 
+
 td.mat-column-last_session_time,
 td.mat-column-latest_session_ingested,
-td.mat-column-latest_session_on_flatiron {
+td.mat-column-latest_session_on_flatiron,
+td.mat-column-latest_training_status {
+    padding-right: 7px;
 }
 td.mat-column-latest_task_protocol {
     overflow-wrap: break-word;
@@ -123,11 +126,27 @@ td.mat-column-n_sessions_current_protocol {
     text-align: center;
 }
 
-.accordion-toggle-column {
-    /* margin-right: 0; */
-    /* padding-right: 0; */
-    text-align: right;
+th.mat-column-detail_link,
+td.mat-column-detail_link {
+    width: 8%;
 }
+td.mat-column-detail_link {
+    padding-right: 8px;
+}
+
+.accordion-toggle-column {
+    width: 5%;
+    text-align: right;
+    color: rgb(170, 170, 170)
+}
+
+th.mat-column-expand_collapse:hover {
+    cursor: pointer;
+}
+
+/* td.mat-column-expand_collapse{
+    font-size: 70%;
+} */
 
 button.accordion-toggle-button {
     transform: translateX(45%);
@@ -187,17 +206,26 @@ tr.statRows:hover {
     width: 100px;
 }
 
-tr.collapsed * {
-    height: 0 !important;
-    border: 2px solid red;
-    position: relative;
-    z-index: 1;
+@keyframes collapsing {
+    from {
+        height: 100%;
+    }
+    to {
+        height: 0;
+        transform: translateY(-120%);
+    }
 }
-tr.collapsed app-summaryplot .summary-plots .dailyplot{
-    border: 2px solid blue;
-    height: 0 !important;
-    position: relative;
-    z-index: 1;
+@keyframes expanding {
+    from {
+        height: 0;
+        transform: translateY(-120%);
+    }
+}
+tr.collapsed,
+tr.collapsed * {
+    /* height: 0; */
+    /* position: relative;
+    z-index: 1; */
 }
 
 /* note - to make sure the filter folds smoothly without getting stuck */
