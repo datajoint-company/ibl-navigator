@@ -33,6 +33,13 @@ mat-form-field.short {
     width: 190px;
 }
 
+.mat-datepicker-toggle{
+    position:absolute;
+    font-size: 3em;
+    margin-left: -50px;
+    margin-top: -20px;
+}
+
 .session-date-filter {
     float: left;
     width: 440px;

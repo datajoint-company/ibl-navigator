@@ -164,8 +164,8 @@
       </th>
       <td  class="accordion-toggle-column" mat-cell *matCellDef="let summary">
         <!-- <span *ngIf="summary?.plotViewingStatus == null">click row to display plots</span> -->
-        <span *ngIf="summary.plotViewingStatus == null || summary?.plotViewingStatus" class="oi oi-caret-top"></span>
-        <span *ngIf="summary?.plotViewingStatus != null && !summary?.plotViewingStatus" class="oi oi-caret-bottom"></span>
+        <span *ngIf="summary.plotViewingStatus == null || summary?.plotViewingStatus" class="oi oi-chevron-top"></span>
+        <span *ngIf="summary?.plotViewingStatus != null && !summary?.plotViewingStatus" class="oi oi-chevron-bottom"></span>
       </td>
     </ng-container>
 

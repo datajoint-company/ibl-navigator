@@ -449,7 +449,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     for (let info of this.allSummary) {
       if (info['subject_uuid'] === summaryId) {
         console.log('before: ', info['plotViewingStatus']);
-        if (info['plotViewingStatus']) {
+        if (info['plotViewingStatus'] || info['plotViewingStatus'] == null) {
           info['plotViewingStatus'] = false;
         } else {
           info['plotViewingStatus'] = true;
