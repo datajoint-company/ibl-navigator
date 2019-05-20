@@ -97,6 +97,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   constructor(public dailySummaryService: DailySummaryService, public filterStoreService: FilterStoreService) { }
 
   ngOnInit() {
+    console.log('on init');
     this.plotViewStatus = {};
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSummaryTableState();
     const filters = this.filterStoreService.retrieveSummaryFilter();
@@ -145,17 +146,23 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.dailySummaryService.getSummaryMenu({'__order': 'last_session_time DESC'});
     this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
-        for (let info of summary) {
-          info['plotViewingStatus'] = true;
-        }
-        this.viewStatusAdded.next(summary);
-        const addViewStatus: Subscription = this.getViewStatusLoadedListener()
-        .subscribe(updatedSummary => {
-          this.allSummary = updatedSummary;
-          this.createMenu(updatedSummary);
-          this.loading = false;
-        });
-
+        this.allSummary = summary;
+        this.createMenu(summary);
+        this.loading = false;
+        // const viewStatusObservable = new Observable((observer) => {
+        //   console.log('making full menu with ', summary);
+        //   for (let info of summary) {
+        //     info['plotViewingStatus'] = true;
+        //   }
+        //   observer.next(summary);
+        //   observer.complete();
+        // });
+        // viewStatusObservable.subscribe(updatedSummary => {
+        //   console.log('view status added?', updatedSummary);
+        //   this.allSummary = updatedSummary;
+        //   this.createMenu(updatedSummary);
+        //   this.loading = false;
+        // });
       });
   }
 
@@ -166,6 +173,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     if (this.summaryMenuSubscription) {
       this.summaryMenuSubscription.unsubscribe();
     }
+
   }
 
   private createMenu(summaryInfo) {
@@ -364,19 +372,32 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     const request = this.filterRequests();
     request['__order'] = 'last_session_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
-      // if (this.summarySubscription) this.summarySubscription.unsubscribe();
       this.filterStoreService.storeSummaryFilter(request);
       this.dailySummaryService.getSummary(request);
       this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
         .subscribe((summaryInfo: any) => {
-          this.loading = false;
+          const viewStatusObservable = new Observable((observer) => {
+            console.log('making full menu with ', summaryInfo);
+            for (let info of summaryInfo) {
+              info['plotViewingStatus'] = true;
+            }
+            observer.next(summaryInfo);
+          });
+          viewStatusObservable.subscribe(updatedSummary => {
+            console.log('updated summary - applied filter:', updatedSummary);
+            this.allSummary = updatedSummary;
+            this.summary = updatedSummary;
+            this.dataSource = new MatTableDataSource(this.summary);
+            this.dataSource.sort = this.sort;
+            this.dataSource.paginator = this.paginator;
+            this.loading = false;
+          });
 
-          this.summary = summaryInfo;
-
-          this.dataSource = new MatTableDataSource(this.summary);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-
+          // this.loading = false;
+          // this.summary = summaryInfo;
+          // this.dataSource = new MatTableDataSource(this.summary);
+          // this.dataSource.sort = this.sort;
+          // this.dataSource.paginator = this.paginator;
         });
     } else {
       this.resetFilter();
@@ -390,16 +411,30 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.filterStoreService.clearSummaryFilter();
     this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
       .subscribe((summaryInfo: any) => {
-        this.loading = false;
-        // for (let info of summaryInfo) {
-        //   info['plotViewingStatus'] = true;
-        // }
-        this.summary = summaryInfo;
-        this.allSummary = summaryInfo;
+        const viewStatusObservable = new Observable((observer) => {
+          for (let info of summaryInfo) {
+            info['plotViewingStatus'] = true;
+          }
+          observer.next(summaryInfo);
+        });
+        viewStatusObservable.subscribe(updatedSummary => {
+          console.log('updated summary - reset filter:', updatedSummary);
+          this.allSummary = updatedSummary;
+          this.summary = updatedSummary;
+          this.dataSource = new MatTableDataSource(this.summary);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          this.loading = false;
+        });
 
-        this.dataSource = new MatTableDataSource(this.summary);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+
+        // this.loading = false;
+        // this.summary = summaryInfo;
+        // this.allSummary = summaryInfo;
+
+        // this.dataSource = new MatTableDataSource(this.summary);
+        // this.dataSource.sort = this.sort;
+        // this.dataSource.paginator = this.paginator;
         
       });
     
@@ -446,6 +481,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   openPlot(summaryId) {
     console.log('trying to open plot for');
     console.log(summaryId);
+    console.log('length of all summary is: ', this.allSummary);
     for (let info of this.allSummary) {
       if (info['subject_uuid'] === summaryId) {
         console.log('before: ', info['plotViewingStatus']);
@@ -474,7 +510,5 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       }
     }
   }
-  getViewStatusLoadedListener() {
-    return this.viewStatusAdded.asObservable();
-  }
+
 }

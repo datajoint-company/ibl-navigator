@@ -164,21 +164,21 @@
       </th>
       <td  class="accordion-toggle-column" mat-cell *matCellDef="let summary">
         <!-- <span *ngIf="summary?.plotViewingStatus == null">click row to display plots</span> -->
-        <span *ngIf="summary.plotViewingStatus == null || summary?.plotViewingStatus" class="oi oi-chevron-top"></span>
+        <span *ngIf="summary?.plotViewingStatus == null || summary?.plotViewingStatus" class="oi oi-chevron-top"></span>
         <span *ngIf="summary?.plotViewingStatus != null && !summary?.plotViewingStatus" class="oi oi-chevron-bottom"></span>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="daily_plots">
       <td colspan="11" mat-cell class="plotsCell" *matCellDef="let summary"> 
-        <app-summary-plots [mouseInfo]="summary" [plotsCollapsed]="summary.plotViewingStatus == null || summary?.plotViewingStatus ? expandedStyle : collapsedStyle"></app-summary-plots>
+        <app-summary-plots [mouseInfo]="summary" [plotsCollapsed]="summary?.plotViewingStatus == null || summary?.plotViewingStatus ? expandedStyle : collapsedStyle"></app-summary-plots>
       </td>
     </ng-container>
 
     <tr mat-header-row class="headerRow" *matHeaderRowDef="displayedColumns; sticky:true"></tr>
 
     <tr mat-row class="statRows" *matRowDef="let row; columns: displayedColumns; let summary" (click)="openPlot(summary?.subject_uuid)"></tr>
-    <tr mat-row [class]="summary.plotViewingStatus == null || summary.plotViewingStatus ? 'expanded' : 'collapsed'" 
+    <tr mat-row [class]="summary?.plotViewingStatus == null || summary?.plotViewingStatus ? 'expanded' : 'collapsed'" 
       *matRowDef="let row; columns: displayedPlots2; let summary" class="plotRows"></tr>
 
     <!-- <tr mat-row [@expandCollapse]="summary.plotViewingStatus ? 'expanded' : 'collapsed'" *matRowDef="let row; columns: displayedPlots2; let summary" class="plotRows" ></tr> -->
