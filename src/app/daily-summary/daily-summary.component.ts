@@ -146,23 +146,23 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.dailySummaryService.getSummaryMenu({'__order': 'last_session_time DESC'});
     this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
-        this.allSummary = summary;
-        this.createMenu(summary);
-        this.loading = false;
-        // const viewStatusObservable = new Observable((observer) => {
-        //   console.log('making full menu with ', summary);
-        //   for (let info of summary) {
-        //     info['plotViewingStatus'] = true;
-        //   }
-        //   observer.next(summary);
-        //   observer.complete();
-        // });
-        // viewStatusObservable.subscribe(updatedSummary => {
-        //   console.log('view status added?', updatedSummary);
-        //   this.allSummary = updatedSummary;
-        //   this.createMenu(updatedSummary);
-        //   this.loading = false;
-        // });
+        // this.allSummary = summary;
+        // this.createMenu(summary);
+        // this.loading = false;
+        const viewStatusObservable = new Observable((observer) => {
+          console.log('making full menu with ', summary);
+          for (let info of summary) {
+            info['plotViewingStatus'] = true;
+          }
+          observer.next(summary);
+          observer.complete();
+        });
+        viewStatusObservable.subscribe(updatedSummary => {
+          console.log('view status added?', updatedSummary);
+          this.allSummary = updatedSummary;
+          this.createMenu(updatedSummary);
+          this.loading = false;
+        });
       });
   }
 

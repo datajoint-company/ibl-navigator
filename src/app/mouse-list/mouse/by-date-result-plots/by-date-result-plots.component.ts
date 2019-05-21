@@ -10,6 +10,8 @@ declare var Plotly: any;
   styleUrls: ['./by-date-result-plots.component.css']
 })
 export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
+  d3 = Plotly.d3;
+
   byDateResultPlotsAreAvailable: boolean;
   loadingPlots = [true, true, true, true, true, true, true, true, true];
   plotConfig = {
@@ -76,6 +78,53 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     elementList.push({ elPsych: this.elPsych2.nativeElement, elRTContrast: this.elRTContrast2.nativeElement, elRTTrialNum: this.elRTTrialNum2.nativeElement });
     elementList.push({ elPsych: this.elPsych3.nativeElement, elRTContrast: this.elRTContrast3.nativeElement, elRTTrialNum: this.elRTTrialNum3.nativeElement });
 
+    const mediumScreenLayout = {
+      font: { size: '85%' },
+      width: '360'
+    };
+
+    const mediumScreenDataStyle = {
+      marker: { size: '3'}
+    };
+
+    const mediumLargeScreenLayout = {
+      font: { size: '90%' },
+      width: '400'
+    };
+
+    const mediumLargeScreenDataStyle = {
+      marker: { size: '4' }
+    };
+
+    const defaultScreenLayout = {
+      font: { size: '100%' },
+      width: ''
+    };
+
+    const defaultScreenDataStyle = {
+      marker: { size: '' }
+    };
+
+    const testRTContrastPlot1_d3 = this.d3.select(this.elRTContrast1.nativeElement)
+      .style({
+        width: '100%',
+        'margin-left': '0',
+        height: '100',
+      });
+    const responsiveRTCplot1 = testRTContrastPlot1_d3.node();
+    window.onresize = function () {
+      const screenWidth = window.innerWidth;
+      console.log('screen width change: ', screenWidth);
+      mediumScreenLayout['title'] = { text: screenWidth };
+      if (screenWidth < 1440 && (screenWidth > 1200 || screenWidth === 1200)) {
+        Plotly.update(responsiveRTCplot1, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
+      } else if (screenWidth < 1200 && (screenWidth > 768 || screenWidth === 768)) {
+        Plotly.update(responsiveRTCplot1, mediumScreenDataStyle, mediumScreenLayout);
+      } else {
+        Plotly.update(responsiveRTCplot1, defaultScreenDataStyle, defaultScreenLayout);
+      }
+
+    };
     // const elPsych1 = this.elPsych1.nativeElement;
     // const elRTContrast1 = this.elRTContrast1.nativeElement;
     // const elRTTrialNum1 = this.elRTTrialNum1.nativeElement;
@@ -191,6 +240,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           }
         });
     });
+    
   }
 
   ngOnDestroy() {

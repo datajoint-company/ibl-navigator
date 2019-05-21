@@ -26,68 +26,36 @@
   height: 350px;
   background-color: rgba(255, 255, 255, 0.7)
 }
-/* XS (600px and down) */
-/* @media only screen and (max-width: 600px) {...}  */
-
-/* S (600px and up) */
-/* @media only screen and (min-width: 600px) {...}  */
-
-/* M (768px and up) */
-@media only screen and (min-width: 768px) {
-  /*  For fixed table cell size, scroll whole table */
+/* XS  and S (767px and down) */
+@media only screen and (max-width: 767px) {
   .byDatePlotsTable {
     table-layout: auto; 
   }
  
   .table-container {
-      width: 768px;
+      width: 600px;
       overflow-x: scroll;
       border: 2px solid rgb(219, 219, 219);
       border-right: 1px solid transparent;   
   }
-  /* For each-cell scroll */
-  /* .byDatePlotsTable {
-    table-layout: fixed;
-    width: 800px;
-    width: 100%;
-  }
- 
-  table tr td {
-      overflow-x: scroll;
-  }
-
-  .table-container {
-      width: 100%;
-  } */
 
   ::-webkit-scrollbar {
     -webkit-appearance: none;
-    width: 10px;
+    width: 7px;
   }
 
   ::-webkit-scrollbar-thumb {
-    border-radius: 8px;
+    border-radius: 5px;
     background-color: rgba(112, 112, 112, 0.5);
     -webkit-box-shadow: 0 0 1px rgba(228, 226, 226, 0.5);
   }
 } 
 
-/* L (992px and up) */
-@media only screen and (min-width: 992px) {
-  /* .byDatePlotsTable {
-    table-layout: auto; 
-  } */
- 
-  .table-container {
-      /* width: 992px; */
-  }
-} 
-
-/* XL (1200px and up) */
-@media only screen and (min-width: 1200px) {
+/* M (768px and up) */
+@media only screen and (min-width: 768px) {
+   /* each cell scroll */
   .byDatePlotsTable {
     table-layout: fixed;
-    /* width: 1160px; */
   }
  
   table tr td {
@@ -97,6 +65,40 @@
   .table-container {
       width: 100%;
   }
+} 
+
+/* L (1024px and up) */
+@media only screen and (min-width: 1024px) {
+  /* each cell scroll */
+  /* .byDatePlotsTable {
+    table-layout: fixed;
+  }
+ 
+  table tr td {
+      overflow-x: scroll;
+  }
+
+  .table-container {
+      width: 100%;
+  } */
+} 
+
+/* LL (1200px and up) */
+@media only screen and (min-width: 1200px) {
+  .byDatePlotsTable {
+    table-layout: fixed;
+    width: 1160px;
+  }
+
+}
+
+/* XL (1440px and up) */
+@media only screen and (min-width: 1440px) {
+  .byDatePlotsTable {
+    table-layout: fixed;
+    width: 1400px;
+  }
+
 }
 
 /* XXL (1600px and up) */
