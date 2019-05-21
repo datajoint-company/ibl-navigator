@@ -151,13 +151,13 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
       // marker: { size: '', color: 'black' }
     };
 
-    const testRTContrastPlot1_d3 = this.d3.select(this.elRTContrast1.nativeElement)
+    const RTContrastPlot1_d3 = this.d3.select(this.elRTContrast1.nativeElement)
       .style({
         // width: '100%',
         // 'margin-left': '0',
         // height: '100',
       });
-    const responsiveRTCplot1 = testRTContrastPlot1_d3.node();
+    const responsiveRTCplot1 = RTContrastPlot1_d3.node();
     const responsiveRTCplot2 = this.d3.select(this.elRTContrast2.nativeElement).node();
     const responsiveRTCplot3 = this.d3.select(this.elRTContrast3.nativeElement).node();
     const responsivePCplot1 = this.d3.select(this.elPsych1.nativeElement).node();
@@ -166,36 +166,14 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     const responsiveRTTNplot1 = this.d3.select(this.elRTTrialNum1.nativeElement).node();
     const responsiveRTTNplot2 = this.d3.select(this.elRTTrialNum2.nativeElement).node();
     const responsiveRTTNplot3 = this.d3.select(this.elRTTrialNum3.nativeElement).node();
-    console.log('inital screen size: ', screenSizeInitial);
-    // if (screenSizeInitial < 1440 && (screenSizeInitial > 1200 || screenSizeInitial === 1200)) {
-    //   Plotly.update(responsiveRTCplot1, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-    //   Plotly.update(responsiveRTCplot2, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-    //   Plotly.update(responsiveRTCplot3, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-    //   Plotly.update(responsiveRTTNplot1, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-    //   Plotly.update(responsiveRTTNplot2, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-    //   Plotly.update(responsiveRTTNplot3, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-    //   Plotly.update(responsivePCplot1, mediumLargeScreenDataStyle, mediumLargeScreenPsychCurveLayout);
-    //   Plotly.update(responsivePCplot2, mediumLargeScreenDataStyle, mediumLargeScreenPsychCurveLayout);
-    //   Plotly.update(responsivePCplot3, mediumLargeScreenDataStyle, mediumLargeScreenPsychCurveLayout);
-    // } else if (screenSizeInitial < 1200 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
-    //   Plotly.update(responsiveRTCplot1, mediumScreenDataStyle, mediumScreenLayout);
-    //   Plotly.update(responsiveRTCplot2, mediumScreenDataStyle, mediumScreenLayout);
-    //   Plotly.update(responsiveRTCplot3, mediumScreenDataStyle, mediumScreenLayout);
-    //   Plotly.update(responsiveRTTNplot1, mediumScreenDataStyle, mediumScreenLayout);
-    //   Plotly.update(responsiveRTTNplot2, mediumScreenDataStyle, mediumScreenLayout);
-    //   Plotly.update(responsiveRTTNplot3, mediumScreenDataStyle, mediumScreenLayout);
-    //   Plotly.update(responsivePCplot1, mediumScreenDataStyle, mediumScreenPsychCurveLayout);
-    //   Plotly.update(responsivePCplot2, mediumScreenDataStyle, mediumScreenPsychCurveLayout);
-    //   Plotly.update(responsivePCplot3, mediumScreenDataStyle, mediumScreenPsychCurveLayout);
-    // }
 
     window.onresize = function () {
       const screenWidth = window.innerWidth;
       console.log('screen width change: ', screenWidth);
-      mediumScreenLayout['title'] = { text: screenWidth };
-      mediumLargeScreenLayout['title'] = { text: screenWidth };
-      mediumScreenPsychCurveLayout['title'] = { text: screenWidth };
-      mediumLargeScreenPsychCurveLayout['title'] = { text: screenWidth };
+      mediumScreenLayout['title'] = { text: 'M - ' + screenWidth };
+      mediumLargeScreenLayout['title'] = { text: 'ML - ' + screenWidth };
+      mediumScreenPsychCurveLayout['title'] = { text: 'M - ' + screenWidth };
+      mediumLargeScreenPsychCurveLayout['title'] = { text: 'ML - ' + screenWidth };
       defaultScreenLayout['title'] = { text: 'default - ' + screenWidth };
       if (screenWidth < 1440 && (screenWidth > 1200 || screenWidth === 1200)) {
         Plotly.update(responsiveRTCplot1, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
@@ -217,26 +195,26 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
         Plotly.update(responsivePCplot1, mediumScreenDataStyle, mediumScreenPsychCurveLayout);
         Plotly.update(responsivePCplot2, mediumScreenDataStyle, mediumScreenPsychCurveLayout);
         Plotly.update(responsivePCplot3, mediumScreenDataStyle, mediumScreenPsychCurveLayout);
+      // } else if (screenWidth > 1440 || screenWidth === 1440) {
+      //   Plotly.relayout(responsiveRTCplot1, defaultScreenLayout);
+      //   Plotly.relayout(responsiveRTCplot2, defaultScreenLayout);
+      //   Plotly.relayout(responsiveRTCplot3, defaultScreenLayout);
+      //   Plotly.relayout(responsivePCplot1, defaultScreenLayout);
+      //   Plotly.relayout(responsivePCplot2, defaultScreenLayout);
+      //   Plotly.relayout(responsivePCplot3, defaultScreenLayout);
+      //   Plotly.relayout(responsiveRTTNplot1, defaultScreenLayout);
+      //   Plotly.relayout(responsiveRTTNplot2, defaultScreenLayout);
+      //   Plotly.relayout(responsiveRTTNplot3, defaultScreenLayout);
       } else {
-        Plotly.relayout(responsiveRTCplot1, defaultScreenLayout);
-        Plotly.relayout(responsiveRTCplot2, defaultScreenLayout);
-        Plotly.relayout(responsiveRTCplot3, defaultScreenLayout);
-        Plotly.relayout(responsivePCplot1, defaultScreenLayout);
-        Plotly.relayout(responsivePCplot2, defaultScreenLayout);
-        Plotly.relayout(responsivePCplot3, defaultScreenLayout);
-        Plotly.relayout(responsiveRTTNplot1, defaultScreenLayout);
-        Plotly.relayout(responsiveRTTNplot2, defaultScreenLayout);
-        Plotly.relayout(responsiveRTTNplot3, defaultScreenLayout);
-
-        // Plotly.update(responsiveRTCplot1, defaultScreenDataStyle, defaultScreenLayout);
-        // Plotly.update(responsiveRTCplot2, defaultScreenDataStyle, defaultScreenLayout);
-        // Plotly.update(responsiveRTCplot3, defaultScreenDataStyle, defaultScreenLayout);
-        // Plotly.update(responsivePCplot1, defaultScreenDataStyle, defaultScreenLayout);
-        // Plotly.update(responsivePCplot2, defaultScreenDataStyle, defaultScreenLayout);
-        // Plotly.update(responsivePCplot3, defaultScreenDataStyle, defaultScreenLayout);
-        // Plotly.update(responsiveRTTNplot1, defaultScreenDataStyle, defaultScreenLayout);
-        // Plotly.update(responsiveRTTNplot2, defaultScreenDataStyle, defaultScreenLayout);
-        // Plotly.update(responsiveRTTNplot3, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsiveRTCplot1, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsiveRTCplot2, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsiveRTCplot3, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsiveRTTNplot1, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsiveRTTNplot2, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsiveRTTNplot3, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsivePCplot1, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsivePCplot2, defaultScreenDataStyle, defaultScreenLayout);
+        Plotly.update(responsivePCplot3, defaultScreenDataStyle, defaultScreenLayout);
       }
 
     };
