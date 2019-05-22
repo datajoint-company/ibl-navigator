@@ -155,32 +155,6 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     console.log('inside fit pat on init - window size: ', screenSizeInitial);
     const element = this.elem.nativeElement;
 
-    // const mediumScreenLayout = {
-    //   font: { size: '11' },
-    //   width: '400',
-    //   legend: {
-    //     x: '-1',
-    //     y: '1',
-    //     font: {
-    //       size: '9.5'
-    //     }
-    //   },
-    //   orientation: 'h'
-    // };
-    // const responsiveFitParPlot = this.d3.select(this.elem.nativeElement).node();
-
-    // window.onresize = function() {
-    //   console.log('window resized!');
-    //   const screenHeight = window.innerHeight;
-    //   const screenWidth = window.innerWidth;
-    //   console.log('height now is: ', screenHeight);
-    //   console.log('width now is: ', screenWidth);
-
-    //   if (screenHeight < 800) {
-    //     Plotly.update(responsiveFitParPlot, {}, mediumScreenLayout);
-    //   }
-    // };
-
     this.mousePlotsService.getFitParametersPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
     this.fitParPlotsSubscription = this.mousePlotsService.getFitParPlotsLoadedListener()
     .subscribe((plotsInfo: any) => {
@@ -200,7 +174,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], this.plotConfig);
           if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
-          } else if (screenSizeInitial < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
+          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (screenSizeInitial < 768) {
             // TODO: perhaps a better layout for small screens?
