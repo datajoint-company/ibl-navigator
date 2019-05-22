@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MousePlotsService } from '../mouse-plots.service';
 
@@ -10,6 +10,8 @@ declare var Plotly: any;
   styleUrls: ['./performance-reaction-time-plot.component.css']
 })
 export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
+  d3 = Plotly.d3;
+  newScreenWidth;
   PRTPlotIsAvailable: boolean;
   plotConfig = {
     responsive: true,
@@ -46,13 +48,82 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
     }
   };
 
+  mediumScreenDataStyle = {
+    marker: [
+      { size: '3', color: 'black' },
+      { size: '3', color: 'red' },
+    ],
+    line: [
+      { width: '1' },
+      { width: '1' }
+    ]
+  };
+  mediumScreenLayout = {
+    font: { size: '10' },
+    width: '460',
+    height: '390'
+  };
+
+  mediumSmallScreenLayout = {
+    font: { size: '10' },
+    width: '400',
+    height: '340'
+  };
+
+  mediumLargeScreenDataStyle = {
+    marker: [
+      { size: '4', color: 'black' },
+      { size: '4', color: 'red' },
+    ],
+    line: [
+      { width: '1.5' },
+      { width: '1.5' }
+    ]
+  };
+  mediumLargeScreenLayout = {
+    font: { size: '11' },
+    width: '500',
+    height: '420'
+  };
+
+  defaultScreenDataStyle = {
+    marker: [
+      { size: '6', color: 'black' },
+      { size: '6', color: 'red' }],
+    line: [
+      { width: '2' },
+      { width: '2' }
+    ]
+  };
+  defaultScreenLayout = {
+    font: { size: '12' },
+    width: '',
+    height: ''
+  };
+
   private PRTPlotSubscription: Subscription;
   @Input('mouseInfo') mouseInfo: Object;
   @Output() PRPPlotAvailability: EventEmitter<any> = new EventEmitter();
   constructor(public mousePlotsService: MousePlotsService) { }
 
   @ViewChild('performanceReactionTimePlot') el: ElementRef;
+  @HostListener('window:resize', ['$event.target']) onresize(event) {
+    this.newScreenWidth = event.innerWidth;
+    const responsivePRTplot = this.d3.select(this.el.nativeElement).node();
+    if (this.newScreenWidth < 768) {
+      Plotly.update(responsivePRTplot, this.defaultScreenDataStyle, this.defaultScreenLayout);
+    } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
+      Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
+    } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 876 || this.newScreenWidth === 876)) {
+      Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
+    } else if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
+      Plotly.update(responsivePRTplot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+    } else {
+      Plotly.update(responsivePRTplot, this.defaultScreenDataStyle, this.defaultScreenLayout);
+    }
+  }
   ngOnInit() {
+    const screenSizeInitial = window.innerWidth;
     const element = this.el.nativeElement;
     this.mousePlotsService.getPerformaceRTPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
     this.PRTPlotSubscription = this.mousePlotsService.getPerformanceRTPlotLoadedListener()
@@ -66,6 +137,15 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';
           Plotly.newPlot(element, performanceRTplot['data'], performanceRTplot['layout'], this.plotConfig);
+          if (screenSizeInitial < 768) {
+            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
+          } else if (screenSizeInitial < 876 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
+            Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
+          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 876 || screenSizeInitial === 876)) {
+            Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
+          } else if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
+            Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+          }
         } else {
           console.log('performance reaction time plot not available');
           this.PRTPlotIsAvailable = false;
