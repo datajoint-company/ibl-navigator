@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { MousePlotsService } from '../mouse-plots.service';
 import { Subscription } from 'rxjs';
 
@@ -10,6 +10,8 @@ declare var Plotly: any;
   styleUrls: ['./water-weight-plot.component.css']
 })
 export class WaterWeightPlotComponent implements OnInit, OnDestroy {
+  d3 = Plotly.d3;
+  newScreenWidth;
   WIWPlotIsAvailable: boolean;
   // svgDownloadIcon = {
   //   'width': 1000,
@@ -64,13 +66,62 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   };
   private mouseWaterWeightSubscription: Subscription;
 
+  mediumScreenDataStyle = {
+    marker: [
+      {}, {}, {}, {}, {}, {},
+      { size: '3', color: 'black' }
+    ],
+    line: [
+      { width: '1' }
+    ]
+  };
+  mediumScreenLayout = {
+    font: { size: '10' }
+  };
+
+  mediumLargeScreenDataStyle = {
+    marker: [
+      {}, {}, {}, {}, {}, {},
+      { size: '4', color: 'black' }
+    ],
+    line: [
+      { width: '1.5' }
+    ]
+  };
+  mediumLargeScreenLayout = {
+    font: { size: '11' }
+  };
+
+  defaultScreenDataStyle = {
+    marker: [
+      {}, {}, {}, {}, {}, {},
+      { size: '6', color: 'black' }
+    ],
+    line: [
+      { width: '2' }
+    ]
+  };
+  defaultScreenLayout = {
+    font: { size: '12' }
+  };
   @Input('mouseInfo') mouseInfo: Object;
   @Output() WIWPlotAvailability: EventEmitter<any> = new EventEmitter();
   constructor(public mousePlotsService: MousePlotsService) { }
 
   @ViewChild('waterIntake_weight_plot') el: ElementRef;
-
+  @HostListener('window:resize', ['$event.target']) onresize(event) {
+    this.newScreenWidth = event.innerWidth;
+    const responsiveWWIplot = this.d3.select(this.el.nativeElement).node();
+    if (this.newScreenWidth < 1024) {
+      Plotly.update(responsiveWWIplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
+    } else if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
+      Plotly.update(responsiveWWIplot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+    } else {
+      Plotly.update(responsiveWWIplot, this.defaultScreenDataStyle, this.defaultScreenLayout);
+    }
+  }
   ngOnInit() {
+    const screenSizeInitial = window.innerWidth;
     const element = this.el.nativeElement;
     const subjectInfo = { 'subject_uuid': this.mouseInfo['subject_uuid'] };
     this.mousePlotsService.getWaterWeightPlot(subjectInfo);
@@ -86,6 +137,11 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
           this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_water_intake_weight_plot';
           Plotly.newPlot(element, WIWplot['data'], WIWplot['layout'], this.plotConfig);
+          if (screenSizeInitial < 1024) {
+            Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
+          } else if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
+            Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+          }
         } else {
           console.log('water intake and weight plot not available for this mouse');
           this.WIWPlotIsAvailable = false;
