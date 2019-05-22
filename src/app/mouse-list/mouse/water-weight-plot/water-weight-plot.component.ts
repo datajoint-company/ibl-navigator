@@ -64,12 +64,15 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
       scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
     }
   };
+  waterTypeCount;
+
   private mouseWaterWeightSubscription: Subscription;
 
   mediumScreenDataStyle = {
     marker: [
-      {}, {}, {}, {}, {}, {},
-      { size: '3', color: 'black' }
+      { size: '3', color: 'black'  }
+      // {}, {}, {}, {}, {}, {},
+      // { size: '3', color: 'black' }
     ],
     line: [
       { width: '1' }
@@ -81,8 +84,9 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
 
   mediumLargeScreenDataStyle = {
     marker: [
-      {}, {}, {}, {}, {}, {},
-      { size: '4', color: 'black' }
+      { size: '4', color: 'black'  }
+      // {}, {}, {}, {}, {}, {},
+      // { size: '4', color: 'black' }
     ],
     line: [
       { width: '1.5' }
@@ -94,8 +98,9 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
 
   defaultScreenDataStyle = {
     marker: [
-      {}, {}, {}, {}, {}, {},
       { size: '6', color: 'black' }
+      // {}, {}, {}, {}, {}, {},
+      // { size: '6', color: 'black' }
     ],
     line: [
       { width: '2' }
@@ -111,6 +116,19 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   @ViewChild('waterIntake_weight_plot') el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
+    let i = 1;
+    this.mediumLargeScreenDataStyle['marker'].splice(0, this.mediumLargeScreenDataStyle['marker'].length - 1);
+    this.mediumScreenDataStyle['marker'].splice(0, this.mediumScreenDataStyle['marker'].length - 1);
+    this.defaultScreenDataStyle['marker'].splice(0, this.defaultScreenDataStyle['marker'].length - 1);
+    if (this.waterTypeCount > 0) {
+      const blankObj = {};
+      while (i < this.waterTypeCount) {
+        this.mediumLargeScreenDataStyle['marker'].unshift(blankObj);
+        this.mediumScreenDataStyle['marker'].unshift(blankObj);
+        this.defaultScreenDataStyle['marker'].unshift(blankObj);
+        i++;
+      }
+    }
     const responsiveWWIplot = this.d3.select(this.el.nativeElement).node();
     if (this.newScreenWidth < 1024) {
       Plotly.update(responsiveWWIplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
@@ -131,11 +149,26 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           console.log('water weight plot retrieved');
           const WIWplot = toPlot['water_weight'];
+          this.waterTypeCount = WIWplot['data'].length;
+          console.log('total number of fields: ', this.waterTypeCount);
           WIWplot['layout']['height'] = '';
           WIWplot['layout']['width'] = '';
           this.WIWPlotIsAvailable = true;
           this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_water_intake_weight_plot';
+          let i = 1;
+          this.mediumLargeScreenDataStyle['marker'].splice(0, this.mediumLargeScreenDataStyle['marker'].length - 1);
+          this.mediumScreenDataStyle['marker'].splice(0, this.mediumScreenDataStyle['marker'].length - 1);
+          this.defaultScreenDataStyle['marker'].splice(0, this.defaultScreenDataStyle['marker'].length - 1);
+          if (this.waterTypeCount > 0) {
+            const blankObj = {};
+            while (i < this.waterTypeCount) {
+              this.mediumLargeScreenDataStyle['marker'].unshift(blankObj);
+              this.mediumScreenDataStyle['marker'].unshift(blankObj);
+              i++;
+            }
+          }
+          
           Plotly.newPlot(element, WIWplot['data'], WIWplot['layout'], this.plotConfig);
           if (screenSizeInitial < 1024) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
