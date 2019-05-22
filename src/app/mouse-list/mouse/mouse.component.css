@@ -51,3 +51,10 @@ h5 {
     background-color: rgb(241, 240, 240);
 }
 
+/* something small (under 768px) */
+@media only screen and (max-width: 768px) {
+  .v-long-plot-container {
+    float: top;
+    width: 100%;
+}
+}

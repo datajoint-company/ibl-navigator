@@ -1,0 +1,31 @@
+/* something small (under 768px) */
+@media only screen and (max-width: 768px) {
+  .fit-par-plot-container {
+    width: 100%;
+    overflow-x: scroll;
+  }
+}
+
+/* small laptop (768px and up) */
+@media only screen and (min-width: 768px) {
+  .fit-par-plot-container {
+    width: 100%;
+    overflow-x: scroll;
+  }
+}
+
+/* laptop (1024px and up) */
+@media only screen and (min-width: 1024px) {
+  /* .fit-par-plot-container {
+    width: 100%;
+    overflow-x: scroll;  
+  } */
+}
+
+/* desktop (1440px and up) */
+@media only screen and (min-width: 1440px) {
+  /* .fit-par-plot-container {
+    width: 100%;
+    overflow-x: scroll;   
+  } */
+}

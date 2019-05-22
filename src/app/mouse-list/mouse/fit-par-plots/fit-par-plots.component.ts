@@ -56,77 +56,98 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
 
   constructor(public mousePlotsService: MousePlotsService) { }
   @ViewChild('fitParPlots') elem: ElementRef;
+  mediumScreenDataStyle = {
+    marker: [
+      { size: '4', color: 'black' },
+      { size: '4', color: 'black' },
+      { size: '4', color: 'black' },
+      { size: '4', color: 'black' },
+      { size: '4', color: 'orange' },
+      { size: '4', color: 'orange' },
+      { size: '4', color: 'orange' },
+      { size: '4', color: 'orange' },
+      { size: '4', color: 'cornflowerblue' },
+      { size: '4', color: 'cornflowerblue' },
+      { size: '4', color: 'cornflowerblue' },
+      { size: '4', color: 'cornflowerblue' },
+    ]
+  };
+  mediumScreenLayout = {
+    font: { size: '10' },
+    width: '460',
+    height: '800',
+    legend: {
+      orientation: 'h',
+      x: '0',
+      y: '1.06',
+      font: {
+        size: '9.5'
+      },
+    }
+  };
+
+  mediumLargeScreenDataStyle = {
+    marker: [
+      { size: '5', color: 'black' },
+      { size: '5', color: 'black' },
+      { size: '5', color: 'black' },
+      { size: '5', color: 'black' },
+      { size: '5', color: 'orange' },
+      { size: '5', color: 'orange' },
+      { size: '5', color: 'orange' },
+      { size: '5', color: 'orange' },
+      { size: '5', color: 'cornflowerblue' },
+      { size: '5', color: 'cornflowerblue' },
+      { size: '5', color: 'cornflowerblue' },
+      { size: '5', color: 'cornflowerblue' },
+    ]
+  };
+  mediumLargeScreenLayout = {
+    font: { size: '11' },
+    width: '520',
+    height: '900',
+    legend: {
+      orientation: 'h',
+      x: '0.05',
+      y: '1.04',
+      font: {
+        size: '10'
+      },
+    }
+  };
+  defaultScreenDataStyle = {
+    marker: []
+  };
+  defaultScreenLayout = {
+    font: { size: '12' },
+    width: '',
+    height: '',
+    legend: {
+      orientation: 'v',
+      x: '',
+      y: '',
+      font: {
+        size: '12'
+      },
+    }
+  };
+
   @HostListener('window:resize', ['$event.target']) onResize(event) {
     console.log('inside hostlistener function');
     console.log('width: ', event.innerWidth);
     console.log('width: ', event.innerHeight);
     this.newScreenWidth = event.innerWidth;
-    const mediumScreenDataStyle = {
-      marker: [
-        { size: '4', color: 'black' },
-        { size: '4', color: 'black' },
-        { size: '4', color: 'black' },
-        { size: '4', color: 'black' },
-        { size: '4', color: 'orange' },
-        { size: '4', color: 'orange' },
-        { size: '4', color: 'orange' },
-        { size: '4', color: 'orange' },
-        { size: '4', color: 'cornflowerblue' },
-        { size: '4', color: 'cornflowerblue' },
-        { size: '4', color: 'cornflowerblue' },
-        { size: '4', color: 'cornflowerblue' },
-      ]
-    };
-    const mediumScreenLayout = {
-      font: { size: '10' },
-      width: '460',
-      height: '800',
-      legend: {
-        orientation: 'h',
-        x: '0',
-        y: '1.06',
-        font: {
-          size: '9.5'
-        },
-      }
-    };
 
-    const mediumLargeScreenDataStyle = {
-      marker: [
-        { size: '5', color: 'black' },
-        { size: '5', color: 'black' },
-        { size: '5', color: 'black' },
-        { size: '5', color: 'black' },
-        { size: '5', color: 'orange' },
-        { size: '5', color: 'orange' },
-        { size: '5', color: 'orange' },
-        { size: '5', color: 'orange' },
-        { size: '5', color: 'cornflowerblue' },
-        { size: '5', color: 'cornflowerblue' },
-        { size: '5', color: 'cornflowerblue' },
-        { size: '5', color: 'cornflowerblue' },
-      ]
-    };
-    const mediumLargeScreenLayout = {
-      font: { size: '11' },
-      width: '580',
-      height: '1020',
-      legend: {
-        orientation: 'h',
-        x: '0.05',
-        y: '1.04',
-        font: {
-          size: '10'
-        },
-      }
-
-    };
     const responsiveFitParPlot = this.d3.select(this.elem.nativeElement).node();
     if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
-      
-      Plotly.update(responsiveFitParPlot, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
+      Plotly.update(responsiveFitParPlot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
     } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
-      Plotly.update(responsiveFitParPlot, mediumScreenDataStyle, mediumScreenLayout);
+      Plotly.update(responsiveFitParPlot, this.mediumScreenDataStyle, this.mediumScreenLayout);
+    } else if (this.newScreenWidth < 768) {
+      // TODO: perhaps a better layout for small screens?
+      Plotly.update(responsiveFitParPlot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+    } else {
+      Plotly.update(responsiveFitParPlot, this.defaultScreenDataStyle, this.defaultScreenLayout);
     }
   }
   ngOnInit() {
@@ -177,6 +198,14 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_fit parameters_plot';
           Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], this.plotConfig);
+          if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
+            Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+          } else if (screenSizeInitial < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
+            Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
+          } else if (screenSizeInitial < 768) {
+            // TODO: perhaps a better layout for small screens?
+            Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+          }
         } else {
           this.fitParPlotsAreAvailable = false;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
