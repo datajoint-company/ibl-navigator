@@ -115,6 +115,19 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
       },
     }
   };
+  smallScreenLayout = {
+    font: { size: '10.5' },
+    width: '420',
+    height: '700',
+    legend: {
+      orientation: 'h',
+      x: '0.05',
+      y: '1.04',
+      font: {
+        size: '9.75'
+      },
+    }
+  };
   defaultScreenDataStyle = {
     marker: []
   };
@@ -142,7 +155,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
       Plotly.update(responsiveFitParPlot, this.mediumScreenDataStyle, this.mediumScreenLayout);
     } else if (this.newScreenWidth < 768) {
       // TODO: perhaps a better layout for small screens?
-      Plotly.update(responsiveFitParPlot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+      Plotly.update(responsiveFitParPlot, this.mediumScreenDataStyle, this.smallScreenLayout);
     } else {
       Plotly.update(responsiveFitParPlot, this.defaultScreenDataStyle, this.defaultScreenLayout);
     }
@@ -173,7 +186,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (screenSizeInitial < 768) {
             // TODO: perhaps a better layout for small screens?
-            Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+            Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
           }
         } else {
           this.fitParPlotsAreAvailable = false;

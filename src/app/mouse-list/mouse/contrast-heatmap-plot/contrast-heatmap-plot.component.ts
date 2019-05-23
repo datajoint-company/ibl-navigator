@@ -80,6 +80,12 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
     height: ''
   };
 
+  smallScreenLayout = {
+    font: { size: '10.5' },
+    width: '',
+    height: '330'
+  };
+
   private contrastHeatmapPlotSubscription: Subscription;
 
   @Output() contrastHeatmapPlotAvailability: EventEmitter<any> = new EventEmitter();
@@ -90,8 +96,10 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
     const responsiveCHplot = this.d3.select(this.elem.nativeElement).node();
-    if (this.newScreenWidth < 768) {
-      Plotly.update(responsiveCHplot, this.defaultScreenDataStyle, this.defaultScreenLayout);
+    if (this.newScreenWidth < 420) {
+      Plotly.update(responsiveCHplot, this.mediumScreenDataStyle, this.smallScreenLayout);
+    } else if (this.newScreenWidth < 768 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
+      Plotly.update(responsiveCHplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
     } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
       Plotly.update(responsiveCHplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
     } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 876 || this.newScreenWidth === 876)) {
@@ -118,7 +126,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot';
           Plotly.newPlot(element, contrastHeatmapPlot['data'], contrastHeatmapPlot['layout'], this.plotConfig);
           if (screenSizeInitial < 768) {
-            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
+            Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
           } else if (screenSizeInitial < 876 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
           } else if (screenSizeInitial < 1024 && (screenSizeInitial > 876 || screenSizeInitial === 876)) {

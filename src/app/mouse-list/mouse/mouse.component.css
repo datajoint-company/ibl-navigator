@@ -67,4 +67,10 @@ h5 {
     float: left;
     width: 100%;
   }
+  .by-date-plots-container {
+    margin-left: 0;
+  }
+  .mouse-plots-container {
+    margin-left: 0;
+}
 }

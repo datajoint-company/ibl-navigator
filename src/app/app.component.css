@@ -31,3 +31,9 @@
         max-width: 1870px;
     }
 }
+
+@media (max-width: 768px) {
+    .navigator-container {
+        padding-left: 2px;
+    }
+}
