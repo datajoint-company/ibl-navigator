@@ -83,13 +83,12 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   private contrastHeatmapPlotSubscription: Subscription;
 
   @Output() contrastHeatmapPlotAvailability: EventEmitter<any> = new EventEmitter();
-  @Input('mouseInfo') mouseInfo: Object;
+  @Input() mouseInfo: Object;
   @ViewChild('contrastHeatmapPlot') elem: ElementRef;
   constructor(public mousePlotsService: MousePlotsService) { }
 
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
-    console.log('screen width change - CH plot: ', this.newScreenWidth);
     const responsiveCHplot = this.d3.select(this.elem.nativeElement).node();
     if (this.newScreenWidth < 768) {
       Plotly.update(responsiveCHplot, this.defaultScreenDataStyle, this.defaultScreenLayout);

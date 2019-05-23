@@ -102,7 +102,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   };
 
   private PRTPlotSubscription: Subscription;
-  @Input('mouseInfo') mouseInfo: Object;
+  @Input() mouseInfo: Object;
   @Output() PRPPlotAvailability: EventEmitter<any> = new EventEmitter();
   constructor(public mousePlotsService: MousePlotsService) { }
 

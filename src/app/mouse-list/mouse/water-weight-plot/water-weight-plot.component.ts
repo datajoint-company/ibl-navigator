@@ -109,7 +109,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   defaultScreenLayout = {
     font: { size: '12' }
   };
-  @Input('mouseInfo') mouseInfo: Object;
+  @Input() mouseInfo: Object;
   @Output() WIWPlotAvailability: EventEmitter<any> = new EventEmitter();
   constructor(public mousePlotsService: MousePlotsService) { }
 
@@ -147,10 +147,8 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
       .subscribe((plotInfo: any) => {
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
-          console.log('water weight plot retrieved');
           const WIWplot = toPlot['water_weight'];
           this.waterTypeCount = WIWplot['data'].length;
-          console.log('total number of fields: ', this.waterTypeCount);
           WIWplot['layout']['height'] = '';
           WIWplot['layout']['width'] = '';
           this.WIWPlotIsAvailable = true;
@@ -168,7 +166,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
               i++;
             }
           }
-          
+
           Plotly.newPlot(element, WIWplot['data'], WIWplot['layout'], this.plotConfig);
           if (screenSizeInitial < 1024) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);

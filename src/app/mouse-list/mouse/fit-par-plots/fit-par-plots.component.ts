@@ -133,9 +133,6 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   };
 
   @HostListener('window:resize', ['$event.target']) onResize(event) {
-    console.log('inside hostlistener function');
-    console.log('width: ', event.innerWidth);
-    console.log('width: ', event.innerHeight);
     this.newScreenWidth = event.innerWidth;
 
     const responsiveFitParPlot = this.d3.select(this.elem.nativeElement).node();
@@ -152,7 +149,6 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   }
   ngOnInit() {
     const screenSizeInitial = window.innerWidth;
-    console.log('inside fit pat on init - window size: ', screenSizeInitial);
     const element = this.elem.nativeElement;
 
     this.mousePlotsService.getFitParametersPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
@@ -160,7 +156,6 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     .subscribe((plotsInfo: any) => {
         if (plotsInfo && plotsInfo[0]) {
           const toPlot = plotsInfo[Object.entries(plotsInfo).length - 1];
-          console.log('fit parameters plots retrieved');
           const fitParPlots = toPlot['fit_pars'];
           // fitParPlots['layout']['yaxis']['title']['text'] = '<i>Lapse High (\u03BB)</i>'; // lambda
           // fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (\u03B3)</i>'; // gamma

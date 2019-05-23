@@ -104,7 +104,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
 
   private TCSDPlotSubscription: Subscription;
   @Output() TCSDPlotAvailability: EventEmitter<any> = new EventEmitter();
-  @Input('mouseInfo') mouseInfo: Object;
+  @Input() mouseInfo: Object;
   constructor(public mousePlotsService: MousePlotsService) { }
 
   @ViewChild('trialCountsSessionDurationPlot') el: ElementRef;
