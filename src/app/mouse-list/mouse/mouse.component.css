@@ -1,5 +1,6 @@
 .mouse-info-container {
     padding-top: 20px;
+    margin-left: 1%;
 }
 
 .mouse-title button {
@@ -21,6 +22,10 @@ h5 {
     margin-left: 1%;
 }
 
+.mouse-plots-container {
+    margin-left: 1%;
+}
+
 .short-plots-container {
     float: left;
     width: 50%;
@@ -35,6 +40,7 @@ h5 {
 .by-date-plots-container {
     float: left;
     width: 100%;
+    margin-left: 0.5%;
 }
 
 .fetch-sessions {

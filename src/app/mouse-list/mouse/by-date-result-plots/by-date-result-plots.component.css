@@ -32,11 +32,12 @@
     table-layout: auto; 
   }
  
+ 
   .table-container {
-      width: 600px;
-      overflow-x: scroll;
-      border: 2px solid rgb(219, 219, 219);
-      border-right: 1px solid transparent;   
+    width: 100vw;
+    overflow-x: scroll;
+    border: 2px solid rgb(219, 219, 219);
+    border-right: 1px solid transparent;   
   }
 
   ::-webkit-scrollbar {
@@ -70,7 +71,7 @@
 /* L (1024px and up) */
 @media only screen and (min-width: 1024px) {
   /* each cell scroll */
-  /* .byDatePlotsTable {
+  .byDatePlotsTable {
     table-layout: fixed;
   }
  
@@ -80,23 +81,16 @@
 
   .table-container {
       width: 100%;
-  } */
-} 
-
-/* LL (1200px and up) */
-@media only screen and (min-width: 1200px) {
-  .byDatePlotsTable {
-    table-layout: fixed;
-    width: 1160px;
   }
-
-}
+} 
 
 /* XL (1440px and up) */
 @media only screen and (min-width: 1440px) {
   .byDatePlotsTable {
     table-layout: fixed;
-    width: 1400px;
+  }
+  table tr td {
+      overflow-x: scroll;
   }
 
 }
@@ -104,13 +98,11 @@
 /* XXL (1600px and up) */
 @media only screen and (min-width: 1600px) {
   .byDatePlotsTable {
-    width: 1560px;
   }
 }
 
 /* XXXL (2200px and up) */
 @media only screen and (min-width: 2200px) {
   .byDatePlotsTable {
-      width: 2160px;
   }
 }
