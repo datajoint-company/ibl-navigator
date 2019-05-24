@@ -176,6 +176,8 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           // fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (\u03BB)</i>';
           fitParPlots['layout']['width'] = '';
           fitParPlots['layout']['height'] = 1200;
+          fitParPlots['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          fitParPlots['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           this.fitParPlotsAreAvailable = true;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_fit parameters_plot';

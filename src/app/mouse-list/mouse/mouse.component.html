@@ -59,13 +59,21 @@
 <div class="mouse-plots-container">
   <h5>Mouse Plots</h5>
   <div *ngIf="mouse">
+    <div class="single-plot-pink">
     <app-water-weight-plot [mouseInfo]="mouse"></app-water-weight-plot>
-    <div class="short-plots-container">
-      <app-trial-counts-session-duration [mouseInfo]="mouse"></app-trial-counts-session-duration>
-      <app-performance-reaction-time-plot [mouseInfo]="mouse"></app-performance-reaction-time-plot>
-      <app-contrast-heatmap-plot [mouseInfo]="mouse"></app-contrast-heatmap-plot>
     </div>
-    <div class="v-long-plot-container">
+    <div class="short-plots-container">
+      <div class="single-plot">
+        <app-trial-counts-session-duration [mouseInfo]="mouse"></app-trial-counts-session-duration>
+      </div>
+      <div class="single-plot-pink">
+        <app-performance-reaction-time-plot [mouseInfo]="mouse"></app-performance-reaction-time-plot>
+      </div>
+      <div class="single-plot">
+        <app-contrast-heatmap-plot [mouseInfo]="mouse"></app-contrast-heatmap-plot>
+      </div>
+    </div>
+    <div class="v-long-plot-container single-plot-pink">
       <app-fit-par-plots [mouseInfo]="mouse"></app-fit-par-plots>
     </div>
     <div class="row fetch-sessions">

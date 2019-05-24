@@ -121,13 +121,15 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           const contrastHeatmapPlot = toPlot['contrast_heatmap'];
           contrastHeatmapPlot['layout']['height'] = '';
           contrastHeatmapPlot['layout']['width'] = '';
+          contrastHeatmapPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          contrastHeatmapPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           this.contrastHeatmapPlotIsAvailable = true;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot';
           Plotly.newPlot(element, contrastHeatmapPlot['data'], contrastHeatmapPlot['layout'], this.plotConfig);
-          if (screenSizeInitial < 768) {
+          if (screenSizeInitial < 420) {
             Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
-          } else if (screenSizeInitial < 876 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
+          } else if (screenSizeInitial < 876 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
           } else if (screenSizeInitial < 1024 && (screenSizeInitial > 876 || screenSizeInitial === 876)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);

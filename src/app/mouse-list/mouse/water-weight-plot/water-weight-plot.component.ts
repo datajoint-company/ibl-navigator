@@ -79,7 +79,9 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
     ]
   };
   mediumScreenLayout = {
-    font: { size: '10' }
+    font: { size: '10' },
+    width: '',
+    height: ''
   };
 
   mediumLargeScreenDataStyle = {
@@ -93,7 +95,9 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
     ]
   };
   mediumLargeScreenLayout = {
-    font: { size: '11' }
+    font: { size: '11' },
+    width: '',
+    height: ''
   };
 
   defaultScreenDataStyle = {
@@ -107,7 +111,23 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
     ]
   };
   defaultScreenLayout = {
-    font: { size: '12' }
+    font: { size: '12' },
+    width: '',
+    height: ''
+  };
+
+  smallScreenLayout = {
+    font: { size: '10.5' },
+    width: '600',
+    height: '330',
+    legend: {
+      orientation: 'h',
+      x: '0',
+      y: '1.08',
+      font: {
+        size: '9.5'
+      },
+    }
   };
   @Input() mouseInfo: Object;
   @Output() WIWPlotAvailability: EventEmitter<any> = new EventEmitter();
@@ -130,7 +150,9 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
       }
     }
     const responsiveWWIplot = this.d3.select(this.el.nativeElement).node();
-    if (this.newScreenWidth < 1024) {
+    if (this.newScreenWidth < 420) {
+      Plotly.update(responsiveWWIplot, this.mediumScreenDataStyle, this.smallScreenLayout);
+    } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
       Plotly.update(responsiveWWIplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
     } else if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
       Plotly.update(responsiveWWIplot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
@@ -151,6 +173,8 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
           this.waterTypeCount = WIWplot['data'].length;
           WIWplot['layout']['height'] = '';
           WIWplot['layout']['width'] = '';
+          WIWplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          WIWplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           this.WIWPlotIsAvailable = true;
           this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_water_intake_weight_plot';
@@ -168,7 +192,9 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
           }
 
           Plotly.newPlot(element, WIWplot['data'], WIWplot['layout'], this.plotConfig);
-          if (screenSizeInitial < 1024) {
+          if (screenSizeInitial < 420) {
+            Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
+          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);

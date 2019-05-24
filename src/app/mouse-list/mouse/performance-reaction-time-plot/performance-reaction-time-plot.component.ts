@@ -101,6 +101,12 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
     height: ''
   };
 
+  smallScreenLayout = {
+    font: { size: '10.5' },
+    width: '',
+    height: '330'
+  };
+
   private PRTPlotSubscription: Subscription;
   @Input() mouseInfo: Object;
   @Output() PRPPlotAvailability: EventEmitter<any> = new EventEmitter();
@@ -110,9 +116,9 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
     const responsivePRTplot = this.d3.select(this.el.nativeElement).node();
-    if (this.newScreenWidth < 768) {
-      Plotly.update(responsivePRTplot, this.defaultScreenDataStyle, this.defaultScreenLayout);
-    } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
+    if (this.newScreenWidth < 420) {
+      Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.smallScreenLayout);
+    } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
       Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
     } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 876 || this.newScreenWidth === 876)) {
       Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
@@ -133,13 +139,15 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           const performanceRTplot = toPlot['performance_reaction_time'];
           performanceRTplot['layout']['height'] = '';
           performanceRTplot['layout']['width'] = '';
+          performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          performanceRTplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';
           Plotly.newPlot(element, performanceRTplot['data'], performanceRTplot['layout'], this.plotConfig);
-          if (screenSizeInitial < 768) {
-            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
-          } else if (screenSizeInitial < 876 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
+          if (screenSizeInitial < 420) { // originally 768
+            Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
+          } else if (screenSizeInitial < 876 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
           } else if (screenSizeInitial < 1024 && (screenSizeInitial > 876 || screenSizeInitial === 876)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);

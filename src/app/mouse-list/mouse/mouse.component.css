@@ -24,12 +24,30 @@ h5 {
 
 .mouse-plots-container {
     margin-left: 1%;
+    /* background:linear-gradient(to right, rgb(195, 53, 157), rgb(143, 83, 173), rgb(93, 111, 190), rgb(3,162,218)); */
+
 }
 
 .short-plots-container {
     float: left;
     width: 50%;
     overflow: scroll;
+}
+
+.single-plot {
+    /* border-bottom: 3px solid rgba(3, 161, 218, 0.15); */
+    /* border-right: 3px solid rgba(3, 161, 218, 0.15); */
+    background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.15), rgba(93, 111, 190, 0.15), rgba(3, 161, 218, 0.15), rgba(255, 255, 255, 0.75));
+
+    /* background:linear-gradient(to right, rgba(195, 53, 157, 0.15), rgba(143, 83, 173, 0.15), rgba(93, 111, 190, 0.15), rgba(3, 161, 218, 0.15)); */
+}
+
+.single-plot-pink {
+    /* border-bottom: 3px solid rgba(195, 53, 157, 0.15); */
+    /* border-right: 3px solid rgba(195, 53, 157, 0.15); */
+    background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.15), rgba(195, 53, 157, 0.08), rgba(143, 83, 173, 0.15), rgba(3, 161, 218, 0.15), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.75));
+
+    /* background:linear-gradient(to left bottom, rgba(195, 53, 157, 0.15), rgba(143, 83, 173, 0.15), rgba(93, 111, 190, 0.15), rgba(3, 161, 218, 0.15)); */
 }
 
 .v-long-plot-container {
@@ -44,6 +62,7 @@ h5 {
 }
 
 .fetch-sessions {
+    padding-top: 1.5%;
     width: 100%;
 }
 .fetch-sessions button {

@@ -102,6 +102,12 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     height: ''
   };
 
+  smallScreenLayout = {
+    font: { size: '10.5' },
+    width: '',
+    height: '330'
+  };
+
   private TCSDPlotSubscription: Subscription;
   @Output() TCSDPlotAvailability: EventEmitter<any> = new EventEmitter();
   @Input() mouseInfo: Object;
@@ -112,9 +118,9 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     this.newScreenWidth = event.innerWidth;
 
     const responsiveTCSDplot = this.d3.select(this.el.nativeElement).node();
-    if (this.newScreenWidth < 768) {
-      Plotly.update(responsiveTCSDplot, this.defaultScreenDataStyle, this.defaultScreenLayout);
-    } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
+    if (this.newScreenWidth < 420) { // 768 original breakpoint
+      Plotly.update(responsiveTCSDplot, this.mediumScreenDataStyle, this.smallScreenLayout);
+    } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
       Plotly.update(responsiveTCSDplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
     } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 876 || this.newScreenWidth === 876)) {
       Plotly.update(responsiveTCSDplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
@@ -136,14 +142,16 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           const TCSDplot = toPlot['trial_counts_session_duration'];
           TCSDplot['layout']['height'] = '';
           TCSDplot['layout']['width'] = '';
+          TCSDplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          TCSDplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
           this.loading = false;
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_trial_counts_session_duration_plot';
           Plotly.newPlot(element, TCSDplot['data'], TCSDplot['layout'], this.plotConfig);
-          if (screenSizeInitial < 768) {
-            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
-          } else if (screenSizeInitial < 876 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
+          if (screenSizeInitial < 420) {
+            Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
+          } else if (screenSizeInitial < 876 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
           } else if (screenSizeInitial < 1024 && (screenSizeInitial > 876 || screenSizeInitial === 876)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
