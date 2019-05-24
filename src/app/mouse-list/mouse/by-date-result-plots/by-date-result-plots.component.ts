@@ -200,11 +200,11 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     const responsiveRTTNplot3 = this.d3.select(this.elRTTrialNum3.nativeElement).node();
 
     console.log('screen width change: ', this.newScreenWidth);
-    this.mediumScreenLayout['title'] = { text: 'M - ' + this.newScreenWidth };
-    this.mediumLargeScreenLayout['title'] = { text: 'ML - ' + this.newScreenWidth };
-    this.mediumScreenPsychCurveLayout['title'] = { text: 'M - ' + this.newScreenWidth };
-    this.mediumLargeScreenPsychCurveLayout['title'] = { text: 'ML - ' + this.newScreenWidth };
-    this.defaultScreenLayout['title'] = { text: 'default - ' + this.newScreenWidth };
+    // this.mediumScreenLayout['title'] = { text: 'M - ' + this.newScreenWidth };
+    // this.mediumLargeScreenLayout['title'] = { text: 'ML - ' + this.newScreenWidth };
+    // this.mediumScreenPsychCurveLayout['title'] = { text: 'M - ' + this.newScreenWidth };
+    // this.mediumLargeScreenPsychCurveLayout['title'] = { text: 'ML - ' + this.newScreenWidth };
+    // this.defaultScreenLayout['title'] = { text: 'default - ' + this.newScreenWidth };
     if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
       Plotly.update(responsiveRTCplot1, this.mediumLargeScreenDataStyle_RTC, this.mediumLargeScreenLayout);
       Plotly.update(responsiveRTCplot2, this.mediumLargeScreenDataStyle_RTC, this.mediumLargeScreenLayout);
