@@ -9,7 +9,6 @@ h4 {
 form { 
     margin-bottom: 5px;
     padding-bottom: 25px;
-    border-bottom: 3px solid rgb(209, 209, 209);
     display: inline-block;
     font-size: 80%;
     width: 100%;
@@ -168,6 +167,7 @@ button.accordion-toggle-button:hover {
 
 
 tr.headerRow {
+    border-top: 3px solid rgb(209, 209, 209);
     border-bottom: 3px solid rgb(209, 209, 209);
 }
 tr.statRows {
@@ -234,7 +234,25 @@ tr.collapsed * {
     /* position: relative;
     z-index: 1; */
 }
+@media only screen and (max-width: 1600px) {
 
+    button.accordion-toggle-button {
+        transform: translateX(30%);
+        border: 2px solid rgb(2, 97, 141); 
+    }
+}
+@media only screen and (max-width: 1024px) {
+    form {
+        border-bottom: 2px solid transparent;
+    }
+    
+    .table-container {
+        overflow-x: scroll;
+    }
+    table {
+        width: 1024px;
+    }
+}
 /* note - to make sure the filter folds smoothly without getting stuck */
 /* problem folding areas */
 @media only screen and (min-width: 1872px) and (max-width: 2316px) {
