@@ -141,6 +141,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           performanceRTplot['layout']['width'] = '';
           performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          performanceRTplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';

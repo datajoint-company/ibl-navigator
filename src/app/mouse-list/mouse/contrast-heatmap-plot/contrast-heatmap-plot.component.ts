@@ -123,6 +123,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           contrastHeatmapPlot['layout']['width'] = '';
           contrastHeatmapPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           contrastHeatmapPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          contrastHeatmapPlot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
           this.contrastHeatmapPlotIsAvailable = true;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot';

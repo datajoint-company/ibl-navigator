@@ -175,6 +175,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
           WIWplot['layout']['width'] = '';
           WIWplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           WIWplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          WIWplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
           this.WIWPlotIsAvailable = true;
           this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_water_intake_weight_plot';

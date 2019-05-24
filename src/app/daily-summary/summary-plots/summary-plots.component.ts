@@ -97,6 +97,7 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
             { toImageButtonOptions:
                 { filename: this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot' }
             });
+          WWIplotInfo['layout']['legend']['bgcolor'] = 'rgba(0, 0, 0, 0)';
           Plotly.newPlot(WWIplotElem, WWIplotInfo['data'], WWIplotInfo['layout'], plotConfigWWI);
           Plotly.newPlot(TCSDplotElem, TCSDplotInfo['data'], TCSDplotInfo['layout'], plotConfigTCSD);
           Plotly.newPlot(PRTplotElem, PRTplotInfo['data'], PRTplotInfo['layout'], plotConfigPRT);

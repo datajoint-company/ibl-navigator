@@ -144,6 +144,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           TCSDplot['layout']['width'] = '';
           TCSDplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           TCSDplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          TCSDplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
           this.loading = false;
