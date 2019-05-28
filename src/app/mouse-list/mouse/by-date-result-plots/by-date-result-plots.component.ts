@@ -276,6 +276,9 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             const datePsychPlot = plot['plotting_data'];
             datePsychPlot['layout']['width'] = '500';
             datePsychPlot['layout']['height'] = '350';
+            datePsychPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+            datePsychPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
+            datePsychPlot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
             this.loadingPlots[index] = false;
             const plotConfig1 = Object.assign({}, this.plotConfig,
               { toImageButtonOptions:
@@ -317,6 +320,9 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   const dateRTCPlot = plot['plotting_data'];
                   dateRTCPlot['layout']['width'] = '';
                   dateRTCPlot['layout']['height'] = '350';
+                  dateRTCPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+                  dateRTCPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
+                  dateRTCPlot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
                   const plotConfig2 = Object.assign({}, this.plotConfig,
                     {
                       toImageButtonOptions:
@@ -368,6 +374,9 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   const dateRTTPlot = plot['plotting_data'];
                   dateRTTPlot['layout']['width'] = '500';
                   dateRTTPlot['layout']['height'] = '350';
+                  dateRTTPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+                  dateRTTPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
+                  dateRTTPlot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
                   const plotConfig3 = Object.assign({}, this.plotConfig,
                     {
                       toImageButtonOptions:

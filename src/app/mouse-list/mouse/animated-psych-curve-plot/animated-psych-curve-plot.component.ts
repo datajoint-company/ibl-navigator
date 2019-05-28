@@ -44,6 +44,8 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
           }
           layout['height'] = '600';
           layout['width'] = '800';
+          layout['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          layout['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           layout['title'] = { text: 'Session Psychometric Curve Progression' };
           layout['yaxis'] = {
             range: [-0.1, 1.1],
@@ -71,7 +73,9 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
                   transition: { duration: 200 },
                   frame: { duration: 160, redraw: true }
                 }],
-              label: 'Play'
+              // label: 'Play'
+              label: '<span>\u25B6</span>'
+              // label: '<span class="oi oi-media-play"></span>'
               }, {
               method: 'animate',
               args: [[null], {
@@ -79,16 +83,18 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
                 transition: { duration: 0 },
                 frame: { duration: 0, redraw: true }
               }],
-              label: 'Pause'
+                label: '&#10074;&#10074;'
+              // label: '<span>\u23F8</span>'
+              // label: '<span class="oi oi-media-pause"></span>'
               }]
           }];
           layout['sliders'] = [{
             pad: { l: 130, t: 55 },
             currentvalue: {
               visible: true,
-              prefix: 'session date:',
-              xanchor: 'right',
-              font: { size: 20, color: '#666' }
+              prefix: 'Session Date:',
+              xanchor: 'center',
+              font: { size: 16, color: '#666' }
             },
             steps: sliderSteps
           }];
