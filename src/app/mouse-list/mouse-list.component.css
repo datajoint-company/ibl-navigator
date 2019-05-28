@@ -83,11 +83,6 @@ mat-checkbox.mouse_gender_menu_chbox {
     flex-direction: row;
 };
 
-.table-container {
-    width: 100%;
-    overflow-x: scroll;
-}
-
 tr.mat-row:hover {
     background-color: rgba(0, 83, 145, .05);
     cursor: pointer;
@@ -99,6 +94,11 @@ tr.mat-row:hover {
 
 .loading-icon img {
     width: 100px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: scroll;
 }
 
 
