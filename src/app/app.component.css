@@ -37,3 +37,24 @@
         padding-left: 2px;
     }
 }
+
+@media (max-width: 430px) {
+    .nav-tabs {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .menu-container {  
+        width: 100%; 
+    }
+
+    .nav-tabs .nav-link {
+        border-radius: 0;
+    }
+
+    .content-container {
+        overflow-x: scroll;
+        width: 100%;
+    }
+}

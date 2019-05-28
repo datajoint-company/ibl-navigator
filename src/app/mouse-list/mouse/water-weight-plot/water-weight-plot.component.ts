@@ -193,9 +193,9 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
           }
 
           Plotly.newPlot(element, WIWplot['data'], WIWplot['layout'], this.plotConfig);
-          if (screenSizeInitial < 420) {
+          if (screenSizeInitial < 430) {
             Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
-          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
+          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 430 || screenSizeInitial === 430)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
