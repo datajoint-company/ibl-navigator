@@ -48,6 +48,7 @@ import { ByDateResultPlotsComponent } from './mouse-list/mouse/by-date-result-pl
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { DailySummaryComponent } from './daily-summary/daily-summary.component';
 import { SummaryPlotsComponent } from './daily-summary/summary-plots/summary-plots.component';
+import { AnimatedPsychCurvePlotComponent } from './mouse-list/mouse/animated-psych-curve-plot/animated-psych-curve-plot.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
@@ -119,7 +120,8 @@ const appRoutes: Routes = [
     FitParPlotsComponent,
     ByDateResultPlotsComponent,
     DailySummaryComponent,
-    SummaryPlotsComponent
+    SummaryPlotsComponent,
+    AnimatedPsychCurvePlotComponent
   ],
   imports: [
     BrowserModule,

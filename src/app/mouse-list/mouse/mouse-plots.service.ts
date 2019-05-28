@@ -20,6 +20,7 @@ export class MousePlotsService {
   private datePsychPlotLoaded = new Subject();
   private dateRTContrastPlotLoaded = new Subject();
   private dateRTTrialPlotLoaded = new Subject();
+  private animationPCplotLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -100,7 +101,7 @@ export class MousePlotsService {
           this.datePsychPlotLoaded.next(plotData);
         },
         (err: any) => {
-          console.log('error in retrieving fit parameters plot data');
+          console.log('error in retrieving by date psychometric curve plot data');
           console.error(err);
         }
       );
@@ -113,7 +114,7 @@ export class MousePlotsService {
           this.dateRTContrastPlotLoaded.next(plotData);
         },
         (err: any) => {
-          console.log('error in retrieving fit parameters plot data');
+          console.log('error in retrieving by date reaction time contrast plot data');
           console.error(err);
         }
       );
@@ -127,6 +128,19 @@ export class MousePlotsService {
         },
         (err: any) => {
           console.log('error in retrieving fit parameters plot data');
+          console.error(err);
+        }
+      );
+  }
+
+  getAnimatedPCplot(subjectInfo) {
+    this.http.post(`http://localhost:3000/api/plot/session-psych-plotData`, subjectInfo)
+      .subscribe(
+        (plotData) => {
+          this.animationPCplotLoaded.next(plotData);
+        },
+        (err: any) => {
+          console.log('error in retrieving psychometric curve plot data for animation');
           console.error(err);
         }
       );
@@ -155,5 +169,8 @@ export class MousePlotsService {
   }
   getDateRTTrialNumPlotLoadedListener() {
     return this.dateRTTrialPlotLoaded.asObservable();
+  }
+  getAnimatedPCplotLoadedListener() {
+    return this.animationPCplotLoaded.asObservable();
   }
 }

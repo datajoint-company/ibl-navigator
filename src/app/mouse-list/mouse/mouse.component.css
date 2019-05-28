@@ -56,9 +56,13 @@ h5 {
 }
 
 .by-date-plots-container {
-    float: left;
+    /* float: left; */
     width: 100%;
     margin-left: 0.5%;
+}
+
+.sessionPCP-container {
+    /* float: bottom; */
 }
 
 .fetch-sessions {

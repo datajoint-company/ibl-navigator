@@ -80,10 +80,15 @@
       <button routerLink="/sessions" [queryParams]="mouse" mat-raised-button (click)="getSessions(mouse)">
         See Sessions</button>
     </div>
-    <div class="by-date-plots-container row">
+    <div class="row by-date-plots-container">
       <app-by-date-result-plots [mouseInfo]="mouse"></app-by-date-result-plots>
     </div>
+    <div class="sessionPCP-container row">
+      <app-animated-psych-curve-plot [mouseInfo]="mouse"></app-animated-psych-curve-plot>
+    </div>
+    <br>
   </div>
+
 </div>
 
 
