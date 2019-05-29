@@ -341,7 +341,12 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               if (!RTCmatchFound) {
                 this.loadingPlots[3 + idx] = false;
                 Plotly.newPlot(elementList[idx].elRTContrast, [],
-                  { title: { text: 'Reaction time - contrast plot unavailable' }, width: '', height: '350' }, this.plotConfig);
+                  { title: { text: 'Reaction time - contrast plot unavailable' },
+                    width: '',
+                    height: '350',
+                    plot_bgcolor: 'rgba(0, 0, 0, 0)',
+                    paper_bgcolor: 'rgba(0, 0, 0, 0)',
+                  }, {displayModeBar: false});
                 if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
                   Plotly.relayout(elementList[idx].elRTContrast, this.mediumLargeScreenLayout);
                 } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
@@ -396,7 +401,12 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               if (!RTTNmatchFound) {
                 this.loadingPlots[6 + idx] = false;
                 Plotly.newPlot(elementList[idx].elRTTrialNum, [],
-                  { title: { text: 'Reaction time - trial number plot unavailable' }, width: '', height: '350' }, this.plotConfig );
+                  { title: { text: 'Reaction time - trial number plot unavailable' },
+                    width: '',
+                    height: '350',
+                    plot_bgcolor: 'rgba(0, 0, 0, 0)',
+                    paper_bgcolor: 'rgba(0, 0, 0, 0)',
+                  }, { displayModeBar: false });
                 if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
                   Plotly.relayout(elementList[idx].elRTTrialNum, this.mediumLargeScreenLayout);
                 } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
