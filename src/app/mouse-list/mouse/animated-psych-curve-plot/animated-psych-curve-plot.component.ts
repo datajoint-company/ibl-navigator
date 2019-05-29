@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MousePlotsService } from '../mouse-plots.service';
+import { AllSessionsService } from 'src/app/session-list/all-sessions.service';
 
 declare var Plotly: any;
 
@@ -10,8 +11,12 @@ declare var Plotly: any;
   styleUrls: ['./animated-psych-curve-plot.component.css']
 })
 export class AnimatedPsychCurvePlotComponent implements OnInit {
+  currentFrame;
+  sessionUUID;
+  current_frame_session_info;
   private AnimPCplotSubscription: Subscription;
-  constructor(public mousePlotsService: MousePlotsService) { }
+  private sessionQuerySubscription: Subscription;
+  constructor(public mousePlotsService: MousePlotsService, public allSessionsService: AllSessionsService) { }
   @Input() mouseInfo: Object;
   @ViewChild('animatedPsychCurvePlot') element: ElementRef;
   ngOnInit() {
@@ -20,14 +25,246 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
     this.AnimPCplotSubscription = this.mousePlotsService.getAnimatedPCplotLoadedListener()
       .subscribe((plotInfo: any) => {
         if (plotInfo && plotInfo.length > 1) {
-          const data = plotInfo[0]['plotting_data']['data'];
+          let data = [];
+          // const data = plotInfo[plotInfo.length - 1]['plotting_data']['data'];
+          if (plotInfo[0]['plotting_data']['data'].length < 4) {
+            data = [
+              {
+                marker: {
+                  color: 'orange',
+                  size: '6'
+                },
+                mode: 'markers',
+                name: 'p_left = 0.2, data',
+                x: [],
+                y: [],
+                type: 'scatter'
+              },
+              {
+                marker: {
+                  color: 'orange'
+                },
+                name: 'p_left = 0.2 model fits',
+                x: [],
+                y: [],
+                type: 'scatter'
+              },
+              plotInfo[0]['plotting_data']['data'][0],
+              plotInfo[0]['plotting_data']['data'][1],
+              {
+                marker: {
+                  color: 'cornflowerblue',
+                  size: '6'
+                },
+                mode: 'markers',
+                name: 'p_left = 0.8, data',
+                x: [],
+                y: [],
+                type: 'scatter'
+              },
+              {
+                marker: {
+                  color: 'cornflowerblue'
+                },
+                name: 'p_left = 0.8 model fits',
+                x: [],
+                y: [],
+                type: 'scatter'
+              }
+            ];
+
+          } else if (plotInfo[0]['plotting_data']['data'].length < 6) {
+            data = [
+              plotInfo[0]['plotting_data']['data'][0],
+              plotInfo[0]['plotting_data']['data'][1],
+              {
+                marker: {
+                  color: 'black',
+                  size: '6'
+                },
+                mode: 'markers',
+                name: 'p_left = 0.5, data',
+                x: [],
+                y: [],
+                type: 'scatter'
+              },
+              {
+                marker: {
+                  color: 'black'
+                },
+                name: 'p_left = 0.5 model fits',
+                x: [],
+                y: [],
+                type: 'scatter'
+              },
+              plotInfo[0]['plotting_data']['data'][2],
+              plotInfo[0]['plotting_data']['data'][3],
+            ];
+          } else {
+            data = plotInfo[0]['plotting_data']['data'];
+          }
+          // const data = [
+          //   {
+          //       marker: {
+          //         color: 'orange',
+          //         size: '6'
+          //       },
+          //       mode: 'markers',
+          //       name: 'p_left = 0.2, data',
+          //       x: [],
+          //       y: [],
+          //       type: 'scatter'
+          //     },
+          //     {
+          //       marker: {
+          //         color: 'orange'
+          //       },
+          //       name: 'p_left = 0.2 model fits',
+          //       x: [],
+          //       y: [],
+          //       type: 'scatter'
+          //     },
+          //     {
+          //       marker: {
+          //         color: 'black',
+          //         size: '6'
+          //       },
+          //       mode: 'markers',
+          //       name: 'p_left = 0.5, data',
+          //       x: [],
+          //       y: [],
+          //       type: 'scatter'
+          //     },
+          //     {
+          //       marker: {
+          //         color: 'black'
+          //       },
+          //       name: 'p_left = 0.5 model fits',
+          //       x: [],
+          //       y: [],
+          //       type: 'scatter'
+          //     },
+          //   {
+          //       marker: {
+          //         color: 'cornflowerblue',
+          //         size: '6'
+          //       },
+          //       mode: 'markers',
+          //       name: 'p_left = 0.8, data',
+          //       x: [],
+          //       y: [],
+          //       type: 'scatter'
+          //     },
+          //     {
+          //       marker: {
+          //         color: 'cornflowerblue'
+          //       },
+          //       name: 'p_left = 0.8 model fits',
+          //       x: [],
+          //       y: [],
+          //       type: 'scatter'
+          //     }
+          // ];
           const frames = [];
           for (let i = 0; i < plotInfo.length; i++) {
-            frames.push({
-              name: plotInfo[i]['session_start_time'],
-              data: plotInfo[i]['plotting_data']['data']
-            });
+            const filledData = [{}, {}, {}, {}, {}, {}];
+            if (plotInfo[i]['plotting_data']['data'].length < 4) {
+              console.log('filling missing data - length: ', plotInfo[i]['plotting_data']['data'].length);
+              console.log('data getting filled: ', plotInfo[i]['plotting_data']['data']);
+              // needs to be empty
+              filledData[0] = {
+                marker: {
+                  color: 'orange',
+                  size: '6'
+                },
+                mode: 'markers',
+                name: 'p_left = 0.2, data',
+                x: [],
+                y: [],
+                type: 'scatter'
+              };
+              // needs to be empty
+              filledData[1] = {
+                marker: {
+                  color: 'orange'
+                },
+                name: 'p_left = 0.2 model fits',
+                x: [],
+                y: [],
+                type: 'scatter'
+              };
+              filledData[2] = plotInfo[i]['plotting_data']['data'][0];
+              filledData[3] = plotInfo[i]['plotting_data']['data'][1];
+              // needs to be empty
+              filledData[4] = {
+                marker: {
+                  color: 'cornflowerblue',
+                  size: '6'
+                },
+                mode: 'markers',
+                name: 'p_left = 0.8, data',
+                x: [],
+                y: [],
+                type: 'scatter'
+              };
+              // needs to be empty
+              filledData[5] = {
+                marker: {
+                  color: 'cornflowerblue'
+                },
+                name: 'p_left = 0.8 model fits',
+                x: [],
+                y: [],
+                type: 'scatter'
+              };
+
+              frames.push({
+                name: plotInfo[i]['session_start_time'],
+                data: filledData
+              });
+              console.log('filled data:', filledData);
+            } else if (plotInfo[i]['plotting_data']['data'].length < 6) {
+              console.log('filling missing data - length: ', plotInfo[i]['plotting_data']['data'].length);
+              console.log('data getting filled: ', plotInfo[i]['plotting_data']['data']);
+              filledData[0] = plotInfo[i]['plotting_data']['data'][0];
+              filledData[1] = plotInfo[i]['plotting_data']['data'][1];
+              // needs to be empty
+              filledData[2] = {
+                marker: {
+                  color: 'black',
+                  size: '6'
+                },
+                mode: 'markers',
+                name: 'p_left = 0.5, data',
+                x: [],
+                y: [],
+                type: 'scatter'
+              };
+              // needs to be empty
+              filledData[3] = {
+                marker: {
+                  color: 'black'
+                },
+                name: 'p_left = 0.5 model fits',
+                x: [],
+                y: [],
+                type: 'scatter'
+              };
+              filledData[4] = plotInfo[i]['plotting_data']['data'][2];
+              filledData[5] = plotInfo[i]['plotting_data']['data'][3];
+              frames.push({
+                name: plotInfo[i]['session_start_time'],
+                data: filledData
+              });
+              console.log('filled data:', filledData);
+            } else {
+              frames.push({
+                name: plotInfo[i]['session_start_time'],
+                data: plotInfo[i]['plotting_data']['data']
+              });
+            }
           }
+          console.log('frames: ', frames);
           const layout = plotInfo[0]['plotting_data']['layout'];
 
           const sliderSteps = [];
@@ -35,6 +272,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
             sliderSteps.push({
               method: 'animate',
               label: plotInfo[i]['session_start_time'].split('T')[0],
+              value: plotInfo[i]['session_start_time'],
               args: [[plotInfo[i]['session_start_time']], {
                 mode: 'immediate',
                 transition: { duration: 200 },
@@ -47,14 +285,10 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
           layout['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           layout['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           layout['title'] = { text: 'Session Psychometric Curve Progression' };
-          layout['yaxis'] = {
-            range: [-0.1, 1.1],
-            autorange: false
-          };
-          layout['xaxis'] = {
-            range: [-110, 110],
-            autorange: false
-          };
+          layout['yaxis']['range'] = [-0.05, 1.05];
+          layout['yaxis']['autorange'] = false;
+          layout['xaxis']['range'] = [-110, 110];
+          layout['xaxis']['autorange'] = false;
           layout['hovermode'] = 'closest';
           layout['updatemenus'] = [{
             x: 0,
@@ -87,9 +321,10 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
               // label: '<span>\u23F8</span>'
               // label: '<span class="oi oi-media-pause"></span>'
               }]
-          }];
+            }
+          ];
           layout['sliders'] = [{
-            pad: { l: 130, t: 55 },
+            pad: { l: 130, t: 65 },
             currentvalue: {
               visible: true,
               prefix: 'Session Date:',
@@ -117,6 +352,25 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
           // Plotly.fileSaver()
           // Plotly.downloadImage(element, opts)
         }
+      });
+  }
+
+  jump2session() {
+    console.log('fetching session uuid for');
+    console.log('mouse id: ', this.mouseInfo['subject_uuid']);
+    console.log('session_start_time of: ', this.element.nativeElement._fullLayout._currentFrame);
+    this.currentFrame = this.element.nativeElement._fullLayout._currentFrame;
+    if (!this.currentFrame) {
+      alert('run the animation/move the slider to choose a session');
+      return;
+    }
+    this.allSessionsService.retrieveSessions({'subject_uuid': this.mouseInfo['subject_uuid'], 'session_start_time': this.currentFrame});
+    this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
+      .subscribe(sessionInfo => {
+        console.log('session retrieved! ID: ', sessionInfo[0]['session_uuid']);
+        console.log(sessionInfo);
+        this.current_frame_session_info = sessionInfo[0];
+        this.sessionUUID = sessionInfo[0]['session_uuid'];
       });
   }
 
