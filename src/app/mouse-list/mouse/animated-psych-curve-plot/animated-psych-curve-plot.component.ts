@@ -106,6 +106,16 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
             config: {displayModeBar: false}
           });
 
+          const images = [];
+          element.on('plotly_animated', () => {
+            Plotly.toImage(element).then((img) => {
+              images.push(img);
+            });
+          });
+
+          // Plotly.animate(element)
+          // Plotly.fileSaver()
+          // Plotly.downloadImage(element, opts)
         }
       });
   }

@@ -271,6 +271,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           this.datePsychPlotList = psychCurveInfo;
           const recent3 = psychCurveInfo.slice(0, 3);
+          console.log('recent3 is...', recent3);
           recent3.forEach((plot, index) => {
             this.recent3dates.push(plot['session_date']);
             const datePsychPlot = plot['plotting_data'];
@@ -292,6 +293,26 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               Plotly.update(elementList[index].elPsych, this.mediumLargeScreenDataStyle_PC, this.mediumLargeScreenPsychCurveLayout);
             }
           });
+          if (recent3.length < 3) {
+            for (let i = 0; i < 3 - recent3.length; i++ ) {
+              this.loadingPlots[i + 1] = false;
+              Plotly.newPlot(elementList[i + 1].elPsych, [],
+                {
+                  title: { text: 'Psychometric curve plot unavailable' },
+                  width: '',
+                  height: '350',
+                  plot_bgcolor: 'rgba(0, 0, 0, 0)',
+                  paper_bgcolor: 'rgba(0, 0, 0, 0)',
+                }, { displayModeBar: false });
+              if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
+                Plotly.relayout(elementList[i + 1].elPsych, this.mediumLargeScreenLayout);
+              } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
+                Plotly.relayout(elementList[i + 1].elPsych, this.mediumScreenLayout);
+              } else if (screenSizeInitial < 768) {
+                Plotly.relayout(elementList[i + 1].elPsych, this.mediumLargeScreenLayout);
+              }
+            }
+          }
 
           this.recent3datesLoaded.next(this.recent3dates);
         } else {
@@ -356,6 +377,27 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                 }
               }
             });
+            if (this.recent3dates.length < 3) {
+              for (let i = 0; i < 3 - this.recent3dates.length; i++) {
+                console.log('elementList here is: ', elementList);
+                this.loadingPlots[i + 4] = false;
+                Plotly.newPlot(elementList[i + 1].elRTContrast, [],
+                  {
+                    title: { text: 'Reaction time - contrast plot unavailable' },
+                    width: '',
+                    height: '350',
+                    plot_bgcolor: 'rgba(0, 0, 0, 0)',
+                    paper_bgcolor: 'rgba(0, 0, 0, 0)',
+                  }, { displayModeBar: false });
+                if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
+                  Plotly.relayout(elementList[i + 1].elRTContrast, this.mediumLargeScreenLayout);
+                } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
+                  Plotly.relayout(elementList[i + 1].elRTContrast, this.mediumScreenLayout);
+                } else if (screenSizeInitial < 768) {
+                  Plotly.relayout(elementList[i + 1].elRTContrast, this.mediumLargeScreenLayout);
+                }
+              }
+            }
 
           } else {
             this.loadingPlots[3] = false;
@@ -416,15 +458,27 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                 }
               }
             });
-            // if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
-            //   Plotly.update(responsiveRTTNplot1, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-            //   Plotly.update(responsiveRTTNplot2, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-            //   Plotly.update(responsiveRTTNplot3, mediumLargeScreenDataStyle, mediumLargeScreenLayout);
-            // } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
-            //   Plotly.update(responsiveRTTNplot1, mediumScreenDataStyle, mediumScreenLayout);
-            //   Plotly.update(responsiveRTTNplot2, mediumScreenDataStyle, mediumScreenLayout);
-            //   Plotly.update(responsiveRTTNplot3, mediumScreenDataStyle, mediumScreenLayout);
-            // }
+            if (this.recent3dates.length < 3) {
+              for (let i = 0; i < 3 - this.recent3dates.length; i++) {
+                console.log('elementList here is: ', elementList);
+                this.loadingPlots[i + 7] = false;
+                Plotly.newPlot(elementList[i + 1].elRTTrialNum, [],
+                  {
+                    title: { text: 'Reaction time - trial number plot unavailable' },
+                    width: '',
+                    height: '350',
+                    plot_bgcolor: 'rgba(0, 0, 0, 0)',
+                    paper_bgcolor: 'rgba(0, 0, 0, 0)',
+                  }, { displayModeBar: false });
+                if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
+                  Plotly.relayout(elementList[i + 1].elRTTrialNum, this.mediumLargeScreenLayout);
+                } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
+                  Plotly.relayout(elementList[i + 1].elRTTrialNum, this.mediumScreenLayout);
+                } else if (screenSizeInitial < 768) {
+                  Plotly.relayout(elementList[i + 1].elRTTrialNum, this.mediumLargeScreenLayout);
+                }
+              }
+            }
           } else {
             this.loadingPlots[5] = false;
             this.loadingPlots[6] = false;
