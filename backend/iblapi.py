@@ -78,6 +78,8 @@ reqmap = {
     'subject': subject.Subject,
     'session': acquisition.Session,
     'sessionpsych': plotting_behavior.SessionPsychCurve,
+    'sessionRTC': plotting_behavior.SessionReactionTimeContrast,
+    'sessionRTTN': plotting_behavior.SessionReactionTimeTrialNumber,
     'waterweight': plotting_behavior.CumulativeSummary.WaterWeight,
     'TCsessionduration': plotting_behavior.CumulativeSummary.TrialCountsSessionDuration,
     'performanceRT': plotting_behavior.CumulativeSummary.PerformanceReactionTime,

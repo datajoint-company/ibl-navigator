@@ -49,6 +49,8 @@ import { AuthInterceptor } from './auth/auth-interceptor';
 import { DailySummaryComponent } from './daily-summary/daily-summary.component';
 import { SummaryPlotsComponent } from './daily-summary/summary-plots/summary-plots.component';
 import { AnimatedPsychCurvePlotComponent } from './mouse-list/mouse/animated-psych-curve-plot/animated-psych-curve-plot.component';
+import { SessionRTCPlotComponent } from './session-list/session/session-rtc-plot/session-rtc-plot.component';
+import { SessionRTTNPlotComponent } from './session-list/session/session-rttn-plot/session-rttn-plot.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
@@ -121,7 +123,9 @@ const appRoutes: Routes = [
     ByDateResultPlotsComponent,
     DailySummaryComponent,
     SummaryPlotsComponent,
-    AnimatedPsychCurvePlotComponent
+    AnimatedPsychCurvePlotComponent,
+    SessionRTCPlotComponent,
+    SessionRTTNPlotComponent
   ],
   imports: [
     BrowserModule,

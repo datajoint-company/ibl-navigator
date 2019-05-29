@@ -276,6 +276,24 @@ app.post('/api/plot/session-psych-plotData', (req, res) => {
     })
 })
 
+app.post('/api/plot/session-RTC-plotData', (req, res) => {
+    request.post('http://localhost:5000/v0/sessionRTC', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/session-RTTN-plotData', (req, res) => {
+    request.post('http://localhost:5000/v0/sessionRTTN', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
 app.post('/api/plot/waterWeightPlot', (req, res) => {
     request.post('http://localhost:5000/v0/waterweight', { form: req.body }, function (error, httpResponse, body) {
         if (error) {

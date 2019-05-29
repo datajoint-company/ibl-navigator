@@ -45,5 +45,7 @@
   <h5>Session Plots</h5>
   <div *ngIf="session">
     <app-session-psych-plot [sessionData]="session"></app-session-psych-plot>
+    <app-session-rtc-plot [sessionData]="session"></app-session-rtc-plot>
+    <app-session-rttn-plot [sessionData]="session"></app-session-rttn-plot>
   </div>
 </div>

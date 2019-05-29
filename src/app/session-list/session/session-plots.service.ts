@@ -7,8 +7,12 @@ import { HttpClient } from '@angular/common/http';
 })
 export class SessionPlotsService {
   private sessionPsychPlot;
+  private sessionRTCPlot;
+  private sessionRTTNPlot;
 
   private sessionPsychPlotLoaded = new Subject();
+  private sessionRTCPlotLoaded = new Subject();
+  private sessionRTTNPlotLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -26,8 +30,44 @@ export class SessionPlotsService {
       );
   }
 
+  getSessionRTCPlot(sessionInfo) {
+    this.http.post('http://localhost:3000/api/plot/session-RTC-plotData', sessionInfo)
+      .subscribe(
+        (plotData) => {
+          this.sessionRTCPlot = plotData;
+          this.sessionRTCPlotLoaded.next(this.sessionRTCPlot);
+        },
+        (err: any) => {
+          console.log('error in retrieving session RTC plot');
+          console.error(err);
+        }
+      );
+  }
+
+  getSessionRTTNPlot(sessionInfo) {
+    this.http.post('http://localhost:3000/api/plot/session-RTTN-plotData', sessionInfo)
+      .subscribe(
+        (plotData) => {
+          this.sessionRTTNPlot = plotData;
+          this.sessionRTTNPlotLoaded.next(this.sessionRTTNPlot);
+        },
+        (err: any) => {
+          console.log('error in retrieving session RTTN plot');
+          console.error(err);
+        }
+      );
+  }
+
   getSessionPsychPlotLoadedListener() {
     return this.sessionPsychPlotLoaded.asObservable();
+  }
+
+  getSessionRTCPlotLoadedListener() {
+    return this.sessionRTCPlotLoaded.asObservable();
+  }
+
+  getSessionRTTNPlotLoadedListener() {
+    return this.sessionRTTNPlotLoaded.asObservable();
   }
 
 }
