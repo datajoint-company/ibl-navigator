@@ -22,9 +22,15 @@ h5 {
     margin-left: 1%;
 }
 
+hr {
+    margin-bottom: 0;
+}
+
 .mouse-plots-container {
     margin-left: 1%;
+    padding-top: 1%;
     /* background:linear-gradient(to right, rgb(195, 53, 157), rgb(143, 83, 173), rgb(93, 111, 190), rgb(3,162,218)); */
+    background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1), rgba(195, 53, 157, 0.04), rgba(143, 83, 173, 0.03), rgba(3, 161, 218, 0.05), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.75));
 
 }
 
@@ -35,28 +41,23 @@ h5 {
 }
 
 .single-plot {
-    /* border-bottom: 3px solid rgba(3, 161, 218, 0.15); */
-    /* border-right: 3px solid rgba(3, 161, 218, 0.15); */
-    background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1), rgba(93, 111, 190, 0.08), rgba(3, 161, 218, 0.1), rgba(255, 255, 255, 0.75));
+    border-right: 1px solid rgba(131, 139, 211, 0.35);
+    border-top: 1px solid rgba(131, 139, 211, 0.35);
+    /* background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1), rgba(93, 111, 190, 0.08), rgba(3, 161, 218, 0.1), rgba(255, 255, 255, 0.75)); */
 
-    /* background:linear-gradient(to right, rgba(195, 53, 157, 0.15), rgba(143, 83, 173, 0.15), rgba(93, 111, 190, 0.15), rgba(3, 161, 218, 0.15)); */
 }
 
-.single-plot-pink {
-    /* border-bottom: 3px solid rgba(195, 53, 157, 0.15); */
-    /* border-right: 3px solid rgba(195, 53, 157, 0.15); */
-    background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1), rgba(195, 53, 157, 0.04), rgba(143, 83, 173, 0.1), rgba(3, 161, 218, 0.1), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.75));
-
-    /* background:linear-gradient(to left bottom, rgba(195, 53, 157, 0.15), rgba(143, 83, 173, 0.15), rgba(93, 111, 190, 0.15), rgba(3, 161, 218, 0.15)); */
+.h-long-plot {
 }
+
 
 .v-long-plot-container {
     float: left;
     width: 50%;
+    border-top: 1px solid rgba(131, 139, 211, 0.35);
 }
 
 .by-date-plots-container {
-    /* float: left; */
     width: 100%;
     margin-left: 0.5%;
 }
@@ -95,5 +96,8 @@ h5 {
   }
   .mouse-plots-container {
     margin-left: 0;
-}
+   }
+  .single-plot {
+    border-right: none;
+  }
 }
