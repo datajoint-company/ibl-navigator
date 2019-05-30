@@ -18,7 +18,8 @@ import { MatSelectModule,
          MatPaginatorModule,
          MatSortModule,
          MatSliderModule,
-         MatExpansionModule } from '@angular/material';
+         MatExpansionModule,
+         MatDialogModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -32,7 +33,7 @@ import { PlotsService } from './plots.service';
 import { ViewSamplePlotsComponent } from './plots/view-sample-plots/view-sample-plots.component';
 import { PlotMenuToggleComponent } from './plots/view-sample-plots/plot-menu-toggle/plot-menu-toggle.component';
 import { SessionListComponent } from './session-list/session-list.component';
-import { SessionComponent } from './session-list/session/session.component';
+import { SessionComponent, SessionPlotDialog } from './session-list/session/session.component';
 import { MouseListComponent } from './mouse-list/mouse-list.component';
 import { MouseComponent } from './mouse-list/mouse/mouse.component';
 import { CellListComponent } from './cell-list/cell-list.component';
@@ -51,6 +52,7 @@ import { SummaryPlotsComponent } from './daily-summary/summary-plots/summary-plo
 import { AnimatedPsychCurvePlotComponent } from './mouse-list/mouse/animated-psych-curve-plot/animated-psych-curve-plot.component';
 import { SessionRTCPlotComponent } from './session-list/session/session-rtc-plot/session-rtc-plot.component';
 import { SessionRTTNPlotComponent } from './session-list/session/session-rttn-plot/session-rttn-plot.component';
+
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
@@ -100,6 +102,7 @@ const appRoutes: Routes = [
 
 
 @NgModule({
+  entryComponents: [SessionComponent, SessionPlotDialog],
   declarations: [
     AppComponent,
     EachBatchComponent,
@@ -125,7 +128,8 @@ const appRoutes: Routes = [
     SummaryPlotsComponent,
     AnimatedPsychCurvePlotComponent,
     SessionRTCPlotComponent,
-    SessionRTTNPlotComponent
+    SessionRTTNPlotComponent,
+    SessionPlotDialog
   ],
   imports: [
     BrowserModule,
@@ -136,7 +140,7 @@ const appRoutes: Routes = [
     MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule,
     MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatSlideToggleModule,
     MatCardModule, MatButtonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSliderModule, MatExpansionModule,
-    ReactiveFormsModule, FlexLayoutModule
+    MatDialogModule, ReactiveFormsModule, FlexLayoutModule
   ],
   providers: [AuthService, AuthGuard, PlotsService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]

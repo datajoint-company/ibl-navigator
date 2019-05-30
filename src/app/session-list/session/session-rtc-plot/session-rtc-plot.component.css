@@ -1,0 +1,8 @@
+#SRTCpngExport {
+    width: 400px;
+    border: 1px solid rgb(145, 173, 199);
+}
+
+#SRTCpngExport:hover {
+    border: 2px solid rgb(145, 173, 199);
+}

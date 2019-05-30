@@ -10,6 +10,8 @@ declare var Plotly: any;
   styleUrls: ['./session-psych-plot.component.css']
 })
 export class SessionPsychPlotComponent implements OnInit, OnDestroy {
+
+  d3 = Plotly.d3;
   plotInfo = [];
   psychPlotIsAvailable: boolean;
   // svgDownloadIcon = {
@@ -63,29 +65,43 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
       }
   };
   private sessionPsychPlotSubscription: Subscription;
-  @Input('sessionData') sessionData: Object;
+  @Input() sessionData: Object;
+  @Input() dialogClosed: boolean;
   @Output() psychPlotAvailability: EventEmitter<any> = new EventEmitter();
+  @Output() openSPCplot: EventEmitter<any> = new EventEmitter();
   constructor(public sessionPlotsService: SessionPlotsService) { }
 
   @ViewChild('session_psych_plot') el: ElementRef;
   ngOnInit() {
     const element = this.el.nativeElement;
+
+    const img_png = this.d3.select('#SPCpngExport');
     // const sessionInfo = { 'subject_uuid': '1a8fa9b4-399b-4175-8c32-e552aaa2541b', 'session_start_time': '2019-03-25T15:51:10'};
     const sessionInfo = { 'subject_uuid': this.sessionData['subject_uuid'], 'session_start_time': this.sessionData['session_start_time'] };
-    
+
     this.sessionPlotsService.getSessionPsychPlot(sessionInfo);
     this.sessionPsychPlotSubscription = this.sessionPlotsService.getSessionPsychPlotLoadedListener()
       .subscribe((psychPlotData: any) => {
         console.log('retrieved session psych plot for...');
         console.log(psychPlotData);
         if (psychPlotData[0]) {
-          console.log('subject_uuid: ', psychPlotData[0]['subject_uuid']);
-          console.log('session_start_time: ', psychPlotData[0]['session_start_time']);
+          // console.log('subject_uuid: ', psychPlotData[0]['subject_uuid']);
+          // console.log('session_start_time: ', psychPlotData[0]['session_start_time']);
           this.plotInfo = psychPlotData[0]['plotting_data'];
           this.psychPlotIsAvailable = true;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = psychPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_psych_plot'
-          Plotly.newPlot(element, this.plotInfo['data'], this.plotInfo['layout'], this.plotConfig);
+          Plotly.newPlot(element, this.plotInfo['data'], this.plotInfo['layout'], this.plotConfig)
+            .then(
+              function (gd) {
+                return Plotly.toImage(gd, { height: 400, width: 600 })
+                  .then(
+                    function (url) {
+                      img_png.attr('src', url);
+                      // return Plotly.toImage(gd, { format: 'png', height: 800, width: 1200 });
+                    }
+                  );
+              });
         } else {
           console.log('psych plot not available for this session');
           this.psychPlotIsAvailable = false;
@@ -98,6 +114,11 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
     if (this.sessionPsychPlotSubscription) {
       this.sessionPsychPlotSubscription.unsubscribe();
     }
+  }
+
+  plotClicked(event) {
+    console.log('session psych plot clicked');
+    this.openSPCplot.emit({showSPCplot: true});
   }
 
 }

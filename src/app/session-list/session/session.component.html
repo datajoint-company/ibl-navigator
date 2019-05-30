@@ -43,9 +43,9 @@
   </div>
   <hr>
   <h5>Session Plots</h5>
-  <div *ngIf="session">
-    <app-session-psych-plot [sessionData]="session"></app-session-psych-plot>
-    <app-session-rtc-plot [sessionData]="session"></app-session-rtc-plot>
-    <app-session-rttn-plot [sessionData]="session"></app-session-rttn-plot>
+  <div class="behavior-plots" *ngIf="session">
+    <app-session-psych-plot [sessionData]="session" [dialogClosed]="dialogClosedSPC" (openSPCplot)="openDialog($event)"></app-session-psych-plot>
+    <app-session-rtc-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTC" (openSRTCplot)="openDialog($event)"></app-session-rtc-plot>
+    <app-session-rttn-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTTN" (openSRTTNplot)="openDialog($event)"></app-session-rttn-plot>
   </div>
 </div>
