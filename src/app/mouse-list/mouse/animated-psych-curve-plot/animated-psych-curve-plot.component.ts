@@ -171,52 +171,140 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
             if (plotInfo[i]['plotting_data']['data'].length < 4) {
               console.log('filling missing data - length: ', plotInfo[i]['plotting_data']['data'].length);
               console.log('data getting filled: ', plotInfo[i]['plotting_data']['data']);
-              // needs to be empty
-              filledData[0] = {
-                marker: {
-                  color: 'orange',
-                  size: '6'
-                },
-                mode: 'markers',
-                name: 'p_left = 0.2, data',
-                x: [],
-                y: [],
-                type: 'scatter'
-              };
-              // needs to be empty
-              filledData[1] = {
-                marker: {
-                  color: 'orange'
-                },
-                name: 'p_left = 0.2 model fits',
-                x: [],
-                y: [],
-                type: 'scatter'
-              };
-              filledData[2] = plotInfo[i]['plotting_data']['data'][0];
-              filledData[3] = plotInfo[i]['plotting_data']['data'][1];
-              // needs to be empty
-              filledData[4] = {
-                marker: {
-                  color: 'cornflowerblue',
-                  size: '6'
-                },
-                mode: 'markers',
-                name: 'p_left = 0.8, data',
-                x: [],
-                y: [],
-                type: 'scatter'
-              };
-              // needs to be empty
-              filledData[5] = {
-                marker: {
-                  color: 'cornflowerblue'
-                },
-                name: 'p_left = 0.8 model fits',
-                x: [],
-                y: [],
-                type: 'scatter'
-              };
+              if (plotInfo[i]['plotting_data']['data'][0]['marker']['color'] === 'black') {
+                console.log('only has p_left = 0.5 - black data');
+                filledData[0] = {
+                  marker: {
+                    color: 'orange',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.2, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[1] = {
+                  marker: {
+                    color: 'orange'
+                  },
+                  name: 'p_left = 0.2 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[2] = plotInfo[i]['plotting_data']['data'][0];
+                filledData[3] = plotInfo[i]['plotting_data']['data'][1];
+                filledData[4] = {
+                  marker: {
+                    color: 'cornflowerblue',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.8, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[5] = {
+                  marker: {
+                    color: 'cornflowerblue'
+                  },
+                  name: 'p_left = 0.8 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+              } else if (plotInfo[i]['plotting_data']['data'][0]['marker']['color'] === 'orange') {
+                console.log('only has p_left = 0.2 - orange data');
+                filledData[0] = plotInfo[i]['plotting_data']['data'][0];
+                filledData[1] = plotInfo[i]['plotting_data']['data'][1];
+                filledData[2] = {
+                  marker: {
+                    color: 'black',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.5, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[3] = {
+                  marker: {
+                    color: 'black'
+                  },
+                  name: 'p_left = 0.5 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[4] = {
+                  marker: {
+                    color: 'cornflowerblue',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.8, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[5] = {
+                  marker: {
+                    color: 'cornflowerblue'
+                  },
+                  name: 'p_left = 0.8 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+              } else {
+                console.log('only has p_left = 0.8 - blue data');
+                filledData[0] = {
+                  marker: {
+                    color: 'orange',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.2, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[1] = {
+                  marker: {
+                    color: 'orange'
+                  },
+                  name: 'p_left = 0.2 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[2] = {
+                  marker: {
+                    color: 'black',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.5, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[3] = {
+                  marker: {
+                    color: 'black'
+                  },
+                  name: 'p_left = 0.5 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[4] = plotInfo[i]['plotting_data']['data'][0];
+                filledData[5] = plotInfo[i]['plotting_data']['data'][1];
+              }
+
 
               frames.push({
                 name: plotInfo[i]['session_start_time'],
@@ -226,32 +314,87 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
             } else if (plotInfo[i]['plotting_data']['data'].length < 6) {
               console.log('filling missing data - length: ', plotInfo[i]['plotting_data']['data'].length);
               console.log('data getting filled: ', plotInfo[i]['plotting_data']['data']);
-              filledData[0] = plotInfo[i]['plotting_data']['data'][0];
-              filledData[1] = plotInfo[i]['plotting_data']['data'][1];
-              // needs to be empty
-              filledData[2] = {
-                marker: {
-                  color: 'black',
-                  size: '6'
-                },
-                mode: 'markers',
-                name: 'p_left = 0.5, data',
-                x: [],
-                y: [],
-                type: 'scatter'
-              };
-              // needs to be empty
-              filledData[3] = {
-                marker: {
-                  color: 'black'
-                },
-                name: 'p_left = 0.5 model fits',
-                x: [],
-                y: [],
-                type: 'scatter'
-              };
-              filledData[4] = plotInfo[i]['plotting_data']['data'][2];
-              filledData[5] = plotInfo[i]['plotting_data']['data'][3];
+
+              if (plotInfo[i]['plotting_data']['data'][0]['marker']['color'] !== 'black' &&
+                plotInfo[i]['plotting_data']['data'][2]['marker']['color'] !== 'black') {
+                filledData[0] = plotInfo[i]['plotting_data']['data'][0];
+                filledData[1] = plotInfo[i]['plotting_data']['data'][1];
+                filledData[2] = {
+                  marker: {
+                    color: 'black',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.5, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[3] = {
+                  marker: {
+                    color: 'black'
+                  },
+                  name: 'p_left = 0.5 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[4] = plotInfo[i]['plotting_data']['data'][2];
+                filledData[5] = plotInfo[i]['plotting_data']['data'][3];
+              } else if (plotInfo[i]['plotting_data']['data'][0]['marker']['color'] !== 'orange' &&
+                plotInfo[i]['plotting_data']['data'][2]['marker']['color'] !== 'orange') {
+                filledData[0] = {
+                  marker: {
+                    color: 'orange',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.2, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[1] = {
+                  marker: {
+                    color: 'orange'
+                  },
+                  name: 'p_left = 0.2 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[2] = plotInfo[i]['plotting_data']['data'][0];
+                filledData[3] = plotInfo[i]['plotting_data']['data'][1];
+                filledData[4] = plotInfo[i]['plotting_data']['data'][2];
+                filledData[5] = plotInfo[i]['plotting_data']['data'][3];
+              } else if (plotInfo[i]['plotting_data']['data'][0]['marker']['color'] !== 'cornflowerblue' &&
+                plotInfo[i]['plotting_data']['data'][2]['marker']['color'] !== 'cornflowerblue') {
+                filledData[0] = plotInfo[i]['plotting_data']['data'][0];
+                filledData[1] = plotInfo[i]['plotting_data']['data'][1];
+                filledData[2] = plotInfo[i]['plotting_data']['data'][2];
+                filledData[3] = plotInfo[i]['plotting_data']['data'][3];
+                filledData[4] = {
+                  marker: {
+                    color: 'cornflowerblue',
+                    size: '6'
+                  },
+                  mode: 'markers',
+                  name: 'p_left = 0.8, data',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+                filledData[5] = {
+                  marker: {
+                    color: 'cornflowerblue'
+                  },
+                  name: 'p_left = 0.8 model fits',
+                  x: [],
+                  y: [],
+                  type: 'scatter'
+                };
+              }
+
               frames.push({
                 name: plotInfo[i]['session_start_time'],
                 data: filledData
