@@ -71,6 +71,9 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
           this.RTTNPlotIsAvailable = true;
           this.RTTNPlotAvailability.emit(this.RTTNPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = rttnPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_RTTN_plot'
+          this.plotInfo['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          this.plotInfo['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
+          this.plotInfo['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
           Plotly.newPlot(element, this.plotInfo['data'], this.plotInfo['layout'], this.plotConfig)
             .then(
               function (gd) {
