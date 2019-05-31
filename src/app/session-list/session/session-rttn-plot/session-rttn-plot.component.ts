@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild, Output, EventEmitter, HostListener } from '@angular/core';
 import { SessionPlotsService } from '../session-plots.service';
 import { Subscription } from 'rxjs';
 
@@ -11,6 +11,7 @@ declare var Plotly: any;
 })
 export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
   d3 = Plotly.d3;
+  newScreenWidth;
   plotInfo = [];
   RTTNPlotIsAvailable: boolean;
   plotConfig = {
@@ -48,6 +49,42 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
       scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
     }
   };
+
+  mediumScreenDataStyle = {
+    'marker.size': ['4'],
+    'line.width': ['1.5']
+  };
+
+  mediumScreenLayout = {
+    'font.size': '11',
+    'width': '580',
+    'height': '386',
+    'legend.font.size': '9.5'
+  };
+
+  smallScreenDataStyle = {
+    'marker.size': ['3.5'],
+    'line.width': ['1']
+  };
+
+  smallScreenLayout = {
+    'font.size': '10.5',
+    'width': '400',
+    'height': '286',
+    'legend.font.size': '9'
+  };
+
+  defaultScreenDataStyle = {
+    'marker.size': ['5'],
+    'line.width': ['1.75']
+  };
+
+  defaultScreenLayout = {
+    'font.size': '',
+    'legend.font.size': '12',
+    'width': '600',
+    'height': '400'
+  };
   private sessionRTTNPlotSubscription: Subscription;
   @Input() sessionData: Object;
   @Input() dialogClosed: boolean;
@@ -56,8 +93,21 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
   constructor(public sessionPlotsService: SessionPlotsService) { }
 
   @ViewChild('session_RTTN_plot') el: ElementRef;
+  @HostListener('window:resize', ['$event.target']) onresize(event) {
+    this.newScreenWidth = event.innerWidth;
+    // console.log('screensize change: ', this.newScreenWidth);
+    const responsiveSRTTNplot = this.d3.select(this.el.nativeElement).node();
+    if (this.newScreenWidth < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
+      Plotly.update(responsiveSRTTNplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
+    } else if (this.newScreenWidth < 768) {
+      Plotly.update(responsiveSRTTNplot, this.smallScreenDataStyle, this.smallScreenLayout);
+    } else {
+      Plotly.update(responsiveSRTTNplot, this.defaultScreenDataStyle, this.defaultScreenLayout);
+    }
+  }
   ngOnInit() {
     const element = this.el.nativeElement;
+    const initialScreenSize = window.innerWidth;
     const img_png = this.d3.select('#SRTTNpngExport');
     const sessionInfo = { 'subject_uuid': this.sessionData['subject_uuid'], 'session_start_time': this.sessionData['session_start_time'] };
 
@@ -84,6 +134,13 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
                     }
                   );
               });
+          if (initialScreenSize < 1024 && (initialScreenSize > 768 || initialScreenSize === 768)) {
+            Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
+          } else if (initialScreenSize < 768) {
+            Plotly.update(element, this.smallScreenDataStyle, this.smallScreenLayout);
+          } else {
+            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
+          }
         } else {
           console.log('psych plot not available for this session');
           this.RTTNPlotIsAvailable = false;

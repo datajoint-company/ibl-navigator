@@ -5,7 +5,7 @@
   <img id="SPCpngExport" (click)="plotClicked($event)" />
 </div>
 
-<div *ngIf="psychPlotIsAvailable !== null && !psychPlotIsAvailable">
+<div *ngIf="psychPlotIsAvailable !== null && !psychPlotIsAvailable" class="missingPlotNotice">
     <p>Psychometric plot not available for this session</p>
 </div>
    

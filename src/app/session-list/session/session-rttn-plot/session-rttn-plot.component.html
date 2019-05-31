@@ -2,6 +2,6 @@
   <div #session_RTTN_plot></div>
 </div>
 <img id="SRTTNpngExport" (click)="plotClicked($event)" width="320px" />
-<div *ngIf="RTTNPlotIsAvailable !== null && !RTTNPlotIsAvailable">
+<div *ngIf="RTTNPlotIsAvailable !== null && !RTTNPlotIsAvailable" class="missingPlotNotice">
   <p>Reaction time trial number plot not available for this session</p>
 </div>

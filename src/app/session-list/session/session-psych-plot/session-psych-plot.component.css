@@ -8,3 +8,8 @@
     /* background-color: rgba(248, 175, 242, 0.075); */
     background: linear-gradient(to right, rgba(248, 175, 242, 0.075), rgba(175, 231, 248, 0.075));
 }
+
+.missingPlotNotice {
+    width: 80%;
+    font-size: 90%;
+}

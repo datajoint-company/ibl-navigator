@@ -75,7 +75,8 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
 
   mediumScreenLayout = {
     'font.size': '11',
-    'width': '480',
+    'width': '580',
+    'height': '386',
     'legend.font.size': '9.5'
   };
 
@@ -89,6 +90,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   smallScreenLayout = {
     'font.size': '10.5',
     'width': '400',
+    'height': '286',
     'legend.font.size': '9'
   };
 
@@ -101,7 +103,9 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
 
   defaultScreenLayout = {
     'font.size': '',
-    'legend.font.size': '12'
+    'legend.font.size': '12',
+    'width': '600',
+    'height': '400'
   };
   private sessionPsychPlotSubscription: Subscription;
   @Input() sessionData: Object;
@@ -113,7 +117,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   @ViewChild('session_psych_plot') el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
-    console.log('screensize change: ', this.newScreenWidth);
+    // console.log('screensize change: ', this.newScreenWidth);
     const responsiveSPCplot = this.d3.select(this.el.nativeElement).node();
     if (this.newScreenWidth < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
       Plotly.update(responsiveSPCplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
@@ -160,11 +164,23 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (initialScreenSize < 768 ) {
             Plotly.update(element, this.smallScreenDataStyle, this.smallScreenLayout);
+          } else {
+            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
           console.log('psych plot not available for this session');
           this.psychPlotIsAvailable = false;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
+          // Plotly.newPlot(element, [], this.mediumScreenLayout, {displayModeBar: false })
+          //   .then(
+          //     function (gd) {
+          //       return Plotly.toImage(gd, { height: 400, width: 600 })
+          //         .then(
+          //           function (url) {
+          //             img_png.attr('src', url);
+          //           }
+          //         );
+          //     });
         }
       });
   }
