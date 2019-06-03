@@ -1,15 +1,71 @@
 .animatedPCplot-container {
     display: flex;
     flex-direction: row;
-    
+    width: 100%;
 }
 
-.eachSessionDetails {
+/* .eachSessionDetails {
     margin-top: 150px;
     margin-left: 10px;
-    font-size: 90%;
 }
 
 .quickSessionDetails {
     padding-top: 10px;
+} */
+
+/* something small (under 768px) */
+@media only screen and (max-width: 768px) {
+    .animatedPCplot-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    .eachSessionDetails {
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+}
+
+/* small laptop (768px and up) */
+@media only screen and (min-width: 768px) {
+    .animatedPlot {
+        width: 75%;
+        overflow: scroll;
+        border: 2px solid purple;
+    }
+    .eachSessionDetails {
+        margin-top: 50px;
+        margin-left: 5px;
+        border: 2px solid pink;
+    }
+    .quickSessionDetails {
+        font-size: 90%;
+    }
+    .quickSessionDetails button {
+        width: 100%;
+        font-size: 90%;
+    }
+}
+
+/* laptop (1024px and up) */
+@media only screen and (min-width: 1024px) {
+    .animatedPlot {
+        width: 100%;
+        border: 1px solid red;
+        width: 100%;
+    }
+    .eachSessionDetails {
+        margin-top: 150px;
+        margin-left: 10px;
+        border: 1px solid black;
+    }
+
+    .quickSessionDetails {
+        padding-top: 10px;
+    }
+}
+
+/* desktop (1440px and up) */
+@media only screen and (min-width: 1440px) {
+
 }

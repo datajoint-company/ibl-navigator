@@ -1,14 +1,18 @@
 <div class="animatedPCplot-container">
-  <div #animatedPsychCurvePlot></div>
+  <div #animatedPsychCurvePlot class="animatedPlot"></div>
   <div class="eachSessionDetails">
     <button mat-raised-button (click)="jump2session()">
         quick session details
     </button>
-    <div class="quickSessionDetails" *ngIf="sessionUUID">
-      <p>Session Start Time: {{ current_frame_session_info?.session_start_time.split("T")[0] }} {{ current_frame_session_info?.session_start_time.split("T")[1] }}</p>
-      <p>Session UUID: {{ sessionUUID }}</p>
-      <p>Task Protocol: {{ current_frame_session_info?.task_protocol }}</p>
-      <button class="btn btn-success" routerLink="../../session/{{ sessionUUID }}">View more details about this session</button>
+    <div class="card quickSessionDetails" *ngIf="sessionUUID">
+      <div class="card-body">
+        <p card-text>Session Start Time: {{ current_frame_session_info?.session_start_time.split("T")[0] }} {{ current_frame_session_info?.session_start_time.split("T")[1] }}</p>
+        <p card-text>Session UUID: {{ sessionUUID }}</p>
+        <p card-text>Task Protocol: {{ current_frame_session_info?.task_protocol }}</p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-success" routerLink="../../session/{{ sessionUUID }}">View more details about this session</button>
+      </div>
     </div>
   </div>
 </div>

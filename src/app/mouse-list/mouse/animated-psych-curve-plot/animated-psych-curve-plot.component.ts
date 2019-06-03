@@ -20,6 +20,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
   @Input() mouseInfo: Object;
   @ViewChild('animatedPsychCurvePlot') element: ElementRef;
   ngOnInit() {
+    const initialScreenSize = window.innerWidth;
     const element = this.element.nativeElement;
     this.mousePlotsService.getAnimatedPCplot({ 'subject_uuid': this.mouseInfo['subject_uuid']});
     this.AnimPCplotSubscription = this.mousePlotsService.getAnimatedPCplotLoadedListener()
@@ -460,7 +461,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
                 transition: { duration: 0 },
                 frame: { duration: 0, redraw: true }
               }],
-                label: '&#10074;&#10074;'
+              label: '&#10074;&#10074;'
               // label: '<span>\u23F8</span>'
               // label: '<span class="oi oi-media-pause"></span>'
               }]
@@ -484,12 +485,26 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
             config: {displayModeBar: false}
           });
 
-          const images = [];
-          element.on('plotly_animated', () => {
-            Plotly.toImage(element).then((img) => {
-              images.push(img);
-            });
-          });
+          const layout2 = {};
+          const layout3 = {};
+          layout2['width'] = '741';
+          layout2['height'] = '494';
+
+          layout3['width'] = '600';
+          layout3['height'] = '475';
+          if (initialScreenSize < 1200 && (initialScreenSize > 1024 || initialScreenSize === 1024)) {
+            Plotly.relayout(element, layout2);
+          } else if (initialScreenSize < 1024) {
+            Plotly.relayout(element, layout3);
+          }
+
+          // see if GIF download is possible
+          // const images = [];
+          // element.on('plotly_animated', () => {
+          //   Plotly.toImage(element).then((img) => {
+          //     images.push(img);
+          //   });
+          // });
 
           // Plotly.animate(element)
           // Plotly.fileSaver()
