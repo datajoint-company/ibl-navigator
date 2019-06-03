@@ -58,6 +58,7 @@ export class SessionRTCPlotComponent implements OnInit, OnDestroy {
   };
 
   mediumScreenLayout = {
+    'xaxis.range': [-35, 35],
     'font.size': '11',
     'width': '580',
     'height': '386',
@@ -72,6 +73,7 @@ export class SessionRTCPlotComponent implements OnInit, OnDestroy {
   };
 
   smallScreenLayout = {
+    'xaxis.range': [-35, 35],
     'font.size': '10.5',
     'width': '400',
     'height': '286',
@@ -86,6 +88,7 @@ export class SessionRTCPlotComponent implements OnInit, OnDestroy {
   };
 
   defaultScreenLayout = {
+    'xaxis.range': [-35, 35],
     'font.size': '',
     'legend.font.size': '12',
     'width': '600',

@@ -52,7 +52,9 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
 
   mediumScreenDataStyle = {
     'marker.size': ['4'],
-    'line.width': ['1.5']
+    'line.width': ['1.5'],
+    'marker.color': ['gray', 'black'],
+    'marker.opacity': '0.5'
   };
 
   mediumScreenLayout = {
@@ -64,7 +66,9 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
 
   smallScreenDataStyle = {
     'marker.size': ['3.5'],
-    'line.width': ['1']
+    'line.width': ['1'],
+    'marker.color': ['gray', 'black'],
+    'marker.opacity': '0.5'
   };
 
   smallScreenLayout = {
@@ -76,7 +80,9 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
 
   defaultScreenDataStyle = {
     'marker.size': ['5'],
-    'line.width': ['1.75']
+    'line.width': ['1.75'],
+    'marker.color': ['gray', 'black'],
+    'marker.opacity': '0.5'
   };
 
   defaultScreenLayout = {
