@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { MousePlotsService } from '../mouse-plots.service';
+import { R3TargetBinder } from '@angular/compiler';
 
 declare var Plotly: any;
 
@@ -80,9 +81,17 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   mediumScreenDataStyle = {
     'marker.size': ['3.5'],
     'error_y.width': ['2.5'],
-    'error_y.thickness': ['1'],
-    'line.width': ['1']
+    'error_y.thickness': ['0.5'],
+    'line.width': ['1'],
   };
+
+  mediumScreenDataStyle_RTTN = {
+    'marker.size': ['3.5'],
+    'line.width': ['1'],
+    'marker.color': ['gray', 'black'],
+    'marker.opacity': '0.5'
+  };
+
 
   mediumLargeScreenLayout = {
     font: { size: '11' },
@@ -109,39 +118,43 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   };
 
   mediumLargeScreenDataStyle_RTC = {
-    marker: [
-      { size: '4', color: 'black' },
-      { size: '4', color: 'orange' },
-      { size: '4', color: 'cornflowerblue' }
-    ],
-    line: [
-      { width: '1.5' },
-      { width: '1.5' },
-      { width: '1.5' }
-    ],
+    // marker: [
+    //   { size: '4', color: 'black' },
+    //   { size: '4', color: 'orange' },
+    //   { size: '4', color: 'cornflowerblue' }
+    // ],
+    // line: [
+    //   { width: '1.5' },
+    //   { width: '1.5' },
+    //   { width: '1.5' }
+    // ],
+    'marker.size': ['4', '4', '4'],
+    'line.width': ['1.5', '1.5', '1.5'],
     'error_y.width': ['3', '3', '3'],
-    'error_y.thickness': ['1.5', '1.5', '1.5']
+    'error_y.thickness': ['1', '1', '1']
   };
   mediumLargeScreenDataStyle_PC = {
-    marker: [
-      { size: '4', color: 'black' },
-      { color: 'black' },
-      { size: '4', color: 'orange' },
-      { color: 'orange' },
-      { size: '4', color: 'cornflowerblue' },
-      { color: 'cornflowerblue' },
-    ],
-    line: [
-      { width: '1.5' },
-      { width: '1.5' },
-      { width: '1.5' }
-    ],
+    // marker: [
+    //   { size: '4', color: 'black' },
+    //   { color: 'black' },
+    //   { size: '4', color: 'orange' },
+    //   { color: 'orange' },
+    //   { size: '4', color: 'cornflowerblue' },
+    //   { color: 'cornflowerblue' },
+    // ],
+    // line: [
+    //   { width: '1.5' },
+    //   { width: '1.5' },
+    //   { width: '1.5' }
+    // ],
+    'marker.size': ['4', '4', '4'],
+    'line.width': ['1.5', '1.5', '1.5'],
     'error_y.width': ['3', '3', '3'],
-    'error_y.thickness': ['1.5', '1.5', '1.5']
+    'error_y.thickness': ['1', '1', '1']
   };
   mediumLargeScreenDataStyle_RTTN = {
     marker: [
-      { size: '4', color: 'lightgray' },
+      { size: '4', color: 'gray', opacity: '0.5' },
       { color: 'black' },
     ],
     line: [
@@ -163,8 +176,15 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   defaultScreenDataStyle = {
     'marker.size': ['5'],
     'error_y.width': ['3.5'],
-    'error_y.thickness': ['1.75'],
+    'error_y.thickness': ['1.25'],
     'line.width': ['1.75']
+  };
+
+  defaultScreenDataStyle_RTTN = {
+    'marker.size': ['5'],
+    'line.width': ['1.75'],
+    'marker.color': ['gray', 'black'],
+    'marker.opacity': '0.5'
   };
   private datePsychPlotSubscription: Subscription;
   private dateRTContrastPlotSubscription: Subscription;
@@ -219,9 +239,9 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
       Plotly.update(responsiveRTCplot1, this.mediumScreenDataStyle, this.mediumScreenLayout);
       Plotly.update(responsiveRTCplot2, this.mediumScreenDataStyle, this.mediumScreenLayout);
       Plotly.update(responsiveRTCplot3, this.mediumScreenDataStyle, this.mediumScreenLayout);
-      Plotly.update(responsiveRTTNplot1, this.mediumScreenDataStyle, this.mediumScreenLayout);
-      Plotly.update(responsiveRTTNplot2, this.mediumScreenDataStyle, this.mediumScreenLayout);
-      Plotly.update(responsiveRTTNplot3, this.mediumScreenDataStyle, this.mediumScreenLayout);
+      Plotly.update(responsiveRTTNplot1, this.mediumScreenDataStyle_RTTN, this.mediumScreenLayout);
+      Plotly.update(responsiveRTTNplot2, this.mediumScreenDataStyle_RTTN, this.mediumScreenLayout);
+      Plotly.update(responsiveRTTNplot3, this.mediumScreenDataStyle_RTTN, this.mediumScreenLayout);
       Plotly.update(responsivePCplot1, this.mediumScreenDataStyle, this.mediumScreenPsychCurveLayout);
       Plotly.update(responsivePCplot2, this.mediumScreenDataStyle, this.mediumScreenPsychCurveLayout);
       Plotly.update(responsivePCplot3, this.mediumScreenDataStyle, this.mediumScreenPsychCurveLayout);
@@ -239,9 +259,9 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
       Plotly.update(responsiveRTCplot1, this.defaultScreenDataStyle, this.defaultScreenLayout);
       Plotly.update(responsiveRTCplot2, this.defaultScreenDataStyle, this.defaultScreenLayout);
       Plotly.update(responsiveRTCplot3, this.defaultScreenDataStyle, this.defaultScreenLayout);
-      Plotly.update(responsiveRTTNplot1, this.defaultScreenDataStyle, this.defaultScreenLayout);
-      Plotly.update(responsiveRTTNplot2, this.defaultScreenDataStyle, this.defaultScreenLayout);
-      Plotly.update(responsiveRTTNplot3, this.defaultScreenDataStyle, this.defaultScreenLayout);
+      Plotly.update(responsiveRTTNplot1, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout);
+      Plotly.update(responsiveRTTNplot2, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout);
+      Plotly.update(responsiveRTTNplot3, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout);
       Plotly.update(responsivePCplot1, this.defaultScreenDataStyle, this.defaultScreenLayout);
       Plotly.update(responsivePCplot2, this.defaultScreenDataStyle, this.defaultScreenLayout);
       Plotly.update(responsivePCplot3, this.defaultScreenDataStyle, this.defaultScreenLayout);
@@ -291,6 +311,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               Plotly.update(elementList[index].elPsych, this.mediumScreenDataStyle, this.mediumScreenPsychCurveLayout);
             } else if (screenSizeInitial < 768) {
               Plotly.update(elementList[index].elPsych, this.mediumLargeScreenDataStyle_PC, this.mediumLargeScreenPsychCurveLayout);
+            } else {
+              Plotly.update(elementList[index].elPsych, this.defaultScreenDataStyle, this.defaultScreenLayout);
             }
           });
           if (recent3.length < 3) {
@@ -356,6 +378,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                     Plotly.update(elementList[idx].elRTContrast, this.mediumScreenDataStyle, this.mediumScreenLayout);
                   } else if (screenSizeInitial < 768) {
                     Plotly.update(elementList[idx].elRTContrast, this.mediumLargeScreenDataStyle_RTC, this.mediumLargeScreenLayout);
+                  } else {
+                    Plotly.update(elementList[idx].elRTContrast, this.defaultScreenDataStyle, this.defaultScreenLayout);
                   }
                 }
               });
@@ -419,6 +443,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   RTTNmatchFound = true;
                   // console.log('session date match in trialNum!', plot['session_date'], 'at index:', index, '& at idx:', idx);
                   const dateRTTPlot = plot['plotting_data'];
+                  // dateRTTPlot['layout'][]
+
                   dateRTTPlot['layout']['width'] = '500';
                   dateRTTPlot['layout']['height'] = '350';
                   dateRTTPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
@@ -434,9 +460,11 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
                     Plotly.update(elementList[idx].elRTTrialNum, this.mediumLargeScreenDataStyle_RTTN, this.mediumLargeScreenLayout);
                   } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
-                    Plotly.update(elementList[idx].elRTTrialNum, this.mediumScreenDataStyle, this.mediumScreenLayout);
+                    Plotly.update(elementList[idx].elRTTrialNum, this.mediumScreenDataStyle_RTTN, this.mediumScreenLayout);
                   } else if (screenSizeInitial < 768) {
                     Plotly.update(elementList[idx].elRTTrialNum, this.mediumLargeScreenDataStyle_RTTN, this.mediumLargeScreenLayout);
+                  } else {
+                    Plotly.update(elementList[idx].elRTTrialNum, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout);
                   }
                 }
               });
