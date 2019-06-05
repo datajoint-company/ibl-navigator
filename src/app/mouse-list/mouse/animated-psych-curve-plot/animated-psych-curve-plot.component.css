@@ -8,10 +8,10 @@
     margin-top: 150px;
     margin-left: 10px;
 }
-
+*/
 .quickSessionDetails {
-    padding-top: 10px;
-} */
+    margin-top: 3px;
+} 
 
 /* something small (under 768px) */
 @media only screen and (max-width: 768px) {
@@ -31,12 +31,12 @@
     .animatedPlot {
         width: 75%;
         overflow: scroll;
-        border: 2px solid purple;
+        /* border: 2px solid purple; */
     }
     .eachSessionDetails {
         margin-top: 50px;
         margin-left: 5px;
-        border: 2px solid pink;
+        /* border: 2px solid pink; */
     }
     .quickSessionDetails {
         font-size: 90%;
@@ -51,13 +51,13 @@
 @media only screen and (min-width: 1024px) {
     .animatedPlot {
         width: 100%;
-        border: 1px solid red;
+        /* border: 1px solid red; */
         width: 100%;
     }
     .eachSessionDetails {
         margin-top: 150px;
         margin-left: 10px;
-        border: 1px solid black;
+        /* border: 1px solid black; */
     }
 
     .quickSessionDetails {

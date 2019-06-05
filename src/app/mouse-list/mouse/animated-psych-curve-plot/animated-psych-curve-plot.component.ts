@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MousePlotsService } from '../mouse-plots.service';
 import { AllSessionsService } from 'src/app/session-list/all-sessions.service';
@@ -12,14 +12,15 @@ declare var Plotly: any;
 })
 export class AnimatedPsychCurvePlotComponent implements OnInit {
   currentFrame;
-  sessionUUID;
   current_frame_session_info;
+  showInfo;
   private AnimPCplotSubscription: Subscription;
   private sessionQuerySubscription: Subscription;
   constructor(public mousePlotsService: MousePlotsService, public allSessionsService: AllSessionsService) { }
   @Input() mouseInfo: Object;
   @ViewChild('animatedPsychCurvePlot') element: ElementRef;
   ngOnInit() {
+    this.showInfo = false;
     const initialScreenSize = window.innerWidth;
     const element = this.element.nativeElement;
     this.mousePlotsService.getAnimatedPCplot({ 'subject_uuid': this.mouseInfo['subject_uuid']});
@@ -497,16 +498,33 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
           } else if (initialScreenSize < 1024) {
             Plotly.relayout(element, layout3);
           }
-
+          element.on('plotly_animatingframe', () => {
+            this.showInfo = false;
+            this.currentFrame = this.element.nativeElement._fullLayout._currentFrame;
+          });
+          element.on('plotly_animated', () => {
+            console.log('animation stopped');
+            this.allSessionsService.retrieveSessions({ 'subject_uuid': this.mouseInfo['subject_uuid'], 'session_start_time': this.currentFrame });
+            this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
+              .subscribe(sessionInfo => {
+                this.current_frame_session_info = sessionInfo[0];
+             });
+            const lookupInfo = setTimeout(() => {
+              if (!this.showInfo) {
+                this.showInfo = true;
+              }
+            }, 500);
+          });
           // see if GIF download is possible
           // const images = [];
           // element.on('plotly_animated', () => {
           //   Plotly.toImage(element).then((img) => {
           //     images.push(img);
+          //     console.log('image added!');
           //   });
+          //   console.log('plot was animated!');
           // });
-
-          // Plotly.animate(element)
+          // Plotly.animate(element);
           // Plotly.fileSaver()
           // Plotly.downloadImage(element, opts)
         }
@@ -528,7 +546,6 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
         console.log('session retrieved! ID: ', sessionInfo[0]['session_uuid']);
         console.log(sessionInfo);
         this.current_frame_session_info = sessionInfo[0];
-        this.sessionUUID = sessionInfo[0]['session_uuid'];
       });
   }
 
