@@ -10,6 +10,15 @@ export class FilterStoreService {
   pageIndexInfo: number;
   pageSizeInfo: number;
   sortInfo: Object;
+  sessionPageIndexInfo: number;
+  sessionPageSizeInfo: number;
+  sessionSortInfo: Object;
+  micePageIndexInfo: number;
+  micePageSizeInfo: number;
+  miceSortInfo: Object;
+  summaryPageIndexInfo: number;
+  summaryPageSizeInfo: number;
+  summarySortInfo: Object;
   constructor() { }
 
   // ========= Session List Filter Sticky ===============//
@@ -19,12 +28,12 @@ export class FilterStoreService {
 
   storeSessionTableState(pageIndex, pageSize, sorter) {
     if (pageSize) {
-      this.pageIndexInfo = pageIndex;
-      this.pageSizeInfo = pageSize;
+      this.sessionPageIndexInfo = pageIndex;
+      this.sessionPageSizeInfo = pageSize;
     } else if (sorter) {
-      this.sortInfo = sorter;
+      this.sessionSortInfo = sorter;
     }
-    console.log(this.pageIndexInfo, this.pageSizeInfo, this.sortInfo);
+    // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo);
   }
 
   retrieveSessionFilter() {
@@ -32,7 +41,7 @@ export class FilterStoreService {
   }
 
   retrieveSessionTableState() {
-    return [this.pageIndexInfo, this.pageSizeInfo, this.sortInfo];
+    return <[number, number, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo];
   }
 
   clearSessionFilter() {
@@ -40,9 +49,9 @@ export class FilterStoreService {
   }
 
   clearSessionTableState() {
-    this.pageIndexInfo = null;
-    this.pageSizeInfo = null;
-    this.sortInfo = {};
+    this.sessionPageIndexInfo = null;
+    this.sessionPageSizeInfo = null;
+    this.sessionSortInfo = {};
   }
 
 // ========= Mouse List Filter Sticky ===============//
@@ -52,12 +61,12 @@ export class FilterStoreService {
 
   storeMouseTableState(pageIndex, pageSize, sorter) {
     if (pageSize) {
-      this.pageIndexInfo = pageIndex;
-      this.pageSizeInfo = pageSize;
+      this.micePageIndexInfo = pageIndex;
+      this.micePageSizeInfo = pageSize;
     } else if (sorter) {
-      this.sortInfo = sorter;
+      this.miceSortInfo = sorter;
     }
-    // console.log(this.pageIndexInfo, this.pageSizeInfo, this.sortInfo);
+    // console.log(this.micePageIndexInfo, this.micePageSizeInfo, this.miceSortInfo);
   }
 
   retrieveMouseFilter() {
@@ -65,16 +74,16 @@ export class FilterStoreService {
     return this.mouseFilter;
   }
   retrieveMouseTableState() {
-    return [this.pageIndexInfo, this.pageSizeInfo, this.sortInfo];
+    return <[number, number, Object]>[this.micePageIndexInfo, this.micePageSizeInfo, this.miceSortInfo];
   }
 
   clearMouseFilter() {
     this.mouseFilter = {};
   }
   clearMouseTableState() {
-    this.pageIndexInfo = null;
-    this.pageSizeInfo = null;
-    this.sortInfo = {};
+    this.micePageIndexInfo = null;
+    this.micePageSizeInfo = null;
+    this.miceSortInfo = {};
   }
 
   // ========= Mouse List Filter Sticky ===============//
@@ -85,10 +94,10 @@ export class FilterStoreService {
 
   storeSummaryTableState(pageIndex, pageSize, sorter) {
     if (pageSize) {
-      this.pageIndexInfo = pageIndex;
-      this.pageSizeInfo = pageSize;
+      this.summaryPageIndexInfo = pageIndex;
+      this.summaryPageSizeInfo = pageSize;
     } else if (sorter) {
-      this.sortInfo = sorter;
+      this.summarySortInfo = sorter;
     }
   }
 
@@ -97,7 +106,7 @@ export class FilterStoreService {
   }
 
   retrieveSummaryTableState() {
-    return [this.pageIndexInfo, this.pageSizeInfo, this.sortInfo];
+    return <[number, number, Object]>[this.summaryPageIndexInfo, this.summaryPageSizeInfo, this.summarySortInfo];
   }
 
   clearSummaryFilter() {
@@ -105,8 +114,8 @@ export class FilterStoreService {
   }
 
   clearSummaryTableState() {
-    this.pageIndexInfo = null;
-    this.pageSizeInfo = null;
-    this.sortInfo = {};
+    this.summaryPageIndexInfo = null;
+    this.summaryPageSizeInfo = null;
+    this.summarySortInfo = {};
   }
 }

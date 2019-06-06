@@ -99,6 +99,8 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     console.log('on init');
     this.plotViewStatus = {};
+    // const tableState = this.filterStoreService.retrieveSummaryTableState();
+
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSummaryTableState();
     const filters = this.filterStoreService.retrieveSummaryFilter();
     for (const key in filters) {
@@ -151,7 +153,9 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
         // this.loading = false;
         const viewStatusObservable = new Observable((observer) => {
           console.log('making full menu with ', summary);
-          for (let info of summary) {
+          console.log('type of summary: ', typeof summary);
+
+          for (let info of summary) { // TODO: sometimes causes failure to compile - fix
             info['plotViewingStatus'] = true;
           }
           observer.next(summary);
