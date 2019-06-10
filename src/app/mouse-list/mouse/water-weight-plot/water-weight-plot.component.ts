@@ -29,7 +29,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   // };
 
   plotConfig = {
-    responsive: true,
+    // responsive: true,
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
@@ -41,7 +41,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
         // icon: this.pngDownloadIcon,
         icon: Plotly.Icons.download_png,
         click: function (gd) {
-          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
           toPngImageButtonOptions.format = 'png';
           Plotly.downloadImage(gd, toPngImageButtonOptions);
         }
@@ -53,7 +53,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
         icon: Plotly.Icons.download_svg,
         format: 'svg',
         click: function (gd) {
-          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
           toSvgImageButtonOptions.format = 'svg';
           Plotly.downloadImage(gd, toSvgImageButtonOptions);
         }
@@ -74,8 +74,8 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
 
   mediumScreenLayout = {
     font: { size: '10' },
-    width: '',
-    height: ''
+    width: '680',
+    // height: '500' // 500 allows for all legends to be printed in download
   };
 
   mediumLargeScreenDataStyle = {
@@ -100,7 +100,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
 
   smallScreenLayout = {
     font: { size: '10.5' },
-    width: '600',
+    // width: '600',
     height: '330',
     legend: {
       orientation: 'h',

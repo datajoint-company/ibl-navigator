@@ -56,13 +56,13 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   };
   mediumScreenLayout = {
     font: { size: '10' },
-    width: '460',
+    // width: '',
     height: '390'
   };
 
   mediumSmallScreenLayout = {
     font: { size: '10' },
-    width: '400',
+    // width: '',
     height: '340'
   };
 
@@ -72,7 +72,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    width: '500',
+    // width: '500',
     height: '420'
   };
 

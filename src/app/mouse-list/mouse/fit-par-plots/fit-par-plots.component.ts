@@ -16,7 +16,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   fitParPlotsAreAvailable: boolean;
   newScreenWidth;
   plotConfig = {
-    responsive: true,
+    // responsive: true,
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
@@ -61,16 +61,17 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   };
   mediumScreenLayout = {
     font: { size: '10' },
-    // width: '460',
+    width: '760',
     height: '800',
-    legend: {
-      orientation: 'h',
-      x: '0',
-      y: '1.06',
-      font: {
-        size: '9.5'
-      },
-    }
+    'legend.font.size': '9.5'
+    // legend: {
+    //   orientation: 'h',
+    //   x: '0',
+    //   y: '1.06',
+    //   font: {
+    //     size: '9.5'
+    //   },
+    // }
   };
 
   mediumLargeScreenDataStyle = {
@@ -80,28 +81,31 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     font: { size: '11' },
     // width: '520',
     height: '900',
-    legend: {
-      orientation: 'h',
-      x: '0.05',
-      y: '1.04',
-      font: {
-        size: '10'
-      },
-    }
+    'legend.font.size': '10'
+    // legend: {
+    //   orientation: 'h',
+    //   x: '0.05',
+    //   y: '1.04',
+    //   font: {
+    //     size: '10'
+    //   },
+    // }
   };
   smallScreenLayout = {
     font: { size: '10.5' },
-    // width: '420',
+    width: '680',
     // width: '100vw',
     height: '700',
-    legend: {
-      orientation: 'h',
-      x: '0.05',
-      y: '1.04',
-      font: {
-        size: '9.75'
-      },
-    }
+    'margin.r': '100',
+    'legend.font.size': '9.75'
+    // legend: {
+    //   orientation: 'h',
+    //   x: '0.05',
+    //   y: '1.04',
+    //   font: {
+    //     size: '9.75'
+    //   },
+    // }
   };
   defaultScreenDataStyle = {
     'marker.size': ['6']
@@ -110,14 +114,15 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     font: { size: '12' },
     width: '',
     height: '',
-    legend: {
-      orientation: 'v',
-      x: '',
-      y: '',
-      font: {
-        size: '12'
-      },
-    }
+    'legend.font.size': '12'
+    // legend: {
+    //   orientation: 'v',
+    //   x: '',
+    //   y: '',
+    //   font: {
+    //     size: '12'
+    //   },
+    // }
   };
 
   @HostListener('window:resize', ['$event.target']) onResize(event) {

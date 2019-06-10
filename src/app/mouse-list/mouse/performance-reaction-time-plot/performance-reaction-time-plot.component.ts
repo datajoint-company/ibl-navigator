@@ -63,8 +63,10 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
 
   mediumSmallScreenLayout = {
     font: { size: '10' },
-    width: '400',
-    height: '340'
+    'margin.l': '85',
+    'margin.r': '0',
+    height: '340',
+    width: '720'
   };
 
   mediumLargeScreenDataStyle = {
@@ -73,7 +75,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    width: '500',
+    // width: '500',
     height: '420'
   };
 
@@ -89,7 +91,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
 
   smallScreenLayout = {
     font: { size: '10.5' },
-    width: '',
+
     height: '330'
   };
 
@@ -129,8 +131,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           const performanceRTplot = toPlot['performance_reaction_time'];
           this.dataLen = performanceRTplot['data'].length;
-          performanceRTplot['layout']['height'] = '';
-          performanceRTplot['layout']['width'] = '';
+          // performanceRTplot['layout']['height'] = '';
+          // performanceRTplot['layout']['width'] = '';
           performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };

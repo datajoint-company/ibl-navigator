@@ -13,7 +13,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   newScreenWidth;
   contrastHeatmapPlotIsAvailable: boolean;
   plotConfig = {
-    responsive: true,
+    // responsive: true,
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
@@ -24,7 +24,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
         title: 'download plot as png',
         icon: Plotly.Icons.download_png,
         click: function (gd) {
-          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
           toPngImageButtonOptions.format = 'png';
           Plotly.downloadImage(gd, toPngImageButtonOptions);
         }
@@ -35,7 +35,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
         icon: Plotly.Icons.download_svg,
         format: 'svg',
         click: function (gd) {
-          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
           toSvgImageButtonOptions.format = 'svg';
           Plotly.downloadImage(gd, toSvgImageButtonOptions);
         }
@@ -52,13 +52,13 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   };
   mediumScreenLayout = {
     font: { size: '10' },
-    width: '460',
+    // width: '460',
     height: '390'
   };
 
   mediumSmallScreenLayout = {
     font: { size: '10' },
-    width: '412',
+    width: '650',
     height: '340'
   };
 
@@ -67,7 +67,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    width: '500',
+    // width: '500',
     height: '420'
   };
 
@@ -82,7 +82,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
 
   smallScreenLayout = {
     font: { size: '10.5' },
-    width: '',
+    width: '700',
     height: '330'
   };
 
