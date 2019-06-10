@@ -12,6 +12,7 @@ declare var Plotly: any;
 export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   d3 = Plotly.d3;
   newScreenWidth;
+  dataLen: number;
   TCSDPlotIsAvailable: boolean;
   loading = true;
   plotConfig = {
@@ -26,7 +27,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
         title: 'download plot as png',
         icon: Plotly.Icons.download_png,
         click: function (gd) {
-          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
           toPngImageButtonOptions.format = 'png';
           Plotly.downloadImage(gd, toPngImageButtonOptions);
         }
@@ -37,7 +38,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
         icon: Plotly.Icons.download_svg,
         format: 'svg',
         click: function (gd) {
-          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
           toSvgImageButtonOptions.format = 'svg';
           Plotly.downloadImage(gd, toSvgImageButtonOptions);
         }
@@ -52,11 +53,6 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   mediumScreenDataStyle = {
     'marker.size': '3',
     'marker.line.width': '0.5',
-    'line.width': '0.275',
-    'line.width[0]': '1',
-    'line.width[1]': '1',
-    'line.width[line.width.length - 1]': '1',
-    'line.width[line.width.length - 2]': '1',
   };
   mediumScreenLayout = {
     font: { size: '10' },
@@ -73,28 +69,16 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   mediumLargeScreenDataStyle = {
     'marker.size': '4',
     'marker.line.width': '0.75',
-    'line.width': '0.35',
-    'line.width[0]': '1.5',
-    'line.width[1]': '1.5',
-    'line.width[line.width.length - 1]': '1.5',
-    'line.width[line.width.length - 2]': '1.5',
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    // width: '500',
-    // height: '420'
-    width: '1200',
-    height: '800'
+    width: '500',
+    height: '420'
   };
 
   defaultScreenDataStyle = {
     'marker.size': '6',
     'marker.line.width': '1',
-    'line.width': '0.5',
-    'line.width[0]': '2',
-    'line.width[1]': '2',
-    'line.width[line.width.length - 1]': '2',
-    'line.width[line.width.length - 2]': '2',
   };
   defaultScreenLayout = {
     font: { size: '12' },
@@ -116,7 +100,11 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   @ViewChild('trialCountsSessionDurationPlot') el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
-
+    if (this.dataLen > 4) {
+      this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
+      this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
+      this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
+    }
     const responsiveTCSDplot = this.d3.select(this.el.nativeElement).node();
     if (this.newScreenWidth < 420) { // 768 original breakpoint
       Plotly.update(responsiveTCSDplot, this.mediumScreenDataStyle, this.smallScreenLayout);
@@ -140,11 +128,17 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           const TCSDplot = toPlot['trial_counts_session_duration'];
-          TCSDplot['layout']['height'] = '';
-          TCSDplot['layout']['width'] = '';
+          this.dataLen = TCSDplot['data'].length;
+          // TCSDplot['layout']['height'] = '';
+          // TCSDplot['layout']['width'] = '';
           TCSDplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           TCSDplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           TCSDplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
+          if (this.dataLen > 4) {
+            this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
+            this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
+            this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
+          }
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
           this.loading = false;

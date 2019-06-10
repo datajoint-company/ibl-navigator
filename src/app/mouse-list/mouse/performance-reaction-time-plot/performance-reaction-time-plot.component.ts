@@ -12,9 +12,10 @@ declare var Plotly: any;
 export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   d3 = Plotly.d3;
   newScreenWidth;
+  dataLen: number;
   PRTPlotIsAvailable: boolean;
   plotConfig = {
-    responsive: true,
+    responsive: false,
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
@@ -25,7 +26,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
         title: 'download plot as png',
         icon: Plotly.Icons.download_png,
         click: function (gd) {
-          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
           toPngImageButtonOptions.format = 'png';
           Plotly.downloadImage(gd, toPngImageButtonOptions);
         }
@@ -36,7 +37,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
         icon: Plotly.Icons.download_svg,
         format: 'svg',
         click: function (gd) {
-          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
           toSvgImageButtonOptions.format = 'svg';
           Plotly.downloadImage(gd, toSvgImageButtonOptions);
         }
@@ -49,19 +50,15 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   };
 
   mediumScreenDataStyle = {
-    marker: [
-      { size: '3', color: 'black' },
-      { size: '3', color: 'red' },
-    ],
-    line: [
-      { width: '1' },
-      { width: '1' }
-    ]
+    'marker.size': '3',
+    'marker.line.width': '0.5',
+    // 'line.width': ['1', '1'].concat(Array(this.dataLen - 4).fill(0.275), ['1', '1'])
+
   };
   mediumScreenLayout = {
     font: { size: '10' },
-    width: '460',
-    height: '390'
+    width: '',
+    height: ''
   };
 
   mediumSmallScreenLayout = {
@@ -71,14 +68,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   };
 
   mediumLargeScreenDataStyle = {
-    marker: [
-      { size: '4', color: 'black' },
-      { size: '4', color: 'red' },
-    ],
-    line: [
-      { width: '1.5' },
-      { width: '1.5' }
-    ]
+    'marker.size': '4',
+    'marker.line.width': '0.75',
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
@@ -87,13 +78,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   };
 
   defaultScreenDataStyle = {
-    marker: [
-      { size: '6', color: 'black' },
-      { size: '6', color: 'red' }],
-    line: [
-      { width: '2' },
-      { width: '2' }
-    ]
+    'marker.size': '6',
+    'marker.line.width': '1',
   };
   defaultScreenLayout = {
     font: { size: '12' },
@@ -116,6 +102,11 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
     const responsivePRTplot = this.d3.select(this.el.nativeElement).node();
+    if (this.dataLen > 4) {
+      this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
+      this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
+      this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
+    }
     if (this.newScreenWidth < 420) {
       Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.smallScreenLayout);
     } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
@@ -137,11 +128,18 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           const performanceRTplot = toPlot['performance_reaction_time'];
+          this.dataLen = performanceRTplot['data'].length;
           performanceRTplot['layout']['height'] = '';
           performanceRTplot['layout']['width'] = '';
           performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
+          if (this.dataLen > 4) {
+            this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
+            this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
+            this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
+
+          }
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';
