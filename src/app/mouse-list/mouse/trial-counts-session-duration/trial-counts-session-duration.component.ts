@@ -15,7 +15,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   TCSDPlotIsAvailable: boolean;
   loading = true;
   plotConfig = {
-    responsive: true,
+    responsive: false,
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
@@ -50,14 +50,13 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   };
 
   mediumScreenDataStyle = {
-    marker: [
-      { size: '3', color: 'black' },
-      { size: '3', color: 'red' },
-    ],
-    line: [
-      { width: '1' },
-      { width: '1' }
-    ]
+    'marker.size': '3',
+    'marker.line.width': '0.5',
+    'line.width': '0.275',
+    'line.width[0]': '1',
+    'line.width[1]': '1',
+    'line.width[line.width.length - 1]': '1',
+    'line.width[line.width.length - 2]': '1',
   };
   mediumScreenLayout = {
     font: { size: '10' },
@@ -72,29 +71,30 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   };
 
   mediumLargeScreenDataStyle = {
-    marker: [
-      { size: '4', color: 'black' },
-      { size: '4', color: 'red' },
-    ],
-    line: [
-      { width: '1.5' },
-      { width: '1.5' }
-    ]
+    'marker.size': '4',
+    'marker.line.width': '0.75',
+    'line.width': '0.35',
+    'line.width[0]': '1.5',
+    'line.width[1]': '1.5',
+    'line.width[line.width.length - 1]': '1.5',
+    'line.width[line.width.length - 2]': '1.5',
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    width: '500',
-    height: '420'
+    // width: '500',
+    // height: '420'
+    width: '1200',
+    height: '800'
   };
 
   defaultScreenDataStyle = {
-    marker: [
-      { size: '6', color: 'black' },
-      { size: '6', color: 'red' }],
-    line: [
-      { width: '2' },
-      { width: '2' }
-    ]
+    'marker.size': '6',
+    'marker.line.width': '1',
+    'line.width': '0.5',
+    'line.width[0]': '2',
+    'line.width[1]': '2',
+    'line.width[line.width.length - 1]': '2',
+    'line.width[line.width.length - 2]': '2',
   };
   defaultScreenLayout = {
     font: { size: '12' },
