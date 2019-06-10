@@ -6,10 +6,10 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class DailySummaryService {
-  private dailySummary;
+  private dailySummary: Array<Object>;
   private dailySummaryLoaded = new Subject();
 
-  private dailySummaryMenu;
+  private dailySummaryMenu: Array<Object>;
   private dailySummaryMenuLoaded = new Subject();
 
   private dailySummaryPlots;
@@ -22,7 +22,7 @@ export class DailySummaryService {
     console.log('POSTing for:', summaryFilter);
     this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
-        (filteredSummaryData) => {
+        (filteredSummaryData: Array<Object>) => {
           console.log('length of SummaryData: ', Object.entries(filteredSummaryData).length);
           this.dailySummary = filteredSummaryData;
           // console.log('dailySummary data are: ');
@@ -42,15 +42,14 @@ export class DailySummaryService {
 
   getSummaryMenu(summaryFilter) {
     console.log('fetching for menu');
-    this.dailySummaryMenu = '';
+    this.dailySummaryMenu = [];
     this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
-        (filteredSummaryData) => {
+        (filteredSummaryData: Array<Object>) => {
           console.log('length of menu: ', Object.entries(filteredSummaryData).length);
 
           this.dailySummaryMenu = filteredSummaryData;
-          // console.log('dailySummary data are: ');
-          // console.log(this.dailySummary);
+
           this.dailySummaryMenuLoaded.next(this.dailySummaryMenu);
         },
         (err: any) => {

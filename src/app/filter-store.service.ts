@@ -7,9 +7,9 @@ export class FilterStoreService {
   sessionFilter: Object;
   mouseFilter: Object;
   summaryFilter: Object;
-  pageIndexInfo: number;
-  pageSizeInfo: number;
-  sortInfo: Object;
+  // pageIndexInfo: number;
+  // pageSizeInfo: number;
+  // sortInfo: Object;
   sessionPageIndexInfo: number;
   sessionPageSizeInfo: number;
   sessionSortInfo: Object;

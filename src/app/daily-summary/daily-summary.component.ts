@@ -148,21 +148,18 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.dailySummaryService.getSummaryMenu({'__order': 'last_session_time DESC'});
     this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
-        // this.allSummary = summary;
-        // this.createMenu(summary);
-        // this.loading = false;
         const viewStatusObservable = new Observable((observer) => {
           console.log('making full menu with ', summary);
-          console.log('type of summary: ', typeof summary);
 
-          for (let info of summary) { // TODO: sometimes causes failure to compile - fix
+          for (const info of Object.values(summary)) {
+            // console.log('logging info: ', info);
             info['plotViewingStatus'] = true;
           }
           observer.next(summary);
           observer.complete();
         });
         viewStatusObservable.subscribe(updatedSummary => {
-          console.log('view status added?', updatedSummary);
+          // console.log('view status added?', updatedSummary);
           this.allSummary = updatedSummary;
           this.createMenu(updatedSummary);
           this.loading = false;
@@ -416,7 +413,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
       .subscribe((summaryInfo: any) => {
         const viewStatusObservable = new Observable((observer) => {
-          for (let info of summaryInfo) {
+          for (const info of Object.values(summaryInfo)) {
             info['plotViewingStatus'] = true;
           }
           observer.next(summaryInfo);
@@ -485,8 +482,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   openPlot(summaryId) {
     console.log('trying to open plot for');
     console.log(summaryId);
-    console.log('length of all summary is: ', this.allSummary);
-    for (let info of this.allSummary) {
+    for (const info of this.allSummary) {
       if (info['subject_uuid'] === summaryId) {
         console.log('before: ', info['plotViewingStatus']);
         if (info['plotViewingStatus'] || info['plotViewingStatus'] == null) {
@@ -495,6 +491,15 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
           info['plotViewingStatus'] = true;
         }
         console.log('after: ', info['plotViewingStatus']);
+      }
+    }
+    for (const info of this.summary) {
+      if (info['subject_uuid'] === summaryId) {
+        if (info['plotViewingStatus'] || info['plotViewingStatus'] == null) {
+          info['plotViewingStatus'] = false;
+        } else {
+          info['plotViewingStatus'] = true;
+        }
       }
     }
   }
@@ -507,9 +512,15 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       for (const info of this.allSummary) {
         info['plotViewingStatus'] = false;
       }
+      for (const info of this.summary) {
+        info['plotViewingStatus'] = false;
+      }
     } else {
       this.allPlotsOpen = true;
       for (const info of this.allSummary) {
+        info['plotViewingStatus'] = true;
+      }
+      for (const info of this.summary) {
         info['plotViewingStatus'] = true;
       }
     }

@@ -109,7 +109,9 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.summaryPlotsSubscription.unsubscribe();
+    if (this.summaryPlotsSubscription) {
+      this.summaryPlotsSubscription.unsubscribe();
+    }
   }
 
 }
