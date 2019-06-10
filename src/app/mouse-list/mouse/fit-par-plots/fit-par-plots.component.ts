@@ -27,7 +27,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
         title: 'download plot as png',
         icon: Plotly.Icons.download_png,
         click: function (gd) {
-          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
           toPngImageButtonOptions.format = 'png';
           Plotly.downloadImage(gd, toPngImageButtonOptions);
         }
@@ -38,7 +38,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
         icon: Plotly.Icons.download_svg,
         format: 'svg',
         click: function (gd) {
-          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
           toSvgImageButtonOptions.format = 'svg';
           Plotly.downloadImage(gd, toSvgImageButtonOptions);
         }
@@ -52,29 +52,16 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
 
   private fitParPlotsSubscription: Subscription;
   @Output() fitParPlotsAvailability: EventEmitter<any> = new EventEmitter();
-  @Input('mouseInfo') mouseInfo: Object;
+  @Input() mouseInfo: Object;
 
   constructor(public mousePlotsService: MousePlotsService) { }
   @ViewChild('fitParPlots') elem: ElementRef;
   mediumScreenDataStyle = {
-    marker: [
-      { size: '4', color: 'black' },
-      { size: '4', color: 'black' },
-      { size: '4', color: 'black' },
-      { size: '4', color: 'black' },
-      { size: '4', color: 'orange' },
-      { size: '4', color: 'orange' },
-      { size: '4', color: 'orange' },
-      { size: '4', color: 'orange' },
-      { size: '4', color: 'cornflowerblue' },
-      { size: '4', color: 'cornflowerblue' },
-      { size: '4', color: 'cornflowerblue' },
-      { size: '4', color: 'cornflowerblue' },
-    ]
+    'marker.size': ['4']
   };
   mediumScreenLayout = {
     font: { size: '10' },
-    width: '460',
+    // width: '460',
     height: '800',
     legend: {
       orientation: 'h',
@@ -87,24 +74,11 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   };
 
   mediumLargeScreenDataStyle = {
-    marker: [
-      { size: '5', color: 'black' },
-      { size: '5', color: 'black' },
-      { size: '5', color: 'black' },
-      { size: '5', color: 'black' },
-      { size: '5', color: 'orange' },
-      { size: '5', color: 'orange' },
-      { size: '5', color: 'orange' },
-      { size: '5', color: 'orange' },
-      { size: '5', color: 'cornflowerblue' },
-      { size: '5', color: 'cornflowerblue' },
-      { size: '5', color: 'cornflowerblue' },
-      { size: '5', color: 'cornflowerblue' },
-    ]
+    'marker.size': ['5']
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    width: '520',
+    // width: '520',
     height: '900',
     legend: {
       orientation: 'h',
@@ -117,7 +91,8 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   };
   smallScreenLayout = {
     font: { size: '10.5' },
-    width: '420',
+    // width: '420',
+    // width: '100vw',
     height: '700',
     legend: {
       orientation: 'h',
@@ -129,7 +104,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     }
   };
   defaultScreenDataStyle = {
-    marker: []
+    'marker.size': ['6']
   };
   defaultScreenLayout = {
     font: { size: '12' },
