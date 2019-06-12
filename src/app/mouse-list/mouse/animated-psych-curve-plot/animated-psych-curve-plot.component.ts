@@ -29,78 +29,121 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
         if (plotInfo && plotInfo.length > 1) {
           let data = [];
           // const data = plotInfo[plotInfo.length - 1]['plotting_data']['data'];
-          if (plotInfo[0]['plotting_data']['data'].length < 4) {
+          if (plotInfo[0]['plotting_data']['data'].length < 6) {
             data = [
               {
-                marker: {
-                  color: 'orange',
-                  size: '6'
-                },
-                mode: 'markers',
-                name: 'p_left = 0.2, data',
-                x: [],
-                y: [],
-                type: 'scatter'
-              },
+                error_y: {
+                  array: [],
+                  arrayminus: [],
+                  color: 'rgba(0.7634747047461135, 0.3348456555528834, 0.225892295531744, 0.3)',
+                  type: 'data',
+                  visible: true
+                }
+              }, // errorbar 0.2
+              plotInfo[0]['plotting_data']['data'][0], // errorbar 0.5
+              {
+                error_y: {
+                  array: [],
+                  arrayminus: [],
+                  color: 'rgba(0.24715576253545807, 0.49918708160096675, 0.5765599057376697, 0.3)',
+                  type: 'data',
+                  visible: true
+                }
+              }, // errorbar 0.8
               {
                 marker: {
-                  color: 'orange'
+                  color: 'rgba(0.7634747047461135, 0.3348456555528834, 0.225892295531744, 1.0)'
                 },
                 name: 'p_left = 0.2 model fits',
                 x: [],
                 y: [],
                 type: 'scatter'
-              },
-              plotInfo[0]['plotting_data']['data'][0],
-              plotInfo[0]['plotting_data']['data'][1],
+              }, // modelfit 0.2
+              plotInfo[0]['plotting_data']['data'][1], // modelfit 0.5
               {
                 marker: {
-                  color: 'cornflowerblue',
-                  size: '6'
-                },
-                mode: 'markers',
-                name: 'p_left = 0.8, data',
-                x: [],
-                y: [],
-                type: 'scatter'
-              },
-              {
-                marker: {
-                  color: 'cornflowerblue'
+                  color: 'rgba(0.24715576253545807, 0.49918708160096675, 0.5765599057376697, 1)'
                 },
                 name: 'p_left = 0.8 model fits',
                 x: [],
                 y: [],
                 type: 'scatter'
-              }
-            ];
-
-          } else if (plotInfo[0]['plotting_data']['data'].length < 6) {
-            data = [
-              plotInfo[0]['plotting_data']['data'][0],
-              plotInfo[0]['plotting_data']['data'][1],
+              }, // modelfit 0.8
               {
                 marker: {
-                  color: 'black',
+                  color: 'rgba(0.7634747047461135, 0.3348456555528834, 0.225892295531744, 1.0)',
+                  line: {
+                    color: 'white',
+                    width: '1'
+                  },
                   size: '6'
                 },
                 mode: 'markers',
-                name: 'p_left = 0.5, data',
+                name: 'p_left = 0.2, data with 68% CI',
                 x: [],
                 y: [],
                 type: 'scatter'
-              },
+              }, // data with 68% CI 0.2
+              plotInfo[0]['plotting_data']['data'][2], // data with 68% CI 0.5
               {
                 marker: {
-                  color: 'black'
+                  color: 'rgba(0.24715576253545807, 0.49918708160096675, 0.5765599057376697, 1.0)',
+                  line: {
+                    color: 'white',
+                    width: '1'
+                  },
+                  size: '6'
+                },
+                mode: 'markers',
+                name: 'p_left = 0.8, data with 68% CI',
+                x: [],
+                y: [],
+                type: 'scatter'
+              }, // data with 68% CI 0.8
+            ];
+
+          } else if (plotInfo[0]['plotting_data']['data'].length < 9) {
+            data = [
+              plotInfo[0]['plotting_data']['data'][0], // errorbar 0.2
+              {
+                error_y: {
+                  array: [],
+                  arrayminus: [],
+                  color: 'rgba(0.133, 0.133, 0.133, 0.3)',
+                  type: 'data',
+                  visible: true
+                }
+              }, // errorbar 0.5
+              plotInfo[0]['plotting_data']['data'][2], // errorbar 0.8
+
+              plotInfo[0]['plotting_data']['data'][3], // modelfit 0.2
+              {
+                marker: {
+                  color: 'rgba(0.133, 0.133, 0.133, 1)'
                 },
                 name: 'p_left = 0.5 model fits',
                 x: [],
                 y: [],
                 type: 'scatter'
-              },
-              plotInfo[0]['plotting_data']['data'][2],
-              plotInfo[0]['plotting_data']['data'][3],
+              }, // modelfit 0.5
+              plotInfo[0]['plotting_data']['data'][4], // modelfit 0.5
+              plotInfo[0]['plotting_data']['data'][5], // data with 68% CI 0.2
+              {
+                marker: {
+                  color: 'rgba(0.133, 0.133, 0.133, 1)',
+                  line: {
+                    color: 'white',
+                    width: '1'
+                  },
+                  size: '6'
+                },
+                mode: 'markers',
+                name: 'p_left = 0.5, data with 68% CI',
+                x: [],
+                y: [],
+                type: 'scatter'
+              }, // data with 68% CI 0.5
+              plotInfo[0]['plotting_data']['data'][6], // data with 68% CI 0.8
             ];
           } else {
             data = plotInfo[0]['plotting_data']['data'];
@@ -170,7 +213,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
           const frames = [];
           for (let i = 0; i < plotInfo.length; i++) {
             const filledData = [{}, {}, {}, {}, {}, {}];
-            if (plotInfo[i]['plotting_data']['data'].length < 4) {
+            if (plotInfo[i]['plotting_data']['data'].length < 6) {
               console.log('filling missing data - length: ', plotInfo[i]['plotting_data']['data'].length);
               console.log('data getting filled: ', plotInfo[i]['plotting_data']['data']);
               if (plotInfo[i]['plotting_data']['data'][0]['marker']['color'] === 'black') {
@@ -313,7 +356,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
                 data: filledData
               });
               console.log('filled data:', filledData);
-            } else if (plotInfo[i]['plotting_data']['data'].length < 6) {
+            } else if (plotInfo[i]['plotting_data']['data'].length < 9) {
               console.log('filling missing data - length: ', plotInfo[i]['plotting_data']['data'].length);
               console.log('data getting filled: ', plotInfo[i]['plotting_data']['data']);
 

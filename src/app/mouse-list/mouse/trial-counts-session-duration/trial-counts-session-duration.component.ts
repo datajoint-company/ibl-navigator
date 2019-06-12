@@ -138,8 +138,9 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           this.dataLen = TCSDplot['data'].length;
           TCSDplot['layout']['legend'] = {
             orientation: 'h',
-            x: '0.02',
-            y: '-0.09'
+            x: '0.00',
+            y: '-0.09',
+            font: {size: '10.5'}
           };
           TCSDplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           TCSDplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';

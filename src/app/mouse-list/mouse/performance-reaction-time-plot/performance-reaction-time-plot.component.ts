@@ -135,8 +135,9 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           this.dataLen = performanceRTplot['data'].length;
           performanceRTplot['layout']['legend'] = {
             orientation: 'h',
-            x: '0.02',
-            y: '-0.09'
+            x: '0',
+            y: '-0.09',
+            font: { size: '10.5' }
           };
           performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';

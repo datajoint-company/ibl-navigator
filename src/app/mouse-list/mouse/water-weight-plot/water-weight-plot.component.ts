@@ -76,6 +76,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   };
   mediumSmallScreenLayout = {
     font: { size: '10.5' },
+    'legend.font.size': '',
     'margin.l': '78',
     width: '725',
     height: '385'
@@ -87,6 +88,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
 
   mediumScreenLayout = {
     font: { size: '10.5' },
+    'legend.font.size': '',
     'margin.l': '78',
     width: '921',
     height: '400'
@@ -98,6 +100,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
+    'legend.font.size': '',
     width: '1100',
     height: '420'
   };
@@ -108,6 +111,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   };
   defaultScreenLayout = {
     font: { size: '12' },
+    'legend.font.size': '',
     'margin.l': '100',
     width: '1200',
     height: '440'
