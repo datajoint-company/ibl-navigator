@@ -50,20 +50,29 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     }
   };
 
+  smallScreenLayout = {
+    font: { size: '10' },
+    'margin.l': '46',
+    width: '409',
+    height: '300'
+  };
+
+  mediumSmallScreenLayout = {
+    font: { size: '10' },
+    'margin.l': '79.5',
+    width: '590',
+    height: '340'
+  };
+
   mediumScreenDataStyle = {
     'marker.size': '3',
     'marker.line.width': '0.5',
   };
   mediumScreenLayout = {
-    font: { size: '10' },
-    // width: '',
-    height: '390'
-  };
-
-  mediumSmallScreenLayout = {
-    font: { size: '10' },
-    // width: '',
-    height: '340'
+    font: { size: '10.5' },
+    'margin.l': '79',
+    width: '768',
+    height: '400'
   };
 
   mediumLargeScreenDataStyle = {
@@ -72,8 +81,9 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    // width: '500',
-    height: '420'
+    'margin.l': '65',
+    width: '519',
+    height: '380'
   };
 
   defaultScreenDataStyle = {
@@ -82,15 +92,12 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   };
   defaultScreenLayout = {
     font: { size: '12' },
-    width: '',
-    height: ''
+    'margin.l': '65',
+    width: '601',
+    height: '400'
   };
 
-  smallScreenLayout = {
-    font: { size: '10.5' },
-    width: '',
-    height: '330'
-  };
+ 
 
   private TCSDPlotSubscription: Subscription;
   @Output() TCSDPlotAvailability: EventEmitter<any> = new EventEmitter();
@@ -108,9 +115,9 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     const responsiveTCSDplot = this.d3.select(this.el.nativeElement).node();
     if (this.newScreenWidth < 420) { // 768 original breakpoint
       Plotly.update(responsiveTCSDplot, this.mediumScreenDataStyle, this.smallScreenLayout);
-    } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
+    } else if (this.newScreenWidth < 768 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
       Plotly.update(responsiveTCSDplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
-    } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 876 || this.newScreenWidth === 876)) {
+    } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
       Plotly.update(responsiveTCSDplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
     } else if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
       Plotly.update(responsiveTCSDplot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
@@ -129,8 +136,11 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           const TCSDplot = toPlot['trial_counts_session_duration'];
           this.dataLen = TCSDplot['data'].length;
-          // TCSDplot['layout']['height'] = '';
-          // TCSDplot['layout']['width'] = '';
+          TCSDplot['layout']['legend'] = {
+            orientation: 'h',
+            x: '0.02',
+            y: '-0.09'
+          };
           TCSDplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           TCSDplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           TCSDplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
@@ -146,12 +156,14 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           Plotly.newPlot(element, TCSDplot['data'], TCSDplot['layout'], this.plotConfig);
           if (screenSizeInitial < 420) {
             Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
-          } else if (screenSizeInitial < 876 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
+          } else if (screenSizeInitial < 768 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
-          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 876 || screenSizeInitial === 876)) {
+          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+          } else {
+            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
           console.log('trial counts session duration plot unavailable for this mouse');

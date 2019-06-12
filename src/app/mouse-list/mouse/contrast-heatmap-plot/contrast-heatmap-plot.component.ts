@@ -66,7 +66,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
     colorbar: { thickness: '7' }
   };
   mediumScreenLayout = {
-    font: { size: '10' },
+    font: { size: '10.5' },
     'margin.l': '78',
     width: '766',
     height: '360'
@@ -89,7 +89,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
     font: { size: '12' },
     'margin.l': '67',
     width: '600',
-    height: '420'
+    height: '400'
   };
 
 

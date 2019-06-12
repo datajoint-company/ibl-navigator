@@ -62,7 +62,10 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     width: '516',
     height: '615',
     'margin.l': '45',
-    'legend.font.size': '9.75'
+    'legend.font.size': '9.75',
+    'xaxis2.showticklabels': false,
+    'xaxis3.showticklabels': false,
+    'xaxis4.showticklabels': false,
   };
 
   mediumSmallScreenLayout = {
@@ -70,7 +73,10 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     'margin.l': '',
     width: '707',
     height: '680',
-    'legend.font.size': '9.5'
+    'legend.font.size': '9.5',
+    'xaxis2.showticklabels': false,
+    'xaxis3.showticklabels': false,
+    'xaxis4.showticklabels': false,
   };
 
   mediumScreenDataStyle = {
@@ -81,7 +87,10 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     'margin.l': '',
     width: '900',
     height: '800',
-    'legend.font.size': '9.5'
+    'legend.font.size': '9.5',
+    'xaxis2.showticklabels': false,
+    'xaxis3.showticklabels': false,
+    'xaxis4.showticklabels': false,
     // legend: {
     //   orientation: 'h',
     //   x: '0',
@@ -100,7 +109,10 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     'margin.l': '',
     width: '600',
     height: '800',
-    'legend.font.size': '10'
+    'legend.font.size': '10',
+    'xaxis2.showticklabels': false,
+    'xaxis3.showticklabels': false,
+    'xaxis4.showticklabels': false,
     // legend: {
     //   orientation: 'h',
     //   x: '0.05',

@@ -69,7 +69,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
 
   };
   mediumScreenLayout = {
-    font: { size: '10' },
+    font: { size: '10.5' },
     'margin.l': '84',
     width: '781',
     height: '400'
@@ -94,7 +94,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
     font: { size: '12' },
     'margin.l': '70',
     width: '612',
-    height: '420'
+    height: '400'
   };
 
   private PRTPlotSubscription: Subscription;
