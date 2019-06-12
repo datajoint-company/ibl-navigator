@@ -190,7 +190,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     const responsiveRTTNplot2 = this.d3.select(this.elRTTrialNum2.nativeElement).node();
     const responsiveRTTNplot3 = this.d3.select(this.elRTTrialNum3.nativeElement).node();
 
-    console.log('screen width change: ', this.newScreenWidth);
+    // console.log('screen width change: ', this.newScreenWidth);
     // this.mediumScreenLayout['title'] = { text: 'M - ' + this.newScreenWidth };
     // this.mediumLargeScreenLayout['title'] = { text: 'ML - ' + this.newScreenWidth };
     // this.mediumScreenPsychCurveLayout['title'] = { text: 'M - ' + this.newScreenWidth };
@@ -216,7 +216,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
       Plotly.update(responsivePCplot1, this.mediumScreenDataStyle, this.mediumScreenPsychCurveLayout);
       Plotly.update(responsivePCplot2, this.mediumScreenDataStyle, this.mediumScreenPsychCurveLayout);
       Plotly.update(responsivePCplot3, this.mediumScreenDataStyle, this.mediumScreenPsychCurveLayout);
-    } else if (this.newScreenWidth < 768) { // rethink - for small screens, make plots a little larger to fit the expanded layout
+    } else if (this.newScreenWidth < 768) { // for small screens, make plots a little larger to fit the expanded layout
       Plotly.update(responsiveRTCplot1, this.mediumLargeScreenDataStyle_RTC, this.mediumLargeScreenLayout_RTC);
       Plotly.update(responsiveRTCplot2, this.mediumLargeScreenDataStyle_RTC, this.mediumLargeScreenLayout_RTC);
       Plotly.update(responsiveRTCplot3, this.mediumLargeScreenDataStyle_RTC, this.mediumLargeScreenLayout_RTC);
@@ -241,9 +241,15 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const screenSizeInitial = window.innerWidth;
     const elementList = [];
-    elementList.push({ elPsych: this.elPsych1.nativeElement, elRTContrast: this.elRTContrast1.nativeElement, elRTTrialNum: this.elRTTrialNum1.nativeElement });
-    elementList.push({ elPsych: this.elPsych2.nativeElement, elRTContrast: this.elRTContrast2.nativeElement, elRTTrialNum: this.elRTTrialNum2.nativeElement });
-    elementList.push({ elPsych: this.elPsych3.nativeElement, elRTContrast: this.elRTContrast3.nativeElement, elRTTrialNum: this.elRTTrialNum3.nativeElement });
+    elementList.push({ elPsych: this.elPsych1.nativeElement,
+                       elRTContrast: this.elRTContrast1.nativeElement,
+                       elRTTrialNum: this.elRTTrialNum1.nativeElement });
+    elementList.push({ elPsych: this.elPsych2.nativeElement,
+                       elRTContrast: this.elRTContrast2.nativeElement,
+                       elRTTrialNum: this.elRTTrialNum2.nativeElement });
+    elementList.push({ elPsych: this.elPsych3.nativeElement,
+                       elRTContrast: this.elRTContrast3.nativeElement,
+                       elRTTrialNum: this.elRTTrialNum3.nativeElement });
 
     // const elPsych1 = this.elPsych1.nativeElement;
     // const elRTContrast1 = this.elRTContrast1.nativeElement;
@@ -262,7 +268,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           this.datePsychPlotList = psychCurveInfo;
           const recent3 = psychCurveInfo.slice(0, 3);
-          console.log('recent3 is...', recent3);
+          // console.log('recent3 is...', recent3);
           recent3.forEach((plot, index) => {
             this.recent3dates.push(plot['session_date']);
             const datePsychPlot = plot['plotting_data'];
@@ -376,7 +382,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             });
             if (this.recent3dates.length < 3) {
               for (let i = 0; i < 3 - this.recent3dates.length; i++) {
-                console.log('elementList here is: ', elementList);
+                // console.log('elementList here is: ', elementList);
                 this.loadingPlots[i + 4] = false;
                 Plotly.newPlot(elementList[i + 1].elRTContrast, [],
                   {
@@ -461,7 +467,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             });
             if (this.recent3dates.length < 3) {
               for (let i = 0; i < 3 - this.recent3dates.length; i++) {
-                console.log('elementList here is: ', elementList);
+                // console.log('elementList here is: ', elementList);
                 this.loadingPlots[i + 7] = false;
                 Plotly.newPlot(elementList[i + 1].elRTTrialNum, [],
                   {
