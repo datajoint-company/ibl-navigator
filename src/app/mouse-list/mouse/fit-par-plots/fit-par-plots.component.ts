@@ -14,6 +14,7 @@ declare var Plotly: any;
 export class FitParPlotsComponent implements OnInit, OnDestroy {
   d3 = Plotly.d3;
   fitParPlotsAreAvailable: boolean;
+  dataLen: number;
   newScreenWidth;
   plotConfig = {
     // responsive: true,
@@ -56,12 +57,27 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
 
   constructor(public mousePlotsService: MousePlotsService) { }
   @ViewChild('fitParPlots') elem: ElementRef;
+  smallScreenLayout = {
+    'font.size': '10',
+    width: '518',
+    height: '615',
+    'margin.l': '34',
+    'legend.font.size': '9.75'
+  };
+
+  mediumSmallScreenLayout = {
+    'font.size': '10',
+    width: '710',
+    height: '680',
+    'legend.font.size': '9.5'
+  };
+
   mediumScreenDataStyle = {
     'marker.size': ['4']
   };
   mediumScreenLayout = {
-    font: { size: '10' },
-    width: '760',
+    'font.size': '10.5',
+    width: '900',
     height: '800',
     'legend.font.size': '9.5'
     // legend: {
@@ -78,9 +94,9 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     'marker.size': ['5']
   };
   mediumLargeScreenLayout = {
-    font: { size: '11' },
-    // width: '520',
-    height: '900',
+    'font.size': '11',
+    width: '600',
+    height: '800',
     'legend.font.size': '10'
     // legend: {
     //   orientation: 'h',
@@ -91,29 +107,17 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     //   },
     // }
   };
-  smallScreenLayout = {
-    font: { size: '10.5' },
-    width: '680',
-    // width: '100vw',
-    height: '700',
-    'margin.r': '100',
-    'legend.font.size': '9.75'
-    // legend: {
-    //   orientation: 'h',
-    //   x: '0.05',
-    //   y: '1.04',
-    //   font: {
-    //     size: '9.75'
-    //   },
-    // }
-  };
+
   defaultScreenDataStyle = {
     'marker.size': ['6']
   };
   defaultScreenLayout = {
-    font: { size: '12' },
-    width: '',
-    height: '',
+    'font.size': '12',
+    'xaxis2.showticklabels': false,
+    'xaxis3.showticklabels': false,
+    'xaxis4.showticklabels': false,
+    width: '750',
+    height: '860',
     'legend.font.size': '12'
     // legend: {
     //   orientation: 'v',
@@ -127,14 +131,19 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize', ['$event.target']) onResize(event) {
     this.newScreenWidth = event.innerWidth;
-
     const responsiveFitParPlot = this.d3.select(this.elem.nativeElement).node();
+    if (this.dataLen > 4) {
+      this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
+      this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
+      this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
+    }
     if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
       Plotly.update(responsiveFitParPlot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
     } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
       Plotly.update(responsiveFitParPlot, this.mediumScreenDataStyle, this.mediumScreenLayout);
-    } else if (this.newScreenWidth < 768) {
-      // TODO: perhaps a better layout for small screens?
+    } else if (this.newScreenWidth < 768 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
+      Plotly.update(responsiveFitParPlot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
+    } else if (this.newScreenWidth < 420) {
       Plotly.update(responsiveFitParPlot, this.mediumScreenDataStyle, this.smallScreenLayout);
     } else {
       Plotly.update(responsiveFitParPlot, this.defaultScreenDataStyle, this.defaultScreenLayout);
@@ -154,11 +163,14 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           // fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (\u03B3)</i>'; // gamma
           // fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';
           // fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (\u03BB)</i>';
-          fitParPlots['layout']['width'] = '';
-          fitParPlots['layout']['height'] = 1200;
           fitParPlots['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           fitParPlots['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           fitParPlots['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
+          if (this.dataLen > 4) {
+            this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
+            this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
+            this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
+          }
           this.fitParPlotsAreAvailable = true;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_fit parameters_plot';
@@ -167,9 +179,12 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
           } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
-          } else if (screenSizeInitial < 768) {
-            // TODO: perhaps a better layout for small screens?
+          } else if (screenSizeInitial < 768 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
+            Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
+          } else if (screenSizeInitial < 420) {
             Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
+          } else {
+            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
           this.fitParPlotsAreAvailable = false;

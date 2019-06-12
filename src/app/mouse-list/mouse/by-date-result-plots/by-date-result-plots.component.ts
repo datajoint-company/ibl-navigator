@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { MousePlotsService } from '../mouse-plots.service';
-import { R3TargetBinder } from '@angular/compiler';
 
 declare var Plotly: any;
 
@@ -16,7 +15,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   byDateResultPlotsAreAvailable: boolean;
   loadingPlots = [true, true, true, true, true, true, true, true, true];
   plotConfig = {
-    responsive: true,
+    // responsive: true,
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
@@ -27,7 +26,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
         title: 'download plot as png',
         icon: Plotly.Icons.download_png,
         click: function (gd) {
-          var toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
           toPngImageButtonOptions.format = 'png';
           Plotly.downloadImage(gd, toPngImageButtonOptions);
         }
@@ -38,7 +37,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
         icon: Plotly.Icons.download_svg,
         format: 'svg',
         click: function (gd) {
-          var toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
           toSvgImageButtonOptions.format = 'svg';
           Plotly.downloadImage(gd, toSvgImageButtonOptions);
         }
@@ -57,44 +56,31 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   mediumScreenLayout = {
     font: { size: '10.5' },
     width: '380',
-    legend: {
-      x: '-0.5',
-      y: '-0.4',
-      font: {
-        size: '9'
-      }
-    }
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.font.size': '9'
   };
 
   mediumScreenLayout_RTC = {
     'xaxis.range': [-35, 35],
     font: { size: '10.5' },
     width: '380',
-    legend: {
-      x: '-0.5',
-      y: '-0.4',
-      font: {
-        size: '9'
-      }
-    }
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.font.size': '9'
   };
 
   mediumScreenPsychCurveLayout = {
     font: { size: '10.5' },
-    width: '450',
-    legend: {
-      x: '1',
-      y: '0.5',
-      font: {
-        size: '9'
-      }
-    }
+    // width: '450',
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.font.size': '9'
   };
 
   mediumScreenDataStyle = {
     'marker.size': ['3.5'],
     'error_y.width': ['2.5'],
-    // 'error_y.thickness': ['0.5'],
     'error_y.thickness': ['1'],
     'line.width': ['1'],
   };
@@ -110,38 +96,26 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   mediumLargeScreenLayout = {
     font: { size: '11' },
     width: '400',
-    legend: {
-      x: '-0.5',
-      y: '-0.4',
-      font: {
-        size: '9.5'
-      }
-    }
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.font.size': '9.5'
   };
 
   mediumLargeScreenLayout_RTC = {
     'xaxis.range': [-35, 35],
     font: { size: '11' },
     width: '400',
-    legend: {
-      x: '-0.5',
-      y: '-0.4',
-      font: {
-        size: '9.5'
-      }
-    }
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.font.size': '9.5'
   };
 
   mediumLargeScreenPsychCurveLayout = {
     font: { size: '11' },
     width: '480',
-    legend: {
-      x: '1',
-      y: '0.5',
-      font: {
-        size: '9.5'
-      }
-    }
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.font.size': '9.5'
   };
 
   mediumLargeScreenDataStyle_RTC = {
@@ -149,14 +123,12 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     'line.width': ['1.5', '1.5', '1.5'],
     'error_y.thickness': ['1.5', '1.5', '1.5'],
     'error_y.width': ['3', '3', '3'],
-    // 'error_y.thickness': ['1', '1', '1']
   };
   mediumLargeScreenDataStyle_PC = {
     'marker.size': ['4', '4', '4'],
     'line.width': ['1.5', '1.5', '1.5'],
     'error_y.thickness': ['1.5', '1.5', '1.5'],
     'error_y.width': ['3', '3', '3'],
-    // 'error_y.thickness': ['1', '1', '1']
   };
   mediumLargeScreenDataStyle_RTTN = {
     marker: [
@@ -170,31 +142,22 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
 
   defaultScreenLayout = {
     font: { size: '' },
-    legend: {
-      x: '1',
-      y: '1',
-      font: {
-        size: '12'
-      }
-    }
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.font.size': '12'
   };
 
   defaultScreenLayout_RTC = {
     'xaxis.range': [-35, 35],
     font: { size: '' },
-    legend: {
-      x: '1',
-      y: '1',
-      font: {
-        size: '12'
-      }
-    }
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.font.size': '12'
   };
 
   defaultScreenDataStyle = {
     'marker.size': ['5'],
     'error_y.width': ['3.5'],
-    // 'error_y.thickness': ['1.25'],
     'error_y.thickness': ['1.75'],
     'line.width': ['1.75']
   };
@@ -314,7 +277,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           recent3.forEach((plot, index) => {
             this.recent3dates.push(plot['session_date']);
             const datePsychPlot = plot['plotting_data'];
-            datePsychPlot['layout']['width'] = '500';
+            datePsychPlot['layout']['width'] = '602';
             datePsychPlot['layout']['height'] = '350';
             datePsychPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
             datePsychPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
@@ -380,7 +343,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   // console.log('session date match in contrast!!', plot['session_date'], 'at index', index);
                   this.loadingPlots[3 + idx] = false;
                   const dateRTCPlot = plot['plotting_data'];
-                  dateRTCPlot['layout']['width'] = '';
+                  dateRTCPlot['layout']['width'] = '540';
                   dateRTCPlot['layout']['height'] = '350';
                   dateRTCPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
                   dateRTCPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
@@ -462,7 +425,6 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   RTTNmatchFound = true;
                   // console.log('session date match in trialNum!', plot['session_date'], 'at index:', index, '& at idx:', idx);
                   const dateRTTPlot = plot['plotting_data'];
-                  // dateRTTPlot['layout'][]
 
                   dateRTTPlot['layout']['width'] = '500';
                   dateRTTPlot['layout']['height'] = '350';
