@@ -57,7 +57,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   mediumSmallScreenLayout = {
     'font.size': '10',
     'margin.l': '77',
-    width: '588',
+    width: '589',
     height: '340'
   };
 
@@ -127,7 +127,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           contrastHeatmapPlot['layout']['legend'] = {
             orientation: 'h',
             x: '0.05',
-            y: '-0.18'
+            y: '-0.15'
           };
           contrastHeatmapPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           contrastHeatmapPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
@@ -138,9 +138,9 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           Plotly.newPlot(element, contrastHeatmapPlot['data'], contrastHeatmapPlot['layout'], this.plotConfig);
           if (screenSizeInitial < 420) {
             Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
-          } else if (screenSizeInitial < 876 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
+          } else if (screenSizeInitial < 768 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
-          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 876 || screenSizeInitial === 876)) {
+          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);

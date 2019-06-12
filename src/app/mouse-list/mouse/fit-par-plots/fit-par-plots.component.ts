@@ -68,7 +68,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   mediumSmallScreenLayout = {
     'font.size': '10',
     'margin.l': '',
-    width: '710',
+    width: '707',
     height: '680',
     'legend.font.size': '9.5'
   };

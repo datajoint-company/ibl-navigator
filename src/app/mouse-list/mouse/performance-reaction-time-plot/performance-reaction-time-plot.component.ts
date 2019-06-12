@@ -48,6 +48,19 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
       scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
     }
   };
+  smallScreenLayout = {
+    font: { size: '10' },
+    'margin.l': '48',
+    width: '418',
+    height: '300'
+  };
+
+  mediumSmallScreenLayout = {
+    font: { size: '10' },
+    'margin.l': '82',
+    height: '340',
+    width: '600'
+  };
 
   mediumScreenDataStyle = {
     'marker.size': '3',
@@ -57,16 +70,9 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   };
   mediumScreenLayout = {
     font: { size: '10' },
-    width: '',
-    height: ''
-  };
-
-  mediumSmallScreenLayout = {
-    font: { size: '10' },
-    'margin.l': '85',
-    'margin.r': '0',
-    height: '340',
-    width: '720'
+    'margin.l': '84',
+    width: '781',
+    height: '400'
   };
 
   mediumLargeScreenDataStyle = {
@@ -75,8 +81,9 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    // width: '500',
-    height: '420'
+    'margin.l': '70',
+    width: '530',
+    height: '380'
   };
 
   defaultScreenDataStyle = {
@@ -85,14 +92,9 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   };
   defaultScreenLayout = {
     font: { size: '12' },
-    width: '',
-    height: ''
-  };
-
-  smallScreenLayout = {
-    font: { size: '10.5' },
-
-    height: '330'
+    'margin.l': '70',
+    width: '612',
+    height: '420'
   };
 
   private PRTPlotSubscription: Subscription;
@@ -111,9 +113,9 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
     }
     if (this.newScreenWidth < 420) {
       Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.smallScreenLayout);
-    } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
+    } else if (this.newScreenWidth < 768 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
       Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
-    } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 876 || this.newScreenWidth === 876)) {
+    } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
       Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
     } else if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
       Plotly.update(responsivePRTplot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
@@ -131,8 +133,11 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           const performanceRTplot = toPlot['performance_reaction_time'];
           this.dataLen = performanceRTplot['data'].length;
-          // performanceRTplot['layout']['height'] = '';
-          // performanceRTplot['layout']['width'] = '';
+          performanceRTplot['layout']['legend'] = {
+            orientation: 'h',
+            x: '0.02',
+            y: '-0.09'
+          };
           performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
@@ -146,14 +151,16 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';
           Plotly.newPlot(element, performanceRTplot['data'], performanceRTplot['layout'], this.plotConfig);
-          if (screenSizeInitial < 420) { // originally 768
+          if (screenSizeInitial < 420) {
             Plotly.update(element, this.mediumScreenDataStyle, this.smallScreenLayout);
-          } else if (screenSizeInitial < 876 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
+          } else if (screenSizeInitial < 768 && (screenSizeInitial > 420 || screenSizeInitial === 420)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
-          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 876 || screenSizeInitial === 876)) {
+          } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+          } else {
+            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
           console.log('performance reaction time plot not available');
