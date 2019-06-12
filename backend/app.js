@@ -1,4 +1,5 @@
 const express = require('express');
+const config = require('./config')
 const fs = require('fs');
 const util = require('util');
 const bodyParser = require('body-parser');
@@ -141,10 +142,9 @@ app.get('/api/plots/:type/:id', (req, res, next) => {
 
 // =============================== login logic ================================= //
 app.post('/login', (req, res) => {
-    console.log('logging in user: ', req.body.username);
-    if (req.body.username === 'ibluser' && req.body.password === '111111') {
+    if (req.body.username === config.demoUsername && req.body.password === config.demoPassword) {
         const token = jwt.sign({username: req.body.username},
-                                'some-secret-value-needs-to-be-changed',
+                                config.jwtSecret,
                                 { expiresIn: "24h"});
         res.status(200).send({ message: 'successful login', token: token, expiresIn: 24 * 60 * 60 * 1000}); //return in millisec
     } else {
@@ -178,7 +178,7 @@ app.get('/api/sessions', checkAuth, (req, res) => {
 })
 
 app.post('/api/sessions', checkAuth, (req, res) => {
-    console.log('posting to filter session page');
+    // console.log('posting to filter session page');
     
     request.post('http://localhost:5000/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
@@ -214,12 +214,12 @@ app.get('/api/mice', (req, res) => {
 })
 
 app.post('/api/mice', (req, res) => {
-    console.log('req.headers is', req.headers)
+    // console.log('req.headers is', req.headers)
     // console.log(req.body);
     let sessionPath = 'v0/subject/?'
     let query = ''
     let count = 0
-    console.log('filter in filterValues are: ')
+    // console.log('filter in filterValues are: ')
     for (filter in req.body) {
         console.log(filter, ": ", req.body[filter])
         if (count == 0) {
@@ -230,13 +230,9 @@ app.post('/api/mice', (req, res) => {
         count += 1;
     }
     //// setup for proxy server
-    console.log('inside post mice');
     // console.log('body is: ', typeof req.body)
     var requestBody = JSON.stringify(req.body)
-    console.log('requestBody is...');
-    console.log(requestBody);
-    console.log('req.body is...');
-    console.log(req.body);
+
     // console.log('request body after stringify: ', typeof requestBody)
     // request.post('https://not-even-a-test.firebaseio.com/test3.json', { form: requestBody }, function (error, httpResponse, body) {
     //     if (error) {
@@ -249,8 +245,7 @@ app.post('/api/mice', (req, res) => {
         if (error) {
             console.error('error: ', error);
         }
-        console.log('response body is');
-        console.log(body)
+
         res.send(body);
     })
 })
