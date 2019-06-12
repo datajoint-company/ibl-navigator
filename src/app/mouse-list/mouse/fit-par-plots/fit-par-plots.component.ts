@@ -59,14 +59,15 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   @ViewChild('fitParPlots') elem: ElementRef;
   smallScreenLayout = {
     'font.size': '10',
-    width: '518',
+    width: '516',
     height: '615',
-    'margin.l': '34',
+    'margin.l': '45',
     'legend.font.size': '9.75'
   };
 
   mediumSmallScreenLayout = {
     'font.size': '10',
+    'margin.l': '',
     width: '710',
     height: '680',
     'legend.font.size': '9.5'
@@ -77,6 +78,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   };
   mediumScreenLayout = {
     'font.size': '10.5',
+    'margin.l': '',
     width: '900',
     height: '800',
     'legend.font.size': '9.5'
@@ -95,6 +97,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   };
   mediumLargeScreenLayout = {
     'font.size': '11',
+    'margin.l': '',
     width: '600',
     height: '800',
     'legend.font.size': '10'
@@ -113,6 +116,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   };
   defaultScreenLayout = {
     'font.size': '12',
+    'margin.l': '',
     'xaxis2.showticklabels': false,
     'xaxis3.showticklabels': false,
     'xaxis4.showticklabels': false,

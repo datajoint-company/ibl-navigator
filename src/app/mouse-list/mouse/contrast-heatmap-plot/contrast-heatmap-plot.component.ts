@@ -47,44 +47,51 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
     }
   };
 
+  smallScreenLayout = {
+    'font.size': '10',
+    'margin.l': '45',
+    width: '410',
+    height: '310'
+  };
+
+  mediumSmallScreenLayout = {
+    'font.size': '10',
+    'margin.l': '77',
+    width: '588',
+    height: '340'
+  };
+
+
   mediumScreenDataStyle = {
     colorbar: { thickness: '7' }
   };
   mediumScreenLayout = {
     font: { size: '10' },
-    // width: '460',
-    height: '390'
-  };
-
-  mediumSmallScreenLayout = {
-    font: { size: '10' },
-    width: '650',
-    height: '340'
+    'margin.l': '78',
+    width: '766',
+    height: '360'
   };
 
   mediumLargeScreenDataStyle = {
-    // colorbar: { thickness: '8.5' }
+    colorbar: { thickness: '6' }
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
-    // width: '500',
-    height: '420'
+    'margin.l': '67',
+    width: '520',
+    height: '360'
   };
 
   defaultScreenDataStyle = {
-    // colorbar: { thickness: '10' }
+    colorbar: { thickness: '7' }
   };
   defaultScreenLayout = {
     font: { size: '12' },
-    width: '',
-    height: ''
+    'margin.l': '67',
+    width: '600',
+    height: '420'
   };
 
-  smallScreenLayout = {
-    font: { size: '10.5' },
-    width: '700',
-    height: '330'
-  };
 
   private contrastHeatmapPlotSubscription: Subscription;
 
@@ -100,9 +107,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
       Plotly.update(responsiveCHplot, this.mediumScreenDataStyle, this.smallScreenLayout);
     } else if (this.newScreenWidth < 768 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
       Plotly.update(responsiveCHplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
-    } else if (this.newScreenWidth < 876 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
-      Plotly.update(responsiveCHplot, this.mediumScreenDataStyle, this.mediumSmallScreenLayout);
-    } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 876 || this.newScreenWidth === 876)) {
+    }  else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
       Plotly.update(responsiveCHplot, this.mediumScreenDataStyle, this.mediumScreenLayout);
     } else if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
       Plotly.update(responsiveCHplot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
@@ -119,8 +124,11 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           const contrastHeatmapPlot = toPlot['contrast_heatmap'];
-          contrastHeatmapPlot['layout']['height'] = '';
-          contrastHeatmapPlot['layout']['width'] = '';
+          contrastHeatmapPlot['layout']['legend'] = {
+            orientation: 'h',
+            x: '0.05',
+            y: '-0.18'
+          };
           contrastHeatmapPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           contrastHeatmapPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           contrastHeatmapPlot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
@@ -136,6 +144,8 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.mediumScreenDataStyle, this.mediumScreenLayout);
           } else if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
+          } else {
+            Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
           console.log('contrast heatmap plot unavailable');
