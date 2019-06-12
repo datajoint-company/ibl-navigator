@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
+import { environment } from '../../../environments/environment';
+
+const BACKEND_API_URL = environment.api_url;
 @Injectable({
   providedIn: 'root'
 })
@@ -25,7 +28,7 @@ export class MousePlotsService {
   constructor(private http: HttpClient) { }
 
   getWaterWeightPlot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/waterWeightPlot`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/waterWeightPlot`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.weightWaterIntake = plotData;
@@ -39,7 +42,7 @@ export class MousePlotsService {
       );
   }
   getTCSessionDurationPlot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/trialCountsSessionDurationPlot`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/trialCountsSessionDurationPlot`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.TCSessionDuration = plotData;
@@ -53,7 +56,7 @@ export class MousePlotsService {
       );
   }
   getPerformaceRTPlot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/performanceReactionTimePlot`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/performanceReactionTimePlot`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.performanceRT = plotData;
@@ -67,7 +70,7 @@ export class MousePlotsService {
       );
   }
   getContrastHeatMapPlot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/contrastHeatmapPlot`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/contrastHeatmapPlot`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.contrastHeatmap = plotData;
@@ -82,7 +85,7 @@ export class MousePlotsService {
   }
 
   getFitParametersPlot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/fitParametersPlot`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/fitParametersPlot`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.fitParPlotsLoaded.next(plotData);
@@ -95,7 +98,7 @@ export class MousePlotsService {
   }
 
   getDatePsychPlot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/datePsychCurvePlot`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/datePsychCurvePlot`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.datePsychPlotLoaded.next(plotData);
@@ -108,7 +111,7 @@ export class MousePlotsService {
   }
 
   getDateRTContrastPlot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/dateReactionTimeContrastPlot`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/dateReactionTimeContrastPlot`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.dateRTContrastPlotLoaded.next(plotData);
@@ -121,7 +124,7 @@ export class MousePlotsService {
   }
 
   getDateRTTrialNumPlot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/dateReactionTimeTrialNumberPlot`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/dateReactionTimeTrialNumberPlot`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.dateRTTrialPlotLoaded.next(plotData);
@@ -134,7 +137,7 @@ export class MousePlotsService {
   }
 
   getAnimatedPCplot(subjectInfo) {
-    this.http.post(`http://localhost:3000/api/plot/session-psych-plotData`, subjectInfo)
+    this.http.post(BACKEND_API_URL + `/plot/session-psych-plotData`, subjectInfo)
       .subscribe(
         (plotData) => {
           this.animationPCplotLoaded.next(plotData);

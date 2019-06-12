@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
+import { environment } from '../../environments/environment';
+
+const BACKEND_API_URL = environment.api_url;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,17 +20,17 @@ export class AllSessionsService {
   constructor(private http: HttpClient) { }
 
   getAllSessions() {
-    this.http.get(`http://localhost:3000/api/sessions`)
+    this.http.get(BACKEND_API_URL + `/sessions`)
       .subscribe((allSessionsData) => {
         this.allSessions = allSessionsData;
-        console.log(this.allSessions);
+        // console.log(this.allSessions);
         this.sessionsLoaded.next(this.allSessions);
       });
   }
 
   getSessionMenu(sessionsFilter) {
-    console.log('POSTing for:', sessionsFilter);
-    this.http.post(`http://localhost:3000/api/sessions/`, sessionsFilter, { responseType: 'json' })
+    // console.log('POSTing for:', sessionsFilter);
+    this.http.post(BACKEND_API_URL + `/sessions/`, sessionsFilter, { responseType: 'json' })
       .subscribe(
         (filteredSessionsData) => {
           this.sessionMenu = filteredSessionsData;
@@ -42,8 +46,8 @@ export class AllSessionsService {
   }
 
   retrieveSessions(sessionsFilter) {
-    console.log('POSTing for:', sessionsFilter);
-    this.http.post(`http://localhost:3000/api/sessions/`, sessionsFilter, { responseType: 'json' })
+    // console.log('POSTing for:', sessionsFilter);
+    this.http.post(BACKEND_API_URL + `/sessions/`, sessionsFilter, { responseType: 'json' })
       .subscribe(
         (filteredSessionsData) => {
           this.retrievedSessions = filteredSessionsData;

@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
+import { environment } from '../../environments/environment';
+
+const BACKEND_API_URL = environment.api_url;
 @Injectable({
   providedIn: 'root'
 })
@@ -17,7 +20,7 @@ export class AllMiceService {
   constructor(private http: HttpClient) { }
 
   getAllMice() {
-    this.http.get(`http://localhost:3000/api/mice`)
+    this.http.get(BACKEND_API_URL + `/mice`)
       .subscribe((allMiceData) => {
         this.allMice = allMiceData;
         this.miceLoaded.next(this.allMice);
@@ -25,8 +28,8 @@ export class AllMiceService {
   }
 
   getMiceMenu(miceFilter) {
-    console.log('Requesting menu for:', miceFilter);
-    this.http.post(`http://localhost:3000/api/mice/`, miceFilter)
+    // console.log('Requesting menu for:', miceFilter);
+    this.http.post(BACKEND_API_URL + `/mice/`, miceFilter)
       .subscribe(
         (filteredMiceData) => {
           this.miceMenu = filteredMiceData;
@@ -39,8 +42,8 @@ export class AllMiceService {
       );
   }
   retrieveMice(miceFilter) {
-    console.log('POSTing for:', miceFilter);
-    this.http.post(`http://localhost:3000/api/mice/`, miceFilter)
+    // console.log('POSTing for:', miceFilter);
+    this.http.post(BACKEND_API_URL + `/mice/`, miceFilter)
       .subscribe(
         (filteredMiceData) => {
           this.retrievedMice = filteredMiceData;

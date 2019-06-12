@@ -4,6 +4,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AuthData } from './auth-data.model';
 
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL = environment.backend_url;
+
 // temporary login service here
 @Injectable({
     providedIn: 'root'
@@ -25,12 +29,12 @@ export class AuthService {
     }
 
     login(username: string, password: string, returnUrl: string) {
-        console.log('auth service loggin user in: ', username);
+        // console.log('auth service loggin user in: ', username);
         const authData: AuthData = {username: username, password: password};
         // const authData = {username: username, password: password};
-        this.http.post(`http://localhost:3000/login`, authData)
+        this.http.post(BACKEND_URL + `/login`, authData)
             .subscribe(response => {
-                console.log(response);
+                // console.log(response);
                 this.token = response['token'];
                 if (response['token']) {
                     this.isLoggedIn = true;
@@ -38,7 +42,7 @@ export class AuthService {
                     this.setAuthTimer(response['expiresIn']);
                     const now = new Date();
                     const expDate = new Date(now.getTime() + response['expiresIn']);
-                    console.log('log in data expires on: ', expDate);
+                    // console.log('log in data expires on: ', expDate);
                     this.saveAuthData(response['token'], expDate);
                     this.router.navigateByUrl(returnUrl);
                 } else {
@@ -85,7 +89,7 @@ export class AuthService {
     }
 
     private setAuthTimer(duration: number) {
-        console.log('setting timer for: ', duration, 'ms from now');
+        // console.log('setting timer for: ', duration, 'ms from now');
         this.tokenTimer = setTimeout(() => {
             this.logout();
         }, duration);

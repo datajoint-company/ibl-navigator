@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { Subject} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
+import { environment } from '../../../environments/environment';
+
+const BACKEND_API_URL = environment.api_url;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,7 +21,7 @@ export class SessionPlotsService {
   constructor(private http: HttpClient) { }
 
   getSessionPsychPlot(sessionInfo) {
-    this.http.post('http://localhost:3000/api/plot/session-psych-plotData', sessionInfo )
+    this.http.post(BACKEND_API_URL + '/plot/session-psych-plotData', sessionInfo )
       .subscribe(
         (plotData) => {
           this.sessionPsychPlot = plotData;
@@ -31,7 +35,7 @@ export class SessionPlotsService {
   }
 
   getSessionRTCPlot(sessionInfo) {
-    this.http.post('http://localhost:3000/api/plot/session-RTC-plotData', sessionInfo)
+    this.http.post(BACKEND_API_URL + '/plot/session-RTC-plotData', sessionInfo)
       .subscribe(
         (plotData) => {
           this.sessionRTCPlot = plotData;
@@ -45,7 +49,7 @@ export class SessionPlotsService {
   }
 
   getSessionRTTNPlot(sessionInfo) {
-    this.http.post('http://localhost:3000/api/plot/session-RTTN-plotData', sessionInfo)
+    this.http.post(BACKEND_API_URL + '/plot/session-RTTN-plotData', sessionInfo)
       .subscribe(
         (plotData) => {
           this.sessionRTTNPlot = plotData;

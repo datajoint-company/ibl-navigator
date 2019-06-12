@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
+import { environment } from '../../environments/environment';
+
+const BACKEND_API_URL = environment.api_url;
 @Injectable({
   providedIn: 'root'
 })
@@ -18,12 +21,12 @@ export class DailySummaryService {
   constructor(private http: HttpClient) { }
 
   getSummary(summaryFilter) {
-    console.log('fetching for full summary');
-    console.log('POSTing for:', summaryFilter);
-    this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
+    // console.log('fetching for full summary');
+    // console.log('POSTing for:', summaryFilter);
+    this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData: Array<Object>) => {
-          console.log('length of SummaryData: ', Object.entries(filteredSummaryData).length);
+          // console.log('length of SummaryData: ', Object.entries(filteredSummaryData).length);
           this.dailySummary = filteredSummaryData;
           // console.log('dailySummary data are: ');
           // console.log(this.dailySummary);
@@ -41,12 +44,12 @@ export class DailySummaryService {
   }
 
   getSummaryMenu(summaryFilter) {
-    console.log('fetching for menu');
+    // console.log('fetching for menu');
     this.dailySummaryMenu = [];
-    this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
+    this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData: Array<Object>) => {
-          console.log('length of menu: ', Object.entries(filteredSummaryData).length);
+          // console.log('length of menu: ', Object.entries(filteredSummaryData).length);
 
           this.dailySummaryMenu = filteredSummaryData;
 
@@ -64,8 +67,8 @@ export class DailySummaryService {
   }
 
   getSummaryPlots(summaryFilter) {
-    console.log('fetching for summary plots');
-    this.http.post(`http://localhost:3000/api/summary/`, summaryFilter, { responseType: 'json' })
+    // console.log('fetching for summary plots');
+    this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData) => {
           this.dailySummaryPlots = filteredSummaryData;
