@@ -15,8 +15,8 @@ import { SessionRTTNPlotComponent } from './session-rttn-plot/session-rttn-plot.
 export class SessionComponent implements OnInit, OnDestroy {
   public session_uuid: string;
   private sessionSubscription: Subscription;
-  session: Object;
-  sessionPlotInfo: Object;
+  session: any;
+  sessionPlotInfo: any;
   dialogClosedSPC = true;
   dialogClosedSRTC = true;
   dialogClosedSRTTN = true;
@@ -49,8 +49,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   fitParsReady(event) {
-    console.log('fit pars ready');
-    console.log(event);
     this.PCplotFitParameter = event;
   }
 

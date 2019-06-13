@@ -19,7 +19,7 @@ export class SamplePlotComponent implements OnInit, OnChanges, OnDestroy {
 
 
   @ViewChild('samplePlot') el: ElementRef;
-  constructor(public plotsService: PlotsService, @Inject(ViewSamplePlotsComponent) private VSPComp: ViewSamplePlotsComponent) {}
+  constructor(public plotsService: PlotsService, @Inject(ViewSamplePlotsComponent) public VSPComp: ViewSamplePlotsComponent) {}
 
   ngOnInit() {
     this.plotInfo = this.VSPComp.PMTComp.selectedPlot;

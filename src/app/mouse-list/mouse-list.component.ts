@@ -25,7 +25,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   mice;
   allMice;
   miceBirthdayFilter: Function;
-  mice_menu = {};
+  mice_menu: any;
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date',
     'subject_line', 'responsible_user', 'sex', 'subject_uuid'];
@@ -50,6 +50,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    this.mice_menu = {};
     // this.loading = true;
     this.mice_menu['sex'] = { F: null, M: null, U: null };
     const tableState: [number, number, Object] = this.filterStoreService.retrieveMouseTableState();

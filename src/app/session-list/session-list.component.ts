@@ -47,7 +47,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filteredSubjectUuidOptions: Observable<string[]>;
   filteredSubjectLineOptions: Observable<string[]>;
   filteredResponsibleUserOptions: Observable<string[]>;
-  session_menu = {};
+  session_menu: any;
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
@@ -75,6 +75,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    this.session_menu = {};
     this.loading = true;
     this.session_menu['sex'] = { F: null, M: null, U: null };
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState();

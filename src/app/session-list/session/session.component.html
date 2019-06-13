@@ -44,7 +44,7 @@
   <hr>
   <h5>Session Plots</h5>
   <div class="sessionBehaviorPlotSection">
-    <table class="table table-bordered table-sm col-3 fitParTable">
+    <table *ngIf="PCplotFitParameter" class="table table-bordered table-sm col-3 fitParTable">
       <tr>
         <th>prob_left</th>
         <th>threshold (&sigma;)</th>
