@@ -98,6 +98,27 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
                 { filename: this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot' }
             });
           WWIplotInfo['layout']['legend']['bgcolor'] = 'rgba(0, 0, 0, 0)';
+          WWIplotInfo['layout']['height'] = '400';
+          WWIplotInfo['layout']['width'] = '650';
+          WWIplotInfo['layout']['margin'] =  {l: '0'};
+          WWIplotInfo['layout']['legend'] = {
+            font: {size: '9.75'}
+          };
+          TCSDplotInfo['layout']['width'] = '500';
+          TCSDplotInfo['layout']['legend'] = {
+            orientation: 'h',
+            x: '0', y: '-0.09', font: {size: '9.75'}
+          };
+          PRTplotInfo['layout']['width'] = '500';
+          PRTplotInfo['layout']['legend'] = {
+            orientation: 'h',
+            x: '0', y: '-0.09', font: { size: '9.75' }
+          };
+          CHplotInfo['layout']['width'] = '540';
+          CHplotInfo['layout']['legend'] = {
+            orientation: 'h',
+            x: '0', y: '-0.09', font: { size: '9.75' }
+          };
           Plotly.newPlot(WWIplotElem, WWIplotInfo['data'], WWIplotInfo['layout'], plotConfigWWI);
           Plotly.newPlot(TCSDplotElem, TCSDplotInfo['data'], TCSDplotInfo['layout'], plotConfigTCSD);
           Plotly.newPlot(PRTplotElem, PRTplotInfo['data'], PRTplotInfo['layout'], plotConfigPRT);
