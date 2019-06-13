@@ -20,6 +20,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   dialogClosedSPC = true;
   dialogClosedSRTC = true;
   dialogClosedSRTTN = true;
+  PCplotFitParameter;
 
   constructor(private route: ActivatedRoute, public allSessionsService: AllSessionsService, public dialog: MatDialog) { }
 
@@ -28,14 +29,14 @@ export class SessionComponent implements OnInit, OnDestroy {
   @ViewChild(SessionRTTNPlotComponent) SRTTNplotComp: SessionPsychPlotComponent;
 
   ngOnInit() {
-    console.log('inside session component');
+    // console.log('inside session component');
     this.session_uuid = this.route.snapshot.paramMap.get('sessionID');
-    console.log('uuid: ' + this.session_uuid);
+    // console.log('uuid: ' + this.session_uuid);
     this.allSessionsService.retrieveSessions({'session_uuid': this.session_uuid});
     this.sessionSubscription = this.allSessionsService.getNewSessionsLoadedListener()
     .subscribe((session: any) => {
       this.session = session[0];
-      console.log('session retrieved - ', session[0]);
+      // console.log('session retrieved - ', session[0]);
       // console.log('logging session psych plot component stuff');
       // console.log(this.SPPComp.psychPlotAvailability);
     });
@@ -47,8 +48,14 @@ export class SessionComponent implements OnInit, OnDestroy {
     }
   }
 
+  fitParsReady(event) {
+    console.log('fit pars ready');
+    console.log(event);
+    this.PCplotFitParameter = event;
+  }
+
   openDialog(x): void {
-    console.log('dialog opening...', x);
+    // console.log('dialog opening...', x);
     // this.session['showPlot'] = true;
     // if (Object.keys(x)[0] === 'showSPCplot') {
     //   this.dialogClosedSPC = false;

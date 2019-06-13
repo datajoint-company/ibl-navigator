@@ -11,6 +11,14 @@
     margin-left: 1%;
 }
 
+.fitParTable {
+    font-size: 75%;
+}
+
+.fitParTable th {
+    text-align: center;
+}
+
 h5 {
     font-weight: 300;
 }

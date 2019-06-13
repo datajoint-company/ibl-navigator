@@ -14,6 +14,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   d3 = Plotly.d3;
   newScreenWidth;
   plotInfo = [];
+  plotFitPars;
   psychPlotIsAvailable: boolean;
   // svgDownloadIcon = {
   //   'width': 1000,
@@ -112,6 +113,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   @Input() dialogClosed: boolean;
   @Output() psychPlotAvailability: EventEmitter<any> = new EventEmitter();
   @Output() openSPCplot: EventEmitter<any> = new EventEmitter();
+  @Output() psychCurveFitPars: EventEmitter<any> = new EventEmitter();
   constructor(public sessionPlotsService: SessionPlotsService) { }
 
   @ViewChild('session_psych_plot') el: ElementRef;
@@ -140,12 +142,14 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
         console.log('retrieved session psych plot for...');
         console.log(psychPlotData);
         if (psychPlotData[0]) {
-          // console.log('subject_uuid: ', psychPlotData[0]['subject_uuid']);
-          // console.log('session_start_time: ', psychPlotData[0]['session_start_time']);
+          this.plotFitPars = psychPlotData[0]['fit_pars'];
+          this.psychCurveFitPars.emit(this.plotFitPars);
+          console.log('fit parameter retrieved: ', this.plotFitPars);
           this.plotInfo = psychPlotData[0]['plotting_data'];
           this.psychPlotIsAvailable = true;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
-          this.plotConfig['toImageButtonOptions']['filename'] = psychPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_psych_plot'
+          this.plotConfig['toImageButtonOptions']['filename'] =
+            psychPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_psych_plot'
           this.plotInfo['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           this.plotInfo['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           this.plotInfo['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
