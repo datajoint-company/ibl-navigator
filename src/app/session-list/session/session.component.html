@@ -43,12 +43,7 @@
   </div>
   <hr>
   <h5>Session Plots</h5>
-  <div class="behavior-plots" *ngIf="session">
-    <app-session-psych-plot [sessionData]="session" [dialogClosed]="dialogClosedSPC" (openSPCplot)="openDialog($event)" (psychCurveFitPars)="fitParsReady($event)"></app-session-psych-plot>
-    <app-session-rtc-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTC" (openSRTCplot)="openDialog($event)"></app-session-rtc-plot>
-    <app-session-rttn-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTTN" (openSRTTNplot)="openDialog($event)"></app-session-rttn-plot>
-  </div>
-  <div>
+  <div class="sessionBehaviorPlotSection">
     <table class="table table-bordered table-sm col-3 fitParTable">
       <tr>
         <th>prob_left</th>
@@ -79,5 +74,12 @@
         <td>{{ PCplotFitParameter[2]?.lapse_high}}</td>
       </tr>
     </table>
+  
+  <div class="behavior-plots" *ngIf="session">
+    <app-session-psych-plot [sessionData]="session" [dialogClosed]="dialogClosedSPC" (openSPCplot)="openDialog($event)" (psychCurveFitPars)="fitParsReady($event)"></app-session-psych-plot>
+    <app-session-rtc-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTC" (openSRTCplot)="openDialog($event)"></app-session-rtc-plot>
+    <app-session-rttn-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTTN" (openSRTTNplot)="openDialog($event)"></app-session-rttn-plot>
   </div>
+  </div>
+ 
 </div>

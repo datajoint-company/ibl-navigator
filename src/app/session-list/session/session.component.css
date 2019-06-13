@@ -11,16 +11,21 @@
     margin-left: 1%;
 }
 
+h5 {
+    font-weight: 300;
+}
+
+.sessionBehaviorPlotSection {
+    display: table;
+}
+
 .fitParTable {
     font-size: 75%;
+    display: table-footer-group;
 }
 
 .fitParTable th {
     text-align: center;
-}
-
-h5 {
-    font-weight: 300;
 }
 
 .behavior-plots {
@@ -31,5 +36,8 @@ h5 {
 @media only screen and (max-width: 768px) {
   .behavior-plots {
       flex-direction: column;
+  }
+  .fitParInfoSection {
+      display: table-header-group;
   }
 }
