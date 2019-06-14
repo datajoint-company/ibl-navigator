@@ -94,10 +94,9 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     font: { size: '12' },
     'margin.l': '65',
     width: '601',
-    height: '400'
+    height: '400',
   };
 
- 
 
   private TCSDPlotSubscription: Subscription;
   @Output() TCSDPlotAvailability: EventEmitter<any> = new EventEmitter();
@@ -107,11 +106,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   @ViewChild('trialCountsSessionDurationPlot') el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
-    if (this.dataLen > 4) {
-      this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
-      this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
-      this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
-    }
+
     const responsiveTCSDplot = this.d3.select(this.el.nativeElement).node();
     if (this.newScreenWidth < 420) { // 768 original breakpoint
       Plotly.update(responsiveTCSDplot, this.mediumScreenDataStyle, this.smallScreenLayout);
@@ -145,11 +140,29 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           TCSDplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           TCSDplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           TCSDplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
-          if (this.dataLen > 4) {
-            this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
-            this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
-            this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
+          this.mediumScreenDataStyle['line.width'] = [];
+          this.mediumLargeScreenDataStyle['line.width'] = [];
+          this.defaultScreenDataStyle['line.width'] = [];
+          for (const datum of TCSDplot['data']) {
+            if (datum['name'] === 'Mondays') {
+              // setting different line width but only affecting the Monday lines in the middle
+              // hiding tooltip hover text for Monday lines, as well as the y value for the date(x) reference lines
+              datum['hoverinfo'] = 'skip';
+              this.mediumScreenDataStyle['line.width'].push('0.25');
+              this.mediumLargeScreenDataStyle['line.width'].push('0.35');
+              this.defaultScreenDataStyle['line.width'].push('0.5');
+            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
+              datum['hoverinfo'] = 'x';
+              this.mediumScreenDataStyle['line.width'].push('1');
+              this.mediumLargeScreenDataStyle['line.width'].push('1.5');
+              this.defaultScreenDataStyle['line.width'].push('2');
+            } else {
+              this.mediumScreenDataStyle['line.width'].push('1');
+              this.mediumLargeScreenDataStyle['line.width'].push('1.5');
+              this.defaultScreenDataStyle['line.width'].push('2');
+            }
           }
+
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
           this.loading = false;

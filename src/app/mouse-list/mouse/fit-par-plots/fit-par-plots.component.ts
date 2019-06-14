@@ -148,11 +148,16 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event.target']) onResize(event) {
     this.newScreenWidth = event.innerWidth;
     const responsiveFitParPlot = this.d3.select(this.elem.nativeElement).node();
-    if (this.dataLen > 4) {
-      this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
-      this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
-      this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
-    }
+    // if (this.dataLen > 4) {
+      // first 12 are for 4 plots for p-left(0.5/0.2/0.8) traces, then horizontal dash (threshold for trained),
+      // then comes the list of Mondays, last 2 are the first day references
+
+      // set line width for Mondays and reference lines
+      // this.mediumScreenDataStyle['line.width'] = Array(12).fill('').concat(['1'], Array(this.dataLen - 15).fill('0.25'), ['1', '1']);
+      // this.mediumLargeScreenDataStyle['line.width'] =
+      //     Array(12).fill('').concat(['1.5'], Array(this.dataLen - 15).fill('0.35'), ['1.5', '1.5']);
+      // this.defaultScreenDataStyle['line.width'] = Array(12).fill('').concat(['2'], Array(this.dataLen - 15).fill('0.5'), ['2', '2']);
+    // }
     if (this.newScreenWidth < 1440 && (this.newScreenWidth > 1024 || this.newScreenWidth === 1024)) {
       Plotly.update(responsiveFitParPlot, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
     } else if (this.newScreenWidth < 1024 && (this.newScreenWidth > 768 || this.newScreenWidth === 768)) {
@@ -175,6 +180,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
         if (plotsInfo && plotsInfo[0]) {
           const toPlot = plotsInfo[Object.entries(plotsInfo).length - 1];
           const fitParPlots = toPlot['fit_pars'];
+          this.dataLen = fitParPlots['data'].length;
           // fitParPlots['layout']['yaxis']['title']['text'] = '<i>Lapse High (\u03BB)</i>'; // lambda
           // fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (\u03B3)</i>'; // gamma
           // fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';
@@ -182,10 +188,24 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           fitParPlots['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           fitParPlots['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           fitParPlots['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
-          if (this.dataLen > 4) {
-            this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
-            this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
-            this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
+          this.mediumScreenDataStyle['line.width'] = [];
+          this.mediumLargeScreenDataStyle['line.width'] = [];
+          this.defaultScreenDataStyle['line.width'] = [];
+          for (const datum of fitParPlots['data']) {
+            if (datum['name'] === 'Mondays') {
+              // setting different line width
+              this.mediumScreenDataStyle['line.width'].push('0.25');
+              this.mediumLargeScreenDataStyle['line.width'].push('0.35');
+              this.defaultScreenDataStyle['line.width'].push('0.5');
+            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
+              this.mediumScreenDataStyle['line.width'].push('1');
+              this.mediumLargeScreenDataStyle['line.width'].push('1.5');
+              this.defaultScreenDataStyle['line.width'].push('2');
+            } else { // probably for threshold for trained dash line
+              this.mediumScreenDataStyle['line.width'].push('1');
+              this.mediumLargeScreenDataStyle['line.width'].push('1');
+              this.defaultScreenDataStyle['line.width'].push('1');
+            }
           }
           this.fitParPlotsAreAvailable = true;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);

@@ -52,6 +52,8 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
     }
   };
 
+  dataSetup = {};
+
   private summaryPlotsSubscription: Subscription;
   @Input() mouseInfo: {};
   @Input() plotsCollapsed: {};
@@ -99,26 +101,52 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
             });
           WWIplotInfo['layout']['legend']['bgcolor'] = 'rgba(0, 0, 0, 0)';
           WWIplotInfo['layout']['height'] = '400';
-          WWIplotInfo['layout']['width'] = '650';
-          WWIplotInfo['layout']['margin'] =  {l: '0'};
+          WWIplotInfo['layout']['width'] = '';
+          WWIplotInfo['layout']['margin'] =  {l: '35'};
           WWIplotInfo['layout']['legend'] = {
-            font: {size: '9.75'}
+            font: {size: '9.75'},
+            x: '1.08'
           };
+          for (const datum of WWIplotInfo['data']) {
+            if (datum['name'] === 'Mondays') {
+              datum['hoverinfo'] = 'skip';
+            }
+          }
+
           TCSDplotInfo['layout']['width'] = '500';
           TCSDplotInfo['layout']['legend'] = {
             orientation: 'h',
             x: '0', y: '-0.09', font: {size: '9.75'}
           };
+          for (const datum of TCSDplotInfo['data']) {
+            if (datum['name'] === 'Mondays') {
+              datum['hoverinfo'] = 'skip';
+            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
+              datum['hoverinfo'] = 'x';
+            }
+          }
           PRTplotInfo['layout']['width'] = '500';
           PRTplotInfo['layout']['legend'] = {
             orientation: 'h',
             x: '0', y: '-0.09', font: { size: '9.75' }
           };
+          for (const datum of PRTplotInfo['data']) {
+            if (datum['name'] === 'Mondays') {
+              datum['hoverinfo'] = 'skip';
+            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
+              datum['hoverinfo'] = 'x';
+            }
+          }
           CHplotInfo['layout']['width'] = '540';
           CHplotInfo['layout']['legend'] = {
             orientation: 'h',
             x: '0', y: '-0.09', font: { size: '9.75' }
           };
+          for (const datum of CHplotInfo['data']) {
+            if (datum['name'] === 'Mondays') {
+              datum['hoverinfo'] = 'skip';
+            }
+          }
           Plotly.newPlot(WWIplotElem, WWIplotInfo['data'], WWIplotInfo['layout'], plotConfigWWI);
           Plotly.newPlot(TCSDplotElem, TCSDplotInfo['data'], TCSDplotInfo['layout'], plotConfigTCSD);
           Plotly.newPlot(PRTplotElem, PRTplotInfo['data'], PRTplotInfo['layout'], plotConfigPRT);

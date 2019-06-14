@@ -65,7 +65,6 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   mediumScreenDataStyle = {
     'marker.size': '3',
     'marker.line.width': '0.5',
-    // 'line.width': ['1', '1'].concat(Array(this.dataLen - 4).fill(0.275), ['1', '1'])
 
   };
   mediumScreenLayout = {
@@ -106,11 +105,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
     const responsivePRTplot = this.d3.select(this.el.nativeElement).node();
-    if (this.dataLen > 4) {
-      this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
-      this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
-      this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
-    }
+
     if (this.newScreenWidth < 420) {
       Plotly.update(responsivePRTplot, this.mediumScreenDataStyle, this.smallScreenLayout);
     } else if (this.newScreenWidth < 768 && (this.newScreenWidth > 420 || this.newScreenWidth === 420)) {
@@ -142,12 +137,30 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           performanceRTplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
-          if (this.dataLen > 4) {
-            this.mediumScreenDataStyle['line.width'] = ['1', '1'].concat(Array(this.dataLen - 4).fill('0.25'), ['1', '1']);
-            this.mediumLargeScreenDataStyle['line.width'] = ['1.5', '1.5'].concat(Array(this.dataLen - 4).fill('0.35'), ['1.5', '1.5']);
-            this.defaultScreenDataStyle['line.width'] = ['2', '2'].concat(Array(this.dataLen - 4).fill('0.5'), ['2', '2']);
 
+          this.mediumScreenDataStyle['line.width'] = [];
+          this.mediumLargeScreenDataStyle['line.width'] = [];
+          this.defaultScreenDataStyle['line.width'] = [];
+          for (const datum of performanceRTplot['data']) {
+            if (datum['name'] === 'Mondays') {
+              // setting different line width but only affecting the Monday lines in the middle
+              // hiding tooltip hover text for Monday lines, as well as the y value for the date(x) reference lines
+              datum['hoverinfo'] = 'skip';
+              this.mediumScreenDataStyle['line.width'].push('0.25');
+              this.mediumLargeScreenDataStyle['line.width'].push('0.35');
+              this.defaultScreenDataStyle['line.width'].push('0.5');
+            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
+              datum['hoverinfo'] = 'x';
+              this.mediumScreenDataStyle['line.width'].push('1');
+              this.mediumLargeScreenDataStyle['line.width'].push('1.5');
+              this.defaultScreenDataStyle['line.width'].push('2');
+            } else {
+              this.mediumScreenDataStyle['line.width'].push('1');
+              this.mediumLargeScreenDataStyle['line.width'].push('1.5');
+              this.defaultScreenDataStyle['line.width'].push('2');
+            }
           }
+
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';

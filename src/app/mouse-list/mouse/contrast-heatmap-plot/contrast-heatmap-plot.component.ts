@@ -124,6 +124,12 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
         if (plotInfo && plotInfo[0]) {
           const toPlot = plotInfo[Object.entries(plotInfo).length - 1];
           const contrastHeatmapPlot = toPlot['contrast_heatmap'];
+          if (contrastHeatmapPlot['data'] && contrastHeatmapPlot['data'].length > 0) {
+            this.defaultScreenDataStyle['hoverinfo'] = [''].concat(Array(contrastHeatmapPlot['data'].length - 1).fill('skip'));
+            this.mediumScreenDataStyle['hoverinfo'] = [''].concat(Array(contrastHeatmapPlot['data'].length - 1).fill('skip'));
+            this.mediumLargeScreenDataStyle['hoverinfo'] = [''].concat(Array(contrastHeatmapPlot['data'].length - 1).fill('skip'));
+
+          }
           contrastHeatmapPlot['layout']['legend'] = {
             orientation: 'h',
             x: '0.05',
