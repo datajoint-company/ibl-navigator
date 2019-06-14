@@ -113,10 +113,11 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
             }
           }
 
-          TCSDplotInfo['layout']['width'] = '500';
+          TCSDplotInfo['layout']['width'] = '535';
           TCSDplotInfo['layout']['legend'] = {
             orientation: 'h',
-            x: '0', y: '-0.09', font: {size: '9.75'}
+            y: '-0.09', font: {size: '9.75'},
+            bgcolor: 'rgba(0, 0, 0, 0)',
           };
           for (const datum of TCSDplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
@@ -125,10 +126,11 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
               datum['hoverinfo'] = 'x';
             }
           }
-          PRTplotInfo['layout']['width'] = '500';
+          PRTplotInfo['layout']['width'] = '535';
           PRTplotInfo['layout']['legend'] = {
             orientation: 'h',
-            x: '0', y: '-0.09', font: { size: '9.75' }
+            bgcolor: 'rgba(0, 0, 0, 0)',
+            y: '-0.09', font: { size: '9.75' }
           };
           for (const datum of PRTplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
@@ -140,7 +142,8 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
           CHplotInfo['layout']['width'] = '540';
           CHplotInfo['layout']['legend'] = {
             orientation: 'h',
-            x: '0', y: '-0.09', font: { size: '9.75' }
+            bgcolor: 'rgba(0, 0, 0, 0)',
+            y: '-0.12', font: { size: '9.75' }
           };
           for (const datum of CHplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
