@@ -133,15 +133,23 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     ]
   };
 
-  defaultScreenLayout = {
-    'font.size': '',
-    'legend.font.size': '12'
+  defaultScreenLayout_RTTN = {
+    'font.size': '12',
+    'legend.font.size': '12',
+    width: '500'
+  };
+
+  defaultScreenLayout_PC = {
+    'font.size': '12',
+    'legend.font.size': '12',
+    width: '602'
   };
 
   defaultScreenLayout_RTC = {
     'xaxis.range': [-35, 35],
-    'font.size': '',
-    'legend.font.size': '12'
+    'font.size': '12',
+    'legend.font.size': '12',
+    width: '540'
   };
 
   defaultScreenDataStyle = {
@@ -230,12 +238,12 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
       Plotly.update(responsiveRTCplot1, this.defaultScreenDataStyle, this.defaultScreenLayout_RTC);
       Plotly.update(responsiveRTCplot2, this.defaultScreenDataStyle, this.defaultScreenLayout_RTC);
       Plotly.update(responsiveRTCplot3, this.defaultScreenDataStyle, this.defaultScreenLayout_RTC);
-      Plotly.update(responsiveRTTNplot1, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout);
-      Plotly.update(responsiveRTTNplot2, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout);
-      Plotly.update(responsiveRTTNplot3, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout);
-      Plotly.update(responsivePCplot1, this.defaultScreenDataStyle, this.defaultScreenLayout);
-      Plotly.update(responsivePCplot2, this.defaultScreenDataStyle, this.defaultScreenLayout);
-      Plotly.update(responsivePCplot3, this.defaultScreenDataStyle, this.defaultScreenLayout);
+      Plotly.update(responsiveRTTNplot1, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout_RTTN);
+      Plotly.update(responsiveRTTNplot2, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout_RTTN);
+      Plotly.update(responsiveRTTNplot3, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout_RTTN);
+      Plotly.update(responsivePCplot1, this.defaultScreenDataStyle, this.defaultScreenLayout_PC);
+      Plotly.update(responsivePCplot2, this.defaultScreenDataStyle, this.defaultScreenLayout_PC);
+      Plotly.update(responsivePCplot3, this.defaultScreenDataStyle, this.defaultScreenLayout_PC);
     }
   }
   ngOnInit() {
@@ -290,7 +298,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             } else if (screenSizeInitial < 768) {
               Plotly.update(elementList[index].elPsych, this.mediumLargeScreenDataStyle_PC, this.mediumLargeScreenPsychCurveLayout);
             } else {
-              Plotly.update(elementList[index].elPsych, this.defaultScreenDataStyle, this.defaultScreenLayout);
+              Plotly.update(elementList[index].elPsych, this.defaultScreenDataStyle, this.defaultScreenLayout_PC);
             }
           });
           if (recent3.length < 3) {
@@ -443,7 +451,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
                   } else if (screenSizeInitial < 768) {
                     Plotly.update(elementList[idx].elRTTrialNum, this.mediumLargeScreenDataStyle_RTTN, this.mediumLargeScreenLayout);
                   } else {
-                    Plotly.update(elementList[idx].elRTTrialNum, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout);
+                    Plotly.update(elementList[idx].elRTTrialNum, this.defaultScreenDataStyle_RTTN, this.defaultScreenLayout_RTTN);
                   }
                 }
               });
