@@ -149,7 +149,7 @@ app.post('/login', (req, res) => {
         res.status(200).send({ message: 'successful login', token: token, expiresIn: 24 * 60 * 60 * 1000}); //return in millisec
     } else {
         // res.status(401).send({message : 'failed login'})
-        res.status(200).send({ message: 'failed login' })
+        res.status(200).send({ message: 'failed login' }) // frontside doesn't seem to receive the message sent back in 401 status thus the 200 status here - TO REVISIT
     }
     
 });
