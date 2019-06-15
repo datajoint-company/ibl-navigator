@@ -16,9 +16,10 @@ export class AuthService {
     constructor(private http: HttpClient,
                 private router: Router) {}
     private token: string;
-    private authStatusListener = new Subject<boolean>();
+    private authStatusListener = new Subject<any>();
     private tokenTimer;
     isLoggedIn = false;
+    loginFail;
 
     isAuthenticated() {
         return this.isLoggedIn;
@@ -29,16 +30,19 @@ export class AuthService {
     }
 
     login(username: string, password: string, returnUrl: string) {
-        // console.log('auth service loggin user in: ', username);
+        console.log('auth service loggin user in: ', username);
         const authData: AuthData = {username: username, password: password};
         // const authData = {username: username, password: password};
         this.http.post(BACKEND_URL + `/login`, authData)
             .subscribe(response => {
-                // console.log(response);
+                console.log('printing response from backend');
+                console.log(response);
                 this.token = response['token'];
                 if (response['token']) {
                     this.isLoggedIn = true;
-                    this.authStatusListener.next(true);
+                    this.loginFail = false;
+                    // this.authStatusListener.next(true);
+                    this.authStatusListener.next([this.isLoggedIn, this.loginFail]);
                     this.setAuthTimer(response['expiresIn']);
                     const now = new Date();
                     const expDate = new Date(now.getTime() + response['expiresIn']);
@@ -47,6 +51,9 @@ export class AuthService {
                     this.router.navigateByUrl(returnUrl);
                 } else {
                     console.log('wrong login combo');
+                    this.loginFail = true;
+                    this.isLoggedIn = false;
+                    this.authStatusListener.next([this.isLoggedIn, this.loginFail]);
                     this.router.navigate(['/']);
                 }
             });
@@ -61,7 +68,9 @@ export class AuthService {
     logout() {
         this.token = null;
         this.isLoggedIn = false;
-        this.authStatusListener.next(false);
+        this.loginFail = false;
+        // this.authStatusListener.next(false);
+        this.authStatusListener.next([this.isLoggedIn, this.loginFail]);
         this.clearAuthData();
         clearTimeout(this.tokenTimer);
         this.router.navigate(['/']);
@@ -80,10 +89,12 @@ export class AuthService {
                 this.token = authInfo.token;
                 this.setAuthTimer(expiresIn);
                 this.isLoggedIn = true;
-                this.authStatusListener.next(true);
+                // this.authStatusListener.next(true);
+                this.authStatusListener.next([this.isLoggedIn, null]);
             } else {
                 this.isLoggedIn = false;
-                this.authStatusListener.next(false);
+                // this.authStatusListener.next(false);
+                this.authStatusListener.next([this.isLoggedIn, null]);
             }
         }
     }

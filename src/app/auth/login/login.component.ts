@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 export class LoginComponent implements OnInit, OnDestroy {
   // isLoggedIn = this.authService.isLoggedIn;
   isLoggedIn = false;
+  loginFail;
   userIsAuthenticated;
   returnUrl: string;
   private authListenerSubscription: Subscription;
@@ -24,7 +25,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isLoggedIn = this.authService.isAuthenticated();
     this.authListenerSubscription = this.authService.getAuthStatusListener()
       .subscribe(loginStatus => {
-        this.userIsAuthenticated = loginStatus;
+        // this.userIsAuthenticated = loginStatus;
+        this.userIsAuthenticated = loginStatus[0];
+        this.loginFail = loginStatus[1];
+        console.log('login failed? ', this.loginFail);
       });
   }
 

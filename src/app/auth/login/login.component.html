@@ -18,4 +18,5 @@
   <div class="login-sub-container">
     <button class="btn-outline-danger btn" (click)="logOut()" *ngIf="isLoggedIn">Log Out</button>
   </div>
+  <p class="login-fail-text" *ngIf="loginFail">Username/password combination is incorrect</p>
 </div>
