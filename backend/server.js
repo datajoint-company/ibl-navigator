@@ -1,11 +1,12 @@
 const http = require('http');
 const app = require('./app');
-const port = 3000;
+const port = 3333;
 
 app.set('port', port);
 const server = http.createServer(app);
 
 server.listen(port);
+console.log('Server listening on port ', port);
 
 // http.createServer(onRequest).listen(3000);
 // function onRequest(client_req, client_res) {
