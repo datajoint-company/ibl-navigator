@@ -6,6 +6,104 @@
     <th>{{ recent3dates[1] }}</th>
     <th>{{ recent3dates[2] }}</th>
   </tr>
+  <tr *ngIf="datePsychPlotFitPars">
+    <td>
+      <table class="date-fit-par-table" *ngIf="datePsychPlotFitPars[0]">
+        <tr>
+          <th>prob left</th>
+          <th>threshold (&sigma;)</th>
+          <th>bias (&mu;)</th>
+          <th>lapse low (&gamma;)</th>
+          <th>lapse high (&lambda;)</th>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[0][recent3dates[0]][0]">
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[0][recent3dates[0]][1]">
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[0][recent3dates[0]][2]">
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['lapse_high']}}</td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table class="date-fit-par-table" *ngIf="datePsychPlotFitPars[1]">
+        <tr>
+          <th>prob left</th>
+          <th>threshold (&sigma;)</th>
+          <th>bias (&mu;)</th>
+          <th>lapse low (&gamma;)</th>
+          <th>lapse high (&lambda;)</th>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[1][recent3dates[1]][0]">
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[1][recent3dates[1]][1]">
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[1][recent3dates[1]][2]">
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['lapse_high']}}</td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table class="date-fit-par-table" *ngIf="datePsychPlotFitPars[2]">
+        <tr>
+          <th>prob left</th>
+          <th>threshold (&sigma;)</th>
+          <th>bias (&mu;)</th>
+          <th>lapse low (&gamma;)</th>
+          <th>lapse high (&lambda;)</th>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[2][recent3dates[2]][0]">
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[2][recent3dates[2]][1]">
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[2][recent3dates[2]][2]">
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['lapse_high']}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
   <tr>
     <td>
       <div class="loading-overlay-small" *ngIf="loadingPlots[0]"></div>

@@ -97,7 +97,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   constructor(public dailySummaryService: DailySummaryService, public filterStoreService: FilterStoreService) { }
 
   ngOnInit() {
-    console.log('on init');
+    // console.log('on init');
     this.plotViewStatus = {};
     // const tableState = this.filterStoreService.retrieveSummaryTableState();
 
@@ -149,7 +149,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
       .subscribe(summary => {
         const viewStatusObservable = new Observable((observer) => {
-          console.log('making full menu with ', summary);
+          // console.log('making full menu with ', summary);
 
           for (const info of Object.values(summary)) {
             // console.log('logging info: ', info);
@@ -367,7 +367,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
-    console.log('applying filter');
+    // console.log('applying filter');
     this.loading = true;
     this.summary = [];
     const request = this.filterRequests();
@@ -378,14 +378,14 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
         .subscribe((summaryInfo: any) => {
           const viewStatusObservable = new Observable((observer) => {
-            console.log('making full menu with ', summaryInfo);
+            // console.log('making full menu with ', summaryInfo);
             for (let info of summaryInfo) {
               info['plotViewingStatus'] = true;
             }
             observer.next(summaryInfo);
           });
           viewStatusObservable.subscribe(updatedSummary => {
-            console.log('updated summary - applied filter:', updatedSummary);
+            // console.log('updated summary - applied filter:', updatedSummary);
             this.allSummary = updatedSummary;
             this.summary = updatedSummary;
             this.dataSource = new MatTableDataSource(this.summary);
@@ -406,7 +406,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   resetFilter() {
-    console.log('resetting filter');
+    // console.log('resetting filter');
     this.loading = true;
     this.dailySummaryService.getSummary({ '__order': 'last_session_time DESC' });
     this.filterStoreService.clearSummaryFilter();
@@ -419,7 +419,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
           observer.next(summaryInfo);
         });
         viewStatusObservable.subscribe(updatedSummary => {
-          console.log('updated summary - reset filter:', updatedSummary);
+          // console.log('updated summary - reset filter:', updatedSummary);
           this.allSummary = updatedSummary;
           this.summary = updatedSummary;
           this.dataSource = new MatTableDataSource(this.summary);
@@ -480,17 +480,17 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   }
 
   openPlot(summaryId) {
-    console.log('trying to open plot for');
-    console.log(summaryId);
+    // console.log('trying to open plot for');
+    // console.log(summaryId);
     for (const info of this.allSummary) {
       if (info['subject_uuid'] === summaryId) {
-        console.log('before: ', info['plotViewingStatus']);
+        // console.log('before: ', info['plotViewingStatus']);
         if (info['plotViewingStatus'] || info['plotViewingStatus'] == null) {
           info['plotViewingStatus'] = false;
         } else {
           info['plotViewingStatus'] = true;
         }
-        console.log('after: ', info['plotViewingStatus']);
+        // console.log('after: ', info['plotViewingStatus']);
       }
     }
     for (const info of this.summary) {
@@ -506,7 +506,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
 
   toggleAllPlotsView() {
     // make all plotViewStatus open/closed regardless of their individual state
-    console.log('all plot view status toggled');
+    // console.log('all plot view status toggled');
     if (this.allPlotsOpen) {
       this.allPlotsOpen = false;
       for (const info of this.allSummary) {

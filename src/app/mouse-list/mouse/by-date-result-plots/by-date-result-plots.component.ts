@@ -49,6 +49,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     }
   };
   recent3dates = [];
+  datePsychPlotFitPars = [];
   datePsychPlotList = [];
   dateRTCPlotList = [];
   dateRTTPlotList = [];
@@ -280,6 +281,8 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           recent3.forEach((plot, index) => {
             this.recent3dates.push(plot['session_date']);
             const datePsychPlot = plot['plotting_data'];
+            this.datePsychPlotFitPars.push({[plot['session_date']]: plot['fit_pars']});
+            // console.log('fitpars for date psych curve plot: ', this.datePsychPlotFitPars);
             datePsychPlot['layout']['width'] = '602';
             datePsychPlot['layout']['height'] = '350';
             datePsychPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';

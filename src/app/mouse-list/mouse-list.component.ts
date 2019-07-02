@@ -19,7 +19,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
     sex_control: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
     subject_birth_date_control : new FormControl(),
     subject_line_control : new FormControl(),
-    responsible_user_control : new FormControl()
+    responsible_user_control : new FormControl(),
+    subject_project_control: new FormControl()
   });
   loading = true;
   mice;
@@ -28,7 +29,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   mice_menu: any;
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date',
-    'subject_line', 'responsible_user', 'sex', 'subject_uuid'];
+    'projects', 'subject_line', 'responsible_user', 'sex', 'subject_uuid'];
 
   // setup for the paginator
   dataSource;
@@ -40,6 +41,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   filteredSubjectUuidOptions: Observable<string[]>;
   filteredSubjectLineOptions: Observable<string[]>;
   filteredResponsibleUserOptions: Observable<string[]>;
+  filteredSubjectProjectOptions: Observable<string[]>;
   genderMenu2ControlMap = { F: 0, M: 1, U: 2 };
 
   private miceSubscription: Subscription;
@@ -117,7 +119,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.mice_menu = {};
 
 
-    const keys = ['lab_name', 'subject_birth_date', 'subject_line', 'subject_uuid', 'sex', 'subject_nickname', 'responsible_user'];
+    const keys = ['lab_name', 'subject_birth_date', 'subject_line', 'subject_uuid', 'sex',
+    'subject_nickname', 'responsible_user', 'projects'];
 
 
     // initialize all entries into an empty list
@@ -203,6 +206,12 @@ export class MouseListComponent implements OnInit, OnDestroy {
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'responsible_user'))
+      );
+
+    this.filteredSubjectProjectOptions = this.mouse_filter_form.controls.projects_control.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, 'projects'))
       );
 
     this.miceBirthdayFilter = (d: Date): boolean => {

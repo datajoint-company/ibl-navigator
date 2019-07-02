@@ -124,7 +124,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   @ViewChild('waterIntake_weight_plot') el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
-    console.log('new screenwidth: ', this.newScreenWidth);
+    // console.log('new screenwidth: ', this.newScreenWidth);
     const responsiveWWIplot = this.d3.select(this.el.nativeElement).node();
     if (this.newScreenWidth < 420) {
       Plotly.update(responsiveWWIplot, this.mediumScreenDataStyle, this.smallScreenLayout);

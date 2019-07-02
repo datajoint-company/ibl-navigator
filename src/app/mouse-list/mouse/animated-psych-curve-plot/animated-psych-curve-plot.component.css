@@ -1,7 +1,6 @@
 .animatedPCplot-container {
     display: flex;
     flex-direction: row;
-    width: 100vw;
     overflow: scroll;
 }
 
@@ -34,7 +33,7 @@
 /* small laptop (768px and up) */
 @media only screen and (min-width: 768px) {
     .animatedPlot {
-        width: 100%;
+        width: 600px;
         overflow: scroll;
         /* border: 2px solid purple; */
     }
@@ -55,9 +54,8 @@
 /* laptop (1024px and up) */
 @media only screen and (min-width: 1024px) {
     .animatedPlot {
-        width: 100%;
+        width: 800px;
         /* border: 1px solid red; */
-        width: 100%;
     }
     .eachSessionDetails {
         margin-top: 150px;

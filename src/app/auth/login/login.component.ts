@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         // this.userIsAuthenticated = loginStatus;
         this.userIsAuthenticated = loginStatus[0];
         this.loginFail = loginStatus[1];
-        console.log('login failed? ', this.loginFail);
+        // console.log('login failed? ', this.loginFail);
       });
   }
 
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onLogin(form: NgForm) {
-    console.log('logging in');
+    // console.log('logging in');
     const username = form.value.username;
     const password = form.value.password;
 
@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   logOut() {
-    console.log('logging out');
+    // console.log('logging out');
     this.authService.logout();
   }
 

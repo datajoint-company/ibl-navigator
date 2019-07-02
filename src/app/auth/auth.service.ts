@@ -30,13 +30,13 @@ export class AuthService {
     }
 
     login(username: string, password: string, returnUrl: string) {
-        console.log('auth service loggin user in: ', username);
+        // console.log('auth service loggin user in: ', username);
         const authData: AuthData = {username: username, password: password};
         // const authData = {username: username, password: password};
         this.http.post(BACKEND_URL + `/login`, authData)
             .subscribe(response => {
-                console.log('printing response from backend');
-                console.log(response);
+                // console.log('printing response from backend');
+                // console.log(response);
                 this.token = response['token'];
                 if (response['token']) {
                     this.isLoggedIn = true;

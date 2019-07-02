@@ -157,12 +157,15 @@ def handle_q(subpath, args, proj, **kwargs):
             #  nplot='count(distinct(concat(subject_uuid, session_start_time)))',
              nplot='count(dummy)',
              keep_all_rows=True)
-             * acquisition.Session() * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+             * acquisition.Session() * acquisition.SessionProject() * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name'))
              & args)
     elif subpath == 'subjpage':
-        q = (subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+        projects = subject.Subject.aggr(subject.SubjectProject, projects='GROUP_CONCAT(DISTINCT subject_project'
+        ' ORDER BY subject_project SEPARATOR ",")')
+
+        q = (subject.Subject() * subject.SubjectLab() * subject.SubjectUser() * projects
              & args)
     elif subpath == 'dailysummary':
 	    # find the latest summary geneartion for each lab

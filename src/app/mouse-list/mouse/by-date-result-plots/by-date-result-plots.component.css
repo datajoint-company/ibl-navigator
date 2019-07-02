@@ -11,6 +11,17 @@
   text-align: center;
 }
 
+.date-fit-par-table {
+  width: 100%;
+  font-size: 66%;
+  margin: 0;
+}
+
+.date-fit-par-table th,
+.date-fit-par-table td {
+  padding: 2px;
+}
+
 .loading-icon-small {
   width: 80px;
   z-index: 1003; 

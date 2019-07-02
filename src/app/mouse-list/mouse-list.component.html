@@ -42,6 +42,16 @@
     </mat-form-field>
 
     <mat-form-field>
+      <label>Project</label>
+      <input matInput type="text" name="projects" formControlName="projects_control" [matAutocomplete]="autoCompSPj"
+        (focus)="stepBackMenu($event)">
+      <mat-autocomplete #autoCompSPj="matAutocomplete">
+        <mat-option *ngFor="let proj of filteredSubjectProjectOptions | async" [value]="proj" (click)="updateMenu()">
+          {{ proj }}</mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field>
       <label>Line</label>
       <input matInput type="text" name="subject_line" formControlName="subject_line_control"
         [matAutocomplete]="autoCompSL" (focus)="stepBackMenu($event)">
@@ -89,6 +99,11 @@
   <ng-container matColumnDef="subject_nickname">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse Nickname </th>
     <td mat-cell *matCellDef="let mouse"> {{mouse.subject_nickname}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="projects">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+    <td mat-cell *matCellDef="let mouse"> {{mouse.projects}} </td>
   </ng-container>
 
   <ng-container matColumnDef="subject_line">
