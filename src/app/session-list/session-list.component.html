@@ -81,6 +81,16 @@
             {{ nickname }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
+
+      <mat-form-field class="long">
+        <label>Project</label>
+        <input matInput type="text" name="session_project" formControlName="session_project_control"
+          [matAutocomplete]="autoCompSProj" (focus)="stepBackMenu($event)">
+        <mat-autocomplete #autoCompSProj="matAutocomplete">
+          <mat-option *ngFor="let project of filteredSessionProjectOptions | async" [value]="project" (click)="updateMenu()">
+            {{ project }}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
       
       <mat-form-field class="long">
         <label>Mouse UUID</label>
@@ -158,6 +168,11 @@
   <ng-container matColumnDef="subject_nickname">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse Nickname </th>
     <td mat-cell *matCellDef="let session"> {{session.subject_nickname}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="session_project">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+    <td mat-cell *matCellDef="let session"> {{session.session_project}} </td>
   </ng-container>
   
   <ng-container matColumnDef="task_protocol">

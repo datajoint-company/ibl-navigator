@@ -25,6 +25,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }),
     lab_name_control: new FormControl(),
     subject_nickname_control: new FormControl(),
+    session_project_control: new FormControl(),
     subject_uuid_control: new FormControl(),
     sex_control: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
     subject_birth_date_control: new FormControl(),
@@ -44,6 +45,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filteredSessionUuidOptions: Observable<string[]>;
   filteredLabNameOptions: Observable<string[]>;
   filteredSubjectNicknameOptions: Observable<string[]>;
+  filteredSessionProjectOptions: Observable<string[]>;
   filteredSubjectUuidOptions: Observable<string[]>;
   filteredSubjectLineOptions: Observable<string[]>;
   filteredResponsibleUserOptions: Observable<string[]>;
@@ -51,7 +53,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
-                              'session_uuid', 'sex', 'subject_uuid', 'nplot'];
+                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'session_project'];
   nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
@@ -164,7 +166,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.session_menu = {};
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'lab_name', 'subject_birth_date', 'subject_line',
-    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user'];
+    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
     for (const key of keys) {
       if (key !== 'sex') {
         this.session_menu[key] = [];
@@ -215,6 +217,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'subject_nickname'))
+      );
+
+    this.filteredSessionProjectOptions = this.session_filter_form.controls.session_project_control.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, 'session_project'))
       );
 
     this.filteredSubjectUuidOptions = this.session_filter_form.controls.subject_uuid_control.valueChanges
