@@ -20,7 +20,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     subject_birth_date_control : new FormControl(),
     subject_line_control : new FormControl(),
     responsible_user_control : new FormControl(),
-    subject_project_control: new FormControl()
+    projects_control: new FormControl()
   });
   loading = true;
   mice;
@@ -41,11 +41,12 @@ export class MouseListComponent implements OnInit, OnDestroy {
   filteredSubjectUuidOptions: Observable<string[]>;
   filteredSubjectLineOptions: Observable<string[]>;
   filteredResponsibleUserOptions: Observable<string[]>;
-  filteredSubjectProjectOptions: Observable<string[]>;
+  filteredProjectsOptions: Observable<string[]>;
   genderMenu2ControlMap = { F: 0, M: 1, U: 2 };
 
   private miceSubscription: Subscription;
   private miceMenuSubscription: Subscription;
+  private allMiceMenuSubscription: Subscription;
 
   constructor(public allMiceService: AllMiceService, public filterStoreService: FilterStoreService) { }
 
@@ -91,9 +92,9 @@ export class MouseListComponent implements OnInit, OnDestroy {
       // console.log(Object.keys(tableState[2])[0], ' => ',  Object.values(tableState[2])[0].direction);
     }
     this.applyFilter();
-    // for creating the menu
-    this.allMiceService.getMiceMenu({'__order': 'lab_name'});
-    this.miceMenuSubscription = this.allMiceService.getMiceMenuLoadedListener()
+    // for creating the initial full menu
+    this.allMiceService.getAllMiceMenu({'__order': 'lab_name'});
+    this.allMiceMenuSubscription = this.allMiceService.getAllMiceMenuLoadedListener()
       .subscribe((mice: any) => {
         // this.loading = false;
         // this.mice = mice;
@@ -133,18 +134,28 @@ export class MouseListComponent implements OnInit, OnDestroy {
     }
 
 
-  // find unique entries for each key
-  for (const mouse of mice) {
-    for (const key of keys) {
-      if (key !== 'sex' && !this.mice_menu[key].includes(mouse[key])) {
-        this.mice_menu[key].push(mouse[key]);
-      } else if (key === 'sex') {
-        if (Object.keys(this.mice_menu[key]).includes(mouse[key]) && !this.mice_menu[key][mouse[key]]) {
-          this.mice_menu[key][mouse[key]] = true;
+    // find unique entries for each key
+    for (const mouse of mice) {
+      for (const key of keys) {
+        if (key !== 'sex' && key !== 'projects' && !this.mice_menu[key].includes(mouse[key])) {
+          this.mice_menu[key].push(mouse[key]);
+        } else if (key === 'sex') {
+          if (Object.keys(this.mice_menu[key]).includes(mouse[key]) && !this.mice_menu[key][mouse[key]]) {
+            this.mice_menu[key][mouse[key]] = true;
+          }
+        } else if (key === 'projects') {
+          if (mouse[key].split(',').length === 1 && !this.mice_menu[key].includes(mouse[key])) {
+            this.mice_menu[key].push(mouse[key]);
+          } else if (mouse[key].split(',').length > 1) {
+            for (const projOpt of mouse[key].split(',')) {
+              if (!this.mice_menu[key].includes(projOpt)) {
+                this.mice_menu[key].push(projOpt);
+              }
+            }
+          }
         }
       }
     }
-  }
 
     // create formcontrol for item in menus
     // const sex_control_array = <FormArray>this.mouse_filter_form.controls['sex_control'];
@@ -208,7 +219,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
         map(value => this._filter(value, 'responsible_user'))
       );
 
-    this.filteredSubjectProjectOptions = this.mouse_filter_form.controls.projects_control.valueChanges
+    this.filteredProjectsOptions = this.mouse_filter_form.controls.projects_control.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'projects'))
@@ -235,6 +246,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
 
   applyFilter() {
     this.loading = true;
+
     const request = this.filterRequests();
     if (Object.entries(request).length > 0) {
       this.filterStoreService.storeMouseFilter(request);
@@ -265,7 +277,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
   stepBackMenu(event) {
-    console.log('detected focus in menu');
     let focusOn: string;
     if (event.checked) {
       focusOn = 'sex';

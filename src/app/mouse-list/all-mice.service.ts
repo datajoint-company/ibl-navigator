@@ -10,10 +10,12 @@ const BACKEND_API_URL = environment.api_url;
 })
 export class AllMiceService {
   private miceMenu;
+  private allMiceMenu;
   private allMice;
   private retrievedMice;
 
   private miceMenuLoaded = new Subject();
+  private allMiceMenuLoaded = new Subject();
   private miceLoaded = new Subject();
   private requestedMiceLoaded = new Subject();
 
@@ -25,6 +27,20 @@ export class AllMiceService {
         this.allMice = allMiceData;
         this.miceLoaded.next(this.allMice);
       });
+  }
+
+  getAllMiceMenu(miceFilter) {
+    this.http.post(BACKEND_API_URL + `/mice/`, miceFilter)
+      .subscribe(
+        (filteredMiceData) => {
+          this.allMiceMenu = filteredMiceData;
+          this.allMiceMenuLoaded.next(this.allMiceMenu);
+        },
+        (err: any) => {
+          console.log('error in fetching mice menu');
+          console.error(err);
+        }
+      );
   }
 
   getMiceMenu(miceFilter) {
@@ -59,6 +75,10 @@ export class AllMiceService {
 
   getMiceMenuLoadedListener() {
     return this.miceMenuLoaded.asObservable();
+  }
+
+  getAllMiceMenuLoadedListener() {
+    return this.allMiceMenuLoaded.asObservable();
   }
 
   getMiceLoadedListener() {

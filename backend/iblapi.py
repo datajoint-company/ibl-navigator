@@ -162,11 +162,15 @@ def handle_q(subpath, args, proj, **kwargs):
                 & reference.LabMembership().proj('lab_name', 'user_name'))
              & args)
     elif subpath == 'subjpage':
+        print('Args are:', args)
+        for e in args:
+            if 'projects' in e:
+                e['subject_project'] = e.pop('projects')
         projects = subject.Subject.aggr(subject.SubjectProject, projects='GROUP_CONCAT(DISTINCT subject_project'
         ' ORDER BY subject_project SEPARATOR ",")')
-
+        proj_restr = (subject.SubjectProject & args).proj()
         q = (subject.Subject() * subject.SubjectLab() * subject.SubjectUser() * projects
-             & args)
+             & args & proj_restr)
     elif subpath == 'dailysummary':
 	    # find the latest summary geneartion for each lab
 	    latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(

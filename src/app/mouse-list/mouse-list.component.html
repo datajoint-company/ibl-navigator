@@ -41,12 +41,12 @@
       <mat-datepicker #DOBPicker></mat-datepicker>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="long">
       <label>Project</label>
       <input matInput type="text" name="projects" formControlName="projects_control" [matAutocomplete]="autoCompSPj"
         (focus)="stepBackMenu($event)">
       <mat-autocomplete #autoCompSPj="matAutocomplete">
-        <mat-option *ngFor="let proj of filteredSubjectProjectOptions | async" [value]="proj" (click)="updateMenu()">
+        <mat-option *ngFor="let proj of filteredProjectsOptions | async" [value]="proj" (click)="updateMenu()">
           {{ proj }}</mat-option>
       </mat-autocomplete>
     </mat-form-field>

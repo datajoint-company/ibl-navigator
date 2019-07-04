@@ -71,6 +71,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   private sessionsSubscription: Subscription;
   private sessionMenuSubscription: Subscription;
+  private allSessionMenuSubscription: Subscription;
+  private reqSessionsSubscription: Subscription;
 
   constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {}
   // @Input('preRestriction') preRestrictedMouseInfo: Object;
@@ -145,20 +147,26 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
       });
     // TODO: create menu content using separate api designated for menu instead of getting all session info
-    this.allSessionsService.getSessionMenu({'__order': 'lab_name'});
-        this.sessionMenuSubscription = this.allSessionsService.getSessionMenuLoadedListener()
-          .subscribe((sessions: any) => {
-            this.allSessions = sessions;
-            this.createMenu(sessions);
-          });
+    this.allSessionsService.getAllSessionMenu({'__order': 'lab_name'});
+    this.allSessionMenuSubscription = this.allSessionsService.getAllSessionMenuLoadedListener()
+      .subscribe((sessions_all: any) => {
+        this.allSessions = sessions_all;
+        this.createMenu(sessions_all);
+      });
   }
 
   ngOnDestroy() {
     if (this.sessionsSubscription) {
       this.sessionsSubscription.unsubscribe();
     }
+    if (this.reqSessionsSubscription) {
+      this.reqSessionsSubscription.unsubscribe();
+    }
     if (this.sessionMenuSubscription) {
       this.sessionMenuSubscription.unsubscribe();
+    }
+    if (this.allSessionMenuSubscription) {
+      this.allSessionMenuSubscription.unsubscribe();
     }
   }
 
@@ -287,6 +295,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   updateMenu() {
+
     const menuRequest = this.filterRequests();
     if (Object.entries(menuRequest).length > 1) {
       menuRequest['order__'] = 'lab_name';
@@ -433,20 +442,22 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
+
     this.loading = true;
     this.sessions = [];
     const request = this.filterRequests();
     request['__order'] = 'session_start_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
       this.filterStoreService.storeSessionFilter(request);
-      this.allSessionsService.retrieveSessions(request);
-      this.allSessionsService.getNewSessionsLoadedListener()
-        .subscribe((sessions: any) => {
+      this.allSessionsService.retrieveSessions2(request);
+      this.reqSessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener2()
+        .subscribe((newSessions: any) => {
           this.loading = false;
-          this.sessions = sessions;
-          this.dataSource = new MatTableDataSource(this.sessions);
+          this.sessions = newSessions;
+          this.dataSource = new MatTableDataSource(newSessions);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
+
         });
     } else {
       this.resetFilter();
@@ -454,14 +465,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   resetFilter() {
+    // console.log('resetting filter');
     this.loading = true;
     this.allSessionsService.retrieveSessions({'__order': 'session_start_time DESC'});
     this.filterStoreService.clearSessionFilter();
     this.allSessionsService.getNewSessionsLoadedListener()
-      .subscribe((sessions: any) => {
+      .subscribe((sessionsAll: any) => {
         this.loading = false;
-        this.sessions = sessions;
-        this.allSessions = sessions;
+        this.sessions = sessionsAll;
+        this.allSessions = sessionsAll;
         this.dataSource = new MatTableDataSource(this.sessions);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -527,7 +539,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   sessionSelected(session) {
-    console.log(session);
+    // console.log(session);
     this.selectedSession = session;
   }
 
