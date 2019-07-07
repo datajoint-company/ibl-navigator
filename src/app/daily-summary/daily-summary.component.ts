@@ -77,7 +77,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   // setup for the paginator
   dataSource;
   pageSize = 5;
-  pageSizeOptions: number[] = [5, 10, 25, 50, 100];
+  pageSizeOptions: number[] = [5, 10, 25];
 
   collapsedStyle = {
     animationName: 'collapsing',
