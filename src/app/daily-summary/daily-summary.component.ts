@@ -36,7 +36,6 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     latest_task_protocol_control: new FormControl(),
     latest_training_status_control: new FormControl(),
     latest_session_ingested_control: new FormControl(),
-    last_session_time_control: new FormControl(),
     session_range_filter: new FormGroup({
       session_range_start_control: new FormControl(),
       session_range_end_control: new FormControl()
@@ -62,8 +61,8 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   filteredSubjectUuidOptions: Observable<string[]>;
   daily_summary_menu = {};
 
-  displayedColumns: string[] = ['subject_nickname', 'last_session_time', 'lab_name', 'latest_training_status',
-    'latest_task_protocol', 'n_sessions_current_protocol', 'latest_session_ingested',
+  displayedColumns: string[] = ['lab_name', 'subject_nickname', 'latest_session_ingested',
+    'latest_training_status', 'latest_task_protocol', 'n_sessions_current_protocol',
     'latest_session_on_flatiron', 'subject_uuid', 'detail_link', 'expand_collapse'];
 
   displayedPlots: string[] = ['water_weight', 'performance_reaction_time',
@@ -91,7 +90,9 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   private viewStatusAdded = new Subject();
 
   private summarySubscription: Subscription;
+  private summarySubscription2: Subscription;
   private summaryMenuSubscription: Subscription;
+  private summaryAllMenuSubscription: Subscription;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   constructor(public dailySummaryService: DailySummaryService, public filterStoreService: FilterStoreService) { }
@@ -120,13 +121,13 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
         }
         if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
           this.dateRangeToggle = false;
-          this.summary_filter_form.controls.last_session_time_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
+          this.summary_filter_form.controls.latest_session_ingested_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
         } else if (dateRange[0] !== '') {
           this.dateRangeToggle = true;
           this.summary_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
           this.summary_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(new Date(dateRange[1] + ' (UTC)'));
         }
-      } else if (key !== 'last_session_time' && key !== '__json' && key !== '__order') {
+      } else if (key !== 'latest_session_ingested' && key !== '__json' && key !== '__order') {
         const controlName = key + '_control';
         if (this.summary_filter_form.controls[controlName]) {
           const toPatch = {};
@@ -145,8 +146,8 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     }
 
     this.applyFilter();
-    this.dailySummaryService.getSummaryMenu({'__order': 'last_session_time DESC'});
-    this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
+    this.dailySummaryService.getSummaryAllMenu({'__order': 'lab_name, latest_session_ingested DESC'});
+    this.summaryAllMenuSubscription = this.dailySummaryService.getSummaryAllMenuLoadedListener()
       .subscribe(summary => {
         const viewStatusObservable = new Observable((observer) => {
           // console.log('making full menu with ', summary);
@@ -171,17 +172,23 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     if (this.summarySubscription) {
       this.summarySubscription.unsubscribe();
     }
+    if (this.summarySubscription2) {
+      this.summarySubscription2.unsubscribe();
+    }
     if (this.summaryMenuSubscription) {
       this.summaryMenuSubscription.unsubscribe();
+    }
+    if (this.summaryAllMenuSubscription) {
+      this.summaryAllMenuSubscription.unsubscribe();
     }
 
   }
 
   private createMenu(summaryInfo) {
     this.daily_summary_menu = {};
-    const keys = ['latest_task_protocol', 'last_session_time', 'subject_uuid',
+    const keys = ['latest_task_protocol', 'latest_session_ingested', 'subject_uuid',
       'latest_training_status', 'lab_name', 'latest_session_on_flatiron',
-      'latest_session_ingested', 'subject_nickname', 'n_sessions_current_protocol'];
+      'subject_nickname', 'n_sessions_current_protocol'];
     for (const key of keys) {
       this.daily_summary_menu[key] = [];
     }
@@ -195,7 +202,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
 
     // create formcontrol for item in menus
     const sessionSeconds = [];
-    for (const date of this.daily_summary_menu['last_session_time']) {
+    for (const date of this.daily_summary_menu['latest_session_ingested']) {
       sessionSeconds.push(new Date(date).getTime());
     }
     this.sessionMinDate = new Date(Math.min(...sessionSeconds));
@@ -240,7 +247,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
 
     this.sessionDateFilter = (d: Date): boolean => {
       const sessionDates = [];
-      for (const date of this.daily_summary_menu['last_session_time']) {
+      for (const date of this.daily_summary_menu['latest_session_ingested']) {
         sessionDates.push(date.split('T')[0]);
       }
 
@@ -264,6 +271,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     focusOn = event.target.name;
     const referenceMenuReq = this.filterRequests(focusOn);
     if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
+      // console.log('reference menu NOT empty - creating new menu');
       this.dailySummaryService.getSummaryMenu(referenceMenuReq);
       this.summaryMenuSubscription = this.dailySummaryService.getSummaryMenuLoadedListener()
         .subscribe((summaryInfo: any) => {
@@ -272,17 +280,22 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
         });
     } else {
       // console.log('reference menu empty - creating all menu');
+      // console.log('length of allSummary is: ', this.allSummary.length);
       this.createMenu(this.allSummary);
     }
   }
 
   updateMenu() {
     const menuRequest = this.filterRequests();
+    // console.log('attempting updateMenu - menuRequest is: ', menuRequest);
+    // console.log('allMenu length here (updateMenu) is: ', this.allSummary.length);
     if (Object.entries(menuRequest).length > 1) {
       this.dailySummaryService.getSummaryMenu(menuRequest);
       this.dailySummaryService.getSummaryMenuLoadedListener()
         .subscribe((sessions: any) => {
           this.createMenu(sessions);
+          // console.log('menu has been updated - requested session length is - ', sessions.length);
+          // console.log('menu has been updated - checking all session length - ', this.allSummary.length);
         });
     }
   }
@@ -297,15 +310,15 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
       const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
       if (filter[1] && filterKey !== focusedField) {
-        if (filterKey === 'last_session_time') {
+        if (filterKey === 'latest_session_ingested') {
           if (!this.dateRangeToggle) {
             const sessionST = new Date(filter[1].toString());
             const rangeStartTime = '00:00:00';
             const rangeEndTime = '23:59:59';
             const startString = sessionST.toISOString().split('T')[0] + 'T' + rangeStartTime;
             const endString = sessionST.toISOString().split('T')[0] + 'T' + rangeEndTime;
-            const rangeStart = '"' + 'last_session_time>' + '\'' + startString + '\'' + '"';
-            const rangeEnd = '"' + 'last_session_time<' + '\'' + endString + '\'' + '"';
+            const rangeStart = '"' + 'latest_session_ingested>' + '\'' + startString + '\'' + '"';
+            const rangeEnd = '"' + 'latest_session_ingested<' + '\'' + endString + '\'' + '"';
             if (requestJSONstring.length > 0) {
               requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
             } else {
@@ -323,8 +336,8 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
             const rangeEndTime = '23:59:59';
             const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
             const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
-            const rangeStart = '"' + 'last_session_time>' + '\'' + startString + '\'' + '"';
-            const rangeEnd = '"' + 'last_session_time<' + '\'' + endString + '\'' + '"';
+            const rangeStart = '"' + 'latest_session_ingested>' + '\'' + startString + '\'' + '"';
+            const rangeEnd = '"' + 'latest_session_ingested<' + '\'' + endString + '\'' + '"';
             if (requestJSONstring.length > 0) {
               requestJSONstring += ',' + rangeStart + ',' + rangeEnd;
             } else {
@@ -335,7 +348,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
             const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
             const rangeStartTime = '00:00:00';
             const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
-            const rangeStart = '"' + 'last_session_time>' + '\'' + startString + '\'' + '"';
+            const rangeStart = '"' + 'latest_session_ingested>' + '\'' + startString + '\'' + '"';
             if (requestJSONstring.length > 0) {
               requestJSONstring += ',' + rangeStart;
             } else {
@@ -346,7 +359,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
             const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
             const rangeEndTime = '23:59:59';
             const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
-            const rangeEnd = '"' + 'last_session_time<' + '\'' + endString + '\'' + '"';
+            const rangeEnd = '"' + 'latest_session_ingested<' + '\'' + endString + '\'' + '"';
             if (requestJSONstring.length > 0) {
               requestJSONstring += ',' + rangeEnd;
             } else {
@@ -371,11 +384,11 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.summary = [];
     const request = this.filterRequests();
-    request['__order'] = 'last_session_time DESC';
+    request['__order'] = 'lab_name, latest_session_ingested DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
       this.filterStoreService.storeSummaryFilter(request);
-      this.dailySummaryService.getSummary(request);
-      this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
+      this.dailySummaryService.getSummary2(request);
+      this.summarySubscription2 = this.dailySummaryService.getSummary2LoadedListener()
         .subscribe((summaryInfo: any) => {
           const viewStatusObservable = new Observable((observer) => {
             // console.log('making full menu with ', summaryInfo);
@@ -386,7 +399,6 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
           });
           viewStatusObservable.subscribe(updatedSummary => {
             // console.log('updated summary - applied filter:', updatedSummary);
-            this.allSummary = updatedSummary;
             this.summary = updatedSummary;
             this.dataSource = new MatTableDataSource(this.summary);
             this.dataSource.sort = this.sort;
@@ -408,7 +420,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   resetFilter() {
     // console.log('resetting filter');
     this.loading = true;
-    this.dailySummaryService.getSummary({ '__order': 'last_session_time DESC' });
+    this.dailySummaryService.getSummary({ '__order': 'lab_name, latest_session_ingested DESC' });
     this.filterStoreService.clearSummaryFilter();
     this.summarySubscription = this.dailySummaryService.getSummaryLoadedListener()
       .subscribe((summaryInfo: any) => {

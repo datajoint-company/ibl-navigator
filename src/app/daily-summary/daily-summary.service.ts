@@ -12,6 +12,12 @@ export class DailySummaryService {
   private dailySummary: Array<Object>;
   private dailySummaryLoaded = new Subject();
 
+  private dailySummary2: Array<Object>;
+  private dailySummary2Loaded = new Subject();
+
+  private dailySummaryAllMenu: Array<Object>;
+  private dailySummaryAllMenuLoaded = new Subject();
+
   private dailySummaryMenu: Array<Object>;
   private dailySummaryMenuLoaded = new Subject();
 
@@ -43,13 +49,31 @@ export class DailySummaryService {
     return this.dailySummaryLoaded.asObservable();
   }
 
+  getSummary2(summaryFilter) {
+    this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
+      .subscribe(
+        (filteredSummaryData: Array<Object>) => {
+          this.dailySummary2 = filteredSummaryData;
+          this.dailySummary2Loaded.next(this.dailySummary2);
+        },
+        (err: any) => {
+          console.log('err in http.post subscription');
+          console.log(err);
+        }
+      );
+  }
+
+  getSummary2LoadedListener() {
+    return this.dailySummary2Loaded.asObservable();
+  }
+
   getSummaryMenu(summaryFilter) {
     // console.log('fetching for menu');
     this.dailySummaryMenu = [];
     this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData: Array<Object>) => {
-          // console.log('length of menu: ', Object.entries(filteredSummaryData).length);
+          console.log('subscribing to requested menu - length of menu: ', Object.entries(filteredSummaryData).length);
 
           this.dailySummaryMenu = filteredSummaryData;
 
@@ -65,6 +89,31 @@ export class DailySummaryService {
   getSummaryMenuLoadedListener() {
     return this.dailySummaryMenuLoaded.asObservable();
   }
+
+
+  getSummaryAllMenu(summaryFilter) {
+    // console.log('fetching for menu');
+    this.dailySummaryAllMenu = [];
+    this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
+      .subscribe(
+        (filteredSummaryData: Array<Object>) => {
+          console.log('subscribing to all summary: length of menu: ', Object.entries(filteredSummaryData).length);
+
+          this.dailySummaryAllMenu = filteredSummaryData;
+
+          this.dailySummaryAllMenuLoaded.next(this.dailySummaryAllMenu);
+        },
+        (err: any) => {
+          console.log('err in http.post subscription');
+          console.log(err);
+        }
+      );
+  }
+
+  getSummaryAllMenuLoadedListener() {
+    return this.dailySummaryAllMenuLoaded.asObservable();
+  }
+
 
   getSummaryPlots(summaryFilter) {
     // console.log('fetching for summary plots');
