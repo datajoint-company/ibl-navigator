@@ -1,0 +1,100 @@
+<div class="mouse-info-container">
+  <div class="mouse-title">
+    <h5>Mouse <{{ mouse?.subject_nickname }}> Info</h5>
+    <button routerLink="/sessions" [queryParams]="mouse" mat-raised-button (click)="getSessions(mouse)">
+      See Sessions</button>
+  </div>
+  <div class="row mouse-info-table">
+    <table class="table col-lg-4 col-sm-6 col-xs-12 table-striped table-bordered table-sm">
+      <tr>
+        <th>Mouse Nickname</th>
+        <td>{{ mouse?.subject_nickname }}</td>
+      </tr>
+      <tr>
+        <th>Mouse UUID</th>
+        <td>{{ mouse?.subject_uuid }}</td>
+      </tr>
+      <tr>
+        <th>Mouse DOB</th>
+        <td>{{ mouse?.subject_birth_date }}</td>
+      </tr>
+      <tr>
+        <th>Lab</th>
+        <td>{{ mouse?.lab_name }}</td>
+      </tr>
+      <tr>
+        <th>Gender</th>
+        <td>{{ mouse?.sex }}</td>
+      </tr>
+      <tr>
+        <th>Project</th>
+        <td>{{ mouse?.projects }}</td>
+      </tr>
+      <tr>
+        <th>User</th>
+        <td>{{ mouse?.responsible_user }}</td>
+      </tr>
+    </table>
+    <table class="table col-lg-3 col-sm-6 col-xs-12 table-striped table-bordered table-sm">
+      <tr>
+        <th>Ear Mark</th>
+        <td>{{ mouse?.ear_mark }}</td>
+      </tr>
+      <tr>
+        <th>Mouse Line</th>
+        <td>{{ mouse?.subject_line }}</td>
+      </tr>
+      <tr>
+        <th>Source</th>
+        <td>{{ mouse?.subject_source }}</td>
+      </tr>
+      <tr>
+        <th>Protocol Number</th>
+        <td>{{ mouse?.protocol_number }}</td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td>{{ mouse?.subject_description }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+<hr>
+<div class="mouse-plots-container">
+  <h5>Mouse Plots</h5>
+  <div *ngIf="mouse">
+    <div class="h-long-plot">
+      <app-water-weight-plot [mouseInfo]="mouse"></app-water-weight-plot>
+    </div>
+    <div class="short-plots-container">
+      <div class="single-plot">
+        <app-trial-counts-session-duration [mouseInfo]="mouse"></app-trial-counts-session-duration>
+      </div>
+      <div class="single-plot">
+        <app-performance-reaction-time-plot [mouseInfo]="mouse"></app-performance-reaction-time-plot>
+      </div>
+      <div class="single-plot">
+        <app-contrast-heatmap-plot [mouseInfo]="mouse"></app-contrast-heatmap-plot>
+      </div>
+    </div>
+    <div class="v-long-plot-container">
+      <app-fit-par-plots [mouseInfo]="mouse"></app-fit-par-plots>
+    </div>
+    <div class="row fetch-sessions">
+      <button routerLink="/sessions" [queryParams]="mouse" mat-raised-button (click)="getSessions(mouse)">
+        See Sessions</button>
+    </div>
+    <div class="row by-date-plots-container">
+      <app-by-date-result-plots [mouseInfo]="mouse"></app-by-date-result-plots>
+    </div>
+    <div class="sessionPCP-container row">
+      <app-animated-psych-curve-plot [mouseInfo]="mouse"></app-animated-psych-curve-plot>
+    </div>
+    <br>
+  </div>
+
+</div>
+
+
+<!-- <app-session-list *ngIf="mouse" [preRestriction]="mouse"></app-session-list> -->
+

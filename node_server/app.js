@@ -411,6 +411,11 @@ app.get('/api/plots/testPlot', (req, res, next) => {
     
 });
 
+//Docker Healthcheck
+app.get('/api/version', (req, res, next) => {
+    res.send('Version: v1.0');    
+});
+
 // ============================================================= //
 
 

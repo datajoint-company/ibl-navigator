@@ -1,0 +1,8 @@
+div.summary-plots {
+    display: flex;
+    flex-direction: row;
+}
+
+div.daily-plot {
+    float: left;
+}
