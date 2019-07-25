@@ -52,6 +52,7 @@ import { SummaryPlotsComponent } from './daily-summary/summary-plots/summary-plo
 import { AnimatedPsychCurvePlotComponent } from './mouse-list/mouse/animated-psych-curve-plot/animated-psych-curve-plot.component';
 import { SessionRTCPlotComponent } from './session-list/session/session-rtc-plot/session-rtc-plot.component';
 import { SessionRTTNPlotComponent } from './session-list/session/session-rttn-plot/session-rttn-plot.component';
+import { RasterPlotsComponent } from './cell-list/cell/raster-plots/raster-plots.component';
 
 
 const appRoutes: Routes = [
@@ -70,10 +71,22 @@ const appRoutes: Routes = [
     path: 'mice',
       canActivate: [AuthGuard],
       canActivateChild: [AuthGuard],
-      component: MouseListComponent,
-      children: [
-        { path: ':lab/:mousename', component: MouseComponent }
-      ]
+      component: MouseListComponent
+  },
+  {
+    path: 'cell',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    children: [{
+      path: ':mouseID',
+      children: [{
+        path: ':sessionTime',
+        children: [{
+          path: ':clusterID',
+          component: CellComponent
+        }]
+      }]
+    }]
   },
   {
     path: 'session/:sessionID',
@@ -85,17 +98,17 @@ const appRoutes: Routes = [
     path: 'sessions',
       canActivate: [AuthGuard],
       canActivateChild: [AuthGuard],
-      component: SessionListComponent,
-      children: [
-        { path: ':sessionID', component: SessionComponent },
-        { path: ':sessionID/:batchname', component: EachBatchComponent }
-      ]
+      component: SessionListComponent
   },
   {
     path: 'summary',
     canActivate: [AuthGuard],
     component: DailySummaryComponent
   },
+  {
+    path: 'testRaster',
+    component: ViewSamplePlotsComponent
+  }
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
   // { path: '**', redirectTo: '/not-found' }
 ];
@@ -129,7 +142,8 @@ const appRoutes: Routes = [
     AnimatedPsychCurvePlotComponent,
     SessionRTCPlotComponent,
     SessionRTTNPlotComponent,
-    SessionPlotDialog
+    SessionPlotDialog,
+    RasterPlotsComponent
   ],
   imports: [
     BrowserModule,

@@ -33,7 +33,27 @@ action = mkvmod('action')
 acquisition = mkvmod('acquisition')
 plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
+plotting_ephys = mkvmod('plotting_ephys')
+ephys = mkvmod('ephys')
 
+dj.config['stores'] = {
+    'ephys': dict(
+        protocol='s3',
+        endpoint='s3.amazonaws.com',
+        access_key=os.environ.get('S3_ACCESS'),
+        secret_key=os.environ.get('S3_SECRET'),
+        bucket='ibl-dj-external',
+        location='/ephys'
+    ),
+    'plotting': dict(
+        protocol='s3',
+        endpoint='s3.amazonaws.com',
+        access_key=os.environ.get('S3_ACCESS'),
+        secret_key=os.environ.get('S3_SECRET'),
+        bucket='ibl-dj-external',
+        location='/plotting'
+    )
+}
 
 class DateTimeEncoder(json.JSONEncoder):
     ''' teach json to dump datetimes, etc '''
@@ -50,6 +70,7 @@ class DateTimeEncoder(json.JSONEncoder):
         np.int64: str,
         np.float32: str,
         np.float64: str,
+        np.ndarray: list
     }
 
     def default(self, o):
@@ -87,7 +108,9 @@ reqmap = {
     'fitpars': plotting_behavior.CumulativeSummary.FitPars,
     'datepsych': plotting_behavior.DatePsychCurve,
     'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
-    'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber
+    'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
+    'cluster': ephys.Cluster,
+    'raster': plotting_ephys.Raster
 }
 dumps = DateTimeEncoder.dumps
 
@@ -183,6 +206,15 @@ def handle_q(subpath, args, proj, **kwargs):
         plotting_behavior.CumulativeSummary.PerformanceReactionTime & plotting_behavior.SubjectLatestDate
 	    # find latest plots for mouse with summary
 	    q = plots * mouse_we_care & args
+    elif subpath == 'clusternavplot':
+        print('fetching cluster plot info...')
+        
+        # specify attributes to exclude from the fetch to save bandwidth (in case no "proj" specified)
+        exclude_attrs = ('-cluster_mean_waveform', '-cluster_template_waveform', '-cluster_waveform_duration',
+                         '-cluster_spike_times', '-cluster_spike_depth', '-cluster_spike_amps')
+        q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
+             & args).proj(..., *exclude_attrs)
+        print(q)
     else:
         abort(404)
 
@@ -191,6 +223,9 @@ def handle_q(subpath, args, proj, **kwargs):
     else:
         ret = q.fetch(**kwargs)
 
+    # print('D type', ret.dtype)
+    # print(ret)
+    print('About to return ', len(ret), 'entries')
     return dumps(ret)
 
 

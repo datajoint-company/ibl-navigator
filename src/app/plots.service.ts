@@ -15,7 +15,7 @@ export class PlotsService {
     constructor(private http: HttpClient) {}
 
     getPlots(type, id) {
-        this.http.get(`http://localhost:3000/api/plots/${ type }/${ id }`)
+        this.http.get(`http://localhost:3333/api/plots/${ type }/${ id }`)
         .subscribe((plotData) => {
             this.plots = plotData;
             console.log('plots (in service getPlots) are: ');
@@ -26,7 +26,7 @@ export class PlotsService {
 
     retrievePlot(plotInfo) {
         console.log('POSTing for:', plotInfo);
-        this.http.post(`http://localhost:3000/api/plot/`, plotInfo, { responseType: 'text' })
+        this.http.post(`http://localhost:3333/api/plot/`, plotInfo, { responseType: 'text' })
             .subscribe(
                 (plotData) => {
                     this.plots = plotData;
@@ -50,7 +50,7 @@ export class PlotsService {
                 'Content-Type': 'application/json'
             })
         };
-        this.http.post('http://localhost:3000/api/mice/', someData, httpOptions)
+        this.http.post('http://localhost:3333/api/mice/', someData, httpOptions)
             .subscribe(
                 (x) => {
                     this.somePost = x;
@@ -75,7 +75,7 @@ export class PlotsService {
     }
 
     getSamplePlot() {
-        this.http.get(`http://localhost:3000/api/plots/testPlot`)
+        this.http.get(`http://localhost:3333/api/plots/testPlot`)
         .subscribe((plotData) => {
             this.psychPlot = plotData;
             console.log('psych sample plots (in service getPlots) are: ');

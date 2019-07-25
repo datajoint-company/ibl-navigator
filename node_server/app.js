@@ -50,7 +50,7 @@ app.post('/api/plot', (req, res) =>{
         async function getRasterPlot() {
             try {
                 console.log('fetching raster plot');
-                return await readFile(`./src/assets/plotData/${req.body.type}${req.body.id}.png`, 'base64');
+                return await readFile(`../src/assets/plotData/${req.body.type}${req.body.id}.png`, 'base64');
             } catch (e) {
                 console.log('e', e);
                 errorInfo = {
@@ -92,7 +92,7 @@ app.post('/api/plot', (req, res) =>{
         async function getPlot() {
             try {
                 console.log('fetching plot...');
-                return await readFile(`./src/assets/plotData/${req.body.type}${req.body.id}.json`, 'utf-8');
+                return await readFile(`../src/assets/plotData/${req.body.type}${req.body.id}.json`, 'utf-8');
             } catch (e) {
                 console.log('e', e);
                 errorInfo = {
@@ -127,7 +127,7 @@ app.get('/api/plots/:type/:id', (req, res, next) => {
     async function readThis() {
         // let plot;
         try {
-            return await readFile(`./src/assets/plotData/${ req.params.type }${ req.params.id }.png`);
+            return await readFile(`../src/assets/plotData/${ req.params.type }${ req.params.id }.png`);
         } catch(e) {
             console.log('e', e);
         }
@@ -363,6 +363,24 @@ app.post('/api/plot/dateReactionTimeTrialNumberPlot', (req, res) => {
     })
 })
 
+app.post('/api/plot/cluster', (req, res) => {
+    request.post('http://localhost:5000/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+app.post('/api/plot/raster', (req, res) => {
+    request.post('http://localhost:5000/v0/raster', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
 
 app.get('/api/plots/testPlot', (req, res, next) => {
 
@@ -370,7 +388,7 @@ app.get('/api/plots/testPlot', (req, res, next) => {
         // let plot;
         try {
             // return await readFile(`./src/assets/plotData/data_dateTime_weight${ req.params.id }.json`, 'utf-8');
-            return await readFile(`./src/assets/plotData/psych_results_sized.json`, 'utf-8');
+            return await readFile(`../src/assets/plotData/psych_results_sized.json`, 'utf-8');
         } catch(e) {
             console.log('e', e);
         }

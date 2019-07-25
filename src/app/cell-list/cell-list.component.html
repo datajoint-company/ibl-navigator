@@ -1,3 +1,39 @@
-<p>
-  cell-list works!
-</p>
+<div *ngIf="cells">
+  <h3>Clusters</h3>
+</div>
+<p>id: {{ clickedClusterId }}</p>
+<div class="row">
+  <div #clusterListNavPlot class="col-6" (click)="testMethod($event)"></div>
+  
+  <div *ngIf="cells">
+    <table class="table table-sm table-hover col-4">
+      <thead>
+        <th>Cluster ID</th>
+        <th>Probe Index</th>
+        <!-- <th>Probe Model Name</th> -->
+        <!-- <th>Cluster Revision</th> -->
+        <!-- <th>Channel Group ID</th> -->
+        <!-- <th>Channel ID</th> -->
+        <th>Cluster Depth</th>
+        <th>Cluster Amp</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cl of cells" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : ''}"
+                  routerLink="/cell/{{cl?.subject_uuid}}/{{cl?.session_start_time}}/{{cl?.cluster_id}}">
+
+          <td>{{ cl.cluster_id }}</td>
+          <td>{{ cl.probe_idx }}</td>
+          <!-- <td>{{ cl.probe_model_name}}</td> -->
+          <!-- <td>{{ cl.cluster_revision }}</td> -->
+          <!-- <td>{{ cl.channel_group_id }}</td> -->
+          <!-- <td>{{ cl.channel_id }}</td> -->
+          <td>{{ cl.cluster_depth }}</td>
+          <td>{{ cl.cluster_amp }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+      
+    
+  </div>
+</div>
