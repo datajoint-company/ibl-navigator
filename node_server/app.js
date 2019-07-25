@@ -364,19 +364,27 @@ app.post('/api/plot/dateReactionTimeTrialNumberPlot', (req, res) => {
 })
 
 app.post('/api/plot/cluster', (req, res) => {
+    const timeX = new Date()
+    console.log('requesting cluster list: ', timeX);
     request.post('http://localhost:5000/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
+        const timeY = new Date()
+        console.log('cluster list took ', timeY - timeX, ' ms')
         res.send(body);
     })
 })
 
 app.post('/api/plot/raster', (req, res) => {
+    const timeA = new Date()
+    console.log('requesting rasters to backend: ', timeA);
     request.post('http://localhost:5000/v0/raster', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
+        const timeB = new Date()
+        console.log('rasters took ', timeB - timeA, ' ms to receive from backend')
         res.send(body);
     })
 })

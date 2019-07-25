@@ -161,7 +161,17 @@ def do_req(subpath):
         if proj:
             q = q.proj(*proj)
 
-        return dumps(q.fetch(**kwargs))
+
+        from time import time
+        start = time()
+        print('about to fetch requested object')
+        print(start)
+        fetched = q.fetch(**kwargs)
+        dur = time() - start
+        print('Took {} seconds to fetch dataset'.format(dur))
+        return dumps(fetched)
+        # return dumps(q.fetch(**kwargs))
+        
 
 
 def handle_q(subpath, args, proj, **kwargs):

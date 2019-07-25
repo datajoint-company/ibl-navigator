@@ -61,7 +61,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 size: 15,
                 color: 'rgba(255, 255, 255, 0.2',
                 line: {
-                  color: color_data,
+                  color: 'rgba(132, 0, 0, 0.5)',
                   width: 2
                 }
               }
@@ -71,9 +71,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               yaxis: {
                 title: 'cluster depth (µm)'
               },
-              xaxis: {
-                title: 'cluster amplitutde (µV)'
-              },
+              
               hovermode: 'closest'
             };
 

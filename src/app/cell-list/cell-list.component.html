@@ -1,7 +1,7 @@
 <div *ngIf="cells">
-  <h3>Clusters</h3>
+  <h3>Cells</h3>
 </div>
-<p>id: {{ clickedClusterId }}</p>
+<!-- <p>id: {{ clickedClusterId }}</p> -->
 <div class="row">
   <!-- <div #clusterListNavPlot class="col-6" (click)="testMethod($event)"></div> -->
   <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (click)="clusterSelected($event)"></plotly-plot>

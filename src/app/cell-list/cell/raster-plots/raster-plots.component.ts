@@ -71,25 +71,34 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
     this.rasterEventFeedbackSubscription = this.cellPlotsService.getRasterEventFeedbackLoadedListener()
       .subscribe((plots: any) => {
         if (plots) {
+          const timeGet = new Date();
           this.eventType = 'feedback';
           this.sortType = 'trial_id';
           this.plotsByEvents = plots;
-          console.log('successfully fetched event feeback rasters');
-          console.log(Object.entries(plots).length);
+          console.log('successfully fetched event feedback rasters');
+          console.log(timeGet);
           for (const item of plots) {
             if (item['sort_by'] === 'trial_id') {
               if (item['trial_condition'] === 'all trials') {
-                  const origRaster_AT = item['plotting_data'];
+                const origRaster_AT = item['plotting_data'];
+                console.log('printing all trials plot for feedback rasters');
                 Plotly.newPlot(element_AT, origRaster_AT['data'], origRaster_AT['layout'], this.plotConfig);
+                // console.log('done plotting:' , new Date() - timeGet, 'ms');
               } else if (item['trial_condition'] === 'correct trials') {
-                  const origRaster_CT = item['plotting_data'];
+                const origRaster_CT = item['plotting_data'];
+                console.log('printing correct trials plot for feedback rasters');
                 Plotly.newPlot(element_CT, origRaster_CT['data'], origRaster_CT['layout'], this.plotConfig);
+                // console.log('done plotting:', new Date() - timeGet, 'ms');
               } else if (item['trial_condition'] === 'right trials') {
-                  const origRaster_RT = item['plotting_data'];
+                const origRaster_RT = item['plotting_data'];
+                console.log('printing right plot for feedback rasters');
                 Plotly.newPlot(element_RT, origRaster_RT['data'], origRaster_RT['layout'], this.plotConfig);
+                // console.log('done plotting:', new Date() - timeGet, 'ms');
               } else if (item['trial_condition'] === 'left trials') {
-                  const origRaster_LT = item['plotting_data'];
+                const origRaster_LT = item['plotting_data'];
+                console.log('printing left trials plot for feedback rasters');
                 Plotly.newPlot(element_LT, origRaster_LT['data'], origRaster_LT['layout'], this.plotConfig);
+                // console.log('done plotting:', new Date() - timeGet, 'ms');
               }
             }
           }
@@ -125,15 +134,19 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
             if (item['sort_by'] === this.sortType) {
               if (item['trial_condition'] === 'all trials') {
                 const origRaster_AT = item['plotting_data'];
+                origRaster_AT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_AT, origRaster_AT['data'], origRaster_AT['layout']);
               } else if (item['trial_condition'] === 'correct trials') {
                 const origRaster_CT = item['plotting_data'];
+                origRaster_CT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_CT, origRaster_CT['data'], origRaster_CT['layout']);
               } else if (item['trial_condition'] === 'right trials') {
                 const origRaster_RT = item['plotting_data'];
+                origRaster_RT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_RT, origRaster_RT['data'], origRaster_RT['layout']);
               } else if (item['trial_condition'] === 'left trials') {
                 const origRaster_LT = item['plotting_data'];
+                origRaster_LT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_LT, origRaster_LT['data'], origRaster_LT['layout']);
               }
             }
@@ -151,15 +164,19 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
             if (item['sort_by'] === this.sortType) {
               if (item['trial_condition'] === 'all trials') {
                 const origRaster_AT = item['plotting_data'];
+                origRaster_AT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_AT, origRaster_AT['data'], origRaster_AT['layout']);
               } else if (item['trial_condition'] === 'correct trials') {
                 const origRaster_CT = item['plotting_data'];
+                origRaster_CT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_CT, origRaster_CT['data'], origRaster_CT['layout']);
               } else if (item['trial_condition'] === 'right trials') {
                 const origRaster_RT = item['plotting_data'];
+                origRaster_RT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_RT, origRaster_RT['data'], origRaster_RT['layout']);
               } else if (item['trial_condition'] === 'left trials') {
                 const origRaster_LT = item['plotting_data'];
+                origRaster_LT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_LT, origRaster_LT['data'], origRaster_LT['layout']);
               }
             }
@@ -177,15 +194,19 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
             if (item['sort_by'] === this.sortType) {
               if (item['trial_condition'] === 'all trials') {
                 const origRaster_AT = item['plotting_data'];
+                origRaster_AT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_AT, origRaster_AT['data'], origRaster_AT['layout']);
               } else if (item['trial_condition'] === 'correct trials') {
                 const origRaster_CT = item['plotting_data'];
+                origRaster_CT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_CT, origRaster_CT['data'], origRaster_CT['layout']);
               } else if (item['trial_condition'] === 'right trials') {
                 const origRaster_RT = item['plotting_data'];
+                origRaster_RT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_RT, origRaster_RT['data'], origRaster_RT['layout']);
               } else if (item['trial_condition'] === 'left trials') {
                 const origRaster_LT = item['plotting_data'];
+                origRaster_LT['layout']['showlegend'] = false;
                 Plotly.newPlot(element_LT, origRaster_LT['data'], origRaster_LT['layout']);
               }
             }
@@ -210,15 +231,19 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
         console.log('fetching sorting raster by: ', sortType);
         if (item['trial_condition'] === 'all trials') {
           const origRaster_AT = item['plotting_data'];
+          origRaster_AT['layout']['showlegend'] = false;
           Plotly.newPlot(element_AT, origRaster_AT['data'], origRaster_AT['layout']);
         } else if (item['trial_condition'] === 'correct trials') {
           const origRaster_CT = item['plotting_data'];
+          origRaster_CT['layout']['showlegend'] = false;
           Plotly.newPlot(element_CT, origRaster_CT['data'], origRaster_CT['layout']);
         } else if (item['trial_condition'] === 'right trials') {
           const origRaster_RT = item['plotting_data'];
+          origRaster_RT['layout']['showlegend'] = false;
           Plotly.newPlot(element_RT, origRaster_RT['data'], origRaster_RT['layout']);
         } else if (item['trial_condition'] === 'left trials') {
           const origRaster_LT = item['plotting_data'];
+          origRaster_LT['layout']['showlegend'] = false;
           Plotly.newPlot(element_LT, origRaster_LT['data'], origRaster_LT['layout']);
         }
       } 
