@@ -13,6 +13,40 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
   plotsByEvents: any;
   eventType: string;
   sortType: string;
+  plotConfig = {
+    // responsive: true,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
 
   private allRastersSubscription: Subscription;
   private rasterEventFeedbackSubscription: Subscription;
@@ -46,16 +80,16 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
             if (item['sort_by'] === 'trial_id') {
               if (item['trial_condition'] === 'all trials') {
                   const origRaster_AT = item['plotting_data'];
-                Plotly.newPlot(element_AT, origRaster_AT['data'], origRaster_AT['layout']);
+                Plotly.newPlot(element_AT, origRaster_AT['data'], origRaster_AT['layout'], this.plotConfig);
               } else if (item['trial_condition'] === 'correct trials') {
                   const origRaster_CT = item['plotting_data'];
-                  Plotly.newPlot(element_CT, origRaster_CT['data'], origRaster_CT['layout']);
+                Plotly.newPlot(element_CT, origRaster_CT['data'], origRaster_CT['layout'], this.plotConfig);
               } else if (item['trial_condition'] === 'right trials') {
                   const origRaster_RT = item['plotting_data'];
-                  Plotly.newPlot(element_RT, origRaster_RT['data'], origRaster_RT['layout']);
+                Plotly.newPlot(element_RT, origRaster_RT['data'], origRaster_RT['layout'], this.plotConfig);
               } else if (item['trial_condition'] === 'left trials') {
                   const origRaster_LT = item['plotting_data'];
-                 Plotly.newPlot(element_LT, origRaster_LT['data'], origRaster_LT['layout']);
+                Plotly.newPlot(element_LT, origRaster_LT['data'], origRaster_LT['layout'], this.plotConfig);
               }
             }
           }

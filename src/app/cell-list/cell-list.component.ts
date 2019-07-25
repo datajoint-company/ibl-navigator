@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 
 import { CellListService } from './cell-list.service';
 
-declare var Plotly: any;
+// declare var Plotly: any;
 
 @Component({
   selector: 'app-cell-list',
@@ -12,27 +12,25 @@ declare var Plotly: any;
   styleUrls: ['./cell-list.component.css']
 })
 export class CellListComponent implements OnInit, OnDestroy, DoCheck {
-  d3 = Plotly.d3;
+  // d3 = Plotly.d3;
   cells: any;
   session: any;
   clickedClusterId: number;
+  plot_data;
+  plot_layout;
+  plot_config;
 
 
   private cellListSubscription: Subscription;
 
   @Input() sessionInfo: Object;
-  @ViewChild('clusterListNavPlot') el_nav: ElementRef;
+  @ViewChild('navTable') el_nav: ElementRef;
 
   constructor(public cellListService: CellListService) { }
 
-  @HostListener('plotly_click', ['$event']) onPlotlyClick(event) {
-    console.log('plotly click!!');
-    console.log(event);
-  }
   ngOnInit() {
-    const element = this.el_nav.nativeElement;
+    // const element = this.el_nav.nativeElement;
     this.session = this.sessionInfo;
-    this.clickedClusterId = 10;
     this.cellListService.retrieveCellList(this.sessionInfo);
     this.cellListSubscription = this.cellListService.getCellListLoadedListener()
         .subscribe((cellListData) => {
@@ -54,7 +52,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             console.log('y_data is: ', y_data);
             console.log('color_data is: ', color_data);
             console.log('size_data is: ', size_data);
-            const plot_data = [{
+            this.plot_data = [{
               x: x_data,
               y: y_data,
               customdata: id_data,
@@ -69,27 +67,41 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               }
             }];
 
-            const plot_layout = {
-              title: 'cluster navigation'
+            this.plot_layout = {
+              yaxis: {
+                title: 'cluster depth (µm)'
+              },
+              xaxis: {
+                title: 'cluster amplitutde (µV)'
+              },
+              hovermode: 'closest'
             };
 
-            Plotly.newPlot(element, plot_data, plot_layout);
+            this.plot_config = {
+              showLink: false,
+              showSendToCloud: false,
+              displaylogo: false,
+              modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+                              'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
+            };
+
+            // Plotly.newPlot(element, this.plot_data, this.plot_layout);
             
-            element.on('plotly_click', function (data) {
-              console.log('data:', data);
-              let pts = '';
-              for (let i = 0; i < data.points.length; i++) {
-                pts = 'amplitude = ' + data.points[i].x + '\ndepth = ' +
-                data.points[i].y.toPrecision(4) + '\nid= ' +
-                data.points[i].customdata + '\n\n';
-              }
-              console.log('original cluster id: ', this.clickedClusterId);
-              this.clickedClusterId = data.points[0].customdata;
-              console.log('Closest point clicked:\n\n' + pts);
-              console.log('clicked cluster id is: ', this.clickedClusterId);
-              console.log('clicked cluster id type is: ', typeof this.clickedClusterId);
-              return this.clickedClusterId;
-            });
+            // element.on('plotly_click', function (data) {
+            //   console.log('data:', data);
+            //   let pts = '';
+            //   for (let i = 0; i < data.points.length; i++) {
+            //     pts = 'amplitude = ' + data.points[i].x + '\ndepth = ' +
+            //     data.points[i].y.toPrecision(4) + '\nid= ' +
+            //     data.points[i].customdata + '\n\n';
+            //   }
+            //   console.log('original cluster id: ', this.clickedClusterId);
+            //   this.clickedClusterId = data.points[0].customdata;
+            //   console.log('Closest point clicked:\n\n' + pts);
+            //   console.log('clicked cluster id is: ', this.clickedClusterId);
+            //   console.log('clicked cluster id type is: ', typeof this.clickedClusterId);
+            //   return this.clickedClusterId;
+            // });
 
           }
         });
@@ -105,9 +117,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
 
-  testMethod(event) {
-    console.log('test method ran!');
-    console.log(event);
+  clusterSelected(data) {
+    const element = this.el_nav.nativeElement.children[1];
+    console.log('cluster selected!');
+    console.log(element);
+    const rows = element.querySelectorAll('tr');
+    console.log('printing rows');
+    console.log(rows);
+    if (data['points'] && data['points'][0]['customdata']) {
+      this.clickedClusterId = data['points'][0]['customdata'];
+      rows[this.clickedClusterId].scrollIntoView({
+                                      behavior: 'smooth',
+                                      block: 'center'});
+    }
+
   }
 
 }

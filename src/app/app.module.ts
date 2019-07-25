@@ -1,5 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import * as PlotlyJS from 'plotly.js/dist/plotly.js';
+import { PlotlyModule } from 'angular-plotly.js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
@@ -22,6 +25,7 @@ import { MatSelectModule,
          MatDialogModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 import { AuthGuard } from './auth/auth-guard.service';
 import { AppComponent } from './app.component';
@@ -54,6 +58,7 @@ import { SessionRTCPlotComponent } from './session-list/session/session-rtc-plot
 import { SessionRTTNPlotComponent } from './session-list/session/session-rttn-plot/session-rttn-plot.component';
 import { RasterPlotsComponent } from './cell-list/cell/raster-plots/raster-plots.component';
 
+PlotlyModule.plotlyjs = PlotlyJS;
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
@@ -146,6 +151,7 @@ const appRoutes: Routes = [
     RasterPlotsComponent
   ],
   imports: [
+    CommonModule, PlotlyModule,
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
