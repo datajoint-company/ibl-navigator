@@ -4,6 +4,9 @@ services:
   iblapi:
     build: ./backend
     image: iblapi:v1.0
+    environment:
+    - DJ_USER=maho
+    - DJ_HOST=datajoint.internationalbrainlab.org
     env_file: ./.env
     # volumes:
     #   - ./backend:/src/iblapi
