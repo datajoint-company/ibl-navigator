@@ -1,0 +1,17 @@
+.trial-condition-raster {
+    float: left;
+    text-align: center;
+    padding: 30px;
+    border: 0.5px lightgrey solid;
+    border-left: 1px lightgrey solid;
+}
+
+.rasterPlotSelectors {
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.order-buttons {
+    display: flex;
+    flex-direction: column;
+}

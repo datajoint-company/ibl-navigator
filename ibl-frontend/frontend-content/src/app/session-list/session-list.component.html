@@ -1,0 +1,234 @@
+<div class="session-list-container">
+<h4>
+  Filter Sessions
+</h4>
+<form [formGroup]="session_filter_form">
+  <div class="filters col-12">
+    <div class="session-field-filters form-section">
+      <mat-form-field class="long">
+        <label for="">Task Protocol</label>
+        <input matInput type="text" name="task_protocol" formControlName="task_protocol_control" [matAutocomplete]="auto"
+          (focus)="stepBackMenu($event)">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let tp of filteredTaskProtocolOptions | async" [value]="tp" (click)="updateMenu()">{{ tp }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field class="long">
+        <label for="">Session UUID</label>
+        <input matInput type="text" name="session_uuid" formControlName="session_uuid_control" [matAutocomplete]="auto2"
+          (focus)="stepBackMenu($event)">
+        <mat-autocomplete #auto2="matAutocomplete">
+          <mat-option *ngFor="let sessionUuid of filteredSessionUuidOptions | async" [value]="sessionUuid"
+            (click)="updateMenu()">{{ sessionUuid }}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <div class="session-date-filter">
+        <div class="date-range-toggler">
+          <label for="dateRangeToggler">Session Start Date</label>
+          <div>
+            On&nbsp;<mat-slide-toggle name="dateRangeToggler" [checked]="dateRangeToggle" (change)="dateRangeToggle=!dateRangeToggle">From/To
+            </mat-slide-toggle>
+          </div>
+        </div>
+        <mat-form-field class="short" *ngIf="!dateRangeToggle">
+          <label for="">Sessions On</label>
+          <input matInput formControlName="session_start_time_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)">
+          <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
+        </mat-form-field>
+        <div formGroupName="session_range_filter" *ngIf="dateRangeToggle" class="range-filter-inputs">
+          <mat-form-field class="short">
+            <label for="">Sessions From</label>
+            <input matInput formControlName="session_range_start_control" [matDatepicker]="datePickerSRS" [min]="sessionMinDate"
+              [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()"
+              (focus)="stepBackMenu($event)">
+            <mat-datepicker-toggle matSuffix [for]="datePickerSRS"></mat-datepicker-toggle>
+            <mat-datepicker #datePickerSRS></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="short">
+            <label for="">Sessions Up To</label>
+            <input matInput formControlName="session_range_end_control" [matDatepicker]="datePickerSRE" [min]="sessionMinDate"
+              [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()"
+              (focus)="stepBackMenu($event)">
+            <mat-datepicker-toggle matSuffix [for]="datePickerSRE"></mat-datepicker-toggle>
+            <mat-datepicker #datePickerSRE></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+       
+    </div>
+    <div class="mouse-field-filters form-section">
+      <mat-form-field>
+        <label>Lab</label>
+        <input matInput type="text" name="lab_name" formControlName="lab_name_control" [matAutocomplete]="autoCompLN"
+          (focus)="stepBackMenu($event)">
+        <mat-autocomplete #autoCompLN="matAutocomplete">
+          <mat-option *ngFor="let lab of filteredLabNameOptions | async" [value]="lab" (click)="updateMenu()">
+            {{ lab }}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field>
+        <label>Mouse Nickname</label>
+        <input matInput type="text" name="subject_nickname" formControlName="subject_nickname_control"
+          [matAutocomplete]="autoCompSN" (focus)="stepBackMenu($event)">
+        <mat-autocomplete #autoCompSN="matAutocomplete">
+          <mat-option *ngFor="let nickname of filteredSubjectNicknameOptions | async" [value]="nickname"
+            (click)="updateMenu()">
+            {{ nickname }}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field class="long">
+        <label>Project</label>
+        <input matInput type="text" name="session_project" formControlName="session_project_control"
+          [matAutocomplete]="autoCompSProj" (focus)="stepBackMenu($event)">
+        <mat-autocomplete #autoCompSProj="matAutocomplete">
+          <mat-option *ngFor="let project of filteredSessionProjectOptions | async" [value]="project" (click)="updateMenu()">
+            {{ project }}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field class="long">
+        <label>Mouse UUID</label>
+        <input matInput type="text" name="subject_uuid" formControlName="subject_uuid_control"
+          [matAutocomplete]="autoCompSUUID" (focus)="stepBackMenu($event)">
+        <mat-autocomplete #autoCompSUUID="matAutocomplete">
+          <mat-option *ngFor="let uuid of filteredSubjectUuidOptions | async" [value]="uuid" (click)="updateMenu()">
+            {{ uuid }}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field class="short">
+        <label>DOB</label>
+        <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker"
+          [matDatepickerFilter]="miceBirthdayFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)"
+          placeholder="DOB - i.e. 10/23/2018">
+        <mat-datepicker-toggle matSuffix [for]="DOBPicker"></mat-datepicker-toggle>
+        <mat-datepicker #DOBPicker></mat-datepicker>
+      </mat-form-field>
+
+      <div class="mouse_gender_filter">
+        <label>Gender</label>
+        <div class="mouse_gender_menu" formArrayName="sex_control"> 
+          <mat-checkbox class="mouse_gender_menu_chbox" [name]="session_menu.sex" [formControlName]="i"
+            *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()">
+            {{ sex.key }}
+          </mat-checkbox>
+        </div>
+      </div>
+
+      <mat-form-field>
+        <label>Line</label>
+        <input matInput type="text" name="subject_line" formControlName="subject_line_control" [matAutocomplete]="autoCompSL"
+          (focus)="stepBackMenu($event)">
+        <mat-autocomplete #autoCompSL="matAutocomplete">
+          <mat-option *ngFor="let line of filteredSubjectLineOptions | async" [value]="line" (click)="updateMenu()">
+            {{ line }}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field>
+        <label>User</label>
+        <input matInput type="text" name="responsible_user" formControlName="responsible_user_control"
+          [matAutocomplete]="autoCompRU" (focus)="stepBackMenu($event)">
+        <mat-autocomplete #autoCompRU="matAutocomplete">
+          <mat-option *ngFor="let responsible_user of filteredResponsibleUserOptions | async" [value]="responsible_user"
+            (click)="updateMenu()">{{ responsible_user }}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      
+    </div>
+  </div>
+  <div>
+    <button mat-raised-button (click)="applyFilter()">Apply Filter</button>
+  </div>
+  <div>
+    <button mat-raised-button (click)="clearControl()">Reset Filter</button>
+  </div>
+  <div class="nplot_filter">
+    <mat-checkbox class="nplot_chbox" name="nplot" formControlName="nplot_control" (change)="updateMenu()">
+      Only show sessions with plots available
+    </mat-checkbox>
+  </div>
+</form>
+
+<div class="table-container">
+<table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
+
+  <ng-container matColumnDef="lab_name">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
+    <td mat-cell *matCellDef="let session"> {{session.lab_name}} </td>
+  </ng-container>
+  
+  <ng-container matColumnDef="subject_nickname">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse Nickname </th>
+    <td mat-cell *matCellDef="let session"> {{session.subject_nickname}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="session_project">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+    <td mat-cell *matCellDef="let session"> {{session.session_project}} </td>
+  </ng-container>
+  
+  <ng-container matColumnDef="task_protocol">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Task Protocol </th>
+    <td mat-cell *matCellDef="let session"> {{session.task_protocol}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="subject_line">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Line </th>
+    <td mat-cell *matCellDef="let session"> {{session.subject_line}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="responsible_user">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
+    <td mat-cell *matCellDef="let session"> {{session.responsible_user}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="session_start_time">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Session Start Time </th>
+    <td mat-cell *matCellDef="let session"> {{ session.session_start_time.split("T")[0] }} {{ session.session_start_time.split("T")[1] }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="subject_birth_date">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse DOB </th>
+    <td mat-cell *matCellDef="let session"> {{session.subject_birth_date }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="subject_uuid">
+    <th mat-header-cell *matHeaderCellDef> Mouse UUID </th>
+    <td mat-cell *matCellDef="let session"> {{session.subject_uuid}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="session_uuid">
+    <th mat-header-cell *matHeaderCellDef> Session UUID </th>
+    <td mat-cell *matCellDef="let session"> {{session.session_uuid}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="sex">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
+    <td mat-cell *matCellDef="let session"class="to-center"> {{session.sex}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="nplot">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Plot Availability </th>
+    <!-- <td mat-cell *matCellDef="let session"> {{ session.nplot }} </td> -->
+    <td mat-cell *matCellDef="let session" class="to-center"> {{session.nplot.toString() | i18nSelect: nplotMap}} </td>
+  </ng-container>
+  
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns; let session" routerLink="/session/{{session?.session_uuid}}"></tr>
+</table>
+</div>
+<div class="loading-icon" *ngIf="loading">
+  <img src="assets/images/loading_icon.gif">
+</div>
+<mat-paginator [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions"
+            showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>
+</div>

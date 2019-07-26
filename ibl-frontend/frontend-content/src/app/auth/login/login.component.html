@@ -1,0 +1,22 @@
+<div class="login-container">
+  <h4 *ngIf="!isLoggedIn">
+    Log In
+  </h4>
+  <div class="col-md-6 col-sm-8 col-12">
+    <form (ngSubmit)="onLogin(f)" #f="ngForm" *ngIf="!isLoggedIn">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input class="form-control" type="text" id="username" name="username" ngModel>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input class="form-control" type="password" id="password" name="password" ngModel>
+      </div>
+      <button class="btn-outline-dark btn" type="submit" *ngIf="!isLoggedIn">Log In</button>
+    </form>
+  </div>
+  <div class="login-sub-container">
+    <button class="btn-outline-danger btn" (click)="logOut()" *ngIf="isLoggedIn">Log Out</button>
+  </div>
+  <p class="login-fail-text" *ngIf="loginFail">Username/password combination is incorrect</p>
+</div>

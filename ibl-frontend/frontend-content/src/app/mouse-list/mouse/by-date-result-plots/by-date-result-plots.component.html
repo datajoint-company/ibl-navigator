@@ -1,0 +1,222 @@
+<h6>Most Recent Result Plots</h6>
+<div class="table-container">
+<table class="table byDatePlotsTable col-12 table-bordered">
+  <tr>
+    <th>{{ recent3dates[0] }}</th>
+    <th>{{ recent3dates[1] }}</th>
+    <th>{{ recent3dates[2] }}</th>
+  </tr>
+  <tr *ngIf="datePsychPlotFitPars">
+    <td>
+      <table class="date-fit-par-table" *ngIf="datePsychPlotFitPars[0]">
+        <tr>
+          <th>prob left</th>
+          <th>threshold (&sigma;)</th>
+          <th>bias (&mu;)</th>
+          <th>lapse low (&gamma;)</th>
+          <th>lapse high (&lambda;)</th>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[0][recent3dates[0]][0]">
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][0]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[0][recent3dates[0]][1]">
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][1]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[0][recent3dates[0]][2]">
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[0][recent3dates[0]][2]['lapse_high']}}</td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table class="date-fit-par-table" *ngIf="datePsychPlotFitPars[1]">
+        <tr>
+          <th>prob left</th>
+          <th>threshold (&sigma;)</th>
+          <th>bias (&mu;)</th>
+          <th>lapse low (&gamma;)</th>
+          <th>lapse high (&lambda;)</th>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[1][recent3dates[1]][0]">
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][0]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[1][recent3dates[1]][1]">
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][1]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[1][recent3dates[1]][2]">
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[1][recent3dates[1]][2]['lapse_high']}}</td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table class="date-fit-par-table" *ngIf="datePsychPlotFitPars[2]">
+        <tr>
+          <th>prob left</th>
+          <th>threshold (&sigma;)</th>
+          <th>bias (&mu;)</th>
+          <th>lapse low (&gamma;)</th>
+          <th>lapse high (&lambda;)</th>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[2][recent3dates[2]][0]">
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][0]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[2][recent3dates[2]][1]">
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][1]['lapse_high']}}</td>
+        </tr>
+        <tr *ngIf="datePsychPlotFitPars[2][recent3dates[2]][2]">
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['prob_left']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['threshold']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['bias']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['lapse_low']}}</td>
+          <td>{{ datePsychPlotFitPars[2][recent3dates[2]][2]['lapse_high']}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[0]"></div>
+      <div #datePsychCurvePlot1>
+        <img class="loading-icon-small" *ngIf="loadingPlots[0]"
+          src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[1]"></div>
+      <div #datePsychCurvePlot2>
+        <img class="loading-icon-small" *ngIf="loadingPlots[1]" src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[2]"></div>
+      <div #datePsychCurvePlot3>
+        <img class="loading-icon-small" *ngIf="loadingPlots[2]" src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[3]"></div>
+      <div #dateRTContrastPlot1>
+        <img class="loading-icon-small" *ngIf="loadingPlots[3]"
+          src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[4]"></div>
+      <div #dateRTContrastPlot2>
+        <img class="loading-icon-small" *ngIf="loadingPlots[4]"
+          src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[5]"></div>
+      <div #dateRTContrastPlot3>
+        <img class="loading-icon-small" *ngIf="loadingPlots[5]"
+          src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[6]"></div>
+      <div #dateRTTrialNumPlot1>
+        <img class="loading-icon-small" *ngIf="loadingPlots[6]"
+          src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[7]"></div>
+      <div #dateRTTrialNumPlot2>
+        <img class="loading-icon-small" *ngIf="loadingPlots[7]"
+          src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+    <td>
+      <div class="loading-overlay-small" *ngIf="loadingPlots[8]"></div>
+      <div #dateRTTrialNumPlot3> 
+        <img class="loading-icon-small" *ngIf="loadingPlots[8]"
+          src="assets/images/loading_icon.gif">
+      </div>
+    </td>
+  </tr>
+</table>
+</div>
+
+
+<!-- <div class="showListofPlots">
+
+  <div class="col-4 byDatePlotColumn">
+    <h6>{{ recent3dates[0] }}</h6>
+    <div #datePsychCurvePlot1></div>
+    <div #dateRTContrastPlot1></div>
+    <div #dateRTTrialNumPlot1></div>
+  </div>
+  <div class="col-4 byDatePlotColumn">
+    <h6>{{ recent3dates[1] }}</h6>
+    <div #datePsychCurvePlot2></div>
+    <div #dateRTContrastPlot2></div>
+    <div #dateRTTrialNumPlot2></div>
+  </div>
+  <div class="col-4 byDatePlotColumn">
+    <h6>{{ recent3dates[2] }}</h6>
+    <div #datePsychCurvePlot3></div>
+    <div #dateRTContrastPlot3></div>
+    <div #dateRTTrialNumPlot3></div>
+  </div>
+</div> -->
+
+<!-- <span class="showListofPlots">
+  <div *ngIf="datePsychPlotList">
+    <p>Date Psych Curve</p>
+    <div *ngFor="let dpcplot of datePsychPlotList; index as i">
+      {{ dpcplot['session_date'] }} ({{ i + 1 }})
+    </div>
+  </div>
+  <div *ngIf="dateRTCPlotList">
+    <p>DateRT Contrast Plot</p>
+    <div *ngFor="let drtcplot of dateRTCPlotList; index as i">
+      {{ drtcplot['session_date'] }} ({{ i + 1 }})
+    </div>
+  </div>
+  <div *ngIf="dateRTTPlotList">
+    <p>DateRT Trial Number Plot</p>
+    <div *ngFor="let drttplot of dateRTTPlotList; index as i">
+      {{ drttplot['session_date'] }} ({{ i + 1 }})
+    </div>
+  </div>
+</span> -->
+<div *ngIf="byDateResultPlotsAreAvailable !== null && !byDateResultPlotsAreAvailable">
+  <p>Session result plots not available</p>
+</div>

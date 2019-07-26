@@ -1,0 +1,14 @@
+.clusterListTable thead th {
+    position: sticky;
+    top: -3px;
+}
+
+.clusterListTable tbody {
+    cursor: pointer;
+}
+
+.clusterListContainer {
+    height: 400px;
+    overflow-y: auto;
+
+}

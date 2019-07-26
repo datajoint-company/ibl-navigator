@@ -1,0 +1,8 @@
+<!-- <img style="position: absolute; z-index: 100; margin-top: 80px; margin-left: 50%;" *ngIf="loading"
+  src="assets/images/loading_icon.gif" width="180px"> -->
+<div class="TCSDplot-container">
+  <div #trialCountsSessionDurationPlot></div>
+  <div *ngIf="TCSDPlotIsAvailable !== null && !TCSDPlotIsAvailable">
+    <p>Trial count session duration plot not available</p>
+  </div>
+</div>

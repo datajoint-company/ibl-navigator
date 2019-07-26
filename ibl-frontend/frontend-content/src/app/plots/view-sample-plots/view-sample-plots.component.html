@@ -1,0 +1,24 @@
+<p>
+  view-sample-plots works!
+</p>
+<div>{{ id }}</div>
+<!-- <app-plot-menu-toggle [plotMenu]="plotMenu"></app-plot-menu-toggle>
+<app-sample-plot #plotMenu></app-sample-plot> -->
+<div class="col-6">
+  <app-plot-menu-toggle (selectedPlotChange)="testChange()"></app-plot-menu-toggle>
+</div>
+<p>selected plot id (from sample-plots comp): {{ PMTComp.selectedPlot.id }}</p>
+<!-- <app-sample-plot #selectedPlot1></app-sample-plot> -->
+<img style="position: absolute; z-index: 100; margin-top: 10%; margin-left: 43.5%;" *ngIf="loading" src="assets/images/loading_icon.gif"
+  width="200px">
+<div id="loadingBackdrop" *ngIf="loading"></div>
+<div #samplePlot2></div>
+<hr>
+<div class='col-10'>
+  <img width="100%" src={{testRaster}}>
+</div>
+<hr>
+<h4>Sample Psychometric Curve</h4>
+<div #samplePlot_psych></div>
+<hr>
+<button class="btn" (click)="testPost()">Post Something</button>

@@ -1,0 +1,103 @@
+.mouse-info-container {
+    padding-top: 20px;
+    margin-left: 1%;
+}
+
+.mouse-title button {
+    margin-left: 1%;
+}
+
+h5 {
+    display: inline-block;
+    font-weight: 300;
+}
+
+.mouse-info-table {
+    font-size: 85%;
+    margin-left: 1%;
+    margin-top: 1%;
+}
+
+.mouse-info-table table {
+    margin-left: 1%;
+}
+
+hr {
+    margin-bottom: 0;
+}
+
+.mouse-plots-container {
+    margin-left: 1%;
+    padding-top: 1%;
+    /* background:linear-gradient(to right, rgb(195, 53, 157), rgb(143, 83, 173), rgb(93, 111, 190), rgb(3,162,218)); */
+    background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1), rgba(195, 53, 157, 0.04), rgba(143, 83, 173, 0.03), rgba(3, 161, 218, 0.05), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.75));
+
+}
+
+.short-plots-container {
+    float: left;
+    width: 50%;
+    overflow: scroll;
+}
+
+.single-plot {
+    border-right: 1px solid rgba(131, 139, 211, 0.35);
+    border-top: 1px solid rgba(131, 139, 211, 0.35);
+    /* background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1), rgba(93, 111, 190, 0.08), rgba(3, 161, 218, 0.1), rgba(255, 255, 255, 0.75)); */
+
+}
+
+.h-long-plot {
+}
+
+
+.v-long-plot-container {
+    float: left;
+    width: 50%;
+    border-top: 1px solid rgba(131, 139, 211, 0.35);
+}
+
+.by-date-plots-container {
+    width: 100%;
+    margin-left: 0.5%;
+}
+
+.sessionPCP-container {
+    /* float: bottom; */
+}
+
+.fetch-sessions {
+    padding-top: 1.5%;
+    width: 100%;
+}
+.fetch-sessions button {
+    padding: 15px 40px;
+    margin-bottom: 20px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+.fetch-sessions button:hover, 
+.mouse-title button:hover {
+    background-color: rgb(241, 240, 240);
+}
+
+/* expand all plots to lay on top for screen under under 1024px) */
+@media only screen and (max-width: 1024px) {
+  .v-long-plot-container {
+    float: top;
+    width: 100%;
+  }
+  .short-plots-container {
+    float: left;
+    width: 100%;
+  }
+  .by-date-plots-container {
+    margin-left: 0;
+  }
+  .mouse-plots-container {
+    margin-left: 0;
+   }
+  .single-plot {
+    border-right: none;
+  }
+}

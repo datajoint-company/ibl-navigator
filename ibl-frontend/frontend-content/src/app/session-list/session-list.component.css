@@ -1,0 +1,215 @@
+.session-list-container {
+    padding-top: 20px;
+}
+
+h4 {
+    font-weight: 300;
+}
+
+form { 
+    margin-bottom: 5px;
+    padding-bottom: 25px;
+    border-bottom: 3px solid rgb(209, 209, 209);
+    display: inline-block;
+    font-size: 80%;
+    width: 100%;
+} 
+
+.mat-datepicker-toggle{
+    position:absolute;
+    font-size: 3em;
+    margin-left: -50px;
+    margin-top: -20px;
+}
+
+.filters {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-section {
+    width: 100%;
+}
+
+.session-date-filter {
+    float: left;
+    width: 440px;
+    margin-top: 9px;
+    display: inline-flex;
+}
+
+.session-date-filter mat-form-field {
+    margin: 0px;
+}
+
+.range-filter-inputs mat-form-field {
+    width: 50%;
+    padding-right: 2%;
+}
+
+.date-range-toggler + mat-form-field {
+    width: 35%;
+}
+
+.date-range-toggler {
+    margin-top: 14px;
+    margin-right: 13px;
+    width: 33%;
+}
+
+.date-range-toggler div {
+    transform: translateY(-25%);
+}
+
+label {
+    font-weight: 500;
+    /* font-family: 'Roboto Condensed', sans-serif; */
+}
+
+.loading-icon {
+    text-align: center;
+}
+
+.loading-icon img {
+    width: 100px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: scroll;
+}
+td.mat-cell, 
+td.mat-footer-cell, 
+th.mat-header-cell {
+    padding-right: 15px;
+}
+
+td.to-center {
+    text-align: center;
+}
+
+mat-form-field {
+    margin: 10px;
+    width: 220px;
+    float: left;
+}
+
+mat-form-field input {
+    /* font-family: 'Roboto Condensed', sans-serif; */
+}
+
+mat-form-field.long {
+    width: 350px;
+}
+
+mat-form-field.short {
+    width: 190px;
+}
+
+.nplot_filter {
+    display: inline-flex;
+}
+mat-checkbox.nplot_chbox {
+    margin: 8px;
+}
+tr.mat-row {
+    /* border-bottom: 1px solid rgba(0,0,0,.12); */
+}
+tr.mat-row:hover {
+    /* background-color: rgb(248, 248, 248); */
+    background-color: rgba(0, 83, 145, .05);
+    cursor: pointer;
+}
+
+button {
+    float: left;
+    margin-left: 5px;
+    border: 2px solid rgb(101, 152, 184);
+}
+button:hover {
+    border: 2px solid rgb(0, 124, 183);
+    background-color: rgb(0, 124, 183);
+    color: white;
+}
+
+.mouse_gender_filter {
+    padding-top: 12px;
+    padding-bottom: 2px;
+    margin-top: 11px;
+    margin-left: 10px;
+    margin-bottom: 8px;
+    width: 150px;
+    float: left;
+}
+mat-checkbox.mouse_gender_menu_chbox {
+    margin-right: 12px;
+
+}
+.mouse_gender_menu{
+    display: flex;
+    flex-direction: row;
+};
+
+
+
+/* for different screen sizes */
+/* XS and S (768px and down) */
+/* @media only screen and (max-width: 768px) {...}  */
+
+/* M (768px and up) */
+@media only screen and (min-width: 768px) {
+ 
+} 
+
+/* L (992px and up) */
+@media only screen and (min-width: 992px) {
+
+} 
+
+/* XL (1200px and up) */
+@media only screen and (min-width: 1200px) {
+}
+
+@media only screen and (max-width: 1383px) {
+    table {
+        overflow-x: scroll;
+    }
+}
+
+/* XXL (1600px and up) */
+@media only screen and (min-width: 1600px) {
+}
+/* note - to make sure the filter folds smoothly without getting stuck */
+/* problem folding areas */
+/* 510-639px and 880px-909px and 1632px-1822px  and  1824px-2111px  */
+@media only screen and (min-width: 1824px) and (max-width: 2111px) {
+    .mouse_gender_filter {
+        margin-bottom: 0px;
+    }
+}
+/* 1536px is where the gender menu drops to the line below */
+@media only screen and (min-width: 1536px) and (max-width: 1822px) {
+    .mouse_gender_filter {
+        margin-bottom: 20px;
+    }
+}
+/* 800px is where the gender menu jumps to the line above */
+@media only screen and (min-width: 800px) and (max-width: 1091px) {
+    .mouse_gender_filter {
+        margin-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width: 639px) {
+    .mouse_gender_filter {
+        margin-bottom: 20px;
+    }
+}
+
+
+/* XXXL (2200px and up) */
+@media only screen and (min-width: 2200px) {
+
+}
+
+
