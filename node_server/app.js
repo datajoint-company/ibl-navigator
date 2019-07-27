@@ -23,7 +23,8 @@ app.use((req, res, next) => {
     next();
 })
 
-
+// configure backend address
+flask_backend = process.env['PY_BACKEND'] || 'http://localhost:5000'
 
 
 
@@ -160,8 +161,8 @@ app.get('/api/sessions', checkAuth, (req, res) => {
     // setup for proxy server
     var options = {
         // hostname: '127.0.0.1/',
-        hostname: process.env['PY_BACKEND'].split(':')[1].split('//')[1],
-        port: parseInt(process.env['PY_BACKEND'].split(':')[2]),
+        hostname: flask_backend.split(':')[1].split('//')[1],
+        port: parseInt(flask_backend.split(':')[2]),
         path: 'v0/_q/sessionpage/?__order=session_start_time', //'v0/session',
         method: req.method,
         headers: req.headers
@@ -182,7 +183,7 @@ app.get('/api/sessions', checkAuth, (req, res) => {
 app.post('/api/sessions', checkAuth, (req, res) => {
     // console.log('posting to filter session page');
     
-    request.post(process.env['PY_BACKEND'] + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -197,8 +198,8 @@ app.get('/api/mice', (req, res) => {
     // setup for proxy server
     var options = {
         // hostname: '127.0.0.1/',
-        hostname: process.env['PY_BACKEND'].split(':')[1].split('//')[1],
-        port: parseInt(process.env['PY_BACKEND'].split(':')[2]),
+        hostname: flask_backend.split(':')[1].split('//')[1],
+        port: parseInt(flask_backend.split(':')[2]),
         path: 'v0/_q/subjpage',//'v0/subject',
         method: req.method,
         headers: req.headers
@@ -244,7 +245,7 @@ app.post('/api/mice', (req, res) => {
     //     console.log('response body is');
     //     console.log(body)
     // });
-    request.post(process.env['PY_BACKEND'] + '/v0/_q/subjpage', {form: req.body}, function(error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/subjpage', {form: req.body}, function(error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -256,7 +257,7 @@ app.post('/api/mice', (req, res) => {
 
 app.post('/api/summary', checkAuth, (req, res) => {
 
-    request.post(process.env['PY_BACKEND'] + '/v0/_q/dailysummary', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/dailysummary', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -266,7 +267,7 @@ app.post('/api/summary', checkAuth, (req, res) => {
 })
 
 app.post('/api/plot/session-psych-plotData', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/sessionpsych', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/sessionpsych', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -275,7 +276,7 @@ app.post('/api/plot/session-psych-plotData', (req, res) => {
 })
 
 app.post('/api/plot/session-RTC-plotData', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/sessionRTC', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/sessionRTC', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -284,7 +285,7 @@ app.post('/api/plot/session-RTC-plotData', (req, res) => {
 })
 
 app.post('/api/plot/session-RTTN-plotData', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/sessionRTTN', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/sessionRTTN', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -293,7 +294,7 @@ app.post('/api/plot/session-RTTN-plotData', (req, res) => {
 })
 
 app.post('/api/plot/waterWeightPlot', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/waterweight', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/waterweight', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -302,7 +303,7 @@ app.post('/api/plot/waterWeightPlot', (req, res) => {
 })
 
 app.post('/api/plot/trialCountsSessionDurationPlot', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/TCsessionduration', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/TCsessionduration', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -312,7 +313,7 @@ app.post('/api/plot/trialCountsSessionDurationPlot', (req, res) => {
 })
 
 app.post('/api/plot/performanceReactionTimePlot', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/performanceRT', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/performanceRT', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -321,7 +322,7 @@ app.post('/api/plot/performanceReactionTimePlot', (req, res) => {
 })
 
 app.post('/api/plot/contrastHeatmapPlot', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/contrastheatmap', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/contrastheatmap', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -330,7 +331,7 @@ app.post('/api/plot/contrastHeatmapPlot', (req, res) => {
 })
 
 app.post('/api/plot/fitParametersPlot', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/fitpars', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/fitpars', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -339,7 +340,7 @@ app.post('/api/plot/fitParametersPlot', (req, res) => {
 })
 
 app.post('/api/plot/datePsychCurvePlot', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/datepsych', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/datepsych', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -348,7 +349,7 @@ app.post('/api/plot/datePsychCurvePlot', (req, res) => {
 })
 
 app.post('/api/plot/dateReactionTimeContrastPlot', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/dateRTcontrast', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/dateRTcontrast', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -357,7 +358,7 @@ app.post('/api/plot/dateReactionTimeContrastPlot', (req, res) => {
 })
 
 app.post('/api/plot/dateReactionTimeTrialNumberPlot', (req, res) => {
-    request.post(process.env['PY_BACKEND'] + '/v0/dateRTtrial', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/dateRTtrial', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -368,7 +369,7 @@ app.post('/api/plot/dateReactionTimeTrialNumberPlot', (req, res) => {
 app.post('/api/plot/cluster', (req, res) => {
     const timeX = new Date()
     console.log('requesting cluster list: ', timeX);
-    request.post(process.env['PY_BACKEND'] + '/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -381,7 +382,7 @@ app.post('/api/plot/cluster', (req, res) => {
 app.post('/api/plot/raster', (req, res) => {
     const timeA = new Date()
     console.log('requesting rasters to backend: ', timeA);
-    request.post(process.env['PY_BACKEND'] + '/v0/raster', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/raster', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
