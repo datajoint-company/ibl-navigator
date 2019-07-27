@@ -193,7 +193,7 @@ app.post('/api/sessions', checkAuth, (req, res) => {
 
 
 
-app.get('/api/mice', (req, res) => {
+app.get('/api/mice', checkAuth, (req, res) => {
     // setup for proxy server
     var options = {
         // hostname: '127.0.0.1/',
@@ -216,7 +216,7 @@ app.get('/api/mice', (req, res) => {
     });
 })
 
-app.post('/api/mice', (req, res) => {
+app.post('/api/mice', checkAuth, (req, res) => {
     // console.log('req.headers is', req.headers)
     // console.log(req.body);
     let sessionPath = 'v0/subject/?'
@@ -265,7 +265,7 @@ app.post('/api/summary', checkAuth, (req, res) => {
     })
 })
 
-app.post('/api/plot/session-psych-plotData', (req, res) => {
+app.post('/api/plot/session-psych-plotData', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/sessionpsych', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -274,7 +274,7 @@ app.post('/api/plot/session-psych-plotData', (req, res) => {
     })
 })
 
-app.post('/api/plot/session-RTC-plotData', (req, res) => {
+app.post('/api/plot/session-RTC-plotData', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/sessionRTC', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -283,7 +283,7 @@ app.post('/api/plot/session-RTC-plotData', (req, res) => {
     })
 })
 
-app.post('/api/plot/session-RTTN-plotData', (req, res) => {
+app.post('/api/plot/session-RTTN-plotData', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/sessionRTTN', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -292,7 +292,7 @@ app.post('/api/plot/session-RTTN-plotData', (req, res) => {
     })
 })
 
-app.post('/api/plot/waterWeightPlot', (req, res) => {
+app.post('/api/plot/waterWeightPlot', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/waterweight', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -301,7 +301,7 @@ app.post('/api/plot/waterWeightPlot', (req, res) => {
     })
 })
 
-app.post('/api/plot/trialCountsSessionDurationPlot', (req, res) => {
+app.post('/api/plot/trialCountsSessionDurationPlot', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/TCsessionduration', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -311,7 +311,7 @@ app.post('/api/plot/trialCountsSessionDurationPlot', (req, res) => {
     })
 })
 
-app.post('/api/plot/performanceReactionTimePlot', (req, res) => {
+app.post('/api/plot/performanceReactionTimePlot', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/performanceRT', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -320,7 +320,7 @@ app.post('/api/plot/performanceReactionTimePlot', (req, res) => {
     })
 })
 
-app.post('/api/plot/contrastHeatmapPlot', (req, res) => {
+app.post('/api/plot/contrastHeatmapPlot', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/contrastheatmap', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -329,7 +329,7 @@ app.post('/api/plot/contrastHeatmapPlot', (req, res) => {
     })
 })
 
-app.post('/api/plot/fitParametersPlot', (req, res) => {
+app.post('/api/plot/fitParametersPlot', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/fitpars', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -338,7 +338,7 @@ app.post('/api/plot/fitParametersPlot', (req, res) => {
     })
 })
 
-app.post('/api/plot/datePsychCurvePlot', (req, res) => {
+app.post('/api/plot/datePsychCurvePlot', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/datepsych', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -347,7 +347,7 @@ app.post('/api/plot/datePsychCurvePlot', (req, res) => {
     })
 })
 
-app.post('/api/plot/dateReactionTimeContrastPlot', (req, res) => {
+app.post('/api/plot/dateReactionTimeContrastPlot', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/dateRTcontrast', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -356,7 +356,7 @@ app.post('/api/plot/dateReactionTimeContrastPlot', (req, res) => {
     })
 })
 
-app.post('/api/plot/dateReactionTimeTrialNumberPlot', (req, res) => {
+app.post('/api/plot/dateReactionTimeTrialNumberPlot', checkAuth, (req, res) => {
     request.post(process.env['PY_BACKEND'] + '/v0/dateRTtrial', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
@@ -365,7 +365,7 @@ app.post('/api/plot/dateReactionTimeTrialNumberPlot', (req, res) => {
     })
 })
 
-app.post('/api/plot/cluster', (req, res) => {
+app.post('/api/plot/cluster', checkAuth, (req, res) => {
     const timeX = new Date()
     console.log('requesting cluster list: ', timeX);
     request.post(process.env['PY_BACKEND'] + '/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
@@ -378,7 +378,7 @@ app.post('/api/plot/cluster', (req, res) => {
     })
 })
 
-app.post('/api/plot/raster', (req, res) => {
+app.post('/api/plot/raster', checkAuth, (req, res) => {
     const timeA = new Date()
     console.log('requesting rasters to backend: ', timeA);
     request.post(process.env['PY_BACKEND'] + '/v0/raster', { form: req.body }, function (error, httpResponse, body) {
