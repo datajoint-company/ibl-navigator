@@ -17,7 +17,7 @@ services:
     networks:
       - main
   ibl-navigator:
-    build: ./ibl-frontend
+    # build: ./ibl-frontend
     image: raphaelguzman/ibl-navigator:v1.0
     environment:
     - PROD_NODE_API=https://testdev.datajoint.io/api
