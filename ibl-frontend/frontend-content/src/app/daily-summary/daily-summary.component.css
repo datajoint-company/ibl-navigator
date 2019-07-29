@@ -120,7 +120,8 @@ td.mat-column-latest_session_on_flatiron,
 td.mat-column-latest_training_status {
     padding-right: 7px;
 }
-td.mat-column-latest_task_protocol {
+td.mat-column-latest_task_protocol,
+td.mat-column-projects {
     overflow-wrap: break-word;
     padding-right: 7px;
 }

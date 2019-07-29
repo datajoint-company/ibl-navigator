@@ -36,6 +36,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     latest_task_protocol_control: new FormControl(),
     latest_training_status_control: new FormControl(),
     latest_session_ingested_control: new FormControl(),
+    projects_control: new FormControl(),
     session_range_filter: new FormGroup({
       session_range_start_control: new FormControl(),
       session_range_end_control: new FormControl()
@@ -59,11 +60,12 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
   filteredLabNameOptions: Observable<string[]>;
   filteredSubjectNicknameOptions: Observable<string[]>;
   filteredSubjectUuidOptions: Observable<string[]>;
+  filteredProjectsOptions: Observable<string[]>;
   daily_summary_menu = {};
 
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'latest_session_ingested',
     'latest_training_status', 'latest_task_protocol', 'n_sessions_current_protocol',
-    'latest_session_on_flatiron', 'subject_uuid', 'detail_link', 'expand_collapse'];
+    'projects', 'latest_session_on_flatiron', 'subject_uuid', 'detail_link', 'expand_collapse'];
 
   displayedPlots: string[] = ['water_weight', 'performance_reaction_time',
     'trial_counts_session_duration', 'contrast_heatmap'];
@@ -188,14 +190,25 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     this.daily_summary_menu = {};
     const keys = ['latest_task_protocol', 'latest_session_ingested', 'subject_uuid',
       'latest_training_status', 'lab_name', 'latest_session_on_flatiron',
-      'subject_nickname', 'n_sessions_current_protocol'];
+      'subject_nickname', 'n_sessions_current_protocol', 'projects'];
     for (const key of keys) {
       this.daily_summary_menu[key] = [];
     }
     for (const summaryItem of summaryInfo) {
       for (const key of keys) {
-        if (!this.daily_summary_menu[key].includes(summaryItem[key])) {
+        console.log('printing keys:', key);
+        if (key !== 'projects' && !this.daily_summary_menu[key].includes(summaryItem[key])) {
           this.daily_summary_menu[key].push(summaryItem[key]);
+        } else if (key === 'projects') {
+          if (summaryItem[key].split(',').length === 1 && !this.daily_summary_menu[key].includes(summaryItem[key])) {
+            this.daily_summary_menu[key].push(summaryItem[key]);
+          } else if (summaryItem[key].split(',').length > 1) {
+            for (const projOpt of summaryItem[key].split(',')) {
+              if (!this.daily_summary_menu[key].includes(projOpt)) {
+                this.daily_summary_menu[key].push(projOpt);
+              }
+            }
+          }
         }
       }
     }
@@ -243,6 +256,12 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'latest_task_protocol'))
+      );
+
+    this.filteredProjectsOptions = this.summary_filter_form.controls.projects_control.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, 'projects'))
       );
 
     this.sessionDateFilter = (d: Date): boolean => {
