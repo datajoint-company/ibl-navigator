@@ -1,7 +1,7 @@
 <div class="mouse-info-container">
   <div class="mouse-title">
     <h5>Mouse <{{ mouse?.subject_nickname }}> Info</h5>
-    <button routerLink="/sessions" [queryParams]="mouse" mat-raised-button (click)="getSessions(mouse)">
+    <button routerLink="/sessions" [queryParams]="cleanMouse" mat-raised-button>
       See Sessions</button>
   </div>
   <div class="row mouse-info-table">
@@ -81,7 +81,7 @@
       <app-fit-par-plots [mouseInfo]="mouse"></app-fit-par-plots>
     </div>
     <div class="row fetch-sessions">
-      <button routerLink="/sessions" [queryParams]="mouse" mat-raised-button (click)="getSessions(mouse)">
+      <button routerLink="/sessions" [queryParams]="cleanMouse" mat-raised-button>
         See Sessions</button>
     </div>
     <div class="row by-date-plots-container">
