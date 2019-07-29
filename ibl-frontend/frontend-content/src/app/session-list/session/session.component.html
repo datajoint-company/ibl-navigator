@@ -25,7 +25,7 @@
     <table class="table col-lg-4 col-sm-6 col-xs-12 table-striped table-bordered table-sm">
       <tr>
         <th>Mouse Nickame</th>
-        <td>{{ session?.subject_nickname }}</td>
+        <td><a routerLink="/mouse/{{session?.subject_uuid}}">{{ session?.subject_nickname }}</a></td>
       </tr>
       <tr>
         <th>Mouse DOB</th>
