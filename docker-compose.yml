@@ -20,7 +20,7 @@ services:
     build: ./ibl-frontend
     image: ibl-navigator:v1.0
     environment:
-    - PROD_NODE_API=https://testdev.datajoint.io/api/api
+    - PROD_NODE_API=https://testdev.datajoint.io/api
     - PROD_NODE_BACKEND=https://testdev.datajoint.io/api
     # - DEV_NODE_API=http://localhost:9000/api
     # - DEV_NODE_BACKEND=http://localhost:9000
@@ -28,11 +28,6 @@ services:
     #   - "8080:8080"
     networks:
       - main
-    depends_on:
-      ibl-node-server:
-        condition: service_healthy
-      iblapi:
-        condition: service_healthy
   ibl-node-server:
     build: ./node_server
     image: ibl-node-server:v1.0
@@ -48,17 +43,18 @@ services:
     networks:
       - main
   nginx:
-    image: nginx:1.15-alpine
+    build: ./nginx-letsencrypt
+    image: ibl-nginx:v1.0
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./nginx-letsencrypt/data/nginx:/etc/nginx/conf.d
-      - ./nginx-letsencrypt/data/certbot/conf:/etc/letsencrypt
-      - ./nginx-letsencrypt/data/certbot/www:/var/www/certbot
     networks:
-      - main
+      - main    
     depends_on:
+      ibl-node-server:
+        condition: service_healthy
+      iblapi:
+        condition: service_healthy
       ibl-navigator:
         condition: service_healthy
 networks:
