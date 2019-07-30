@@ -15,4 +15,4 @@ FROM linuxserver/letsencrypt
 # COPY ./data/nginx/app.conf /config/nginx/nginx.conf
 # COPY ./data/nginx/ssl.conf /config/nginx/ssl.conf
 
-COPY ./config/nginx/app.conf /config/nginx/site-confs/app.conf
+COPY ./app.conf /config/nginx/site-confs/app.conf
