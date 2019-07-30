@@ -72,8 +72,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    cap_add:
-      - NET_ADMIN
+    # cap_add:
+    #   - NET_ADMIN
     # volumes:
     #   - ./nginx-letsencrypt/data/nginx/app.conf:/config
     networks:
