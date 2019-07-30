@@ -67,6 +67,7 @@ services:
       - URL=datajoint.io
       - SUBDOMAINS=testdev
       - TZ=Europe/London
+      - ONLY_SUBDOMAINS=true
     ports:
       - "80:80"
       - "443:443"
