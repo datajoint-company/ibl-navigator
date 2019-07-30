@@ -4,7 +4,7 @@ COPY ./app.conf /config/nginx/site-confs/app.conf
 
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-# ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 HEALTHCHECK       \
     --timeout=3s \ 
