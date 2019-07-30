@@ -10,7 +10,7 @@ RUN \
     #  && \
     # rm /config/* && \
     # mkdir -p /config/nginx
-COPY ./config /config
+# COPY ./config /config
 
 # COPY ./data/nginx/app.conf /config/nginx/nginx.conf
 # COPY ./data/nginx/ssl.conf /config/nginx/ssl.conf
