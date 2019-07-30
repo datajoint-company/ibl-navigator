@@ -7,7 +7,7 @@
 FROM linuxserver/letsencrypt
 RUN \
     mkdir -p /run/nginx && \
-    rm -R /config/* && \
+    rm /config/* && \
     mkdir -p /config/nginx
 # COPY ./data/nginx /config
 
