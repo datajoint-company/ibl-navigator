@@ -5,8 +5,8 @@
 # # COPY ./data/certbot/www /var/www/certbot
 
 FROM linuxserver/letsencrypt
-RUN \
-    mkdir -p /run/nginx
+# RUN \
+#     mkdir -p /run/nginx
     #  && \
     # rm /config/* && \
     # mkdir -p /config/nginx
@@ -15,4 +15,4 @@ RUN \
 # COPY ./data/nginx/app.conf /config/nginx/nginx.conf
 # COPY ./data/nginx/ssl.conf /config/nginx/ssl.conf
 
-COPY ./config/nginx/app.conf /config/nginx/site-confs/testdev
+COPY ./config/nginx/app.conf /config/nginx/site-confs/app.conf
