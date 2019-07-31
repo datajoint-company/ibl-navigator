@@ -20,3 +20,8 @@ For detached mode and to add log after the fact
 To see the production build using `ng build --prod`,
 do the regular docker-compose up then go to localhost:8080
 `docker-compose up --build`
+
+--------------------------------
+
+for testdev deploy
+for dev mode, make sure `STAGING=true` for nginx > environment setting.

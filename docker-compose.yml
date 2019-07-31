@@ -53,7 +53,7 @@ services:
       - SUBDOMAINS=testdev
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
-      # - STAGING=true
+      - STAGING=true
     ports:
       - "80:80"
       - "443:443"
