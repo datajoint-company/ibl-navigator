@@ -10,10 +10,6 @@
       <thead class="thead-light">
         <th>Cluster ID</th>
         <th>Probe Index</th>
-        <!-- <th>Probe Model Name</th> -->
-        <!-- <th>Cluster Revision</th> -->
-        <!-- <th>Channel Group ID</th> -->
-        <!-- <th>Channel ID</th> -->
         <th>Cluster Depth</th>
         <th>Cluster Amp</th>
       </thead>
@@ -23,19 +19,16 @@
 
           <td>{{ cl.cluster_id }}</td>
           <td>{{ cl.probe_idx }}</td>
-          <!-- <td>{{ cl.probe_model_name}}</td> -->
-          <!-- <td>{{ cl.cluster_revision }}</td> -->
-          <!-- <td>{{ cl.channel_group_id }}</td> -->
-          <!-- <td>{{ cl.channel_id }}</td> -->
           <td>{{ cl.cluster_depth }}</td>
           <td>{{ cl.cluster_amp }}</td>
         </tr>
       </tbody>
     </table>
-
-      
-    
   </div>
-  <br>
+  <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (click)="clusterSelected($event)">
+    </plotly-plot>
+  <div *ngIf="cells">
+    <app-raster-plots [clusterInfo]="cellOnFocus"></app-raster-plots>
+  </div>
   <br>
 </div>

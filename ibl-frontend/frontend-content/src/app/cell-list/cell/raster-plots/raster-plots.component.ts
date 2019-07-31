@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CellPlotsService } from '../cell-plots.service';
 
@@ -62,7 +62,7 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
   // @ViewChild('raster_LT') el4: ElementRef;
 
   constructor(public cellPlotsService: CellPlotsService) { }
-
+  
   ngOnInit() {
     const element = this.el.nativeElement;
     // const element_AT = this.el1.nativeElement;

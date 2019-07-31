@@ -19,6 +19,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   plot_data;
   plot_layout;
   plot_config;
+  cellOnFocus;
 
 
   private cellListSubscription: Subscription;
@@ -27,7 +28,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   @ViewChild('navTable') el_nav: ElementRef;
 
   constructor(public cellListService: CellListService) { }
+  @HostListener('window:keyup', ['$event']) keyEvent(event) {
+    console.log('listening to key event');
+    console.log(event.target);
+    if (event.key === 'Tab') {
+      console.log('tab on table!');
+      console.log(event);
+    }
+   
 
+  }
   ngOnInit() {
     // const element = this.el_nav.nativeElement;
     this.session = this.sessionInfo;
@@ -36,6 +46,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         .subscribe((cellListData) => {
           if (Object.entries(cellListData).length > 0) {
             this.cells = cellListData;
+            console.log('printing cells index 2');
+            console.log(this.cells[2]);
+            this.cellOnFocus = this.cells[2];
             const x_data = [];
             const y_data = [];
             const id_data = [];
@@ -103,6 +116,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
           }
         });
+         
+    
   }
 
   ngDoCheck() {
