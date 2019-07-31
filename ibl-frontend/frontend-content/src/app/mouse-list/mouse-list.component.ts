@@ -5,6 +5,7 @@ import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllMiceService } from './all-mice.service';
 import { FilterStoreService } from '../filter-store.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-mouse-list',
@@ -72,7 +73,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
       } else if (key === 'sex') {
         this.mouse_filter_form.controls.sex_control['controls'][this.genderMenu2ControlMap[filters[key]]].patchValue(true);
       } else if (key === 'subject_birth_date') {
-        this.mouse_filter_form.controls.subject_birth_date_control.patchValue(new Date(filters[key] + ' (UTC)'));
+        // console.log('before patching value for DOB - ', filters[key]);
+        this.mouse_filter_form.controls.subject_birth_date_control.patchValue(moment.utc(filters[key]));
       } else {
         const controlName = key + '_control';
         if (this.mouse_filter_form.controls[controlName]) {
@@ -323,7 +325,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
 
           if (filterKey === 'subject_birth_date') {
             // Tue Dec 11 2018 00:00:00 GMT-0600 (Central Standard Time) => 2018-12-11T06:00:00.000Z => 2018-12-11
-            const mouseDOB = new Date(filter[1].toString());
+            const mouseDOB = moment.utc(filter[1]);
             requestFilter[filterKey] = mouseDOB.toISOString().split('T')[0];
           } else {
             requestFilter[filterKey] = filter[1];

@@ -6,6 +6,7 @@ import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DailySummaryService } from './daily-summary.service';
 import { FilterStoreService } from '../filter-store.service';
+import * as moment from 'moment';
 
 declare var Plotly: any;
 @Component({
@@ -123,11 +124,11 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
         }
         if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
           this.dateRangeToggle = false;
-          this.summary_filter_form.controls.latest_session_ingested_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
+          this.summary_filter_form.controls.latest_session_ingested_control.patchValue(moment.utc(dateRange[0]));
         } else if (dateRange[0] !== '') {
           this.dateRangeToggle = true;
-          this.summary_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(new Date(dateRange[0] + ' (UTC)'));
-          this.summary_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(new Date(dateRange[1] + ' (UTC)'));
+          this.summary_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(moment.utc(dateRange[0]));
+          this.summary_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(moment.utc(dateRange[1]));
         }
       } else if (key !== 'latest_session_ingested' && key !== '__json' && key !== '__order') {
         const controlName = key + '_control';
@@ -196,7 +197,6 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     }
     for (const summaryItem of summaryInfo) {
       for (const key of keys) {
-        console.log('printing keys:', key);
         if (key !== 'projects' && !this.daily_summary_menu[key].includes(summaryItem[key])) {
           this.daily_summary_menu[key].push(summaryItem[key]);
         } else if (key === 'projects') {
@@ -331,7 +331,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
       if (filter[1] && filterKey !== focusedField) {
         if (filterKey === 'latest_session_ingested') {
           if (!this.dateRangeToggle) {
-            const sessionST = new Date(filter[1].toString());
+            const sessionST = moment.utc(filter[1]);
             const rangeStartTime = '00:00:00';
             const rangeEndTime = '23:59:59';
             const startString = sessionST.toISOString().split('T')[0] + 'T' + rangeStartTime;
@@ -349,8 +349,8 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
           ////      ["session_range_filter", { session_range_start_control: null, session_range_end_control: null }]
           if (this.dateRangeToggle && filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
 
-            const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
-            const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
+            const sessionStart = moment.utc(filter[1]['session_range_start_control']);
+            const sessionEnd = moment.utc(filter[1]['session_range_end_control']);
             const rangeStartTime = '00:00:00';
             const rangeEndTime = '23:59:59';
             const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
@@ -364,7 +364,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
             }
           } else if (this.dateRangeToggle && filter[1]['session_range_start_control'] && !filter[1]['session_range_end_control']) {
             // console.log('all session from ', filter[1]['session_range_start_control'], ' requested!');
-            const sessionStart = new Date(filter[1]['session_range_start_control'].toString());
+            const sessionStart = moment.utc(filter[1]['session_range_start_control']);
             const rangeStartTime = '00:00:00';
             const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
             const rangeStart = '"' + 'latest_session_ingested>' + '\'' + startString + '\'' + '"';
@@ -375,7 +375,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
             }
           } else if (this.dateRangeToggle && !filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
             // console.log('all session up to ', filter[1]['session_range_end_control'], ' requested!');
-            const sessionEnd = new Date(filter[1]['session_range_end_control'].toString());
+            const sessionEnd = moment.utc(filter[1]['session_range_end_control']);
             const rangeEndTime = '23:59:59';
             const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
             const rangeEnd = '"' + 'latest_session_ingested<' + '\'' + endString + '\'' + '"';

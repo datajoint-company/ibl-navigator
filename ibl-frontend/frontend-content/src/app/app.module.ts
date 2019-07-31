@@ -23,6 +23,7 @@ import { MatSelectModule,
          MatSliderModule,
          MatExpansionModule,
          MatDialogModule } from '@angular/material';
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -158,11 +159,14 @@ const appRoutes: Routes = [
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
     MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule,
-    MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatSlideToggleModule,
+    MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatMomentDateModule, MatSlideToggleModule,
     MatCardModule, MatButtonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSliderModule, MatExpansionModule,
     MatDialogModule, ReactiveFormsModule, FlexLayoutModule
   ],
-  providers: [AuthService, AuthGuard, PlotsService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [AuthService, AuthGuard, PlotsService,
+              { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+              { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
+             ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

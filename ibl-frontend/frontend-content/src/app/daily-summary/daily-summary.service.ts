@@ -97,7 +97,7 @@ export class DailySummaryService {
     this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData: Array<Object>) => {
-          console.log('subscribing to all summary: length of menu: ', Object.entries(filteredSummaryData).length);
+          // console.log('subscribing to all summary: length of menu: ', Object.entries(filteredSummaryData).length);
 
           this.dailySummaryAllMenu = filteredSummaryData;
 
