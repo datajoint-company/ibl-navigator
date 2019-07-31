@@ -393,6 +393,17 @@ app.post('/api/plot/raster', checkAuth, (req, res) => {
     })
 })
 
+app.post('/api/plot/psth', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/psth', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
+
+
 
 app.get('/api/plots/testPlot', (req, res, next) => {
 
