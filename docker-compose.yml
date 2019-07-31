@@ -18,21 +18,16 @@ services:
       - main
   ibl-navigator:
     build: ./ibl-frontend
-    image: ibl-navigator:v1.0
+    image: raphaelguzman/ibl-navigator:v2.0
     environment:
-    - PROD_NODE_API=http://localhost:3333/api
-    - PROD_NODE_BACKEND=http://localhost:3333
+    - PROD_NODE_API=https://testdev.datajoint.io/api
+    - PROD_NODE_BACKEND=https://testdev.datajoint.io
     # - DEV_NODE_API=http://localhost:9000/api
     # - DEV_NODE_BACKEND=http://localhost:9000
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     networks:
       - main
-    depends_on:
-      ibl-node-server:
-        condition: service_healthy
-      iblapi:
-        condition: service_healthy
   ibl-node-server:
     build: ./node_server
     image: ibl-node-server:v1.0
@@ -43,26 +38,41 @@ services:
     env_file: .env
     # volumes:
     #   - ./node_server:/src
-    ports:
-      - "3333:3333"
+    # ports:
+    #   - "3333:3333"
     networks:
       - main
+  # nginx:
+  #   build: ./nginx-letsencrypt
+  #   image: ibl-nginx:v1.0
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - EMAIL=raphael@vathes.com
+  #     - URL=datajoint.io
+  #     - SUBDOMAINS=testdev
+  #     - TZ=Europe/London
+  #     - ONLY_SUBDOMAINS=true
+  #     - STAGING=true
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   # cap_add:
+  #   #   - NET_ADMIN
+  #   # volumes:
+  #   #   - ./nginx-letsencrypt/app.conf:/config/nginx/site-confs/app.conf
+  #   networks:
+  #     - main   
+  #   depends_on:
+  #     ibl-node-server:
+  #       condition: service_healthy
+  #     iblapi:
+  #       condition: service_healthy
+  #     ibl-navigator:
+  #       condition: service_healthy
 networks:
     main:
         ipam:
             driver: default
             config:
                 - subnet: 10.28.0.0/16
-
-
-# services:
-  # iblapi-dj:
-  #   build: ./backend
-  #   env_file: ./backend/.env
-  #   volumes:
-  #     - ./backend/notebooks:/notebooks
-  #     - ./backend:/src/iblapi
-  #   ports:
-  #     - "8888:8888"
-  #   links:
-  #     - iblapi
