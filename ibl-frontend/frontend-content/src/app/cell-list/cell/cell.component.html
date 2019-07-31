@@ -54,11 +54,11 @@
   <h5>Plots</h5>
   <div class="rasterPlotsSection" *ngIf="cell">
     <h6>Raster Plot</h6>
-    <app-raster-plots [clusterInfo]="cell"></app-raster-plots>
+    <app-raster-plots [clusterInfo]="cell" (eventSelected)="rasterEventSelected($event)"></app-raster-plots>
   </div>
   <div class="psthPlotsSection" *ngIf="cell">
     <h6>PSTH Plot</h6>
-    <app-psth-plots [clusterInfo]="cell"></app-psth-plots>
+    <app-psth-plots [clusterInfo]="cell" [selectedEvent]="selectedEvent"></app-psth-plots>
   </div>
 
 </div>

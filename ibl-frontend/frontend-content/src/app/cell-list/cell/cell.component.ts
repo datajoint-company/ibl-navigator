@@ -14,6 +14,7 @@ export class CellComponent implements OnInit, OnDestroy {
   public session_time: string;
   public cluster_id: string;
   cell: any;
+  selectedEvent: string;
 
   private cellSubscription: Subscription;
 
@@ -40,6 +41,12 @@ export class CellComponent implements OnInit, OnDestroy {
     if (this.cellSubscription) {
       this.cellSubscription.unsubscribe();
     }
+  }
+
+  rasterEventSelected(event) {
+    console.log('raster plot event selected!');
+    console.log(event);
+    this.selectedEvent = event;
   }
 
 }

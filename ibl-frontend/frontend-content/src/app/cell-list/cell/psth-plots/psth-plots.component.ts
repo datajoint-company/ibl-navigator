@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges, ElementRef, ViewChild, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CellPlotsService } from '../cell-plots.service';
 
@@ -8,7 +8,7 @@ declare var Plotly: any;
   templateUrl: './psth-plots.component.html',
   styleUrls: ['./psth-plots.component.css']
 })
-export class PsthPlotsComponent implements OnInit, OnDestroy {
+export class PsthPlotsComponent implements OnInit, OnDestroy, OnChanges {
   d3 = Plotly.d3;
   PSTHplots: any;
   eventType: string;
@@ -50,6 +50,7 @@ export class PsthPlotsComponent implements OnInit, OnDestroy {
   private allPsthPlotSubscription: Subscription;
 
   @Input() clusterInfo: Object;
+  @Input() selectedEvent: String;
   @ViewChild('PSTH_plot') el: ElementRef;
   constructor(public cellPlotsService: CellPlotsService) { }
 
@@ -77,6 +78,10 @@ export class PsthPlotsComponent implements OnInit, OnDestroy {
     if (this.allPsthPlotSubscription) {
       this.allPsthPlotSubscription.unsubscribe();
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.order_by_event(changes.selectedEvent.currentValue);
   }
 
   order_by_event(eventType) {
