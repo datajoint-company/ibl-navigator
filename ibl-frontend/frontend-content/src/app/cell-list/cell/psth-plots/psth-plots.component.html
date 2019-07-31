@@ -1,0 +1,13 @@
+<div class="psthPlotSelectors col-6">
+  <div class="order-buttons col-6">
+    <label for="event">Event</label>
+    <select name="event" (change)="order_by_event($event.target.value)">
+      <option value="feedback" selected>Feedback</option>
+      <option value="response">Response</option>
+      <option value="stim on">Stim On</option>
+    </select>
+  </div>
+</div>
+<div class="psthPlot-container">
+  <div #PSTH_plot></div>
+</div>

@@ -11,14 +11,16 @@ const BACKEND_API_URL = environment.api_url;
 })
 export class CellPlotsService {
   private allRasters;
-  private rasterEventFeedback
-  private rasterEventResponse
-  private rasterEventStimOn
+  private rasterEventFeedback;
+  private rasterEventResponse;
+  private rasterEventStimOn;
+  private allPsthPlots;
 
   private allRastersLoaded = new Subject();
   private rasterEventFeedbackLoaded = new Subject();
   private rasterEventResponseLoaded = new Subject();
   private rasterEventStimOnLoaded = new Subject();
+  private allPsthPlotsLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -133,6 +135,33 @@ export class CellPlotsService {
       );
   }
 
+  getAllPSTH(clusterInfo) {
+    const query = {
+      'subject_uuid': clusterInfo['subject_uuid'],
+      'session_start_time': clusterInfo['session_start_time'],
+      'cluster_id': clusterInfo['cluster_id'],
+      'probe_idx': clusterInfo['probe_idx'],
+      'cluster_revision': clusterInfo['cluster_revision']
+    }
+    // let timeA = new Date()
+    console.log('fetching all 3 psth plots..');
+    this.http.post(BACKEND_API_URL + `/plot/psth`, query)
+      .subscribe(
+        (plotData) => {
+          console.log('received all 3 psth plots');
+          // console.log('duration: ', new Date() - timeA, ' ms');
+          console.log('length of data: ', Object.entries(plotData).length);
+          this.allPsthPlots = plotData;
+
+          this.allPsthPlotsLoaded.next(this.allPsthPlots);
+        },
+        (err: any) => {
+          console.log('error in retrieving psth plots');
+          console.error(err);
+        }
+      );
+  }
+
   getAllRastersLoadedListener() {
     return this.allRastersLoaded.asObservable();
   }
@@ -147,5 +176,8 @@ export class CellPlotsService {
 
   getRasterEventStimOnLoadedListener() {
     return this.rasterEventStimOnLoaded.asObservable();
+  }
+  getAllPsthPlotsLoadedListener() {
+    return this.allPsthPlotsLoaded.asObservable();
   }
 }

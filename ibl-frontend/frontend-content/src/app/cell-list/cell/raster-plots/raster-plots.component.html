@@ -2,9 +2,9 @@
   <div class="order-buttons col-6">
     <label for="event">Event</label>
     <select name="event" (change)="order_by_event($event.target.value)">
-      <option value="feedback" selected>Feedback</option>
-      <option value="response">Response</option>
-      <option value="stim on">Stim On</option>
+      <option value="feedback" selected [disabled]="sortType==='response - stim on'">Feedback</option>
+      <option value="response" [disabled]="sortType==='feedback - stim on'">Response</option>
+      <option value="stim on" [disabled]="sortType==='feedback - response'">Stim On</option>
     </select>
   </div>
   <div class="order-buttons col-6">
@@ -18,7 +18,8 @@
   </div>
 </div>
 <div class="rasterPlot-container">
-  <div class="trial-condition-raster">
+  <div #raster_plots></div>
+  <!-- <div class="trial-condition-raster">
     <label>All Trials</label>
     <div #raster_AT></div>
   </div>
@@ -33,5 +34,5 @@
   <div class="trial-condition-raster">
     <label>Left Trials</label>
     <div #raster_LT></div>
-  </div>
+  </div> -->
 </div>
