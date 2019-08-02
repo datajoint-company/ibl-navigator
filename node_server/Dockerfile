@@ -10,10 +10,13 @@ RUN \
     cd /src && \
     npm install
 
-COPY ./* /src/
+# RUN npm install -g nodemon
 
-RUN \
-    mv /src/check-auth.js /src/middleware/
+# COPY ./* /src/
+COPY ./ /src/
+
+# RUN \
+#     mv /src/check-auth.js /src/middleware/
 
 HEALTHCHECK       \
     --timeout=3s \ 
@@ -22,4 +25,5 @@ HEALTHCHECK       \
         curl --fail http://localhost:3333/api/version || exit 1
 
 CMD node /src/server.js
+# CMD nodemon /src/server.js
 # CMD tail -f /dev/null

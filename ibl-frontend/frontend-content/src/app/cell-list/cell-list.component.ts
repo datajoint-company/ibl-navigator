@@ -4,6 +4,9 @@ import { Subscription } from 'rxjs';
 
 import { CellListService } from './cell-list.service';
 
+import { environment } from '../../environments/environment';
+const BACKEND_URL = environment.backend_url;
+
 // declare var Plotly: any;
 
 @Component({
@@ -21,9 +24,23 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   plot_config;
   cellOnFocus;
 
+  raster_data = [];
+  raster_layout = [];
+  raster_config = [];
+  rasterPlotList;
+
+  targetClusterRowInfo = []
+  targetClusterId;
+  targetClusterDepth;
+  targetClusterAmp;
+  targetProbeIndex;
+
+  eventType;
+  sortType;
+  probeIndex;
 
   private cellListSubscription: Subscription;
-
+  private rasterListSubscription: Subscription;
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
 
@@ -34,6 +51,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     if (event.key === 'Tab') {
       console.log('tab on table!');
       console.log(event);
+      if (event.target.cells && event.target.cells.length === 4) {
+        this.targetClusterRowInfo = [];
+        for (const row of event.target.cells) {
+          this.targetClusterRowInfo.push(row.innerText);
+        }
+        this.targetClusterId = parseInt(this.targetClusterRowInfo[0], 10);
+        this.targetProbeIndex = parseInt(this.targetClusterRowInfo[1], 10);
+        // this.targetClusterDepth = this.targetClusterRowInfo[2];
+        // this.targetClusterAmp = this.targetClusterRowInfo[3];
+
+      }
     }
    
 
@@ -43,81 +71,102 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.session = this.sessionInfo;
     this.cellListService.retrieveCellList(this.sessionInfo);
     this.cellListSubscription = this.cellListService.getCellListLoadedListener()
-        .subscribe((cellListData) => {
-          if (Object.entries(cellListData).length > 0) {
-            this.cells = cellListData;
-            console.log('printing cells index 2');
-            console.log(this.cells[2]);
-            this.cellOnFocus = this.cells[2];
-            const x_data = [];
-            const y_data = [];
-            const id_data = [];
-            const size_data = [];
-            const color_data = [];
-            for (let entry of Object.values(cellListData)) {
-              id_data.push(entry['cluster_id']);
-              size_data.push(entry['channel_id']);
-              y_data.push(entry['cluster_depth']);
-              x_data.push(entry['cluster_amp']);
-              color_data.push(entry['cluster_id']);
-            }
-            console.log('x_data is: ', x_data);
-            console.log('y_data is: ', y_data);
-            console.log('color_data is: ', color_data);
-            console.log('size_data is: ', size_data);
-            this.plot_data = [{
-              x: x_data,
-              y: y_data,
-              customdata: id_data,
-              mode: 'markers',
-              marker: {
-                size: 15,
-                color: 'rgba(255, 255, 255, 0.2',
-                line: {
-                  color: 'rgba(132, 0, 0, 0.5)',
-                  width: 2
-                }
-              }
-            }];
-
-            this.plot_layout = {
-              yaxis: {
-                title: 'cluster depth (µm)'
-              },
-              
-              hovermode: 'closest'
-            };
-
-            this.plot_config = {
-              showLink: false,
-              showSendToCloud: false,
-              displaylogo: false,
-              modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
-                              'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
-            };
-
-            // Plotly.newPlot(element, this.plot_data, this.plot_layout);
-            
-            // element.on('plotly_click', function (data) {
-            //   console.log('data:', data);
-            //   let pts = '';
-            //   for (let i = 0; i < data.points.length; i++) {
-            //     pts = 'amplitude = ' + data.points[i].x + '\ndepth = ' +
-            //     data.points[i].y.toPrecision(4) + '\nid= ' +
-            //     data.points[i].customdata + '\n\n';
-            //   }
-            //   console.log('original cluster id: ', this.clickedClusterId);
-            //   this.clickedClusterId = data.points[0].customdata;
-            //   console.log('Closest point clicked:\n\n' + pts);
-            //   console.log('clicked cluster id is: ', this.clickedClusterId);
-            //   console.log('clicked cluster id type is: ', typeof this.clickedClusterId);
-            //   return this.clickedClusterId;
-            // });
-
+      .subscribe((cellListData) => {
+        if (Object.entries(cellListData).length > 0) {
+          this.cells = cellListData;
+          this.cellOnFocus = this.cells[2];
+          const x_data = [];
+          const y_data = [];
+          const id_data = [];
+          const size_data = [];
+          const color_data = [];
+          for (let entry of Object.values(cellListData)) {
+            id_data.push(entry['cluster_id']);
+            size_data.push(entry['channel_id']);
+            y_data.push(entry['cluster_depth']);
+            x_data.push(entry['cluster_amp']);
+            color_data.push(entry['cluster_id']);
           }
-        });
-         
-    
+          // console.log('x_data is: ', x_data);
+          // console.log('y_data is: ', y_data);
+          // console.log('color_data is: ', color_data);
+          // console.log('size_data is: ', size_data);
+          this.plot_data = [{
+            x: x_data,
+            y: y_data,
+            customdata: id_data,
+            mode: 'markers',
+            marker: {
+              size: 15,
+              color: 'rgba(255, 255, 255, 0.2',
+              line: {
+                color: 'rgba(132, 0, 0, 0.5)',
+                width: 2
+              }
+            }
+          }];
+
+          this.plot_layout = {
+            yaxis: {
+              title: 'cluster depth (µm)'
+            },
+            hovermode: 'closest'
+          };
+
+          this.plot_config = {
+            showLink: false,
+            showSendToCloud: false,
+            displaylogo: false,
+            modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+                            'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
+          };
+        }
+      });
+    // initial setting for the raster viewer
+    this.eventType = 'feedback';
+    this.sortType = 'trial_id';
+    this.targetClusterId = 0;
+    this.probeIndex = 0;
+    const queryInfo = {};
+    queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    queryInfo['probe_idx'] = this.probeIndex;
+    queryInfo['cluster_revision'] = '0';
+    queryInfo['event'] = this.eventType;
+    queryInfo['sort_by'] = this.sortType;
+
+    this.cellListService.retrieveRasterList(queryInfo);
+    this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
+      .subscribe((rasterPlotList) => {
+        console.log('rasterplot list data');
+        console.log(rasterPlotList);
+        this.rasterPlotList = rasterPlotList;
+        const timeA = new Date()
+        console.log('received from node server - now plotting');
+        for (const raster of Object.values(rasterPlotList)) {
+          const p_idx = raster['probe_idx'];
+          const c_rev = raster['cluster_revision'];
+          const sstime = raster['session_start_time'];
+          const subj_id = raster['subject_uuid'];
+          const event = raster['event'];
+          const sorting = raster['sort_by'];
+          const cluster_id = raster['cluster_id'];
+          this.raster_data.push(raster['plotting_data']['data']);
+          const layout = raster['plotting_data']['layout'];
+          console.log('logging the soruce of image: ', layout['images'][0]['source']);
+          // /raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/0/0/feedback/feedback - response/4.png
+          layout['images'][0]['source'] =
+            // 'https://picsum.photos/id/277/536/354'
+            BACKEND_URL + `/raster/${subj_id}/${sstime}/${p_idx}/${c_rev}/${event}/${sorting}/${cluster_id}.png`;
+            // 'http://localhost:3333/plotImg/raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/response/trial_id.0.png';
+          this.raster_layout.push(layout);
+          this.raster_config.push(raster['plotting_data']['config']);
+          let timeB = new Date();
+          let dur = timeB.getTime() - timeA.getTime();
+          console.log('plotted one - ', dur, 'ms since receiving the data back');
+        }
+        
+      });
   }
 
   ngDoCheck() {
@@ -127,6 +176,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   ngOnDestroy() {
     if (this.cellListSubscription) {
       this.cellListSubscription.unsubscribe();
+    }
+    if (this.rasterListSubscription) {
+      this.rasterListSubscription.unsubscribe();
     }
   }
 
@@ -144,6 +196,84 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                                       block: 'center'});
     }
 
+  }
+
+  order_by_event(eventType) {
+    console.log('event order selected!: ', eventType);
+    this.eventType = eventType;
+    const queryInfo = {};
+    queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    queryInfo['probe_idx'] = this.probeIndex;
+    queryInfo['cluster_revision'] = '0';
+    queryInfo['event'] = this.eventType;
+    queryInfo['sort_by'] = this.sortType;
+    this.raster_data = [];
+    this.raster_layout = [];
+    this.raster_config = [];
+    this.cellListService.retrieveRasterList(queryInfo);
+    this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
+      .subscribe((rasterPlotList) => {
+        console.log('rasterplot list data');
+        console.log(rasterPlotList);
+        this.rasterPlotList = rasterPlotList;
+        for (const raster of Object.values(rasterPlotList)) {
+          const p_idx = raster['probe_idx'];
+          const c_rev = raster['cluster_revision'];
+          const sstime = raster['session_start_time'];
+          const subj_id = raster['subject_uuid'];
+          const event = raster['event'];
+          const sorting = raster['sort_by'];
+          const cluster_id = raster['cluster_id'];
+          this.raster_data.push(raster['plotting_data']['data']);
+          const layout = raster['plotting_data']['layout'];
+          // /raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/0/0/feedback/feedback - response/4.png
+          layout['images'][0]['source'] =
+            BACKEND_URL + `/raster/${subj_id}/${sstime}/${p_idx}/${c_rev}/${event}/${sorting}/${cluster_id}.png`;
+          // 'http://localhost:3333/plotImg/raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/response/trial_id.0.png';
+          this.raster_layout.push(layout);
+          this.raster_config.push(raster['plotting_data']['config']);
+        }
+      });
+  }
+
+  order_by_sorting(sortType) {
+    console.log('sort order selected!: ', sortType);
+    this.sortType = sortType;
+    const queryInfo = {};
+    queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    queryInfo['probe_idx'] = this.probeIndex;
+    queryInfo['cluster_revision'] = '0';
+    queryInfo['event'] = this.eventType;
+    queryInfo['sort_by'] = this.sortType;
+    this.raster_data = [];
+    this.raster_layout = [];
+    this.raster_config = [];
+    this.cellListService.retrieveRasterList(queryInfo);
+    this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
+      .subscribe((rasterPlotList) => {
+        console.log('rasterplot list data');
+        console.log(rasterPlotList);
+        this.rasterPlotList = rasterPlotList;
+        for (const raster of Object.values(rasterPlotList)) {
+          const p_idx = raster['probe_idx'];
+          const c_rev = raster['cluster_revision'];
+          const sstime = raster['session_start_time'];
+          const subj_id = raster['subject_uuid'];
+          const event = raster['event'];
+          const sorting = raster['sort_by'];
+          const cluster_id = raster['cluster_id'];
+          this.raster_data.push(raster['plotting_data']['data']);
+          const layout = raster['plotting_data']['layout'];
+          // /raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/0/0/feedback/feedback - response/4.png
+          layout['images'][0]['source'] =
+            BACKEND_URL + `/raster/${subj_id}/${sstime}/${p_idx}/${c_rev}/${event}/${sorting}/${cluster_id}.png`;
+          // 'http://localhost:3333/plotImg/raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/response/trial_id.0.png';
+          this.raster_layout.push(layout);
+          this.raster_config.push(raster['plotting_data']['config']);
+        }
+      });
   }
 
 }

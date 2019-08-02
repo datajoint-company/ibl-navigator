@@ -21,6 +21,9 @@ To see the production build using `ng build --prod`,
 do the regular docker-compose up then go to localhost:8080
 `docker-compose up --build`
 
+to check inside docker 
+`docker-compose -f docker-compose-dev.yml exec ibl-node-server /bin/bash`
+
 --------------------------------
 
 for testdev deploy

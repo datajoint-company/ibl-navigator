@@ -34,10 +34,13 @@ services:
   ibl-node-server:
     build: ./node_server
     image: ibl-node-server:v1.0
+    # command: nodemon /src/server.js
+    volumes:
+      - ./node_server/app.js:/src/app.js
     environment:
-    - NODE_ENV=development
-    - DEMO_USERNAME=ibluser
-    - PY_BACKEND=http://iblapi:5000
+      - NODE_ENV=development
+      - DEMO_USERNAME=ibluser
+      - PY_BACKEND=http://iblapi:5000
     env_file: .env
     ports:
       - "3333:3333"

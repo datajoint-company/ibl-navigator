@@ -12,3 +12,13 @@
     overflow-y: auto;
 
 }
+
+.rasterPlotSelectors {
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.order-buttons {
+    display: flex;
+    flex-direction: column;
+}

@@ -111,7 +111,8 @@ reqmap = {
     'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
     'cluster': ephys.Cluster,
     'raster': plotting_ephys.Raster,
-    'psth': plotting_ephys.Psth
+    'psth': plotting_ephys.Psth,
+    'rasterbatch': plotting_ephys.RasterLink
 }
 dumps = DateTimeEncoder.dumps
 

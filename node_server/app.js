@@ -8,9 +8,11 @@ const http = require('http');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('./middleware/check-auth');
+// const serveStatic = require('serve-static')
 
 const app = express();
 app.use(bodyParser.json());
+
 
 const readFile = util.promisify(fs.readFile)
 const writeFile = util.promisify(fs.writeFile)
@@ -22,12 +24,13 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
     next();
 })
+app.use(express.static(path.join(__dirname + '/test')));
 
 // configure backend address
 flask_backend = process.env['PY_BACKEND'] || 'http://localhost:5000'
 
 
-
+// app.use([checkAuth, serveStatic('static/plotImg')])
 // ======================== for testing/developing purpose - keep till raster plots are done ========================== //
 app.post('/api/plot', (req, res) =>{
     console.log(req.body);
@@ -402,8 +405,24 @@ app.post('/api/plot/psth', checkAuth, (req, res) => {
     })
 })
 
-
-
+app.post('/api/plot/rasterbatch', checkAuth, (req, res) => {
+    // req.setTimeout(60000);
+    const timeA = new Date()
+    console.log('requesting rasters batch to backend: ', timeA);
+    request.post(flask_backend + '/v0/rasterbatch', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        const timeZ = new Date()
+        console.log('rasters batch took ', timeZ - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
+app.get('/api/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {
+    let p = path.join(__dirname, `/test/plotImg/raster/${req.params.mouse_id}/${req.params.session_time}/${req.params.probe_index}/${req.params.cluster_revision}/${req.params.event_type}/${req.params.sort_by}/0.png`)
+    res.sendFile(p);
+})
 
 app.get('/api/plots/testPlot', (req, res, next) => {
 

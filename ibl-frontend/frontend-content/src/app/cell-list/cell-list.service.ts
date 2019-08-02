@@ -10,26 +10,23 @@ const BACKEND_API_URL = environment.api_url;
 })
 export class CellListService {
   private cellList;
+  private rasterList;
 
   private cellListLoaded = new Subject();
+  private rasterListLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
-  retrieveCellList(clusterInfo) {
-    const mouse_id = clusterInfo['subject_uuid'];
-    const session_time = clusterInfo['session_start_time'];
-    const cluster_id = clusterInfo['cluster_id']
+  retrieveCellList(sessionInfo) {
+    const mouse_id = sessionInfo['subject_uuid'];
+    const session_time = sessionInfo['session_start_time'];
     console.log('retrieving for..');
     console.log('mouse_id: ', mouse_id);
     console.log('session_time: ', session_time);
-    // console.log('cluster_id: ', cluster_id);
     this.http.post(BACKEND_API_URL + `/plot/cluster`, {
       'subject_uuid': mouse_id,
       'session_start_time': session_time
     })
-    // this.http.post(BACKEND_API_URL + `/plot/cluster`, { 'subject_uuid': mouse_id,
-    //                                                     'session_start_time': session_time,
-    //                                                     'cluster_id': cluster_id})
       .subscribe(
         (sessionCellData) => {
           console.log('retrieved cell Data!: ', Object.entries(sessionCellData).length)
@@ -43,8 +40,33 @@ export class CellListService {
       );
   }
 
+  retrieveRasterList(queryInfo) {
+    console.log('printing queryInfo')
+    console.log(queryInfo);
+    // const mouse_id = queryInfo['subject_uuid'];
+    // const session_time = queryInfo['session_start_time'];
+    // const probe_index = queryInfo['probe_idx'];
+    // const cluster_rev = queryInfo['cluster_revision'];
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          console.log('just fetched from backend');
+          console.log(sessionRasterData);
+          // console.log('retrieved session\'s raster data!: ', Object.entries(sessionRasterData).length);
+          this.rasterList = sessionRasterData;
+          this.rasterListLoaded.next(this.rasterList);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list for session');
+          console.error(err);
+        }
+      );
+  }
+
   getCellListLoadedListener() {
     return this.cellListLoaded.asObservable();
   }
-
+  getRasterListLoadedListener() {
+    return this.rasterListLoaded.asObservable();
+  }
 }
