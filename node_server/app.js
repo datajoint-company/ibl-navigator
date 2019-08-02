@@ -408,8 +408,8 @@ app.post('/api/plot/psth', checkAuth, (req, res) => {
 app.post('/api/plot/rasterbatch', checkAuth, (req, res) => {
     // req.setTimeout(60000);
     const timeA = new Date()
-    console.log('requesting rasters batch to backend: ', timeA);
-    request.post(flask_backend + '/v0/rasterbatch', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
+    console.log('requesting rasters light batch to backend: ', timeA);
+    request.post(flask_backend + '/v0/rasterlight', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -420,7 +420,7 @@ app.post('/api/plot/rasterbatch', checkAuth, (req, res) => {
     })
 })
 app.get('/api/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {
-    let p = path.join(__dirname, `/test/plotImg/raster/${req.params.mouse_id}/${req.params.session_time}/${req.params.probe_index}/${req.params.cluster_revision}/${req.params.event_type}/${req.params.sort_by}/0.png`)
+    let p = path.join(__dirname, `/test/raster/${req.params.mouse_id}/${req.params.session_time}/${req.params.probe_index}/${req.params.cluster_revision}/${req.params.event_type}/${req.params.sort_by}/0.png`)
     res.sendFile(p);
 })
 

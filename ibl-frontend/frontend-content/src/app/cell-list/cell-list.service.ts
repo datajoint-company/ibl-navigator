@@ -43,11 +43,8 @@ export class CellListService {
   retrieveRasterList(queryInfo) {
     console.log('printing queryInfo')
     console.log(queryInfo);
-    // const mouse_id = queryInfo['subject_uuid'];
-    // const session_time = queryInfo['session_start_time'];
-    // const probe_index = queryInfo['probe_idx'];
-    // const cluster_rev = queryInfo['cluster_revision'];
     this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+    // this.http.post(BACKEND_API_URL + `/plot/raster`, queryInfo)
       .subscribe(
         (sessionRasterData) => {
           console.log('just fetched from backend');

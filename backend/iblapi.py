@@ -112,7 +112,8 @@ reqmap = {
     'cluster': ephys.Cluster,
     'raster': plotting_ephys.Raster,
     'psth': plotting_ephys.Psth,
-    'rasterbatch': plotting_ephys.RasterLink
+    'rasterbatch': plotting_ephys.RasterLink,
+    'rasterlight': plotting_ephys.RasterLinkOnly
 }
 dumps = DateTimeEncoder.dumps
 
