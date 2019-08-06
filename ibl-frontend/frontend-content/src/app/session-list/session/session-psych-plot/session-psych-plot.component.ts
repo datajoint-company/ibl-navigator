@@ -139,8 +139,8 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
     this.sessionPlotsService.getSessionPsychPlot(sessionInfo);
     this.sessionPsychPlotSubscription = this.sessionPlotsService.getSessionPsychPlotLoadedListener()
       .subscribe((psychPlotData: any) => {
-        console.log('retrieved session psych plot for...');
-        console.log(psychPlotData);
+        // console.log('retrieved session psych plot for...');
+        // console.log(psychPlotData);
         if (psychPlotData[0]) {
           this.plotFitPars = psychPlotData[0]['fit_pars'];
           this.psychCurveFitPars.emit(this.plotFitPars);
