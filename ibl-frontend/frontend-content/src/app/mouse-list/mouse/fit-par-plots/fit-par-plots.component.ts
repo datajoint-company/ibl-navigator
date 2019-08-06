@@ -181,10 +181,10 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           const toPlot = plotsInfo[Object.entries(plotsInfo).length - 1];
           const fitParPlots = toPlot['fit_pars'];
           this.dataLen = fitParPlots['data'].length;
-          // fitParPlots['layout']['yaxis']['title']['text'] = '<i>Lapse High (\u03BB)</i>'; // lambda
-          // fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (\u03B3)</i>'; // gamma
-          // fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';
-          // fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (\u03A3)</i>';
+          fitParPlots['layout']['yaxis']['title']['text'] = '<i>Lapse High (\u03BB)</i>'; // lambda
+          fitParPlots['layout']['yaxis2']['title']['text'] = '<i>Lapse Low (\u03B3)</i>'; // gamma
+          fitParPlots['layout']['yaxis3']['title']['text'] = '<i>Bias (&mu;)</i>';
+          fitParPlots['layout']['yaxis4']['title']['text'] = '<i>Threshold (\u03A3)</i>';
           fitParPlots['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           fitParPlots['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           fitParPlots['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
