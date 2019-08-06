@@ -11,9 +11,11 @@ const BACKEND_API_URL = environment.api_url;
 export class CellListService {
   private cellList;
   private rasterList;
+  private rasterTemplates;
 
   private cellListLoaded = new Subject();
   private rasterListLoaded = new Subject();
+  private rasterTemplatesLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -60,10 +62,30 @@ export class CellListService {
       );
   }
 
+  retrieveRasterTemplates() {
+    this.http.get(BACKEND_API_URL + `/plot/rastertemplate`)
+      .subscribe(
+        (rasterTemplates) => {
+          console.log('just fetched templates from backend');
+          console.log(rasterTemplates);
+          // console.log('retrieved session\'s raster data!: ', Object.entries(sessionRasterData).length);
+          this.rasterTemplates = rasterTemplates;
+          this.rasterTemplatesLoaded.next(this.rasterTemplates);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster templates');
+          console.error(err);
+        }
+      );
+  }
+
   getCellListLoadedListener() {
     return this.cellListLoaded.asObservable();
   }
   getRasterListLoadedListener() {
     return this.rasterListLoaded.asObservable();
+  }
+  getRasterTemplatesLoadedListener() {
+    return this.rasterTemplatesLoaded.asObservable();
   }
 }
