@@ -3,6 +3,8 @@ div.summary-plots {
     flex-direction: row;
 }
 
-div.daily-plot {
+div.dailyplot {
     float: left;
+    width: 355px;
+    overflow-x: auto;
 }

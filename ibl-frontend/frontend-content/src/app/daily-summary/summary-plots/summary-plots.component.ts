@@ -100,8 +100,8 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
                 { filename: this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot' }
             });
           WWIplotInfo['layout']['legend']['bgcolor'] = 'rgba(0, 0, 0, 0)';
-          WWIplotInfo['layout']['height'] = '400';
-          WWIplotInfo['layout']['width'] = '';
+          WWIplotInfo['layout']['height'] = '300';
+          WWIplotInfo['layout']['width'] = '480';
           WWIplotInfo['layout']['margin'] =  {l: '35'};
           WWIplotInfo['layout']['legend'] = {
             font: {size: '9.75'},
@@ -113,7 +113,9 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
             }
           }
 
-          TCSDplotInfo['layout']['width'] = '535';
+          // TCSDplotInfo['layout']['width'] = '535';
+          TCSDplotInfo['layout']['width'] = '360';
+          TCSDplotInfo['layout']['height'] = '300';
           TCSDplotInfo['layout']['legend'] = {
             orientation: 'h',
             y: '-0.09', font: {size: '9.75'},
@@ -126,7 +128,9 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
               datum['hoverinfo'] = 'x';
             }
           }
-          PRTplotInfo['layout']['width'] = '535';
+          // PRTplotInfo['layout']['width'] = '535';
+          PRTplotInfo['layout']['width'] = '360';
+          PRTplotInfo['layout']['height'] = '300';
           PRTplotInfo['layout']['legend'] = {
             orientation: 'h',
             bgcolor: 'rgba(0, 0, 0, 0)',
@@ -139,7 +143,9 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
               datum['hoverinfo'] = 'x';
             }
           }
-          CHplotInfo['layout']['width'] = '540';
+          // CHplotInfo['layout']['width'] = '540';
+          CHplotInfo['layout']['width'] = '370';
+          CHplotInfo['layout']['height'] = '300';
           CHplotInfo['layout']['legend'] = {
             orientation: 'h',
             bgcolor: 'rgba(0, 0, 0, 0)',
