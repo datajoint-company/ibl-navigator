@@ -31,12 +31,12 @@ for dev mode, make sure `STAGING=true` for nginx > environment setting.
 
 Before building, make sure `build: ./ibl-frontend` is UNcommented in docker-compose.yml.
 `docker-compose build ibl-navigator` once that's built,
-`docker push raphaelguzman/ibl-navigator:v2.0`
+`docker push registry.vathes.com/ibl-navigator/frontend:v0.0`
 
 `ssh testdev` go to `ibl-navigator`
 `docker-compose down` to stop what's already running
 `git pull origin master` to get the latest from `mahos/ibl-navigator` repo.
-`docker login` to docker to get access.
+`docker login registry.vathes.com` to docker to get access.
 `docker-compose pull` to get the ibl-navigator container
 `docker-compose up --build -d`
 
