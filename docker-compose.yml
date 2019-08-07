@@ -3,7 +3,7 @@ version: '2.4'
 services:     
   iblapi:
     # build: ./backend
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.0
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.0 # add -dev ending to testdev tag
     environment:
     - DJ_USER=maho
     - DJ_HOST=datajoint.internationalbrainlab.org
@@ -18,10 +18,10 @@ services:
       - main
   ibl-navigator:
     # build: ./ibl-frontend
-    image: registry.vathes.com/ibl-navigator/frontend:v0.0
+    image: registry.vathes.com/ibl-navigator/frontend:v0.0 # add -dev ending to testdev tag
     environment:
-    # - PROD_NODE_API=https://testdev.datajoint.io/api
-    # - PROD_NODE_BACKEND=https://testdev.datajoint.io
+    # - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
+    # - PROD_NODE_BACKEND=https://testdev.datajoint.io # for testdev deploy
     - PROD_NODE_API=https://djcompute.internationalbrainlab.org/api
     - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org
     # - DEV_NODE_API=http://localhost:9000/api
@@ -32,7 +32,7 @@ services:
       - main
   ibl-node-server:
     # build: ./node_server
-    image: registry.vathes.com/ibl-navigator/node-server:v0.0
+    image: registry.vathes.com/ibl-navigator/node-server:v0.0 # add -dev ending to testdev tag
     environment:
     - NODE_ENV=development
     - DEMO_USERNAME=ibluser
@@ -45,14 +45,14 @@ services:
     networks:
       - main
   nginx:
-    # build: ./nginx-letsencrypt
+    build: ./nginx-letsencrypt
     image: registry.vathes.com/ibl-navigator/nginx:v0.0
     environment:
       - PUID=1000
       - PGID=1000
       - EMAIL=admin@vathes.com
-      # - URL=datajoint.io
-      # - SUBDOMAINS=testdev
+      # - URL=datajoint.io # for testdev deploy
+      # - SUBDOMAINS=testdev # for testdev deploy
       - URL=internationalbrainlab.org
       - SUBDOMAINS=djcompute
       - TZ=Europe/London
