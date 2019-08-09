@@ -419,6 +419,17 @@ app.post('/api/plot/rasterbatch', checkAuth, (req, res) => {
         res.send(body);
     })
 })
+app.get('/api/plot/rastertemplate', checkAuth, (req, res) => {
+    const time1 = new Date()
+    request.get(flask_backend + '/v0/rastertemplate', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        const time2 = new Date()
+        console.log('rasters templates took ', time2 - time1, ' ms to receive from backend')
+        res.send(body);
+    })
+})
 app.get('/api/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {
     let p = path.join(__dirname, `/test/raster/${req.params.mouse_id}/${req.params.session_time}/${req.params.probe_index}/${req.params.cluster_revision}/${req.params.event_type}/${req.params.sort_by}/0.png`)
     res.sendFile(p);
