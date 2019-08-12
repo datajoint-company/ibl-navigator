@@ -49,8 +49,6 @@ export class CellListService {
     // this.http.post(BACKEND_API_URL + `/plot/raster`, queryInfo)
       .subscribe(
         (sessionRasterData) => {
-          console.log('just fetched from backend');
-          console.log(sessionRasterData);
           // console.log('retrieved session\'s raster data!: ', Object.entries(sessionRasterData).length);
           this.rasterList = sessionRasterData;
           this.rasterListLoaded.next(this.rasterList);

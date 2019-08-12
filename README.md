@@ -37,7 +37,7 @@ commentout the `build: ./ibl-frontend` repeat for other 3.
 
 for testdev deploy
 for test dev mode, make sure `STAGING=true` for nginx > environment setting.
-
+comment out the test/* directory in `.dockerignore`
 switch to the `-k` flag line CMD in Dockerfile for nginx
 
 `ssh testdev` go to `ibl-navigator`
@@ -51,7 +51,7 @@ switch to the `-k` flag line CMD in Dockerfile for nginx
 
 for real deploy
 for client deploy mode, comment out `STAGING=true` for nginx > environment setting.
-
+MAKE SURE the test/* directory in `.dockerignore` is NOT commented out.
 switch to the line without the `-k` flag CMD in Dockerfile for nginx
 
 `ssh djcompute` go to `nagivator-deployer/ibl-navigator`

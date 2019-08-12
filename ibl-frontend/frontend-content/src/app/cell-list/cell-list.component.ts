@@ -30,7 +30,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   rasterPlotList;
   rasterTemplates = [];
 
-  targetClusterRowInfo = []
+  testPlotData;
+  testPlotLayout;
+
+  targetClusterRowInfo = [];
   targetClusterId;
   targetClusterDepth;
   targetClusterAmp;
@@ -148,6 +151,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             this.rasterTemplates.push(temp['raster_data_template']);
           }
         }
+        let titleJoined = '';
         this.cellListService.retrieveRasterList(queryInfo);
         this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
           .subscribe((rasterPlotList) => {
@@ -156,209 +160,35 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             const timeA = new Date()
             console.log('received from node server - now plotting');
             console.log('printing raster layout before loop = ', this.raster_layout);
-            let count = 0;
-            let currentLayout = {};
             for (const raster of Object.values(rasterPlotList)) {
               const currentTemplate = this.rasterTemplates[raster['template_idx']];
-              console.log('curentTemp: ', currentTemplate);
               this.raster_data.push(currentTemplate['data']);
-              Object.entries(currentLayout).length = 0;
-              // currentLayout = {title: {text: ''}};
-              currentLayout = currentTemplate['layout'];
-              currentLayout['images'][0] = {source: 'http://' + raster['plotting_data_link']};
-              currentLayout['title'] = {text: `${currentLayout['title']['text']}${raster['mark_label']}`};
-              console.log('raster mark label - ', raster['mark_label']);
-              console.log('currentLyaout title - ', currentLayout['title']);
-              console.log('currentLayout source - ', currentLayout['images'][0]['source']);
-              currentLayout['yaxis'] = {range: raster['plot_ylim']};
-              // console.log('currentLayout img source - ', currentLayout['images'][0]['source']);
-              this.raster_layout.push(currentLayout);
-              count += 1;
-              console.log(count);
+              const layoutCopy = Object.assign({}, currentTemplate['layout']);
+              layoutCopy['images'] = [{
+                source: 'http://' + raster['plotting_data_link'],
+                y: raster['plot_ylim'],
+                sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
+                layer: 'below',
+                sizex: '2',
+                sizing: 'stretch',
+                x: '-1',
+                xref: 'x',
+                yref: 'y'
+              }];
+              // layoutCopy['images'][0]['source'] = 'http://' + raster['plotting_data_link'];
+              titleJoined = currentTemplate.layout.title.text + raster['mark_label'];
+              layoutCopy['title'] = {text: titleJoined};
+              layoutCopy['yaxis'] = {range: raster['plot_ylim']};
+              layoutCopy['width'] = 705;
+              layoutCopy['height'] = 450;
+              // layoutCopy['template'] = {};
+              this.raster_layout.push(layoutCopy);
+              this.raster_config.push({});
             }
             console.log('layout - ', this.raster_layout);
             console.log('data - ', this.raster_data);
-          });
-
       });
-    // this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
-    //   .subscribe((rasterPlotList) => {
-    //     console.log('rasterplot list data');
-    //     console.log(rasterPlotList);
-    //     this.rasterPlotList = rasterPlotList;
-    //     const timeA = new Date()
-    //     console.log('received from node server - now plotting');
-    //     for (const raster of Object.values(rasterPlotList)) {
-    //       const p_idx = raster['probe_idx'];
-    //       const c_rev = raster['cluster_revision'];
-    //       const sstime = raster['session_start_time'];
-    //       const subj_id = raster['subject_uuid'];
-    //       const event = raster['event'];
-    //       const sorting = raster['sort_by'];
-    //       const cluster_id = raster['cluster_id'];
-    //       // this.raster_data.push(raster['plotting_data']['data']);
-    //       const dataTemplate = [
-    //         {
-    //           "marker": {
-    //             "opacity": "0"
-    //           },
-    //           "mode": "markers",
-    //           "showlegend": false,
-    //           "x": [
-    //             "-1",
-    //             "1"
-    //           ],
-    //           "y": [
-    //             "0",
-    //             5.222400000000001
-    //           ],
-    //           "type": "scatter"
-    //         },
-    //         {
-    //           "legendgroup": "spike",
-    //           "marker": {
-    //             "color": "green",
-    //             "opacity": 0.5,
-    //             "size": "6"
-    //           },
-    //           "mode": "markers",
-    //           "name": "spike time on left trials",
-    //           "x": ["5"],
-    //           "y": ["10"],
-    //           "type": "scatter"
-    //         },
-    //         {
-    //           "legendgroup": "spike",
-    //           "marker": {
-    //             "color": "blue",
-    //             "opacity": 0.5,
-    //             "size": "6"
-    //           },
-    //           "mode": "markers",
-    //           "name": "spike time on right trials",
-    //           "x": ["5"],
-    //           "y": ["10"],
-    //           "type": "scatter"
-    //         },
-    //         {
-    //           "legendgroup": "spike",
-    //           "marker": {
-    //             "color": "red",
-    //             "opacity": 0.5,
-    //             "size": "6"
-    //           },
-    //           "mode": "markers",
-    //           "name": "spike time on incorrect trials",
-    //           "x": ["5"],
-    //           "y": ["10"],
-    //           "type": "scatter"
-    //         }
-    //       ];
-    //       this.raster_data.push(dataTemplate);
-
-    //       const layout = {
-    //         "height": "450",
-    //         "images": [
-    //           {
-    //             "layer": "below",
-    //             "sizex": "2",
-    //             "sizey": 5.222400000000001,
-    //             "sizing": "stretch",
-    //             'images': [{}],
-    //             "x": "-1",
-    //             "xref": "x",
-    //             "y": 5.222400000000001,
-    //             "yref": "y"
-    //             }
-    //         ],
-    //         "margin": {
-    //           "b": "40",
-    //           "l": "50",
-    //           "pad": "0",
-    //           "r": "30",
-    //           "t": "80"
-    //         },
-    //         "title": {
-    //           "text": "Raster, aligned to response",
-    //           "x": 0.21,
-    //           "y": 0.87
-    //         },
-    //         "width": "705",
-    //         "xaxis": {
-    //           "range": ["-1", "1"],
-    //           "showgrid": false,
-    //           "title": {
-    //             "text": "Time (sec)"
-    //             }
-    //         },
-    //         "yaxis": {
-    //           "range": ["0", 5.222400000000001],
-    //           "showgrid": false,
-    //           "title": {
-    //             "text": "Trial idx"
-    //             }
-    //         },
-    //         'template': {
-    //           'data': {
-    //             "scatter": [{ "marker": { "colorbar": { "outlinewidth": "0", "ticks": "" } }, "type": "scatter" }]
-    //           },
-    //           'layout': {
-    //             "annotationdefaults": { "arrowcolor": "#2a3f5f", "arrowhead": "0", "arrowwidth": "1" },
-    //             "colorscale": {
-    //               "diverging": [["0", "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], ["1", "#276419"]],
-    //               "sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]],
-    //               "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]
-    //             },
-    //             "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"],
-    //             "font": { "color": "#2a3f5f" },
-    //             "geo": { "bgcolor": "white", "lakecolor": "white", "landcolor": "#E5ECF6", "showlakes": true, "showland": true, "subunitcolor": "white" },
-    //             "hoverlabel": { "align": "left" },
-    //             "hovermode": "closest",
-    //             "mapbox": { "style": "light" },
-    //             "paper_bgcolor": "white",
-    //             "plot_bgcolor": "#E5ECF6",
-    //             "polar": {
-    //               "angularaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" },
-    //               "bgcolor": "#E5ECF6",
-    //               "radialaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }
-    //             },
-    //             "scene": {
-    //               "xaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": "2", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white" },
-    //               "yaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": "2", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white" },
-    //               "zaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": "2", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white" }
-    //             },
-    //             "shapedefaults": {
-    //               "line": { "color": "#2a3f5f" }
-    //             },
-    //             "ternary": {
-    //               "aaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" },
-    //               "baxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" },
-    //               "bgcolor": "#E5ECF6",
-    //               "caxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }
-    //             },
-    //             "title": { "x": 0.05 },
-    //             "xaxis": { "automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "zerolinecolor": "white", "zerolinewidth": "2" },
-    //             "yaxis": { "automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "zerolinecolor": "white", "zerolinewidth": "2" }
-
-    //           }
-    //         }
-    //       };
-    //       // const layout = raster['plotting_data_link']['layout'];
-    //       // console.log('logging the soruce of image: ', layout['images'][0]['source']);
-    //       // // /raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/0/0/feedback/feedback - response/4.png
-    //       layout['images'][0]['source'] =
-    //         'http://' + raster['plotting_data_link'];
-    //         // BACKEND_URL + `/raster/${subj_id}/${sstime}/${p_idx}/${c_rev}/${event}/${sorting}/${cluster_id}.png`;
-    //         // 'http://localhost:3333/plotImg/raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/response/trial_id/0.png';
-    //       this.raster_layout.push(layout);
-    //       this.raster_config.push({});
-    //       // console.log('rasterlayout - source: ', layout['images'][0]['source']);
-    //       const timeB = new Date();
-    //       const dur = timeB.getTime() - timeA.getTime();
-    //       // console.log('plotted one - ', dur, 'ms since receiving the data back');
-    //     }
-        
-    //   });
+    });
   }
 
   ngDoCheck() {
