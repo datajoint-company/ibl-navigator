@@ -147,7 +147,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         console.log('raster templates retrieved');
         for (const [index, temp] of Object.entries(templates)) {
           if (temp['template_idx'] === parseInt(index, 10)) {
-            console.log('pushing raster template index: ', temp['template_idx']);
             this.rasterTemplates.push(temp['raster_data_template']);
           }
         }
@@ -157,20 +156,30 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           .subscribe((rasterPlotList) => {
             console.log('raster plot list - ', rasterPlotList);
             this.rasterPlotList = rasterPlotList;
-            const timeA = new Date()
-            console.log('received from node server - now plotting');
-            console.log('printing raster layout before loop = ', this.raster_layout);
+            const timeA = new Date();
             for (const raster of Object.values(rasterPlotList)) {
               const currentTemplate = this.rasterTemplates[raster['template_idx']];
-              this.raster_data.push(currentTemplate['data']);
+              const dataCopy = Object.assign([], currentTemplate['data']);
+              dataCopy[0] = {
+                y: raster['plot_ylim'],
+                // y: [0, 147.2],
+                x: ['-1', '1'],
+                type: 'scatter',
+                showlegend: false,
+                mode: 'markers',
+                marker: { opacity: '0'}
+              };
+              this.raster_data.push(dataCopy);
+              // this.raster_data.push(currentTemplate['data']);
+
               const layoutCopy = Object.assign({}, currentTemplate['layout']);
               layoutCopy['images'] = [{
                 // source: 'http://localhost:3333' + raster['plotting_data_link'],
                 source: BACKEND_URL + '/api' + raster['plotting_data_link'],
-                y: raster['plot_ylim'],
-                sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
+                y: raster['plot_ylim'][1],
+                sizey: parseFloat(raster['plot_ylim'][1]) - parseFloat(raster['plot_ylim'][0]),
                 layer: 'below',
-                sizex: '2',
+                sizex: 2,
                 sizing: 'stretch',
                 x: '-1',
                 xref: 'x',
