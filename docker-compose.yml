@@ -20,7 +20,7 @@ services:
     # build: ./ibl-frontend
     image: registry.vathes.com/ibl-navigator/frontend:v0.0-dev1 # add -dev ending to testdev tag
     environment:
-    - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
+    # - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
     - PROD_NODE_BACKEND=https://testdev.datajoint.io # for testdev deploy
     # - PROD_NODE_API=https://djcompute.internationalbrainlab.org/api # for client deploy
     # - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org # for client deploy
