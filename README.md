@@ -44,6 +44,7 @@ switch to the `-k` flag line CMD in Dockerfile for nginx
 `ssh testdev` go to `ibl-navigator`
 `docker-compose down` to stop what's already running
 `git pull origin dev` to get the latest from `mahos/ibl-navigator` repo.
+make sure to move over to the `dev` branch by `git checkout dev`
 `docker login registry.vathes.com` to docker to get access.
 `docker-compose pull` to get the ibl-navigator container
 `docker-compose up --build -d`

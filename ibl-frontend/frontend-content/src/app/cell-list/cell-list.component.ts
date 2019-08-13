@@ -165,7 +165,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               this.raster_data.push(currentTemplate['data']);
               const layoutCopy = Object.assign({}, currentTemplate['layout']);
               layoutCopy['images'] = [{
-                source: 'http://' + raster['plotting_data_link'],
+                // source: 'http://localhost:3333' + raster['plotting_data_link'],
+                source: BACKEND_URL + raster['plotting_data_link'],
                 y: raster['plot_ylim'],
                 sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
                 layer: 'below',
@@ -251,7 +252,18 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.raster_data.push(this.rasterTemplates[raster['template_idx']]['data']);
           // this.raster_data.push(raster['plotting_data']['data']);
           const newLayout = this.rasterTemplates[raster['template_idx']]['layout'];
-          newLayout['images'][0]['source'] = 'http://' + raster['plotting_data_link'];
+          newLayout['images'] = [{
+                // source: 'http://localhost:3333' + raster['plotting_data_link'],
+                source: BACKEND_URL + raster['plotting_data_link'],
+                y: raster['plot_ylim'],
+                sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
+                layer: 'below',
+                sizex: '2',
+                sizing: 'stretch',
+                x: '-1',
+                xref: 'x',
+                yref: 'y'
+              }];
           this.raster_layout.push(newLayout);
           // const layout = raster['plotting_data']['layout'];
           // /raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/0/0/feedback/feedback - response/4.png
@@ -294,7 +306,19 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.raster_data.push(this.rasterTemplates[raster['template_idx']]['data']);
           // this.raster_data.push(raster['plotting_data']['data']);
           const newLayout = this.rasterTemplates[raster['template_idx']]['layout'];
-          newLayout['images'][0]['source'] = 'http://' + raster['plotting_data_link'];
+          newLayout['images'] = [{
+            // source: 'http://localhost:3333' + raster['plotting_data_link'],
+            source: BACKEND_URL + raster['plotting_data_link'],
+            y: raster['plot_ylim'],
+            sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
+            layer: 'below',
+            sizex: '2',
+            sizing: 'stretch',
+            x: '-1',
+            xref: 'x',
+            yref: 'y'
+          }];
+          // newLayout['images'][0]['source'] = 'http://localhost:3333' + raster['plotting_data_link'];
           this.raster_layout.push(newLayout);
           // const layout = raster['plotting_data']['layout'];
           // /raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/0/0/feedback/feedback - response/4.png
