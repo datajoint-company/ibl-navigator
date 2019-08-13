@@ -175,11 +175,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               const layoutCopy = Object.assign({}, currentTemplate['layout']);
               layoutCopy['images'] = [{
                 // source: 'http://localhost:3333' + raster['plotting_data_link'],
-<<<<<<< HEAD
-                source: BACKEND_URL + raster['plotting_data_link'],
-=======
                 source: BACKEND_URL + '/api' + raster['plotting_data_link'],
->>>>>>> 49351c44c659b746592a60bce625a69b631579cf
                 y: raster['plot_ylim'][1],
                 sizey: parseFloat(raster['plot_ylim'][1]) - parseFloat(raster['plot_ylim'][0]),
                 layer: 'below',
