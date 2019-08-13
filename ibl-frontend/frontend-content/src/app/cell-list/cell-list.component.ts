@@ -166,7 +166,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               const layoutCopy = Object.assign({}, currentTemplate['layout']);
               layoutCopy['images'] = [{
                 // source: 'http://localhost:3333' + raster['plotting_data_link'],
-                source: BACKEND_URL + '/api' + raster['plotting_data_link'],
+                source: BACKEND_URL + raster['plotting_data_link'],
                 y: raster['plot_ylim'],
                 sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
                 layer: 'below',
@@ -254,7 +254,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           const newLayout = this.rasterTemplates[raster['template_idx']]['layout'];
           newLayout['images'] = [{
                 // source: 'http://localhost:3333' + raster['plotting_data_link'],
-            source: BACKEND_URL + '/api' + raster['plotting_data_link'],
+            source: BACKEND_URL + raster['plotting_data_link'],
                 y: raster['plot_ylim'],
                 sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
                 layer: 'below',
@@ -308,7 +308,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           const newLayout = this.rasterTemplates[raster['template_idx']]['layout'];
           newLayout['images'] = [{
             // source: 'http://localhost:3333' + raster['plotting_data_link'],
-            source: BACKEND_URL + '/api' + raster['plotting_data_link'],
+            source: BACKEND_URL + raster['plotting_data_link'],
             y: raster['plot_ylim'],
             sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
             layer: 'below',
