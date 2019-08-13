@@ -24,7 +24,7 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
     next();
 })
-app.use(express.static(path.join(__dirname + '/test')));
+app.use('/api', express.static(path.join(__dirname + '/test')));
 
 // configure backend address
 flask_backend = process.env['PY_BACKEND'] || 'http://localhost:5000'
