@@ -100,6 +100,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             x: x_data,
             y: y_data,
             customdata: id_data,
+            text: id_data,
             mode: 'markers',
             marker: {
               size: 15,
@@ -114,6 +115,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.plot_layout = {
             yaxis: {
               title: 'cluster depth (µm)'
+            },
+            xaxis: {
+              title: 'cluster amp (µV)'
             },
             hovermode: 'closest'
           };
