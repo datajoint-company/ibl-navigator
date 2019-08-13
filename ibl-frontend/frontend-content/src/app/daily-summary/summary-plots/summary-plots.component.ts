@@ -154,6 +154,9 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
           for (const datum of CHplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
               datum['hoverinfo'] = 'skip';
+            } else if (datum['xgap']) {
+              datum['xgap'] = '0.25';
+              datum['ygap'] = '0.5';
             }
           }
           Plotly.newPlot(WWIplotElem, WWIplotInfo['data'], WWIplotInfo['layout'], plotConfigWWI);

@@ -17,13 +17,14 @@ services:
     networks:
       - main
   ibl-navigator:
-    build: ./ibl-frontend
+    # build: ./ibl-frontend
     image: registry.vathes.com/ibl-navigator/frontend:v0.0-dev3 # add -dev ending to testdev tag
     environment:
     # - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
     - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy
     # - PROD_NODE_API=https://djcompute.internationalbrainlab.org/api # for client deploy
     # - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org # for client deploy
+    # - PROD_NODE_BACKEND=http://localhost:3333
     # - DEV_NODE_API=http://localhost:9000/api
     # - DEV_NODE_BACKEND=http://localhost:9000
     # ports:
@@ -31,7 +32,7 @@ services:
     networks:
       - main
   ibl-node-server:
-    build: ./node_server
+    # build: ./node_server
     image: registry.vathes.com/ibl-navigator/node-server:v0.0-dev3 # add -dev ending to testdev tag
     environment:
     - NODE_ENV=development
@@ -44,36 +45,36 @@ services:
     #   - "3333:3333"
     networks:
       - main
-  # nginx:
-  #   build: ./nginx-letsencrypt
-  #   image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev2
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - EMAIL=admin@vathes.com
-  #     - URL=datajoint.io # for testdev deploy
-  #     - SUBDOMAINS=testdev # for testdev deploy
-  #     # - URL=internationalbrainlab.org # for client deploy
-  #     # - SUBDOMAINS=djcompute # for client deploy
-  #     - TZ=Europe/London
-  #     - ONLY_SUBDOMAINS=true
-  #     - STAGING=true # UNcomment for testdev
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   # cap_add:
-  #   #   - NET_ADMIN
-  #   # volumes:
-  #   #   - ./nginx-letsencrypt/app.conf:/config/nginx/site-confs/app.conf
-  #   networks:
-  #     - main   
-  #   depends_on:
-  #     ibl-node-server:
-  #       condition: service_healthy
-  #     iblapi:
-  #       condition: service_healthy
-  #     ibl-navigator:
-  #       condition: service_healthy
+  nginx:
+    # build: ./nginx-letsencrypt
+    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - EMAIL=admin@vathes.com
+      - URL=datajoint.io # for testdev deploy
+      - SUBDOMAINS=testdev # for testdev deploy
+      # - URL=internationalbrainlab.org # for client deploy
+      # - SUBDOMAINS=djcompute # for client deploy
+      - TZ=Europe/London
+      - ONLY_SUBDOMAINS=true
+      - STAGING=true # UNcomment for testdev
+    ports:
+      - "80:80"
+      - "443:443"
+    # cap_add:
+    #   - NET_ADMIN
+    # volumes:
+    #   - ./nginx-letsencrypt/app.conf:/config/nginx/site-confs/app.conf
+    networks:
+      - main   
+    depends_on:
+      ibl-node-server:
+        condition: service_healthy
+      iblapi:
+        condition: service_healthy
+      ibl-navigator:
+        condition: service_healthy
 networks:
     main:
         ipam:
