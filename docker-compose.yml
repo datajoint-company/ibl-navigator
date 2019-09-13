@@ -59,6 +59,8 @@ services:
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
       - STAGING=true # UNcomment for testdev
+      - NODE_SERVER=http://ibl-node-server:3333
+      - FRONTEND_SERVER=http://ibl-navigator:8080
     ports:
       - "80:80"
       - "443:443"
