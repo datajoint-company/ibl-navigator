@@ -47,7 +47,7 @@ services:
       - main
   nginx:
     # build: ./nginx-letsencrypt
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev2
+    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev3
     environment:
       - PUID=1000
       - PGID=1000
