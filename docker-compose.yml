@@ -47,7 +47,7 @@ services:
       - main
   nginx:
     # build: ./nginx-letsencrypt
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev2
+    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev3
     environment:
       - PUID=1000
       - PGID=1000
@@ -59,6 +59,8 @@ services:
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
       - STAGING=true # UNcomment for testdev
+      - NODE_SERVER=http://ibl-node-server:3333
+      - FRONTEND_SERVER=http://ibl-navigator:8080
     ports:
       - "80:80"
       - "443:443"
