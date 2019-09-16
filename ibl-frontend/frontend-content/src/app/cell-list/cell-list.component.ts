@@ -58,6 +58,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       if (this.clickedClusterId - 1 > -1) {
         this.clickedClusterId -= 1;
         this.targetClusterId = this.clickedClusterId;
+        console.log('plot data is: ', this.plot_data);
       }
       // console.log(event);
       // console.log('evene target children', event.target.children);
@@ -217,8 +218,25 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngDoCheck() {
-    // this.clickedClusterId ++;
-
+    console.log('do check ran');
+    console.log('this.clicked cluster id: ', this.clickedClusterId);
+    console.log(this.plot_data[0]['x'].length);
+    const markerColors = [];
+    if (this.plot_data[0]['x'] && this.clickedClusterId > -1) {
+      for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
+        if (this.clickedClusterId === i) {
+          markerColors.push('rgba(0, 0, 0, 1)'); // black
+        } else {
+          markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
+        }
+      }
+    } else {
+      for (let i = 0; i++; i < this.plot_data[0]['x'].length) {
+        markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
+      }
+    }
+    this.plot_data[0]['marker']['line']['color'] = markerColors;
+    console.log('markerColors: ', markerColors);
   }
   ngOnDestroy() {
     if (this.cellListSubscription) {
