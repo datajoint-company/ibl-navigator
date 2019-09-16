@@ -52,20 +52,32 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   constructor(public cellListService: CellListService) { }
   @HostListener('window:keyup', ['$event']) keyEvent(event) {
     console.log('listening to key event');
-    console.log(event.target);
-    if (event.key === 'Tab') {
-      console.log('tab on table!');
-      console.log(event);
-      if (event.target.cells && event.target.cells.length === 4) {
-        this.targetClusterRowInfo = [];
-        for (const row of event.target.cells) {
-          this.targetClusterRowInfo.push(row.innerText);
-        }
-        this.targetClusterId = parseInt(this.targetClusterRowInfo[0], 10);
-        this.targetProbeIndex = parseInt(this.targetClusterRowInfo[1], 10);
-        // this.targetClusterDepth = this.targetClusterRowInfo[2];
-        // this.targetClusterAmp = this.targetClusterRowInfo[3];
+    console.log(event.key);
+    if (event.key === 'ArrowUp') {
+      console.log('arrow upped!');
+      if (this.clickedClusterId - 1 > -1) {
+        this.clickedClusterId -= 1;
+        this.targetClusterId = this.clickedClusterId;
+        console.log('plot data is: ', this.plot_data);
+      }
+      // console.log(event);
+      // console.log('evene target children', event.target.children);
+      // if (event.target.children && event.target.children[0].childElementCount === 4) {
+      //   console.log('insde');
+      //   this.targetClusterRowInfo = [];
+      //   for (const row of event.target.children[0].children) { // TODO: traverse actual elements' innertext here
+      //     this.targetClusterRowInfo.push(row.innerText);
+      //   }
+      //   this.targetClusterId = parseInt(this.targetClusterRowInfo[0], 10);
+      //   this.targetProbeIndex = parseInt(this.targetClusterRowInfo[1], 10);
 
+      // }
+    } else if (event.key === 'ArrowDown') {
+      console.log('arrow down or tab detected');
+      console.log('this.clickedClusterId', this.clickedClusterId);
+      if (this.clickedClusterId + 1) {
+        this.clickedClusterId += 1;
+        this.targetClusterId = this.clickedClusterId;
       }
     }
    
@@ -100,6 +112,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             x: x_data,
             y: y_data,
             customdata: id_data,
+            text: id_data,
             mode: 'markers',
             marker: {
               size: 15,
@@ -114,6 +127,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.plot_layout = {
             yaxis: {
               title: 'cluster depth (µm)'
+            },
+            xaxis: {
+              title: 'cluster amp (µV)'
             },
             hovermode: 'closest'
           };
@@ -202,8 +218,25 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngDoCheck() {
-    // this.clickedClusterId ++;
-
+    console.log('do check ran');
+    console.log('this.clicked cluster id: ', this.clickedClusterId);
+    console.log(this.plot_data[0]['x'].length);
+    const markerColors = [];
+    if (this.plot_data[0]['x'] && this.clickedClusterId > -1) {
+      for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
+        if (this.clickedClusterId === i) {
+          markerColors.push('rgba(0, 0, 0, 1)'); // black
+        } else {
+          markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
+        }
+      }
+    } else {
+      for (let i = 0; i++; i < this.plot_data[0]['x'].length) {
+        markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
+      }
+    }
+    this.plot_data[0]['marker']['line']['color'] = markerColors;
+    console.log('markerColors: ', markerColors);
   }
   ngOnDestroy() {
     if (this.cellListSubscription) {
@@ -214,13 +247,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
 
-  clusterSelected(data) {
+  clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
-    console.log('cluster selected!');
+    console.log('cluster selected from cluster plot!');
     console.log(element);
     const rows = element.querySelectorAll('tr');
     console.log('printing rows');
     console.log(rows);
+    this.targetClusterId = this.clickedClusterId;
     if (data['points'] && data['points'][0]['customdata']) {
       this.clickedClusterId = data['points'][0]['customdata'];
       rows[this.clickedClusterId].scrollIntoView({
@@ -228,6 +262,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                                       block: 'center'});
     }
 
+  }
+
+  clusterSelectedTable(cluster_id) {
+    console.log('cluster selected from table!');
+    const element = this.el_nav.nativeElement.children[1];
+    console.log(cluster_id);
+    const rows = element.querySelectorAll('tr');
+    console.log('printing rows');
+    console.log(rows);
+    this.clickedClusterId = cluster_id;
+    this.targetClusterId = this.clickedClusterId;
   }
 
   order_by_event(eventType) {
