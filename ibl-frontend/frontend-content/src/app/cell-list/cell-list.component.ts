@@ -52,20 +52,31 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   constructor(public cellListService: CellListService) { }
   @HostListener('window:keyup', ['$event']) keyEvent(event) {
     console.log('listening to key event');
-    console.log(event.target);
-    if (event.key === 'Tab') {
-      console.log('tab on table!');
-      console.log(event);
-      if (event.target.cells && event.target.cells.length === 4) {
-        this.targetClusterRowInfo = [];
-        for (const row of event.target.cells) {
-          this.targetClusterRowInfo.push(row.innerText);
-        }
-        this.targetClusterId = parseInt(this.targetClusterRowInfo[0], 10);
-        this.targetProbeIndex = parseInt(this.targetClusterRowInfo[1], 10);
-        // this.targetClusterDepth = this.targetClusterRowInfo[2];
-        // this.targetClusterAmp = this.targetClusterRowInfo[3];
+    console.log(event.key);
+    if (event.key === 'ArrowUp') {
+      console.log('arrow upped!');
+      if (this.clickedClusterId - 1 > -1) {
+        this.clickedClusterId -= 1;
+        this.targetClusterId = this.clickedClusterId;
+      }
+      // console.log(event);
+      // console.log('evene target children', event.target.children);
+      // if (event.target.children && event.target.children[0].childElementCount === 4) {
+      //   console.log('insde');
+      //   this.targetClusterRowInfo = [];
+      //   for (const row of event.target.children[0].children) { // TODO: traverse actual elements' innertext here
+      //     this.targetClusterRowInfo.push(row.innerText);
+      //   }
+      //   this.targetClusterId = parseInt(this.targetClusterRowInfo[0], 10);
+      //   this.targetProbeIndex = parseInt(this.targetClusterRowInfo[1], 10);
 
+      // }
+    } else if (event.key === 'ArrowDown') {
+      console.log('arrow down or tab detected');
+      console.log('this.clickedClusterId', this.clickedClusterId);
+      if (this.clickedClusterId + 1) {
+        this.clickedClusterId += 1;
+        this.targetClusterId = this.clickedClusterId;
       }
     }
    
@@ -218,13 +229,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
 
-  clusterSelected(data) {
+  clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
-    console.log('cluster selected!');
+    console.log('cluster selected from cluster plot!');
     console.log(element);
     const rows = element.querySelectorAll('tr');
     console.log('printing rows');
     console.log(rows);
+    this.targetClusterId = this.clickedClusterId;
     if (data['points'] && data['points'][0]['customdata']) {
       this.clickedClusterId = data['points'][0]['customdata'];
       rows[this.clickedClusterId].scrollIntoView({
@@ -232,6 +244,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                                       block: 'center'});
     }
 
+  }
+
+  clusterSelectedTable(cluster_id) {
+    console.log('cluster selected from table!');
+    const element = this.el_nav.nativeElement.children[1];
+    console.log(cluster_id);
+    const rows = element.querySelectorAll('tr');
+    console.log('printing rows');
+    console.log(rows);
+    this.clickedClusterId = cluster_id;
+    this.targetClusterId = this.clickedClusterId;
   }
 
   order_by_event(eventType) {
