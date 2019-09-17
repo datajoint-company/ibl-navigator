@@ -1,7 +1,7 @@
 # FROM linuxserver/letsencrypt
 FROM nginx:alpine
 
-COPY ./app.conf /etc/nginx/site-confs/app.conf
+COPY ./app.conf /etc/nginx/conf.d/default.conf
 
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
