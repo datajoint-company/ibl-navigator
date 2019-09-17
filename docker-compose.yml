@@ -45,20 +45,44 @@ services:
     #   - "3333:3333"
     networks:
       - main
+  # nginx-letsencrypt:
+  #   build: ./nginx-letsencrypt
+  #   image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev3
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - EMAIL=admin@vathes.com
+  #     - URL=datajoint.io # for testdev deploy
+  #     - SUBDOMAINS=testdev # for testdev deploy
+  #     # - URL=internationalbrainlab.org # for client deploy
+  #     # - SUBDOMAINS=djcompute # for client deploy
+  #     - TZ=Europe/London
+  #     - ONLY_SUBDOMAINS=true
+  #     - STAGING=true # UNcomment for testdev
+  #     - NODE_SERVER=http://ibl-node-server:3333
+  #     - FRONTEND_SERVER=http://ibl-navigator:8080
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   # cap_add:
+  #   #   - NET_ADMIN
+  #   # volumes:
+  #   #   - ./nginx-letsencrypt/app.conf:/config/nginx/site-confs/app.conf
+  #   networks:
+  #     - main   
+  #   depends_on:
+  #     ibl-node-server:
+  #       condition: service_healthy
+  #     iblapi:
+  #       condition: service_healthy
+  #     ibl-navigator:
+  #       condition: service_healthy
   nginx:
-    # build: ./nginx-letsencrypt
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev3
+    build: ./nginx
+    image: registry.vathes.com/ibl-navigator/nginx-only:v0.0-dev1
     environment:
-      - PUID=1000
-      - PGID=1000
-      - EMAIL=admin@vathes.com
       - URL=datajoint.io # for testdev deploy
       - SUBDOMAINS=testdev # for testdev deploy
-      # - URL=internationalbrainlab.org # for client deploy
-      # - SUBDOMAINS=djcompute # for client deploy
-      - TZ=Europe/London
-      - ONLY_SUBDOMAINS=true
-      - STAGING=true # UNcomment for testdev
       - NODE_SERVER=http://ibl-node-server:3333
       - FRONTEND_SERVER=http://ibl-navigator:8080
     ports:
@@ -66,8 +90,8 @@ services:
       - "443:443"
     # cap_add:
     #   - NET_ADMIN
-    # volumes:
-    #   - ./nginx-letsencrypt/app.conf:/config/nginx/site-confs/app.conf
+    volumes:
+      - ./letsencrypt-keys:/etc/letsencrypt/live:ro
     networks:
       - main   
     depends_on:
