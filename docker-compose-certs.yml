@@ -20,7 +20,7 @@ services:
     # cap_add:
     #   - NET_ADMIN
     volumes:
-      - ./letsencrypt-keys:/etc/letsencrypt/live
+      - ./letsencrypt-keys:/config/etc/letsencrypt
     networks:
       - main   
 networks:

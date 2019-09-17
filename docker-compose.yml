@@ -78,8 +78,8 @@ services:
   #     ibl-navigator:
   #       condition: service_healthy
   nginx:
-    # build: ./nginx
-    image: registry.vathes.com/ibl-navigator/nginx-k8s:v0.0-dev1
+    build: ./nginx
+    image: registry.vathes.com/ibl-navigator/nginx-k8s:v0.0-dev2
     environment:
       - URL=datajoint.io # for testdev deploy
       - SUBDOMAINS=testdev # for testdev deploy
@@ -91,7 +91,7 @@ services:
     # cap_add:
     #   - NET_ADMIN
     volumes:
-      - ./letsencrypt-keys:/etc/letsencrypt/live:ro
+      - ./letsencrypt-keys:/etc/letsencrypt:ro
     networks:
       - main   
     depends_on:
