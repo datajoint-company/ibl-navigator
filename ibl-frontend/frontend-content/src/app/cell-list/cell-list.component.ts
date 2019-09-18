@@ -335,6 +335,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       });
   }
 
+  navigate_cell_plots(event, direction) {
+    console.log('going', direction, 'the list of cells');
+
+  }
+
   order_by_event(eventType) {
     console.log('event order selected!: ', eventType);
     this.eventType = eventType;
