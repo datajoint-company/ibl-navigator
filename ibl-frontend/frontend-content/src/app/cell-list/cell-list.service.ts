@@ -11,10 +11,12 @@ const BACKEND_API_URL = environment.backend_url;
 export class CellListService {
   private cellList;
   private rasterList;
+  private psthList;
   private rasterTemplates;
 
   private cellListLoaded = new Subject();
   private rasterListLoaded = new Subject();
+  private psthListLoaded = new Subject();
   private rasterTemplatesLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
@@ -60,6 +62,23 @@ export class CellListService {
       );
   }
 
+  retrievePSTHList(queryInfo) {
+    console.log('printing psth queryInfo');
+    console.log(queryInfo);
+    this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
+      .subscribe(
+        (sessionPSTHData) => {
+          console.log('psth data retrieved - ', sessionPSTHData);
+          this.psthList = sessionPSTHData;
+          this.psthListLoaded.next(this.psthList);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list for session');
+          console.error(err);
+        }
+      );
+  }
+
   retrieveRasterTemplates() {
     this.http.get(BACKEND_API_URL + `/plot/rastertemplate`)
       .subscribe(
@@ -82,6 +101,9 @@ export class CellListService {
   }
   getRasterListLoadedListener() {
     return this.rasterListLoaded.asObservable();
+  }
+  getPSTHListLoadedListener() {
+    return this.psthListLoaded.asObservable();
   }
   getRasterTemplatesLoadedListener() {
     return this.rasterTemplatesLoaded.asObservable();

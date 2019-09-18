@@ -419,6 +419,21 @@ app.post('/plot/rasterbatch', checkAuth, (req, res) => {
         res.send(body);
     })
 })
+
+app.post('/plot/psthbatch', checkAuth, (req, res) => {
+    // req.setTimeout(60000);
+    const timeA = new Date()
+    console.log('requesting psth batch to backend: ', timeA);
+    request.post(flask_backend + '/v0/psth', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        const timeZ = new Date()
+        console.log('psthbatch took ', timeZ - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
 app.get('/plot/rastertemplate', checkAuth, (req, res) => {
     const time1 = new Date()
     request.get(flask_backend + '/v0/rastertemplate', function(error, httpResponse, body) {

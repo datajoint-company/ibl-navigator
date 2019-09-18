@@ -30,6 +30,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   rasterPlotList;
   rasterTemplates = [];
 
+  psth_data = [];
+  psth_layout = {};
+  psth_config = {};
+
   testPlotData;
   testPlotLayout;
 
@@ -45,6 +49,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   private cellListSubscription: Subscription;
   private rasterListSubscription: Subscription;
+  private psthListSubscription: Subscription;
   private rasterTemplateSubscription: Subscription;
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
@@ -215,28 +220,63 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             console.log('data - ', this.raster_data);
       });
     });
+
+    const psthQueryInfo = {};
+    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    psthQueryInfo['probe_idx'] = this.probeIndex;
+    psthQueryInfo['cluster_revision'] = '0';
+    psthQueryInfo['event'] = this.eventType;
+    psthQueryInfo['cluster_id'] = 0;
+    console.log('querying for psth plots with: ', psthQueryInfo);
+    this.cellListService.retrievePSTHList(psthQueryInfo);
+    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+      .subscribe((psthPlotList) => {
+        console.log('psth plot list successfully retrieved: ', psthPlotList);
+        this.psth_data = psthPlotList[0]['plotting_data']['data'];
+        this.psth_layout = psthPlotList[0]['plotting_data']['layout'];
+        this.psth_config = {};
+      });
+
   }
 
   ngDoCheck() {
     console.log('do check ran');
     console.log('this.clicked cluster id: ', this.clickedClusterId);
-    console.log(this.plot_data[0]['x'].length);
+    // console.log(this.plot_data[0]['x'].length);
     const markerColors = [];
-    if (this.plot_data[0]['x'] && this.clickedClusterId > -1) {
-      for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-        if (this.clickedClusterId === i) {
-          markerColors.push('rgba(0, 0, 0, 1)'); // black
-        } else {
+    if (this.plot_data) {
+      if (this.plot_data[0]['x'] && this.clickedClusterId > -1) {
+        for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
+          if (this.clickedClusterId === i) {
+            markerColors.push('rgba(0, 0, 0, 1)'); // black
+          } else {
+            markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
+          }
+        }
+      } else {
+        for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
           markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
         }
       }
-    } else {
-      for (let i = 0; i++; i < this.plot_data[0]['x'].length) {
-        markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
-      }
+      this.plot_data[0]['marker']['line']['color'] = markerColors;
+      // console.log('markerColors: ', markerColors);
     }
-    this.plot_data[0]['marker']['line']['color'] = markerColors;
-    console.log('markerColors: ', markerColors);
+
+    // const psthQueryInfo = {};
+    // psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    // psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    // psthQueryInfo['probe_idx'] = this.probeIndex;
+    // psthQueryInfo['cluster_revision'] = '0';
+    // psthQueryInfo['event'] = this.eventType;
+    // psthQueryInfo['cluster_id'] = this.clickedClusterId;
+    // this.cellListService.retrievePSTHList(psthQueryInfo);
+    // this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+    //   .subscribe((psthPlot) => {
+    //     this.psth_data = psthPlot[0]['plotting_data']['data'];
+    //     this.psth_layout = psthPlot[0]['plotting_data']['layout'];
+    //     this.psth_config = {};
+    //   });
   }
   ngOnDestroy() {
     if (this.cellListSubscription) {
@@ -244,6 +284,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
     if (this.rasterListSubscription) {
       this.rasterListSubscription.unsubscribe();
+    }
+    if (this.rasterTemplateSubscription) {
+      this.rasterTemplateSubscription.unsubscribe();
+    }
+    if (this.psthListSubscription) {
+      this.psthListSubscription.unsubscribe();
     }
   }
 
@@ -273,6 +319,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     console.log(rows);
     this.clickedClusterId = cluster_id;
     this.targetClusterId = this.clickedClusterId;
+    const psthQueryInfo = {};
+    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    psthQueryInfo['probe_idx'] = this.probeIndex;
+    psthQueryInfo['cluster_revision'] = '0';
+    psthQueryInfo['event'] = this.eventType;
+    psthQueryInfo['cluster_id'] = cluster_id;
+    this.cellListService.retrievePSTHList(psthQueryInfo);
+    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+      .subscribe((psthPlot) => {
+        this.psth_data = psthPlot[0]['plotting_data']['data'];
+        this.psth_layout = psthPlot[0]['plotting_data']['layout'];
+        this.psth_config = {};
+      });
   }
 
   order_by_event(eventType) {
