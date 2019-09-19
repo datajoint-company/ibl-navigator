@@ -456,6 +456,15 @@ app.get('/plots/testPlot', (req, res, next) => {
     
 });
 
+app.post('/signed-url', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/signed-url', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        res.send(body);
+    })
+})
+
 //Docker Healthcheck
 app.get('/version', (req, res, next) => {
     res.send('Version: v1.0');    

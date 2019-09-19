@@ -16,6 +16,8 @@ from flask import Flask
 from flask import request
 from flask import abort
 
+import boto3
+
 API_VERSION = '0'
 app = Flask(__name__)
 API_PREFIX = '/v{}'.format(API_VERSION)
@@ -40,16 +42,16 @@ dj.config['stores'] = {
     'ephys': dict(
         protocol='s3',
         endpoint='s3.amazonaws.com',
-        access_key=os.environ.get('S3_ACCESS'),
-        secret_key=os.environ.get('S3_SECRET'),
+        access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
+        secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
         bucket='ibl-dj-external',
         location='/ephys'
     ),
     'plotting': dict(
         protocol='s3',
         endpoint='s3.amazonaws.com',
-        access_key=os.environ.get('S3_ACCESS'),
-        secret_key=os.environ.get('S3_SECRET'),
+        access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
+        secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
         bucket='ibl-dj-external',
         location='/plotting'
     )
@@ -131,6 +133,14 @@ def do_req(subpath):
     # 1) parse request & arguments
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
+
+    if obj == "signed-url" and request.method == "POST":
+        s3_client = boto3.client('s3')
+        response = s3_client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': request.values['Bucket'],
+                                                            'Key': request.values['Object']},
+                                                    ExpiresIn=300)
+        return json.dumps({"SignedUrl":response})    
 
     values = request.values
     postargs, jsonargs = {}, None
