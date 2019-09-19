@@ -59,31 +59,21 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     console.log('listening to key event');
     console.log(event.key);
     if (event.key === 'ArrowUp') {
-      console.log('arrow upped!');
-      if (this.clickedClusterId - 1 > -1) {
-        this.clickedClusterId -= 1;
-        this.targetClusterId = this.clickedClusterId;
-        console.log('plot data is: ', this.plot_data);
-      }
-      // console.log(event);
-      // console.log('evene target children', event.target.children);
-      // if (event.target.children && event.target.children[0].childElementCount === 4) {
-      //   console.log('insde');
-      //   this.targetClusterRowInfo = [];
-      //   for (const row of event.target.children[0].children) { // TODO: traverse actual elements' innertext here
-      //     this.targetClusterRowInfo.push(row.innerText);
-      //   }
-      //   this.targetClusterId = parseInt(this.targetClusterRowInfo[0], 10);
-      //   this.targetProbeIndex = parseInt(this.targetClusterRowInfo[1], 10);
-
+      this.navigate_cell_plots({}, 'up');
+      // console.log('arrow upped!');
+      // if (this.clickedClusterId - 1 > -1) {
+      //   this.clickedClusterId -= 1;
+      //   this.targetClusterId = this.clickedClusterId;
+      //   console.log('plot data is: ', this.plot_data);
       // }
     } else if (event.key === 'ArrowDown') {
-      console.log('arrow down or tab detected');
-      console.log('this.clickedClusterId', this.clickedClusterId);
-      if (this.clickedClusterId + 1) {
-        this.clickedClusterId += 1;
-        this.targetClusterId = this.clickedClusterId;
-      }
+      this.navigate_cell_plots({}, 'down');
+      // console.log('arrow down or tab detected');
+      // console.log('this.clickedClusterId', this.clickedClusterId);
+      // if (this.clickedClusterId + 1) {
+      //   this.clickedClusterId += 1;
+      //   this.targetClusterId = this.clickedClusterId;
+      // }
     }
    
 
@@ -307,6 +297,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                                       behavior: 'smooth',
                                       block: 'center'});
     }
+    const psthQueryInfo = {};
+    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    psthQueryInfo['probe_idx'] = this.probeIndex;
+    psthQueryInfo['cluster_revision'] = '0';
+    psthQueryInfo['event'] = this.eventType;
+    psthQueryInfo['cluster_id'] = this.clickedClusterId;
+    this.cellListService.retrievePSTHList(psthQueryInfo);
+    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+      .subscribe((psthPlot) => {
+        this.psth_data = psthPlot[0]['plotting_data']['data'];
+        this.psth_layout = psthPlot[0]['plotting_data']['layout'];
+        this.psth_config = {};
+      });
 
   }
 
@@ -337,7 +341,34 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   navigate_cell_plots(event, direction) {
     console.log('going', direction, 'the list of cells');
-
+    if (direction === 'up') {
+      console.log('arrow upped!');
+      if (this.clickedClusterId - 1 > -1) {
+        this.clickedClusterId -= 1;
+        this.targetClusterId = this.clickedClusterId;
+      }
+    }
+    if (direction === 'down') {
+      console.log('arrow down!');
+      if (this.clickedClusterId + 1 < this.plot_data[0]['x'].length + 1) {
+        this.clickedClusterId += 1;
+        this.targetClusterId = this.clickedClusterId;
+      }
+    }
+    const psthQueryInfo = {};
+    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    psthQueryInfo['probe_idx'] = this.probeIndex;
+    psthQueryInfo['cluster_revision'] = '0';
+    psthQueryInfo['event'] = this.eventType;
+    psthQueryInfo['cluster_id'] = this.clickedClusterId;
+    this.cellListService.retrievePSTHList(psthQueryInfo);
+    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+      .subscribe((psthPlot) => {
+        this.psth_data = psthPlot[0]['plotting_data']['data'];
+        this.psth_layout = psthPlot[0]['plotting_data']['layout'];
+        this.psth_config = {};
+      });
   }
 
   order_by_event(eventType) {
