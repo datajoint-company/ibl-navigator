@@ -7,6 +7,9 @@ COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
+COPY ./fullchain.pem /etc/letsencrypt/live/testdev.datajoint.io/fullchain.pem
+COPY ./privkey.pem /etc/letsencrypt/live/testdev.datajoint.io/privkey.pem
+
 HEALTHCHECK       \
     --timeout=3s \ 
     --retries=20  \
