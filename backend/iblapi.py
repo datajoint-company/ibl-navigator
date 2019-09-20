@@ -17,6 +17,7 @@ from flask import request
 from flask import abort
 
 import boto3
+s3_client = boto3.client('s3')
 
 API_VERSION = '0'
 app = Flask(__name__)
@@ -115,7 +116,7 @@ reqmap = {
     'raster': plotting_ephys.Raster,
     'psth': plotting_ephys.Psth,
     'rasterbatch': plotting_ephys.RasterLink,
-    'rasterlight': plotting_ephys.RasterLinkOnly,
+    'rasterlight': plotting_ephys.RasterLinkS3,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
 dumps = DateTimeEncoder.dumps
@@ -133,14 +134,6 @@ def do_req(subpath):
     # 1) parse request & arguments
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
-
-    if obj == "signed-url" and request.method == "POST":
-        s3_client = boto3.client('s3')
-        response = s3_client.generate_presigned_url('get_object',
-                                                    Params={'Bucket': request.values['Bucket'],
-                                                            'Key': request.values['Object']},
-                                                    ExpiresIn=300)
-        return json.dumps({"SignedUrl":response})    
 
     values = request.values
     postargs, jsonargs = {}, None
@@ -175,7 +168,6 @@ def do_req(subpath):
         if proj:
             q = q.proj(*proj)
 
-
         from time import time
         start = time()
         print('about to fetch requested object')
@@ -197,6 +189,7 @@ def handle_q(subpath, args, proj, **kwargs):
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
 
     ret = []
+    post_process = None
     if subpath == 'sessionpage':
         q = (acquisition.Session().aggr(
             # plotting_behavior.SessionPsychCurve(),
@@ -261,6 +254,14 @@ def handle_q(subpath, args, proj, **kwargs):
         q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
              & args).proj(..., *exclude_attrs)
         print(q)
+    elif subpath == 'rasterlight':
+        q = plotting_ephys.RasterLinkS3
+        def post_process(ret):
+            return [{k: s3_client.generate_presigned_url(
+                    'get_object', 
+                    Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
+                    ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
+                    for i in ret]
     else:
         abort(404)
 
@@ -272,7 +273,7 @@ def handle_q(subpath, args, proj, **kwargs):
     # print('D type', ret.dtype)
     # print(ret)
     print('About to return ', len(ret), 'entries')
-    return dumps(ret)
+    return dumps(post_process(ret)) if post_process else dumps(ret)
 
 
 if is_gunicorn:

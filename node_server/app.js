@@ -409,7 +409,7 @@ app.post('/plot/rasterbatch', checkAuth, (req, res) => {
     // req.setTimeout(60000);
     const timeA = new Date()
     console.log('requesting rasters light batch to backend: ', timeA);
-    request.post(flask_backend + '/v0/rasterlight', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/rasterlight', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
@@ -455,15 +455,6 @@ app.get('/plots/testPlot', (req, res, next) => {
     });
     
 });
-
-app.post('/signed-url', checkAuth, (req, res) => {
-    request.post(flask_backend + '/v0/signed-url', { form: req.body }, function (error, httpResponse, body) {
-        if (error) {
-            console.error('error: ', error);
-        }
-        res.send(body);
-    })
-})
 
 //Docker Healthcheck
 app.get('/version', (req, res, next) => {

@@ -3,7 +3,7 @@ version: '2.4'
 services:     
   iblapi:
     # build: ./backend
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.0-dev2 # add -dev ending to testdev tag
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.0-dev3 # add -dev ending to testdev tag
     environment:
     - DJ_USER=maho
     - DJ_HOST=datajoint.internationalbrainlab.org
@@ -34,7 +34,7 @@ services:
       - main
   ibl-node-server:
     # build: ./node_server
-    image: registry.vathes.com/ibl-navigator/node-server:v0.0-dev4 # add -dev ending to testdev tag
+    image: registry.vathes.com/ibl-navigator/node-server:v0.0-dev5 # add -dev ending to testdev tag
     environment:
     - NODE_ENV=development
     - DEMO_USERNAME=ibluser
