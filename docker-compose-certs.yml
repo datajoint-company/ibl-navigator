@@ -14,6 +14,13 @@ services:
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
       - STAGING=true # UNcomment for testdev
+    healthcheck:
+      # test: ["CMD-SHELL","if","[", "$$(expr", "$$(date", "+%s)","-","$$(stat","-c","%Y","$$(ls","-la","/config/etc/letsencrypt/live/*.*/fullchain.pem","|","awk","'{print","sprintf(\"%s/%s\",\"/config/etc/letsencrypt/live/*.*\",$$11)}')))","-lt","\"7776000\"","];","then","exit","0;else","exit","1;fi"]
+      # test: if [ $$(expr $(date +%s) - $$(stat -c %Y $(ls -la /config/etc/letsencrypt/live/*.*/fullchain.pem | awk '{print sprintf("%s/%s", "/config/etc/letsencrypt/live/*.*", $11)}'))) -lt "7776000" ]; then exit 0;else exit 1;fi
+      test: ["/healthcheck.sh"]
+      timeout: 5s
+      retries: 60
+      interval: 1s
     ports:
       - "80:80"
       - "443:443"
@@ -21,6 +28,7 @@ services:
     #   - NET_ADMIN
     volumes:
       - ./letsencrypt-keys:/config/etc/letsencrypt
+      - ./letsencrypt-healthcheck.sh:/healthcheck.sh
     networks:
       - main   
 networks:
