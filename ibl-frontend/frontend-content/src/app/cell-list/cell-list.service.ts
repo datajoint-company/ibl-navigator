@@ -13,11 +13,13 @@ export class CellListService {
   private rasterList;
   private psthList;
   private rasterTemplates;
+  private psthTemplates;
 
   private cellListLoaded = new Subject();
   private rasterListLoaded = new Subject();
   private psthListLoaded = new Subject();
   private rasterTemplatesLoaded = new Subject();
+  private psthTemplatesLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -96,6 +98,22 @@ export class CellListService {
       );
   }
 
+  retrievePsthTemplates() {
+    this.http.get(BACKEND_API_URL + `/plot/psthtemplate`)
+      .subscribe(
+        (psthTemplates) => {
+          console.log('just fetched PSTH template from backend');
+          console.log(psthTemplates);
+          this.psthTemplates = psthTemplates;
+          this.psthTemplatesLoaded.next(this.psthTemplates);
+        },
+        (err: any) => {
+          console.log('error in retrieving PSTH templates');
+          console.error(err);
+        }
+      );
+  }
+
   getCellListLoadedListener() {
     return this.cellListLoaded.asObservable();
   }
@@ -107,5 +125,8 @@ export class CellListService {
   }
   getRasterTemplatesLoadedListener() {
     return this.rasterTemplatesLoaded.asObservable();
+  }
+  getPsthTemplatesLoadedListener() {
+    return this.psthTemplatesLoaded.asObservable();
   }
 }

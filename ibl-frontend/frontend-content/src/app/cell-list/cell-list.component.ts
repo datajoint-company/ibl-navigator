@@ -31,8 +31,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   rasterTemplates = [];
 
   psth_data = [];
-  psth_layout = {};
-  psth_config = {};
+  psth_layout0 = {};
+  psth_config0 = {};
+  psth_layout = [];
+  psth_config = [];
+  psthPlotList;
+  psthTemplates = [];
 
   testPlotData;
   testPlotLayout;
@@ -51,6 +55,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private rasterListSubscription: Subscription;
   private psthListSubscription: Subscription;
   private rasterTemplateSubscription: Subscription;
+  private psthTemplatesSubscription: Subscription;
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
 
@@ -151,7 +156,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     queryInfo['event'] = this.eventType;
     queryInfo['sort_by'] = this.sortType;
 
-    
     this.cellListService.retrieveRasterTemplates();
     this.rasterTemplateSubscription = this.cellListService.getRasterTemplatesLoadedListener()
       .subscribe((templates) => {
@@ -197,11 +201,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 yref: 'y'
               }];
               // layoutCopy['images'][0]['source'] = 'http://' + raster['plotting_data_link'];
-              titleJoined = currentTemplate.layout.title.text + raster['mark_label'];
-              layoutCopy['title'] = {text: titleJoined};
+              titleJoined = `${currentTemplate.layout.title.text} ${raster['mark_label']}`;
+              layoutCopy['title.text'] = titleJoined;
               layoutCopy['yaxis'] = {range: raster['plot_ylim']};
-              layoutCopy['width'] = 705;
-              layoutCopy['height'] = 450;
+              layoutCopy['width'] = 658;
+              layoutCopy['height'] = 420;
               // layoutCopy['template'] = {};
               this.raster_layout.push(layoutCopy);
               this.raster_config.push({});
@@ -217,23 +221,82 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     psthQueryInfo['probe_idx'] = this.probeIndex;
     psthQueryInfo['cluster_revision'] = '0';
     psthQueryInfo['event'] = this.eventType;
-    psthQueryInfo['cluster_id'] = 0;
-    console.log('querying for psth plots with: ', psthQueryInfo);
-    this.cellListService.retrievePSTHList(psthQueryInfo);
-    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
-      .subscribe((psthPlotList) => {
-        console.log('psth plot list successfully retrieved: ', psthPlotList);
-        this.psth_data = psthPlotList[0]['plotting_data']['data'];
-        this.psth_layout = psthPlotList[0]['plotting_data']['layout'];
-        this.psth_config = {};
+    // console.log('querying for psth plots with: ', psthQueryInfo);
+    // this.cellListService.retrievePSTHList(psthQueryInfo);
+    // this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+    //   .subscribe((psthPlotList) => {
+    //     console.log('psth plot list successfully retrieved: ', psthPlotList);
+    //     this.psth_data = psthPlotList[0]['plotting_data']['data'];
+    //     this.psth_layout = psthPlotList[0]['plotting_data']['layout'];
+    //     this.psth_config = {};
+    //   });
+    this.cellListService.retrievePsthTemplates();
+    this.psthTemplatesSubscription = this.cellListService.getPsthTemplatesLoadedListener()
+      .subscribe((template) => {
+        console.log('psth template retrieved');
+        for (const [index, temp] of Object.entries(template)) {
+          if (temp['psth_template_idx'] === parseInt(index, 10)) {
+            this.psthTemplates.push(temp['psth_data_template']);
+          }
+        }
+        this.cellListService.retrievePSTHList(psthQueryInfo);
+        this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+          .subscribe((psthPlotList) => {
+            console.log('psth plot list - ', psthPlotList);
+            this.psthPlotList = psthPlotList;
+            const timeA = new Date();
+            for (const psth of Object.values(psthPlotList)) {
+              const currentTemplate = this.psthTemplates[psth['psth_template_idx']];
+              const dataCopy = Object.assign([], currentTemplate['data']);
+              // data = [left, right, incorrect, all]
+              dataCopy[0] = {
+                y: psth['psth_left'].split(','),
+                x: psth['psth_time'].split(','),
+                name: 'left trials',
+                mode: 'lines',
+                marker: { size: 6, color: 'green'}
+              };
+              dataCopy[1] = {
+                y: psth['psth_right'].split(','),
+                x: psth['psth_time'].split(','),
+                name: 'right trials',
+                mode: 'lines',
+                marker: { size: 6, color: 'blue' }
+              };
+              dataCopy[2] = {
+                y: psth['psth_incorrect'].split(','),
+                x: psth['psth_time'].split(','),
+                name: 'incorrect trials',
+                mode: 'lines',
+                marker: { size: 6, color: 'red' }
+              };
+              dataCopy[3] = {
+                y: psth['psth_all'].split(','),
+                x: psth['psth_time'].split(','),
+                name: 'all trials',
+                mode: 'lines',
+                marker: { size: 6, color: 'black' }
+              };
+              this.psth_data.push(dataCopy);
+
+              const layoutCopy = Object.assign({}, currentTemplate['layout']);
+              layoutCopy['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
+              layoutCopy['xaxis']['range'] = psth['psth_x_lim'].split(',');
+              layoutCopy['width'] = 658;
+              layoutCopy['height'] = 420;
+              this.psth_layout.push(layoutCopy);
+              this.psth_config.push({});
+            }
+            console.log('psth layout - ', this.psth_layout);
+            console.log('psth data - ', this.psth_data);
+          });
       });
 
   }
 
   ngDoCheck() {
-    console.log('do check ran');
-    console.log('this.clicked cluster id: ', this.clickedClusterId);
-    // console.log(this.plot_data[0]['x'].length);
+    // console.log('do check ran');
+    // console.log('this.clicked cluster id: ', this.clickedClusterId);
     const markerColors = [];
     if (this.plot_data) {
       if (this.plot_data[0]['x'] && this.clickedClusterId > -1) {
@@ -297,20 +360,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                                       behavior: 'smooth',
                                       block: 'center'});
     }
-    const psthQueryInfo = {};
-    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    psthQueryInfo['probe_idx'] = this.probeIndex;
-    psthQueryInfo['cluster_revision'] = '0';
-    psthQueryInfo['event'] = this.eventType;
-    psthQueryInfo['cluster_id'] = this.clickedClusterId;
-    this.cellListService.retrievePSTHList(psthQueryInfo);
-    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
-      .subscribe((psthPlot) => {
-        this.psth_data = psthPlot[0]['plotting_data']['data'];
-        this.psth_layout = psthPlot[0]['plotting_data']['layout'];
-        this.psth_config = {};
-      });
+    // const psthQueryInfo = {};
+    // psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    // psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    // psthQueryInfo['probe_idx'] = this.probeIndex;
+    // psthQueryInfo['cluster_revision'] = '0';
+    // psthQueryInfo['event'] = this.eventType;
+    // psthQueryInfo['cluster_id'] = this.clickedClusterId;
+    // this.cellListService.retrievePSTHList(psthQueryInfo);
+    // this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+    //   .subscribe((psthPlot) => {
+    //     this.psth_data = psthPlot[0]['plotting_data']['data'];
+    //     this.psth_layout = psthPlot[0]['plotting_data']['layout'];
+    //     this.psth_config = {};
+    //   });
 
   }
 
@@ -323,20 +386,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     console.log(rows);
     this.clickedClusterId = cluster_id;
     this.targetClusterId = this.clickedClusterId;
-    const psthQueryInfo = {};
-    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    psthQueryInfo['probe_idx'] = this.probeIndex;
-    psthQueryInfo['cluster_revision'] = '0';
-    psthQueryInfo['event'] = this.eventType;
-    psthQueryInfo['cluster_id'] = cluster_id;
-    this.cellListService.retrievePSTHList(psthQueryInfo);
-    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
-      .subscribe((psthPlot) => {
-        this.psth_data = psthPlot[0]['plotting_data']['data'];
-        this.psth_layout = psthPlot[0]['plotting_data']['layout'];
-        this.psth_config = {};
-      });
+    // const psthQueryInfo = {};
+    // psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    // psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    // psthQueryInfo['probe_idx'] = this.probeIndex;
+    // psthQueryInfo['cluster_revision'] = '0';
+    // psthQueryInfo['event'] = this.eventType;
+    // psthQueryInfo['cluster_id'] = cluster_id;
+    // this.cellListService.retrievePSTHList(psthQueryInfo);
+    // this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+    //   .subscribe((psthPlot) => {
+    //     this.psth_data = psthPlot[0]['plotting_data']['data'];
+    //     this.psth_layout = psthPlot[0]['plotting_data']['layout'];
+    //     this.psth_config = {};
+    //   });
   }
 
   navigate_cell_plots(event, direction) {
@@ -355,20 +418,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.targetClusterId = this.clickedClusterId;
       }
     }
-    const psthQueryInfo = {};
-    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    psthQueryInfo['probe_idx'] = this.probeIndex;
-    psthQueryInfo['cluster_revision'] = '0';
-    psthQueryInfo['event'] = this.eventType;
-    psthQueryInfo['cluster_id'] = this.clickedClusterId;
-    this.cellListService.retrievePSTHList(psthQueryInfo);
-    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
-      .subscribe((psthPlot) => {
-        this.psth_data = psthPlot[0]['plotting_data']['data'];
-        this.psth_layout = psthPlot[0]['plotting_data']['layout'];
-        this.psth_config = {};
-      });
+    // const psthQueryInfo = {};
+    // psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    // psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    // psthQueryInfo['probe_idx'] = this.probeIndex;
+    // psthQueryInfo['cluster_revision'] = '0';
+    // psthQueryInfo['event'] = this.eventType;
+    // psthQueryInfo['cluster_id'] = this.clickedClusterId;
+    // this.cellListService.retrievePSTHList(psthQueryInfo);
+    // this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+    //   .subscribe((psthPlot) => {
+    //     this.psth_data = psthPlot[0]['plotting_data']['data'];
+    //     this.psth_layout = psthPlot[0]['plotting_data']['layout'];
+    //     this.psth_config = {};
+    //   });
   }
 
   order_by_event(eventType) {

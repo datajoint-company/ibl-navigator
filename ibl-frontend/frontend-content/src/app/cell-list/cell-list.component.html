@@ -71,7 +71,9 @@
     </div>
   </div>
   <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot>
-  <plotly-plot [data]="psth_data" [layout]="psth_layout" [config]="psth_config"></plotly-plot>
+  <plotly-plot [data]="psth_data[targetClusterId]" [layout]="psth_layout[targetClusterId]" [config]="psth_config[targetClusterId]"></plotly-plot>
+
+  <!-- <plotly-plot [data]="psth_data" [layout]="psth_layout" [config]="psth_config"></plotly-plot> -->
 
   <br>
 </div>

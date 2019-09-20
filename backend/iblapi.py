@@ -112,6 +112,8 @@ reqmap = {
     'cluster': ephys.Cluster,
     'raster': plotting_ephys.Raster,
     'psth': plotting_ephys.Psth,
+    'psthdata': plotting_ephys.PsthDataVarchar,
+    'psthtemplate': plotting_ephys.PsthTemplate,
     'rasterbatch': plotting_ephys.RasterLink,
     'rasterlight': plotting_ephys.RasterLinkOnly,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate
