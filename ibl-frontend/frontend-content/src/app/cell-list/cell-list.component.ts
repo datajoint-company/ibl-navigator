@@ -478,12 +478,43 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 yref: 'y'
               }];
           this.raster_layout.push(newLayout);
-          // const layout = raster['plotting_data']['layout'];
-          // /raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/0/0/feedback/feedback - response/4.png
-          // layout['images'][0]['source'] =  BACKEND_URL + `/raster/${subj_id}/${sstime}/${p_idx}/${c_rev}/${event}/${sorting}/${cluster_id}.png`;
-          // 'http://localhost:3333/plotImg/raster/efa5e878-6d7a-47ef-8ec8-ac7d6272cf22/2019-05-07T17:22:20/response/trial_id.0.png';
-          // this.raster_layout.push(layout);
-          this.raster_config.push(raster['plotting_data']['config']);
+          this.raster_config.push({});
+        }
+      });
+
+    const psthQueryInfo = {};
+    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    psthQueryInfo['probe_idx'] = this.probeIndex;
+    psthQueryInfo['cluster_revision'] = '0';
+    psthQueryInfo['event'] = this.eventType;
+    this.psth_data = [];
+    this.psth_layout = [];
+    this.psth_config = [];
+    this.cellListService.retrievePSTHList(psthQueryInfo);
+    this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+      .subscribe((psthPlotList) => {
+        console.log('psth list data');
+        console.log(psthPlotList);
+        this.psthPlotList = psthPlotList;
+        for (const psth of Object.values(psthPlotList)) {
+
+          const newData = this.psthTemplates[psth['psth_template_idx']]['data'];
+          newData[0]['y'] = psth['psth_left'].split(',');
+          newData[0]['x'] = psth['psth_time'].split(',');
+          newData[1]['y'] = psth['psth_right'].split(',');
+          newData[1]['x'] = psth['psth_time'].split(',');
+          newData[2]['y'] = psth['psth_incorrect'].split(',');
+          newData[2]['x'] = psth['psth_time'].split(',');
+          newData[3]['y'] = psth['psth_all'].split(',');
+          newData[3]['x'] = psth['psth_time'].split(',');
+
+          const newLayout = this.psthTemplates[psth['psth_template_idx']]['layout'];
+          newLayout['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
+          newLayout['xaxis']['range'] = psth['psth_x_lim'].split(',');
+          this.psth_data.push(newData);
+          this.psth_layout.push(newLayout);
+          this.psth_config.push({});
         }
       });
   }
