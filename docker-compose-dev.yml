@@ -7,6 +7,7 @@ services:
     environment:
     - DJ_USER=maho
     - DJ_HOST=datajoint.internationalbrainlab.org
+    - AWS_DEFAULT_REGION=us-east-1
     env_file: ./.env
     ports:
       - "5555:5000"
