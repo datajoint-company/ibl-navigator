@@ -409,7 +409,7 @@ app.post('/plot/rasterbatch', checkAuth, (req, res) => {
     // req.setTimeout(60000);
     const timeA = new Date()
     console.log('requesting rasters light batch to backend: ', timeA);
-    request.post(flask_backend + '/v0/rasterlight', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/rasterlight', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
