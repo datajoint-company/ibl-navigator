@@ -36,8 +36,8 @@ action = mkvmod('action')
 acquisition = mkvmod('acquisition')
 plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
-plotting_ephys = mkvmod('plotting_ephys')
-ephys = mkvmod('ephys')
+# plotting_ephys = mkvmod('plotting_ephys')
+# ephys = mkvmod('ephys')
 
 dj.config['stores'] = {
     'ephys': dict(
@@ -112,14 +112,14 @@ reqmap = {
     'datepsych': plotting_behavior.DatePsychCurve,
     'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
     'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
-    'cluster': ephys.Cluster,
-    'raster': plotting_ephys.Raster,
-    'psth': plotting_ephys.Psth,
-    'psthdata': plotting_ephys.PsthDataVarchar,
-    'psthtemplate': plotting_ephys.PsthTemplate,
-    'rasterbatch': plotting_ephys.RasterLink,
-    'rasterlight': plotting_ephys.RasterLinkS3,
-    'rastertemplate': plotting_ephys.RasterLayoutTemplate
+    # 'cluster': ephys.Cluster,
+    # 'raster': plotting_ephys.Raster,
+    # 'psth': plotting_ephys.Psth,
+    # 'psthdata': plotting_ephys.PsthDataVarchar,
+    # 'psthtemplate': plotting_ephys.PsthTemplate,
+    # 'rasterbatch': plotting_ephys.RasterLink,
+    # 'rasterlight': plotting_ephys.RasterLinkS3,
+    # 'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
 dumps = DateTimeEncoder.dumps
 
@@ -256,14 +256,14 @@ def handle_q(subpath, args, proj, **kwargs):
         q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
              & args).proj(..., *exclude_attrs)
         print(q)
-    elif subpath == 'rasterlight':
-        q = plotting_ephys.RasterLinkS3
-        def post_process(ret):
-            return [{k: s3_client.generate_presigned_url(
-                    'get_object', 
-                    Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
-                    ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
-                    for i in ret]
+    # elif subpath == 'rasterlight':
+    #     q = plotting_ephys.RasterLinkS3
+    #     def post_process(ret):
+    #         return [{k: s3_client.generate_presigned_url(
+    #                 'get_object', 
+    #                 Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
+    #                 ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
+    #                 for i in ret]
     else:
         abort(404)
 

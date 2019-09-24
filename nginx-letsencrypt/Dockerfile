@@ -11,4 +11,7 @@ HEALTHCHECK       \
     --retries=20  \
     CMD           \
         # curl --fail https://djcompute.internationalbrainlab.org:443 || exit 1
-        curl --fail -k https://localhost:443 || exit 1 #switch to this one for testdev deploy
+        # switch to this one below for public deploy
+        curl --fail https://data.internationalbrainlab.org:443 || exit 1 
+        #switch to this one below for testdev deploy
+        # curl --fail -k https://localhost:443 || exit 1 

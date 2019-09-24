@@ -5,8 +5,10 @@ services:
     build: ./backend
     image: iblapi:v1.0
     environment:
-    - DJ_USER=maho
-    - DJ_HOST=datajoint.internationalbrainlab.org
+    # - DJ_USER=maho
+    # - DJ_HOST=datajoint.internationalbrainlab.org
+    - DJ_USER=ibl-navigator
+    - DJ_HOST=datajoint-public.internationalbrainlab.org
     - AWS_DEFAULT_REGION=us-east-1
     env_file: ./.env
     ports:
