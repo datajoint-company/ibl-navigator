@@ -5,7 +5,7 @@
 <div class="row">
   <!-- <div #clusterListNavPlot class="col-6" (click)="testMethod($event)"></div> -->
   <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (click)="clusterSelectedPlot($event)"></plotly-plot>
-  <div class="plots-navigator">
+  <div class="plots-navigator" *ngIf="showController">
     <div *ngIf="cells" class="clusterListContainer">
       <table class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable>
         <thead class="thead-light">

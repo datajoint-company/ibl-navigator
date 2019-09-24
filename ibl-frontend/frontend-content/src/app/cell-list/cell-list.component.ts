@@ -51,6 +51,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   sortType;
   probeIndex;
 
+  showController = false;
+
   private cellListSubscription: Subscription;
   private rasterListSubscription: Subscription;
   private psthListSubscription: Subscription;
@@ -65,23 +67,19 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     console.log(event.key);
     if (event.key === 'ArrowUp') {
       this.navigate_cell_plots({}, 'up');
-      // console.log('arrow upped!');
-      // if (this.clickedClusterId - 1 > -1) {
-      //   this.clickedClusterId -= 1;
-      //   this.targetClusterId = this.clickedClusterId;
-      //   console.log('plot data is: ', this.plot_data);
-      // }
     } else if (event.key === 'ArrowDown') {
       this.navigate_cell_plots({}, 'down');
-      // console.log('arrow down or tab detected');
-      // console.log('this.clickedClusterId', this.clickedClusterId);
-      // if (this.clickedClusterId + 1) {
-      //   this.clickedClusterId += 1;
-      //   this.targetClusterId = this.clickedClusterId;
-      // }
     }
-   
-
+  }
+  @HostListener('window:scroll', ['$event']) onWindowScroll(event) {
+    console.log('listening to scroll event');
+    console.log(window.pageYOffset);
+    console.log(event);
+    if (window.pageYOffset > 640) {
+      this.showController = true;
+    } else {
+      this.showController = false;
+    }
   }
   ngOnInit() {
     // const element = this.el_nav.nativeElement;
