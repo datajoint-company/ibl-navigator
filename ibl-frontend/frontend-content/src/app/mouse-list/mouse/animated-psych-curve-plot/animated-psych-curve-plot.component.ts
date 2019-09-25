@@ -397,7 +397,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
               value: plotInfo[i]['session_start_time'],
               args: [[plotInfo[i]['session_start_time']], {
                 mode: 'immediate',
-                transition: { duration: 200 },
+                transition: { duration: 0 }, // originally set to 200 pre-filter
                 frame: { duration: 160, redraw: true },
               }]
             });
@@ -426,7 +426,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
               args: [null, {
                   mode: 'immediate',
                   fromcurrent: true,
-                  transition: { duration: 200 },
+                  transition: { duration: 0 }, // originally set to 200 pre-filter
                   frame: { duration: 160, redraw: true }
                 }],
               // label: 'Play'
