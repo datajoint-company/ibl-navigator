@@ -37,7 +37,7 @@ export class AllMiceService {
           this.allMiceMenuLoaded.next(this.allMiceMenu);
         },
         (err: any) => {
-          console.log('error in fetching mice menu');
+          // console.log('error in fetching mice menu');
           console.error(err);
         }
       );
@@ -52,7 +52,7 @@ export class AllMiceService {
           this.miceMenuLoaded.next(this.miceMenu);
         },
         (err: any) => {
-          console.log('error in fetching mice menu');
+          // console.log('error in fetching mice menu');
           console.error(err);
         }
       );
@@ -66,7 +66,7 @@ export class AllMiceService {
           this.requestedMiceLoaded.next(this.retrievedMice);
         },
         (err: any) => {
-          console.log('err in fetching requested mice');
+          // console.log('err in fetching requested mice');
           console.error(err);
         }
       );

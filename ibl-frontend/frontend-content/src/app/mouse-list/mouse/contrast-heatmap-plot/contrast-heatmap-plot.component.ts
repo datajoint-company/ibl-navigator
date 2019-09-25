@@ -154,7 +154,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('contrast heatmap plot unavailable');
+          // console.log('contrast heatmap plot unavailable');
           this.contrastHeatmapPlotIsAvailable = false;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
         }

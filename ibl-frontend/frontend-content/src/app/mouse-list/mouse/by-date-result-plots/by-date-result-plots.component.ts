@@ -330,7 +330,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
           this.loadingPlots = [false, false, false, false, false, false, false, false, false];
           this.byDateResultPlotsAreAvailable = false;
           this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
-          console.log('date psychometric curve unavailable');
+          // console.log('date psychometric curve unavailable');
         }
       });
     this.getRecent3DatesLoadedListener().subscribe((dates) => {
@@ -417,7 +417,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             this.loadingPlots[3] = false;
             this.loadingPlots[4] = false;
             this.loadingPlots[5] = false;
-            console.log('date reaction time contrast plot unavailable');
+            // console.log('date reaction time contrast plot unavailable');
           }
         });
       this.mousePlotsService.getDateRTTrialNumPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC' });
@@ -501,7 +501,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             this.loadingPlots[6] = false;
             this.loadingPlots[7] = false;
             this.loadingPlots[8] = false;
-            console.log('date reaction time trial number plot unavailable');
+            // console.log('date reaction time trial number plot unavailable');
           }
         });
     });

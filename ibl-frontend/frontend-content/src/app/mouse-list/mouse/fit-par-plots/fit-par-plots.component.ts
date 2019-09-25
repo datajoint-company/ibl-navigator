@@ -225,7 +225,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
         } else {
           this.fitParPlotsAreAvailable = false;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
-          console.log('fit parameters plots not available');
+          // console.log('fit parameters plots not available');
         }
       });
   }

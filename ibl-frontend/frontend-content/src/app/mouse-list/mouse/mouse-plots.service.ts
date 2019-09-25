@@ -36,7 +36,7 @@ export class MousePlotsService {
           this.waterWeightPlotLoaded.next(this.weightWaterIntake);
         },
         (err: any) => {
-          console.log('error in retrieving weight & waterIntake plot data');
+          // console.log('error in retrieving weight & waterIntake plot data');
           console.error(err);
         }
       );
@@ -50,7 +50,7 @@ export class MousePlotsService {
           this.TCSessionDurationPlotLoaded.next(this.TCSessionDuration);
         },
         (err: any) => {
-          console.log('error in retrieving trial counts session duration plot data');
+          // console.log('error in retrieving trial counts session duration plot data');
           console.error(err);
         }
       );
@@ -64,7 +64,7 @@ export class MousePlotsService {
           this.performanceRTPlotLoaded.next(this.performanceRT);
         },
         (err: any) => {
-          console.log('error in retrieving performance reaction time plot data');
+          // console.log('error in retrieving performance reaction time plot data');
           console.error(err);
         }
       );
@@ -78,7 +78,7 @@ export class MousePlotsService {
           this.contrastHeatmapPlotLoaded.next(this.contrastHeatmap);
         },
         (err: any) => {
-          console.log('error in retrieving contrast heatmap plot data');
+          // console.log('error in retrieving contrast heatmap plot data');
           console.error(err);
         }
       );
@@ -91,7 +91,7 @@ export class MousePlotsService {
           this.fitParPlotsLoaded.next(plotData);
         },
         (err: any) => {
-          console.log('error in retrieving fit parameters plot data');
+          // console.log('error in retrieving fit parameters plot data');
           console.error(err);
         }
       );
@@ -104,7 +104,7 @@ export class MousePlotsService {
           this.datePsychPlotLoaded.next(plotData);
         },
         (err: any) => {
-          console.log('error in retrieving by date psychometric curve plot data');
+          // console.log('error in retrieving by date psychometric curve plot data');
           console.error(err);
         }
       );
@@ -117,7 +117,7 @@ export class MousePlotsService {
           this.dateRTContrastPlotLoaded.next(plotData);
         },
         (err: any) => {
-          console.log('error in retrieving by date reaction time contrast plot data');
+          // console.log('error in retrieving by date reaction time contrast plot data');
           console.error(err);
         }
       );
@@ -130,7 +130,7 @@ export class MousePlotsService {
           this.dateRTTrialPlotLoaded.next(plotData);
         },
         (err: any) => {
-          console.log('error in retrieving fit parameters plot data');
+          // console.log('error in retrieving fit parameters plot data');
           console.error(err);
         }
       );
@@ -143,7 +143,7 @@ export class MousePlotsService {
           this.animationPCplotLoaded.next(plotData);
         },
         (err: any) => {
-          console.log('error in retrieving psychometric curve plot data for animation');
+          // console.log('error in retrieving psychometric curve plot data for animation');
           console.error(err);
         }
       );
