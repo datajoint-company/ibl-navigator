@@ -53,7 +53,7 @@ services:
     networks:
       - main
   nginx:
-    build: ./nginx-letsencrypt
+    # build: ./nginx-letsencrypt
     # image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev3
     image: registry.vathes.com/ibl-navigator/nginx:v0.0-public1 # for public deploy
     environment:
