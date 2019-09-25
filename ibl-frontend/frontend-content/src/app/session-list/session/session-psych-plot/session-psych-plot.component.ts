@@ -144,7 +144,6 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
         if (psychPlotData[0]) {
           this.plotFitPars = psychPlotData[0]['fit_pars'];
           this.psychCurveFitPars.emit(this.plotFitPars);
-          console.log('fit parameter retrieved: ', this.plotFitPars);
           this.plotInfo = psychPlotData[0]['plotting_data'];
           this.psychPlotIsAvailable = true;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
@@ -172,7 +171,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('psych plot not available for this session');
+          // console.log('psych plot not available for this session');
           this.psychPlotIsAvailable = false;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
           // Plotly.newPlot(element, [], this.mediumScreenLayout, {displayModeBar: false })
@@ -196,7 +195,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   }
 
   plotClicked(event) {
-    console.log('session psych plot clicked');
+    // console.log('session psych plot clicked');
     this.openSPCplot.emit({showSPCplot: true});
   }
 

@@ -116,11 +116,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
             }
             if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
               this.dateRangeToggle = false;
-              console.log('loggin date range[0]- ', dateRange[0]);
+              // console.log('loggin date range[0]- ', dateRange[0]);
               this.session_filter_form.controls.session_start_time_control.patchValue(moment.utc(dateRange[0]));
             } else if (dateRange[0] !== '') {
               this.dateRangeToggle = true;
-              console.log('loggin date range[1]- ', dateRange[1]);
+              // console.log('loggin date range[1]- ', dateRange[1]);
               this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(moment.utc(dateRange[0]));
               this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(moment.utc(dateRange[1]));
             }

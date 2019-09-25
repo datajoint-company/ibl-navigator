@@ -148,7 +148,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('psych plot not available for this session');
+          // console.log('psych plot not available for this session');
           this.RTTNPlotIsAvailable = false;
           this.RTTNPlotAvailability.emit(this.RTTNPlotIsAvailable);
         }
@@ -162,7 +162,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
   }
 
   plotClicked(event) {
-    console.log('session RTTN plot clicked');
+    // console.log('session RTTN plot clicked');
     this.openSRTTNplot.emit({ showSRTTNplot: true });
   }
 
