@@ -75,8 +75,8 @@ services:
       - "443:443"
     # cap_add:
     #   - NET_ADMIN
-    # volumes:
-    #   - ./nginx-letsencrypt/app.conf:/config/nginx/site-confs/app.conf
+    volumes:
+      - ./letsencrypt-keys:/config/etc/letsencrypt
     networks:
       - main   
     depends_on:
