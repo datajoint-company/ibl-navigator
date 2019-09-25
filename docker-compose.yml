@@ -60,10 +60,11 @@ services:
       - PUID=1000
       - PGID=1000
       - EMAIL=admin@vathes.com
-      - URL=datajoint.io # for testdev deploy
-      - SUBDOMAINS=testdev # for testdev deploy
-      # - URL=internationalbrainlab.org # for client deploy
+      # - URL=datajoint.io # for testdev deploy
+      # - SUBDOMAINS=testdev # for testdev deploy
+      - URL=internationalbrainlab.org # for client or public demo deploy
       # - SUBDOMAINS=djcompute # for client deploy
+      - SUBDOMAINS=data # for public demo deploy
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
       # - STAGING=true # UNcomment for testdev
