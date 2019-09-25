@@ -116,7 +116,7 @@ services:
     #   ibl-navigator:
     #     condition: service_healthy
   nginx:
-    build: ./nginx
+    # build: ./nginx
     image: registry.vathes.com/ibl-navigator/nginx-k8s:v0.0-dev8
     environment:
       - URL=datajoint.io # for testdev deploy
