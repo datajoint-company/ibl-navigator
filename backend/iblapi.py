@@ -257,7 +257,7 @@ def handle_q(subpath, args, proj, **kwargs):
              & args).proj(..., *exclude_attrs)
         print(q)
     elif subpath == 'rasterlight':
-        q = plotting_ephys.RasterLinkS3
+        q = plotting_ephys.RasterLinkS3 & args
         def post_process(ret):
             return [{k: s3_client.generate_presigned_url(
                     'get_object', 
