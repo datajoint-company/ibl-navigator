@@ -76,7 +76,7 @@ services:
     # cap_add:
     #   - NET_ADMIN
     volumes:
-      - ./letsencrypt-keys:/config/etc/letsencrypt
+      - ./letsencrypt-keys:/config/etc/letsencrypt:ro
     networks:
       - main   
     depends_on:
