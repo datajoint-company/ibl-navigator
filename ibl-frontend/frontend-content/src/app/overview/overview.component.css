@@ -27,3 +27,12 @@ h4 {
     padding: 18px 0px 6px;
     background-color: rgba(255, 255, 255, 0.66);
 }
+
+.text-details a {
+    color: #03a2da; /* bright IBL blue */
+}
+
+.text-details a:hover {
+    color: #c944a4; /* bright IBL fuscia */
+    text-decoration: none;
+}
