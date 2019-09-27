@@ -87,9 +87,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // console.log('tableState: ', tableState);
     this.route.queryParams
       .subscribe(params => {
-        // console.log('params loading sessions: ', params);
         if (Object.entries(params).length === 0) {
           params = this.filterStoreService.retrieveSessionFilter();
+          if (!params) {
+            params = { 'nplot': 1 }
+          }
         }
         for (const key in params) {
           if (key === '__json') {
@@ -453,7 +455,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.sessions = [];
     const request = this.filterRequests();
-    request['__order'] = 'session_start_time DESC';
+    request['__order'] = 'lab_name ASC, session_start_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
       this.filterStoreService.storeSessionFilter(request);
       this.allSessionsService.retrieveSessions2(request);
