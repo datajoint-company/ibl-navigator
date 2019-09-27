@@ -1,3 +1,8 @@
+tr.mat-row:hover {
+    background-color: rgba(0, 83, 145, .05);
+    cursor: pointer;
+}
+
 .subject-list-container {
     padding-top: 20px;
 }
@@ -83,10 +88,7 @@ mat-checkbox.mouse_gender_menu_chbox {
     flex-direction: row;
 };
 
-tr.mat-row:hover {
-    background-color: rgba(0, 83, 145, .05);
-    cursor: pointer;
-}
+
 
 .loading-icon {
     text-align: center;
