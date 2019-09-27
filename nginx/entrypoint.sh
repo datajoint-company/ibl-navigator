@@ -27,6 +27,8 @@ nginx -s reload
 
 inotifywait -m /etc/letsencrypt/archive/${SUBDOMAINS}.${URL} |
     while read path action file; do
-        echo "Renewal: Reloading NGINX since $file issue $action event"
-        nginx -s reload
+        if [ "$(echo $action | grep MODIFY)" ] || [ "$(echo $action | grep CREATE)" ] || [ "$(echo $action | grep MOVE)" ]; then
+            echo "Renewal: Reloading NGINX since $file issue $action event"
+            nginx -s reload
+        fi
     done
