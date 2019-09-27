@@ -26,3 +26,4 @@ HEALTHCHECK \
     --timeout=3s \
     CMD \
         wget --no-check-certificate --quiet --tries=20 --spider https://localhost:443 || exit 1
+        # wget --quiet --tries=20 --spider https://testdev.datajoint.io:443 || exit 1
