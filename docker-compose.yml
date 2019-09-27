@@ -85,7 +85,7 @@ services:
     #     condition: service_healthy
   nginx:
     # build: ./nginx
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev4
+    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev5
     environment:
       - URL=datajoint.io # for testdev deploy
       - SUBDOMAINS=testdev # for testdev deploy
