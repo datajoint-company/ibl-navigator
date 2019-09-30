@@ -141,6 +141,11 @@ button:hover {
     width: 150px;
     float: left;
 }
+
+.mouse_gender_menu mat-checkbox#genderU {
+    visibility: hidden;
+}
+
 mat-checkbox.mouse_gender_menu_chbox {
     margin-right: 12px;
 

@@ -115,7 +115,8 @@
         <label>Gender</label>
         <div class="mouse_gender_menu" formArrayName="sex_control"> 
           <mat-checkbox class="mouse_gender_menu_chbox" [name]="session_menu.sex" [formControlName]="i"
-            *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()">
+            *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()"
+            [id]="sex.key == 'U' ? 'genderU' : ''">
             {{ sex.key }}
           </mat-checkbox>
         </div>
