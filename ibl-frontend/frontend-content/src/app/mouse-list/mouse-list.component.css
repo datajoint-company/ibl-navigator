@@ -1,3 +1,5 @@
+
+
 tr.mat-row:hover {
     background-color: rgba(0, 83, 145, .05);
     cursor: pointer;
@@ -79,11 +81,16 @@ button.mat-raised-button:hover {
     float: left;  
 }
 
+.mouse_gender_menu mat-checkbox#genderU {
+    visibility: hidden;
+}
+
 mat-checkbox.mouse_gender_menu_chbox {
     margin-right: 12px;
 }
 
-.mouse_gender_menu{
+
+.mouse_gender_menu {
     display: flex;
     flex-direction: row;
 };
@@ -102,7 +109,6 @@ mat-checkbox.mouse_gender_menu_chbox {
     width: 100%;
     overflow-x: scroll;
 }
-
 
 
 

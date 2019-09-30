@@ -72,8 +72,10 @@
     <div class="mouse_gender_filter">
       <label>Gender</label>
       <div class="mouse_gender_menu" formArrayName="sex_control">
-        <mat-checkbox class="mouse_gender_menu_chbox" [name]="mice_menu.sex" [formControlName]="i"
-          *ngFor="let gender of mice_menu.sex | keyvalue; let i=index" [value]="gender.key" (change)="stepBackMenu($event)">
+        <mat-checkbox [name]="mice_menu.sex" [formControlName]="i"
+          *ngFor="let gender of mice_menu.sex | keyvalue; let i=index" [value]="gender.key" (change)="stepBackMenu($event)"
+          class='mouse_gender_menu_chbox'
+          [id]="gender.key == 'U' ? 'genderU' : ''">
           {{ gender.key }}</mat-checkbox>
       </div>
     </div>
