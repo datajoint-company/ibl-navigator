@@ -37,7 +37,7 @@ hr {
 .short-plots-container {
     float: left;
     width: 50%;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .single-plot {

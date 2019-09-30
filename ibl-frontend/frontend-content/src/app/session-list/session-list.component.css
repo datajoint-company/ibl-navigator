@@ -76,7 +76,7 @@ label {
 
 .table-container {
     width: 100%;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 td.mat-cell, 
 td.mat-footer-cell, 
@@ -177,7 +177,7 @@ mat-checkbox.mouse_gender_menu_chbox {
 
 @media only screen and (max-width: 1383px) {
     table {
-        overflow-x: scroll;
+        overflow-x: auto;
     }
 }
 

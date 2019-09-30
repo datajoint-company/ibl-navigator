@@ -107,7 +107,7 @@ mat-checkbox.mouse_gender_menu_chbox {
 
 .table-container {
     width: 100%;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 

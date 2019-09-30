@@ -1,7 +1,7 @@
 .animatedPCplot-container {
     display: flex;
     flex-direction: row;
-    overflow: scroll;
+    overflow: auto;
 }
 
 /* .eachSessionDetails {
@@ -22,7 +22,7 @@
 
     .animatedPlot {
         width: 100%;
-        overflow: scroll;
+        overflow: auto;
     }
     .eachSessionDetails {
         margin-top: 5px;
@@ -34,7 +34,7 @@
 @media only screen and (min-width: 768px) {
     .animatedPlot {
         width: 600px;
-        overflow: scroll;
+        overflow: auto;
         /* border: 2px solid purple; */
     }
     .eachSessionDetails {
