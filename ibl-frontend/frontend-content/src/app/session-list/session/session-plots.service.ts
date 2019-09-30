@@ -28,7 +28,7 @@ export class SessionPlotsService {
           this.sessionPsychPlotLoaded.next(this.sessionPsychPlot);
         },
         (err: any) => {
-          console.log('error in retrieving session psych plot');
+          // console.log('error in retrieving session psych plot');
           console.error(err);
         }
       );
@@ -42,7 +42,7 @@ export class SessionPlotsService {
           this.sessionRTCPlotLoaded.next(this.sessionRTCPlot);
         },
         (err: any) => {
-          console.log('error in retrieving session RTC plot');
+          // console.log('error in retrieving session RTC plot');
           console.error(err);
         }
       );
@@ -56,7 +56,7 @@ export class SessionPlotsService {
           this.sessionRTTNPlotLoaded.next(this.sessionRTTNPlot);
         },
         (err: any) => {
-          console.log('error in retrieving session RTTN plot');
+          // console.log('error in retrieving session RTTN plot');
           console.error(err);
         }
       );

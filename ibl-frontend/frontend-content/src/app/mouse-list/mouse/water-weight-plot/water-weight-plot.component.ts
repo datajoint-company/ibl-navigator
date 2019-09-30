@@ -175,7 +175,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('water intake and weight plot not available for this mouse');
+          // console.log('water intake and weight plot not available for this mouse');
           this.WIWPlotIsAvailable = false;
           this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
         }

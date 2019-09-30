@@ -19,7 +19,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
@@ -177,7 +177,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('performance reaction time plot not available');
+          // console.log('performance reaction time plot not available');
           this.PRTPlotIsAvailable = false;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
         }

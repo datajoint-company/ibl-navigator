@@ -17,7 +17,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
@@ -154,7 +154,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('contrast heatmap plot unavailable');
+          // console.log('contrast heatmap plot unavailable');
           this.contrastHeatmapPlotIsAvailable = false;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
         }

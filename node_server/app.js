@@ -409,13 +409,39 @@ app.post('/plot/rasterbatch', checkAuth, (req, res) => {
     // req.setTimeout(60000);
     const timeA = new Date()
     console.log('requesting rasters light batch to backend: ', timeA);
-    request.post(flask_backend + '/v0/rasterlight', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/rasterlight', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
         if (error) {
             console.error('error: ', error);
         }
         const timeZ = new Date()
         console.log('rasters batch took ', timeZ - timeA, ' ms to receive from backend')
         console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
+
+app.post('/plot/psthbatch', checkAuth, (req, res) => {
+    // req.setTimeout(60000);
+    const timeA = new Date()
+    console.log('requesting psth batch to backend: ', timeA);
+    request.post(flask_backend + '/v0/psthdata', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        const timeZ = new Date()
+        console.log('psth data batch took ', timeZ - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
+app.get('/plot/psthtemplate', checkAuth, (req, res) => {
+    const time1 = new Date()
+    request.get(flask_backend + '/v0/psthtemplate', function (error, httpResponse, body) {
+        if (error) {
+            console.error('error: ', error);
+        }
+        const time2 = new Date()
+        console.log('psth template took ', time2 - time1, ' ms to receive from backend')
         res.send(body);
     })
 })

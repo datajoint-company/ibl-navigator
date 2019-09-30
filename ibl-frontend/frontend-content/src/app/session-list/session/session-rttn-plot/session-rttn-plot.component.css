@@ -4,6 +4,7 @@
 }
 
 #SRTTNpngExport:hover {
+    cursor: pointer;
     border: 2px solid rgb(240, 240, 240);
     background: linear-gradient(to right, rgba(248, 175, 242, 0.075), rgba(175, 231, 248, 0.075));
 }

@@ -16,6 +16,9 @@ from flask import Flask
 from flask import request
 from flask import abort
 
+import boto3
+s3_client = boto3.client('s3')
+
 API_VERSION = '0'
 app = Flask(__name__)
 API_PREFIX = '/v{}'.format(API_VERSION)
@@ -33,23 +36,23 @@ action = mkvmod('action')
 acquisition = mkvmod('acquisition')
 plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
-plotting_ephys = mkvmod('plotting_ephys')
-ephys = mkvmod('ephys')
+# plotting_ephys = mkvmod('plotting_ephys')
+# ephys = mkvmod('ephys')
 
 dj.config['stores'] = {
     'ephys': dict(
         protocol='s3',
         endpoint='s3.amazonaws.com',
-        access_key=os.environ.get('S3_ACCESS'),
-        secret_key=os.environ.get('S3_SECRET'),
+        access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
+        secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
         bucket='ibl-dj-external',
         location='/ephys'
     ),
     'plotting': dict(
         protocol='s3',
         endpoint='s3.amazonaws.com',
-        access_key=os.environ.get('S3_ACCESS'),
-        secret_key=os.environ.get('S3_SECRET'),
+        access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
+        secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
         bucket='ibl-dj-external',
         location='/plotting'
     )
@@ -109,12 +112,14 @@ reqmap = {
     'datepsych': plotting_behavior.DatePsychCurve,
     'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
     'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
-    'cluster': ephys.Cluster,
-    'raster': plotting_ephys.Raster,
-    'psth': plotting_ephys.Psth,
-    'rasterbatch': plotting_ephys.RasterLink,
-    'rasterlight': plotting_ephys.RasterLinkOnly,
-    'rastertemplate': plotting_ephys.RasterLayoutTemplate
+    # 'cluster': ephys.Cluster,
+    # 'raster': plotting_ephys.Raster,
+    # 'psth': plotting_ephys.Psth,
+    # 'psthdata': plotting_ephys.PsthDataVarchar,
+    # 'psthtemplate': plotting_ephys.PsthTemplate,
+    # 'rasterbatch': plotting_ephys.RasterLink,
+    # 'rasterlight': plotting_ephys.RasterLinkS3,
+    # 'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
 dumps = DateTimeEncoder.dumps
 
@@ -165,7 +170,6 @@ def do_req(subpath):
         if proj:
             q = q.proj(*proj)
 
-
         from time import time
         start = time()
         print('about to fetch requested object')
@@ -187,6 +191,7 @@ def handle_q(subpath, args, proj, **kwargs):
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
 
     ret = []
+    post_process = None
     if subpath == 'sessionpage':
         q = (acquisition.Session().aggr(
             # plotting_behavior.SessionPsychCurve(),
@@ -251,6 +256,14 @@ def handle_q(subpath, args, proj, **kwargs):
         q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
              & args).proj(..., *exclude_attrs)
         print(q)
+    # elif subpath == 'rasterlight':
+    #     q = plotting_ephys.RasterLinkS3
+    #     def post_process(ret):
+    #         return [{k: s3_client.generate_presigned_url(
+    #                 'get_object', 
+    #                 Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
+    #                 ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
+    #                 for i in ret]
     else:
         abort(404)
 
@@ -262,7 +275,7 @@ def handle_q(subpath, args, proj, **kwargs):
     # print('D type', ret.dtype)
     # print(ret)
     print('About to return ', len(ret), 'entries')
-    return dumps(ret)
+    return dumps(post_process(ret)) if post_process else dumps(ret)
 
 
 if is_gunicorn:

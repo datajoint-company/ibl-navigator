@@ -43,7 +43,7 @@ export class AllSessionsService {
           this.allSessionMenuLoaded.next(this.allSessionMenu);
         },
         (err: any) => {
-          console.log('err in fetching requested menu');
+          // console.log('err in fetching requested menu');
           console.error(err);
         }
       );
@@ -60,7 +60,7 @@ export class AllSessionsService {
           this.sessionMenuLoaded.next(this.sessionMenu);
         },
         (err: any) => {
-          console.log('err in fetching requested menu');
+          // console.log('err in fetching requested menu');
           console.error(err);
         }
       );
@@ -77,7 +77,7 @@ export class AllSessionsService {
           this.newSessionsLoaded.next(this.retrievedSessions);
         },
         (err: any) => {
-          console.log('err in fetching requested sessions');
+          // console.log('err in fetching requested sessions');
           console.error(err);
         }
       );
@@ -94,7 +94,7 @@ export class AllSessionsService {
           this.newSessionsLoaded2.next(this.retrievedSessions2);
         },
         (err: any) => {
-          console.log('err in fetching requested sessions');
+          // console.log('err in fetching requested sessions');
           console.error(err);
         }
       );

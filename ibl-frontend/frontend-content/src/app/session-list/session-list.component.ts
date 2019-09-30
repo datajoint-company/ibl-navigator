@@ -87,9 +87,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // console.log('tableState: ', tableState);
     this.route.queryParams
       .subscribe(params => {
-        // console.log('params loading sessions: ', params);
         if (Object.entries(params).length === 0) {
           params = this.filterStoreService.retrieveSessionFilter();
+          if (!params) {
+            params = { 'nplot': 1 }
+          }
         }
         for (const key in params) {
           if (key === '__json') {
@@ -116,11 +118,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
             }
             if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
               this.dateRangeToggle = false;
-              console.log('loggin date range[0]- ', dateRange[0]);
+              // console.log('loggin date range[0]- ', dateRange[0]);
               this.session_filter_form.controls.session_start_time_control.patchValue(moment.utc(dateRange[0]));
             } else if (dateRange[0] !== '') {
               this.dateRangeToggle = true;
-              console.log('loggin date range[1]- ', dateRange[1]);
+              // console.log('loggin date range[1]- ', dateRange[1]);
               this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(moment.utc(dateRange[0]));
               this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(moment.utc(dateRange[1]));
             }
@@ -453,7 +455,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.sessions = [];
     const request = this.filterRequests();
-    request['__order'] = 'session_start_time DESC';
+    request['__order'] = 'lab_name ASC, session_start_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
       this.filterStoreService.storeSessionFilter(request);
       this.allSessionsService.retrieveSessions2(request);

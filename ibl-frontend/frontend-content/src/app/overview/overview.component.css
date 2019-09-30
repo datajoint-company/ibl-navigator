@@ -6,3 +6,33 @@
 h4 {
     font-weight: 300;
 }
+
+.home-container {
+    background-image: url("/assets/images/home_ibl_brainbow.jpg");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 60vw;
+    height: 80vh;
+    position: absolute;
+}
+
+.text-container {
+    padding: 0px 220px 0 0;
+    
+    margin-top: 150px;
+    
+}
+
+.text-details {
+    padding: 18px 0px 6px;
+    background-color: rgba(255, 255, 255, 0.55);
+}
+
+.text-details a {
+    color: #03a2da; /* bright IBL blue */
+}
+
+.text-details a:hover {
+    color: #c944a4; /* bright IBL fuscia */
+    text-decoration: none;
+}
