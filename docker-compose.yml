@@ -52,15 +52,8 @@ services:
     #   - "3333:3333"
     networks:
       - main
-<<<<<<< HEAD
   letsencrypt:
     image: linuxserver/letsencrypt:latest
-=======
-  nginx:
-    # build: ./nginx-letsencrypt
-    # image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev3
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-public1 # for public deploy
->>>>>>> 8d3c4658a00a870628f81de0c9403be2b315047f
     environment:
       - PUID=1000
       - PGID=1000
