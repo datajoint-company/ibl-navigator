@@ -20,7 +20,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
