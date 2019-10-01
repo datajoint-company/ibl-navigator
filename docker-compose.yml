@@ -52,10 +52,8 @@ services:
     #   - "3333:3333"
     networks:
       - main
-  nginx:
-    # build: ./nginx-letsencrypt
-    # image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev3
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-public1 # for public deploy
+  letsencrypt:
+    image: linuxserver/letsencrypt:latest
     environment:
       - PUID=1000
       - PGID=1000
@@ -68,24 +66,56 @@ services:
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
       - STAGING=true # UNcomment for testdev
+      - VALIDATION=http
+    healthcheck:
+      # test: ["CMD-SHELL","if","[", "$$(expr", "$$(date", "+%s)","-","$$(stat","-c","%Y","$$(ls","-la","/config/etc/letsencrypt/live/*.*/fullchain.pem","|","awk","'{print","sprintf(\"%s/%s\",\"/config/etc/letsencrypt/live/*.*\",$$11)}')))","-lt","\"7776000\"","];","then","exit","0;else","exit","1;fi"]
+      # test: if [ $$(expr $(date +%s) - $$(stat -c %Y $(ls -la /config/etc/letsencrypt/live/*.*/fullchain.pem | awk '{print sprintf("%s/%s", "/config/etc/letsencrypt/live/*.*", $11)}'))) -lt "7776000" ]; then exit 0;else exit 1;fi
+      test: /healthcheck.sh
+      timeout: 5s
+      retries: 300
+      interval: 1s
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
+    # cap_add:
+    #   - NET_ADMIN
+    volumes:
+      - ./letsencrypt-keys:/config/etc/letsencrypt
+      - ./letsencrypt/healthcheck.sh:/healthcheck.sh
+    networks:
+      - main
+    # depends_on:
+    #   ibl-node-server:
+    #     condition: service_healthy
+    #   iblapi:
+    #     condition: service_healthy
+    #   ibl-navigator:
+    #     condition: service_healthy
+  nginx:
+    # build: ./nginx
+    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev5
+    environment:
+      - URL=datajoint.io # for testdev deploy
+      - SUBDOMAINS=testdev # for testdev deploy
       - NODE_SERVER=http://ibl-node-server:3333
       - FRONTEND_SERVER=http://ibl-navigator:8080
+      - LETSENCRYPT_SERVER=http://letsencrypt:80
     ports:
       - "80:80"
       - "443:443"
     # cap_add:
     #   - NET_ADMIN
     volumes:
-      - ./letsencrypt-keys:/config/etc/letsencrypt:ro
+      - ./letsencrypt-keys:/etc/letsencrypt:ro
     networks:
       - main   
-    depends_on:
-      ibl-node-server:
-        condition: service_healthy
-      iblapi:
-        condition: service_healthy
-      ibl-navigator:
-        condition: service_healthy
+    # depends_on:
+    #   ibl-node-server:
+    #     condition: service_healthy
+    #   iblapi:
+    #     condition: service_healthy
+    #   ibl-navigator:
+    #     condition: service_healthy
 networks:
     main:
         ipam:
