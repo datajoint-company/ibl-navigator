@@ -90,7 +90,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
         if (Object.entries(params).length === 0) {
           params = this.filterStoreService.retrieveSessionFilter();
           if (!params) {
-            params = { 'nplot': 1 }
+            params = { 'nplot': 1 };
+            this.updateMenu();
           }
         }
         for (const key in params) {

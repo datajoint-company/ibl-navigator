@@ -89,28 +89,40 @@ td.to-center {
 }
 
 mat-form-field {
-    margin: 10px;
+    margin: 0px 10px;
+    top: 5px;
     width: 220px;
     float: left;
-}
+    top: 8px;
+    /* margin-bottom: 0; */
 
-mat-form-field input {
-    /* font-family: 'Roboto Condensed', sans-serif; */
 }
 
 mat-form-field.long {
     width: 350px;
+    margin-bottom: 0;
+    top: 8px;
 }
 
 mat-form-field.short {
     width: 190px;
+    margin-bottom: 0;
+    top: 8px;
 }
 
+
 .nplot_filter {
-    display: inline-flex;
+    padding-top: 14px;
+    /* padding-bottom: 2px; */
+    margin-top: 19px;
+    margin-bottom: 8px;
+    margin-left: 10px;
+    float: left;
+    top: 8px;
 }
 mat-checkbox.nplot_chbox {
-    margin: 8px;
+    /* margin: 8px; */
+    top: 12px;
 }
 tr.mat-row {
     /* border-bottom: 1px solid rgba(0,0,0,.12); */
@@ -133,13 +145,18 @@ button:hover {
 }
 
 .mouse_gender_filter {
-    padding-top: 12px;
-    padding-bottom: 2px;
-    margin-top: 11px;
+    top: 8px;
+    padding-top: 4px;
+    padding-bottom: 0px;
+    margin-top: 14px;
     margin-left: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 0px;
     width: 150px;
     float: left;
+}
+
+.mouse_gender_filter label {
+    margin-bottom: 0px;
 }
 
 .mouse_gender_menu mat-checkbox#genderU {
@@ -148,14 +165,18 @@ button:hover {
 
 mat-checkbox.mouse_gender_menu_chbox {
     margin-right: 12px;
-
+}
+.mouse_gender_menu_chbox label.mat-checkbox-layout {
+    margin-bottom: 0px;
 }
 .mouse_gender_menu{
     display: flex;
     flex-direction: row;
 };
 
-
+.cleardivider {
+    visibility: hidden;
+}
 
 /* for different screen sizes */
 /* XS and S (768px and down) */
@@ -186,28 +207,43 @@ mat-checkbox.mouse_gender_menu_chbox {
 }
 /* note - to make sure the filter folds smoothly without getting stuck */
 /* problem folding areas */
-/* 510-639px and 880px-909px and 1632px-1822px  and  1824px-2111px  */
-@media only screen and (min-width: 1824px) and (max-width: 2111px) {
-    .mouse_gender_filter {
-        margin-bottom: 0px;
+/* 2076px - 2267px is where the menu breaks */
+@media only screen and (min-width: 2076px) and (max-width: 2267px) {
+    .cleardivider {
+        width: 100vw;
+        height: 2px;
+        display: inline-block;
     }
 }
-/* 1536px is where the gender menu drops to the line below */
-@media only screen and (min-width: 1536px) and (max-width: 1822px) {
-    .mouse_gender_filter {
-        margin-bottom: 20px;
+/* 1200px - 1247px is where the menu breaks */
+@media only screen and (min-width: 1200px) and (max-width: 1247px) {
+    .cleardivider {
+        width: 100vw;
+        height: 2px;
+        display: inline-block;
     }
 }
-/* 800px is where the gender menu jumps to the line above */
-@media only screen and (min-width: 800px) and (max-width: 1091px) {
-    .mouse_gender_filter {
-        margin-bottom: 20px;
+/* 910px - 1039px is where the menu breaks */
+@media only screen and (min-width: 910px) and (max-width: 1039px) {
+    .cleardivider {
+        width: 100vw;
+        height: 2px;
+        display: inline-block;
+    }
+}
+
+/* 512px - 641px is where the menu breaks */
+@media only screen and (min-width: 512px) and (max-width: 641px) {
+    .cleardivider {
+        width: 100vw;
+        height: 2px;
+        display: inline-block;
     }
 }
 
 @media only screen and (max-width: 639px) {
     .mouse_gender_filter {
-        margin-bottom: 20px;
+        /* margin-bottom: 20px; */
     }
 }
 
