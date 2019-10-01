@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input} from '@angular/core';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
@@ -35,6 +35,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     nplot_control: new FormControl()
   });
   loading = true;
+  smallScreen;
+  filterExpanded;
   sessions;
   allSessions;
   sessionDateFilter: Function;
@@ -79,10 +81,18 @@ export class SessionListComponent implements OnInit, OnDestroy {
   // @Input('preRestriction') preRestrictedMouseInfo: Object;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  
   ngOnInit() {
     this.session_menu = {};
     this.loading = true;
     this.session_menu['sex'] = { F: null, M: null, U: null };
+    if (window.innerWidth < 1250 || window.innerHeight < 750) {
+      this.smallScreen = true;
+      this.filterExpanded = false;
+    } else {
+      this.smallScreen = false;
+      this.filterExpanded = true;
+    }
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState();
     // console.log('tableState: ', tableState);
     this.route.queryParams

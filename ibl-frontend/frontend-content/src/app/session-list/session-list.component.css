@@ -15,6 +15,16 @@ form {
     width: 100%;
 } 
 
+.filterExpand {
+    height: auto;
+    visibility: visible;
+}
+.filterCollapse,
+.filterCollapse * {
+    height: 0;
+    visibility: hidden;
+}
+
 .mat-datepicker-toggle{
     position:absolute;
     font-size: 3em;

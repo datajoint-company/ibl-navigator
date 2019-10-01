@@ -2,8 +2,11 @@
 <h4>
   Filter Sessions
 </h4>
+<button class="btn" *ngIf="!filterExpanded" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
+<button class="btn" *ngIf="filterExpanded" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
+
 <form [formGroup]="session_filter_form">
-  <div class="filters col-12">
+  <div [class]="filterExpanded ? 'filters col-12 filterExpand':'filters col-12 filterCollapse'">
     <div class="session-field-filters form-section">
       <mat-form-field class="long">
         <label for="">Task Protocol</label>
