@@ -94,9 +94,13 @@ services:
   nginx:
     # build: ./nginx
     image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev5
+    # image: registry.vathes.com/ibl-navigator/nginx:v0.0-public1 # for public deploy ?
     environment:
-      - URL=datajoint.io # for testdev deploy
-      - SUBDOMAINS=testdev # for testdev deploy
+      # - URL=datajoint.io # for testdev deploy
+      # - SUBDOMAINS=testdev # for testdev deploy
+      - URL=internationalbrainlab.org # for client or public demo deploy
+      # - SUBDOMAINS=djcompute # for client deploy
+      - SUBDOMAINS=data # for public demo deploy
       - NODE_SERVER=http://ibl-node-server:3333
       - FRONTEND_SERVER=http://ibl-navigator:8080
       - LETSENCRYPT_SERVER=http://letsencrypt:80
