@@ -1,4 +1,7 @@
-
+.table-container {
+    width: 100%;
+    overflow: auto !important;
+}
 
 tr.mat-row:hover {
     background-color: rgba(0, 83, 145, .05);
@@ -129,10 +132,7 @@ mat-checkbox.mouse_gender_menu_chbox {
 
 
 
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-}
+
 
 
 
