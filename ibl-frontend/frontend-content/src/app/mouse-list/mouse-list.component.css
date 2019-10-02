@@ -5,6 +5,14 @@ tr.mat-row:hover {
     cursor: pointer;
 }
 
+.loading-icon {
+    text-align: center;
+}
+
+.loading-icon img {
+    width: 100px;
+}
+
 .subject-list-container {
     padding-top: 20px;
 }
@@ -22,6 +30,16 @@ form {
     flex-direction: column;
     width: 100%;
 } 
+
+.filterExpand {
+    height: auto;
+    visibility: visible;
+}
+.filterCollapse,
+.filterCollapse * {
+    height: 0;
+    visibility: hidden;
+}
 
 .mat-datepicker-toggle{
     position:absolute;
@@ -58,8 +76,18 @@ mat-form-field.short {
     margin-top: 10px;
     display: flex;
     flex-direction: row;
+    float: left;
+    width: 100vw;
 }
 
+.btn-reset {
+    border: 2px solid rgb(180, 69, 134) !important;
+}
+.btn-reset:hover {
+    border: 2px solid rgb(180, 69, 134) !important;
+    background-color: rgb(180, 69, 134) !important;
+    color: white;
+}
 button.mat-raised-button {
     float: left;
     margin-left: 5px;
@@ -71,6 +99,8 @@ button.mat-raised-button:hover {
     background-color: rgb(0, 124, 183);
     color: white;
 }
+
+
 
 .mouse_gender_filter {
     padding-top: 12px;
@@ -97,13 +127,7 @@ mat-checkbox.mouse_gender_menu_chbox {
 
 
 
-.loading-icon {
-    text-align: center;
-}
 
-.loading-icon img {
-    width: 100px;
-}
 
 .table-container {
     width: 100%;

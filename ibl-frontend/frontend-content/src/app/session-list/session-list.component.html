@@ -1,9 +1,11 @@
 <div class="session-list-container">
 <h4>
-  Filter Sessions
+  List of Sessions
 </h4>
-<button class="btn" *ngIf="!filterExpanded" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
+<button mat-raised-button class="btn" *ngIf="!filterExpanded" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
 <button class="btn" *ngIf="filterExpanded" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
+<button *ngIf="!filterExpanded" class="btn btn-reset" mat-raised-button (click)="clearControl()">Reset Filter</button>
+
 
 <form [formGroup]="session_filter_form">
   <div [class]="filterExpanded ? 'filters col-12 filterExpand':'filters col-12 filterCollapse'">
@@ -153,11 +155,14 @@
       
     </div>
   </div>
-  <div>
-    <button mat-raised-button (click)="applyFilter()">Apply Filter</button>
-  </div>
-  <div>
-    <button mat-raised-button (click)="clearControl()">Reset Filter</button>
+  <br>
+  <div *ngIf="filterExpanded">
+    <div>
+      <button mat-raised-button (click)="applyFilter()">Apply Filter</button>
+    </div>
+    <div>
+      <button mat-raised-button class="btn btn-reset" (click)="clearControl()">Reset Filter</button>
+    </div>
   </div>
   
 </form>

@@ -154,6 +154,15 @@ button:hover {
     color: white;
 }
 
+.btn-reset {
+    border: 2px solid rgb(180, 69, 134);
+}
+.btn-reset:hover {
+    border: 2px solid rgb(180, 69, 134);
+    background-color: rgb(180, 69, 134);
+    color: white;
+}
+
 .mouse_gender_filter {
     top: 8px;
     padding-top: 4px;
