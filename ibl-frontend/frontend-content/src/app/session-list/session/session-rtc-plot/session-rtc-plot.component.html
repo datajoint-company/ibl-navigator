@@ -2,6 +2,9 @@
   <div #session_RTC_plot></div>
 </div>
 <img id="SRTCpngExport" (click)="plotClicked($event)" width="320px" />
-<div *ngIf="RTCPlotIsAvailable !== null && !RTCPlotIsAvailable" class="missingPlotNotice">
+<div *ngIf="plotLoading">
+  <p>plot loading...</p>
+</div>
+<div *ngIf="RTCPlotIsAvailable !== null && !RTCPlotIsAvailable && plotLoading == false" class="missingPlotNotice">
   <p>Reaction time contrast plot not available for this session</p>
 </div>

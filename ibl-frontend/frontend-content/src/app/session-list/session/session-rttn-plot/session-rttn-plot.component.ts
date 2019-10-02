@@ -14,6 +14,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
   newScreenWidth;
   plotInfo = [];
   RTTNPlotIsAvailable: boolean;
+  plotLoading: boolean;
   plotConfig = {
     showLink: false,
     showSendToCloud: false,
@@ -112,6 +113,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const element = this.el.nativeElement;
     const initialScreenSize = window.innerWidth;
     const img_png = this.d3.select('#SRTTNpngExport');
@@ -125,6 +127,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
           // console.log('session_start_time: ', rttnPlotData[0]['session_start_time']);
           this.plotInfo = rttnPlotData[0]['plotting_data'];
           this.RTTNPlotIsAvailable = true;
+          this.plotLoading = false;
           this.RTTNPlotAvailability.emit(this.RTTNPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = rttnPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_RTTN_plot'
           this.plotInfo['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
@@ -149,6 +152,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
           }
         } else {
           // console.log('psych plot not available for this session');
+          this.plotLoading = false;
           this.RTTNPlotIsAvailable = false;
           this.RTTNPlotAvailability.emit(this.RTTNPlotIsAvailable);
         }

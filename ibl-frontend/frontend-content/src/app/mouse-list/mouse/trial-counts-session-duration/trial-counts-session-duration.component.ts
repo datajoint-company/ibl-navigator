@@ -14,6 +14,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   newScreenWidth;
   dataLen: number;
   TCSDPlotIsAvailable: boolean;
+  plotLoading: boolean;
   loading = true;
   plotConfig = {
     responsive: false,
@@ -121,6 +122,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const screenSizeInitial = window.innerWidth;
     const element = this.el.nativeElement;
     this.mousePlotsService.getTCSessionDurationPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
@@ -162,7 +164,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
               this.defaultScreenDataStyle['line.width'].push('2');
             }
           }
-
+          this.plotLoading = false;
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
           this.loading = false;
@@ -181,6 +183,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           }
         } else {
           // console.log('trial counts session duration plot unavailable for this mouse');
+          this.plotLoading = false;
           this.TCSDPlotIsAvailable = false;
           this.loading = false;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);

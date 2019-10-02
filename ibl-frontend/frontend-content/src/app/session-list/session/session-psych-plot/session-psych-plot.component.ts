@@ -16,6 +16,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   plotInfo = [];
   plotFitPars;
   psychPlotIsAvailable: boolean;
+  plotLoading: boolean;
   // svgDownloadIcon = {
   //   'width': 1000,
   //   'height': 1000,
@@ -130,6 +131,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const element = this.el.nativeElement;
     const initialScreenSize = window.innerWidth;
     const img_png = this.d3.select('#SPCpngExport');
@@ -145,6 +147,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
           this.plotFitPars = psychPlotData[0]['fit_pars'];
           this.psychCurveFitPars.emit(this.plotFitPars);
           this.plotInfo = psychPlotData[0]['plotting_data'];
+          this.plotLoading = false;
           this.psychPlotIsAvailable = true;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] =
@@ -172,6 +175,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
           }
         } else {
           // console.log('psych plot not available for this session');
+          this.plotLoading = false;
           this.psychPlotIsAvailable = false;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
           // Plotly.newPlot(element, [], this.mediumScreenLayout, {displayModeBar: false })
