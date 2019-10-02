@@ -32,7 +32,21 @@
     font-family: 'Roboto Condensed', sans-serif;
     font-weight: 300;
 }
+.menu-button {
+    padding-right: 10px;
+}
 
+.menu-button button,
+.menu-button button:active {
+    border: 2px solid #03a2da;
+    background-color: transparent;
+    color: #03a2da;
+}
+.menu-button button:hover {
+    border: 2px solid #03a2da;
+    background-color: #03a2da;
+    color: white;
+}
 .menu-container {  
     width: 100%; 
 }

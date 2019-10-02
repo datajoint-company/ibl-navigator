@@ -11,7 +11,13 @@
   </div>
   
   <div class="row">
-    <div class="menu-container">
+    <div class="menu-button ml-auto">
+      <button *ngIf="smallScreen" class="btn" (click)="menuCollapsed = !menuCollapsed">
+        <span *ngIf="menuCollapsed" class="oi oi-menu"></span>
+        <span *ngIf="!menuCollapsed" class="oi oi-collapse-up"></span>
+      </button>
+    </div>
+    <div *ngIf="!menuCollapsed" class="menu-container">
       <ul class="nav nav-tabs">
         <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
           <a class="nav-link" routerLink="/">Home</a>
