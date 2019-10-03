@@ -11,6 +11,8 @@ declare var Plotly: any;
   styleUrls: ['./animated-psych-curve-plot.component.css']
 })
 export class AnimatedPsychCurvePlotComponent implements OnInit {
+  allSessions;
+  mostRecentPlot;
   currentFrame;
   current_frame_session_info;
   showInfo;
@@ -23,10 +25,22 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
     this.showInfo = false;
     const initialScreenSize = window.innerWidth;
     const element = this.element.nativeElement;
+    // get list of sessions for the mouse here for later use showing/jumping to session info
+    this.allSessionsService.retrieveSessions(
+      { 'subject_uuid': this.mouseInfo['subject_uuid']});
+    this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
+      .subscribe(sessionInfo => {
+        // console.log('all session for mouse (' + this.mouseInfo['subject_nickname'] + '): ', sessionInfo);
+        this.allSessions = sessionInfo;
+      });
+
+    // get all session plots for the mouse for animating
     this.mousePlotsService.getAnimatedPCplot({ 'subject_uuid': this.mouseInfo['subject_uuid']});
     this.AnimPCplotSubscription = this.mousePlotsService.getAnimatedPCplotLoadedListener()
       .subscribe((plotInfo: any) => {
         if (plotInfo && plotInfo.length > 1) {
+          // console.log('animated plots allPlots: ', plotInfo);
+          this.mostRecentPlot = plotInfo[plotInfo.length - 1];
           let data = [];
           // const data = plotInfo[plotInfo.length - 1]['plotting_data']['data'];
           if (plotInfo[0]['plotting_data']['data'].length < 6) {
@@ -483,17 +497,22 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
           });
           element.on('plotly_animated', () => {
             // console.log('animation stopped');
-            this.allSessionsService.retrieveSessions(
-              { 'subject_uuid': this.mouseInfo['subject_uuid'], 'session_start_time': this.currentFrame });
-            this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
-              .subscribe(sessionInfo => {
-                this.current_frame_session_info = sessionInfo[0];
-             });
+            // this.allSessionsService.retrieveSessions(
+            //   { 'subject_uuid': this.mouseInfo['subject_uuid'], 'session_start_time': this.currentFrame });
+            // this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
+            //   .subscribe(sessionInfo => {
+            //     this.current_frame_session_info = sessionInfo[0];
+            //  });
+            for (const session of this.allSessions) {
+              if (session['session_start_time'] === this.currentFrame) {
+                this.current_frame_session_info = session;
+              }
+            }
             const lookupInfo = setTimeout(() => {
               if (!this.showInfo) {
                 this.showInfo = true;
               }
-            }, 500);
+            }, 0);
           });
           // see if GIF download is possible
           // const images = [];
@@ -520,13 +539,18 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
       alert('run the animation/move the slider to choose a session');
       return;
     }
-    this.allSessionsService.retrieveSessions({'subject_uuid': this.mouseInfo['subject_uuid'], 'session_start_time': this.currentFrame});
-    this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
-      .subscribe(sessionInfo => {
-        // console.log('session retrieved! ID: ', sessionInfo[0]['session_uuid']);
-        // console.log(sessionInfo);
-        this.current_frame_session_info = sessionInfo[0];
-      });
+    // this.allSessionsService.retrieveSessions({'subject_uuid': this.mouseInfo['subject_uuid'], 'session_start_time': this.currentFrame});
+    // this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
+    //   .subscribe(sessionInfo => {
+    //     // console.log('session retrieved! ID: ', sessionInfo[0]['session_uuid']);
+    //     // console.log(sessionInfo);
+    //     this.current_frame_session_info = sessionInfo[0];
+    //   });
+    for (const session of this.allSessions) {
+      if (session['session_start_time'] === this.currentFrame) {
+        this.current_frame_session_info = session;
+      }
+    }
   }
 
 }
