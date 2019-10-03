@@ -80,16 +80,18 @@
     <div class="v-long-plot-container">
       <app-fit-par-plots [mouseInfo]="mouse"></app-fit-par-plots>
     </div>
+    <div class="row sessionPCP-container">
+      <app-animated-psych-curve-plot [mouseInfo]="mouse"></app-animated-psych-curve-plot>
+    </div>
     <div class="row fetch-sessions">
       <button routerLink="/sessions" [queryParams]="cleanMouse" mat-raised-button>
         See Sessions</button>
     </div>
+    
     <div class="row by-date-plots-container">
       <app-by-date-result-plots [mouseInfo]="mouse"></app-by-date-result-plots>
     </div>
-    <div class="sessionPCP-container row">
-      <app-animated-psych-curve-plot [mouseInfo]="mouse"></app-animated-psych-curve-plot>
-    </div>
+    
     <br>
   </div>
 

@@ -42,9 +42,11 @@ hr {
 
 .single-plot {
     border-right: 1px solid rgba(131, 139, 211, 0.35);
-    border-top: 1px solid rgba(131, 139, 211, 0.35);
+    /* border-bottom: 1px solid rgba(131, 139, 211, 0.35); */
     /* background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1), rgba(93, 111, 190, 0.08), rgba(3, 161, 218, 0.1), rgba(255, 255, 255, 0.75)); */
-
+}
+.single-plot:not(:first-child) {
+    border-top: 1px solid rgba(131, 139, 211, 0.35);
 }
 
 .h-long-plot {
@@ -54,7 +56,7 @@ hr {
 .v-long-plot-container {
     float: left;
     width: 50%;
-    border-top: 1px solid rgba(131, 139, 211, 0.35);
+    /* border-top: 1px solid rgba(131, 139, 211, 0.35); */
 }
 
 .by-date-plots-container {
@@ -63,10 +65,14 @@ hr {
 }
 
 .sessionPCP-container {
-    /* float: bottom; */
+    width: 100%;
+    float: left;
+    padding-bottom: 20px;
+    border-top: 1px solid rgba(131, 139, 211, 0.35);
 }
 
 .fetch-sessions {
+    border-top: 1px solid rgba(131, 139, 211, 0.35);
     padding-top: 1.5%;
     width: 100%;
 }
@@ -86,6 +92,7 @@ hr {
   .v-long-plot-container {
     float: top;
     width: 100%;
+    border-top: 1px solid rgba(131, 139, 211, 0.35);
   }
   .short-plots-container {
     float: left;
