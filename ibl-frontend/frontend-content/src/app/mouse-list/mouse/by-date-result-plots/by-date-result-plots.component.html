@@ -217,6 +217,6 @@
     </div>
   </div>
 </span> -->
-<div *ngIf="byDateResultPlotsAreAvailable !== null && !byDateResultPlotsAreAvailable">
+<div *ngIf="byDateResultPlotsAreAvailable !== null && !byDateResultPlotsAreAvailable && !loadingPlots.includes(true)">
   <p>Session result plots not available</p>
 </div>
