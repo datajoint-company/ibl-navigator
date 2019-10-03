@@ -214,6 +214,11 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_fit parameters_plot';
           Plotly.newPlot(element, fitParPlots['data'], fitParPlots['layout'], this.plotConfig);
+          
+          element.on('plotly_hover', function(data) {
+            console.log('plotly fit par plot hover deteced');
+            console.log(data);
+          });
           if (screenSizeInitial < 1440 && (screenSizeInitial > 1024 || screenSizeInitial === 1024)) {
             Plotly.update(element, this.mediumLargeScreenDataStyle, this.mediumLargeScreenLayout);
           } else if (screenSizeInitial < 1024 && (screenSizeInitial > 768 || screenSizeInitial === 768)) {
