@@ -22,6 +22,7 @@ import { MatSelectModule,
          MatSortModule,
          MatSliderModule,
          MatExpansionModule,
+         MatTooltipModule,
          MatDialogModule } from '@angular/material';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -156,7 +157,7 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
-    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule,
+    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule, MatTooltipModule,
     MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatMomentDateModule, MatSlideToggleModule,
     MatCardModule, MatButtonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSliderModule, MatExpansionModule,
     MatDialogModule, ReactiveFormsModule, FlexLayoutModule
