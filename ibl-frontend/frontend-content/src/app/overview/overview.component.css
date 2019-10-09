@@ -45,7 +45,7 @@ ol a:hover {
 
 .home-bottom-container {
     height: 800px;
-    background-color: #e9e9e9d3;
+    background-color: #ecececc0;
 }
 
 .detail-container {
@@ -64,6 +64,7 @@ ol a:hover {
 .each-figure {
     height: 320px;
     margin: 0px 18px;
+    text-align: center;
 }
 
 .text-image {
@@ -73,6 +74,7 @@ ol a:hover {
 
 .figure-caption {
     margin-top: 8px;
+    
 }
 
 #fig3 {
@@ -118,7 +120,7 @@ ol {
     }
     .each-figure {
         height: auto;
-        margin: 0px 8px;
+        margin: 10px 8px;
         float: left;
     }
 

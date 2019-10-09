@@ -64,21 +64,24 @@ import { PsthPlotsComponent } from './cell-list/cell/psth-plots/psth-plots.compo
 PlotlyModule.plotlyjs = PlotlyJS;
 
 const appRoutes: Routes = [
-  { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent },
+  { path: '', 
+    component: OverviewComponent, 
+    // canActivate: [AuthGuard] 
+  },
+  // { path: 'login', component: LoginComponent },
   // { path: 'plot', component: ViewSamplePlotsComponent },
   // { path: 'cells', component: CellListComponent },
   // { path: 'water-weight', component: WaterWeightPlotComponent},
   {
     path: 'mouse/:mouseUUID',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
     component: MouseComponent
   },
   {
     path: 'mice',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: MouseListComponent
   },
   // {
@@ -98,14 +101,14 @@ const appRoutes: Routes = [
   // },
   {
     path: 'session/:sessionID',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
     component: SessionComponent
   },
   {
     path: 'sessions',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: SessionListComponent
   },
   // {
@@ -115,6 +118,7 @@ const appRoutes: Routes = [
   // },
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
   // { path: '**', redirectTo: '/not-found' }
+  { path: '**', redirectTo: '' }
 ];
 
 
