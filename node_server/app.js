@@ -30,119 +30,6 @@ app.use((req, res, next) => {
 flask_backend = process.env['PY_BACKEND'] || 'http://localhost:5000'
 
 
-// app.use([checkAuth, serveStatic('static/plotImg')])
-// ======================== for testing/developing purpose - keep till raster plots are done ========================== //
-app.post('/plot', (req, res) =>{
-    console.log(req.body);
-    if (req.body.type == 'raster_test_data') {
-        // res.sendFile(`./src/assets/plotData/${req.body.type}${req.body.id}.png`)
-        // const options = {
-        //     root: './src/assets/plotData/',
-        //     headers: {
-        //         'content-type': 'image/png',
-        //         'status': 200
-        //     }
-        // }
-        // res.sendFile(`${req.body.type}${req.body.id}.png`, options, function(err) {
-        //     if (err) {
-        //         throw err;
-        //     } else {
-        //         console.log(`${req.body.type}${req.body.id}.png`, ' was sent!');
-        //     }
-        // } )
-        
-        async function getRasterPlot() {
-            try {
-                console.log('fetching raster plot');
-                return await readFile(`../src/assets/plotData/${req.body.type}${req.body.id}.png`, 'base64');
-            } catch (e) {
-                console.log('e', e);
-                errorInfo = {
-                    error: e,
-                    message: 'something happened in the retrieval of the plot data'
-                }
-                throw errorInfo
-            }
-        }
-        // async function decodeRasterPlot(base64str, file) {
-        //     try {
-        //         var bitmap = new Buffer(base64str, 'base64');
-        //         console.log('decoding raster plot');
-        //         return await writeFile(file, bitmap);
-        //     } catch (e) {
-        //         console.log('e', e);
-        //         errorInfo = {
-        //             error: e,
-        //             message: 'something happened in the decoding of the plot data'
-        //         }
-        //         throw errorInfo
-        //     }
-        // }
-        getRasterPlot()
-            .then((rasterplot)=>{
-                    // console.log('raster plot fetched. see below')
-                    // console.log(rasterplot)
-                    res.writeHead(200, { 'Content-Type': 'image/png' })
-                    res.end(rasterplot);
-            })
-            .catch((errorInfo) => {
-                console.log("error caught ")
-                console.error(errorInfo);
-                res.status(500).send(errorInfo);
-            });
-
-
-    } else {
-        async function getPlot() {
-            try {
-                console.log('fetching plot...');
-                return await readFile(`../src/assets/plotData/${req.body.type}${req.body.id}.json`, 'utf-8');
-            } catch (e) {
-                console.log('e', e);
-                errorInfo = {
-                    error: e,
-                    message: 'something happened in the retrieval of the plot data'
-                }
-                throw errorInfo
-            }
-        }
-
-        getPlot()
-            .then((plot) => {
-                console.log('plot fetched. see below')
-                console.log(plot)
-                // plot.toString('base64')
-                setTimeout(() => {
-                    res.status(200).send(plot);
-                }, 10);
-
-            })
-            .catch((errorInfo) => {
-                console.log("error caught")
-                console.error(errorInfo);
-
-                res.status(500).send(errorInfo);
-            });
-    }
-})
-
-app.get('/plots/:type/:id', (req, res, next) => {
-
-    async function readThis() {
-        // let plot;
-        try {
-            return await readFile(`../src/assets/plotData/${ req.params.type }${ req.params.id }.png`);
-        } catch(e) {
-            console.log('e', e);
-        }
-    }
-    readThis()
-    .then((plot)=> {
-        setTimeout(() => {
-            res.status(200).contentType('image/png').send(plot);
-        }, 10);
-    });
-});
 
 // =============================== login logic ================================= //
 app.post('/login', (req, res) => {
@@ -461,26 +348,7 @@ app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:
     res.sendFile(p);
 })
 
-app.get('/plots/testPlot', (req, res, next) => {
 
-    async function readThis() {
-        // let plot;
-        try {
-            // return await readFile(`./src/assets/plotData/data_dateTime_weight${ req.params.id }.json`, 'utf-8');
-            return await readFile(`../src/assets/plotData/psych_results_sized.json`, 'utf-8');
-        } catch(e) {
-            console.log('e', e);
-        }
-    }
-    readThis()
-    .then((plot)=> {
-        setTimeout(() => {
-            res.status(200).send(plot);
-        }, 10);
-         
-    });
-    
-});
 
 //Docker Healthcheck
 app.get('/version', (req, res, next) => {
