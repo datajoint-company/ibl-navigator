@@ -80,7 +80,7 @@ mat-form-field.short {
     display: flex;
     flex-direction: row;
     float: left;
-    width: 100vw;
+    width: 100%;
 }
 
 .btn-reset {

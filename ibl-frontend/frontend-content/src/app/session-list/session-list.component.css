@@ -1,5 +1,10 @@
 .session-list-container {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100vw;
     padding-top: 20px;
+    padding-right: 15px;
+    padding-left: 15px;
 }
 
 h4 {
@@ -208,11 +213,16 @@ mat-checkbox.mouse_gender_menu_chbox {
 
 /* L (992px and up) */
 @media only screen and (min-width: 992px) {
-
+    
 } 
 
 /* XL (1200px and up) */
 @media only screen and (min-width: 1200px) {
+    .session-list-container {
+        width: auto;
+        margin-left: 8.333333333%;
+        margin-right: 8.333333333%;
+    }
 }
 
 @media only screen and (max-width: 1383px) {
