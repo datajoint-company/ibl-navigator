@@ -11,12 +11,12 @@ services:
     - DJ_HOST=datajoint-public.internationalbrainlab.org
     - AWS_DEFAULT_REGION=us-east-1
     env_file: ./.env
+    ports:
+      - "5555:5000"
     healthcheck:
       test: curl --fail http://localhost:5000/v0/lab || exit 1
       timeout: 3s
       retries: 20
-    ports:
-      - "5555:5000"
     entrypoint: ["/src/iblapi/run-ibl-api.prod.sh"]
     #entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
     networks:
@@ -30,7 +30,7 @@ services:
       - ./ibl-frontend/frontend-content/src:/frontend/src
       - ./ibl-frontend/frontend-content/angular.json:/frontend/angular.json
     healthcheck:
-      test: curl --fail http://localhost:8080 || exit 1
+      test: curl --fail http://localhost:9000 || exit 1
       timeout: 3s
       retries: 20
     ports:
