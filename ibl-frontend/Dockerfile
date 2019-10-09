@@ -89,12 +89,6 @@ RUN \
 
 RUN npm install http-server -g
 
-HEALTHCHECK       \
-    --timeout=3s \ 
-    --retries=20  \
-    CMD           \
-        curl --fail http://localhost:8080 || exit 1
-
 WORKDIR /frontend/dist/pipeline-viewer
 # WORKDIR /frontend
 
