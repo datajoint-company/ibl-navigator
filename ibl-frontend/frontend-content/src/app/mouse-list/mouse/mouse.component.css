@@ -37,6 +37,9 @@ hr {
 .short-plots-container {
     float: left;
     width: 50%;
+    overflow: hidden;
+}
+.short-plots-container:hover {
     overflow: auto;
 }
 

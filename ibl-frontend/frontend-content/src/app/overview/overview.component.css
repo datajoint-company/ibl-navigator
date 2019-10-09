@@ -44,7 +44,7 @@ ol a:hover {
 }
 
 .home-bottom-container {
-    height: 800px;
+    height: auto;
     background-color: #ecececc0;
 }
 
@@ -58,11 +58,11 @@ ol a:hover {
 .figures {
     display: inline-flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    /* justify-content: space-evenly; */
 }
 
 .each-figure {
-    height: 320px;
+    max-height: 320px;
     margin: 0px 18px;
     text-align: center;
 }
@@ -79,6 +79,9 @@ ol a:hover {
 
 #fig3 {
     width: 250px;
+}
+#fig4 {
+    width: 100%;
 }
 
 ol {
@@ -191,7 +194,7 @@ ol {
         font-size: 1.15rem;
     }
     .each-figure {
-        height: 275px;
+        max-height: 275px;
         margin: 0px 12px;
     }
 
