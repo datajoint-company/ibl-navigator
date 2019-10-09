@@ -1,94 +1,96 @@
-<div class="session-info-container">  
-  <h5>Session Info</h5>
-  <div class="row session-info-table">
-    <table class="table col-lg-4 col-sm-6 col-xs-12 table-striped table-bordered table-sm" >
-      <tr>
-        <th>Lab Name</th><td>{{ session?.lab_name }}</td>
-      </tr>
-      <tr>
-        <th>Session Start Time</th><td>{{ session?.session_start_time.split("T")[0] }} {{ session?.session_start_time.split("T")[1] }}</td>
-      </tr>
-      <tr>
-        <th>Task Protocol</th><td>{{ session?.task_protocol }}</td>
-      </tr>
-      <tr>
-        <th>Session UUID</th><td>{{ session?.session_uuid }}</td>
-      </tr>
-      <tr>
-        <th>User</th><td>{{ session?.responsible_user }}</td>
-      </tr>
-      <tr>
-        <th>Session Project</th>
-        <td>{{ session?.session_project }}</td>
-      </tr>
-    </table>
-    <table class="table col-lg-4 col-sm-6 col-xs-12 table-striped table-bordered table-sm">
-      <tr>
-        <th>Mouse Nickame</th>
-        <td><a routerLink="/mouse/{{session?.subject_uuid}}">{{ session?.subject_nickname }}</a></td>
-      </tr>
-      <tr>
-        <th>Mouse DOB</th>
-        <td>{{ session?.subject_birth_date }}</td>
-      </tr>
-      <tr>
-        <th>Mouse Line</th>
-        <td>{{ session?.subject_line }}</td>
-      </tr>
-      <tr>
-        <th>Mouse Gender</th>
-        <td>{{ session?.sex }}</td>
-      </tr>
-      <tr>
-        <th>Mouse UUID</th>
-        <td>{{ session?.subject_uuid }}</td>
-      </tr>
-    </table>
-  </div>
-  <hr>
-  <h5>Session Plots</h5>
-  <div class="sessionBehaviorPlotSection">
-    <table *ngIf="PCplotFitParameter" class="table table-bordered table-sm col-3 fitParTable">
-      <tr>
-        <th>prob_left</th>
-        <th>threshold (&sigma;)</th>
-        <th>bias (&mu;)</th>
-        <th>lapse_low (&gamma;)</th>
-        <th>lapse_high (&lambda;)</th>
-      </tr>
-      <tr>
-        <td>{{ PCplotFitParameter[0]?.prob_left}}</td>
-        <td>{{ PCplotFitParameter[0]?.threshold}}</td>
-        <td>{{ PCplotFitParameter[0]?.bias}}</td>
-        <td>{{ PCplotFitParameter[0]?.lapse_low}}</td>
-        <td>{{ PCplotFitParameter[0]?.lapse_high}}</td>
-      </tr>
-      <tr>
-        <td>{{ PCplotFitParameter[1]?.prob_left}}</td>
-        <td>{{ PCplotFitParameter[1]?.threshold}}</td>
-        <td>{{ PCplotFitParameter[1]?.bias}}</td>
-        <td>{{ PCplotFitParameter[1]?.lapse_low}}</td>
-        <td>{{ PCplotFitParameter[1]?.lapse_high}}</td>
-      </tr>
-      <tr>
-        <td>{{ PCplotFitParameter[2]?.prob_left}}</td>
-        <td>{{ PCplotFitParameter[2]?.threshold}}</td>
-        <td>{{ PCplotFitParameter[2]?.bias}}</td>
-        <td>{{ PCplotFitParameter[2]?.lapse_low}}</td>
-        <td>{{ PCplotFitParameter[2]?.lapse_high}}</td>
-      </tr>
-    </table>
-  
-    <div class="behavior-plots" *ngIf="session">
-      <app-session-psych-plot [sessionData]="session" [dialogClosed]="dialogClosedSPC" (openSPCplot)="openDialog($event)" (psychCurveFitPars)="fitParsReady($event)"></app-session-psych-plot>
-      <app-session-rtc-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTC" (openSRTCplot)="openDialog($event)"></app-session-rtc-plot>
-      <app-session-rttn-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTTN" (openSRTTNplot)="openDialog($event)"></app-session-rttn-plot>
+<div class="col-xl-10 offset-xl-1">
+  <div class="session-info-container">  
+    <h5>Session Info</h5>
+    <div class="row session-info-table">
+      <table class="table col-lg-4 col-sm-6 col-xs-12 table-striped table-bordered table-sm" >
+        <tr>
+          <th>Lab Name</th><td>{{ session?.lab_name }}</td>
+        </tr>
+        <tr>
+          <th>Session Start Time</th><td>{{ session?.session_start_time.split("T")[0] }} {{ session?.session_start_time.split("T")[1] }}</td>
+        </tr>
+        <tr>
+          <th>Task Protocol</th><td>{{ session?.task_protocol }}</td>
+        </tr>
+        <tr>
+          <th>Session UUID</th><td>{{ session?.session_uuid }}</td>
+        </tr>
+        <tr>
+          <th>User</th><td>{{ session?.responsible_user }}</td>
+        </tr>
+        <tr>
+          <th>Session Project</th>
+          <td>{{ session?.session_project }}</td>
+        </tr>
+      </table>
+      <table class="table col-lg-4 col-sm-6 col-xs-12 table-striped table-bordered table-sm">
+        <tr>
+          <th>Mouse Nickame</th>
+          <td><a routerLink="/mouse/{{session?.subject_uuid}}">{{ session?.subject_nickname }}</a></td>
+        </tr>
+        <tr>
+          <th>Mouse DOB</th>
+          <td>{{ session?.subject_birth_date }}</td>
+        </tr>
+        <tr>
+          <th>Mouse Line</th>
+          <td>{{ session?.subject_line }}</td>
+        </tr>
+        <tr>
+          <th>Mouse Gender</th>
+          <td>{{ session?.sex }}</td>
+        </tr>
+        <tr>
+          <th>Mouse UUID</th>
+          <td>{{ session?.subject_uuid }}</td>
+        </tr>
+      </table>
     </div>
+    <hr>
+    <h5>Session Plots</h5>
+    <div class="sessionBehaviorPlotSection">
+      <table *ngIf="PCplotFitParameter" class="table table-bordered table-sm col-3 fitParTable">
+        <tr>
+          <th>prob_left</th>
+          <th>threshold (&sigma;)</th>
+          <th>bias (&mu;)</th>
+          <th>lapse_low (&gamma;)</th>
+          <th>lapse_high (&lambda;)</th>
+        </tr>
+        <tr>
+          <td>{{ PCplotFitParameter[0]?.prob_left}}</td>
+          <td>{{ PCplotFitParameter[0]?.threshold}}</td>
+          <td>{{ PCplotFitParameter[0]?.bias}}</td>
+          <td>{{ PCplotFitParameter[0]?.lapse_low}}</td>
+          <td>{{ PCplotFitParameter[0]?.lapse_high}}</td>
+        </tr>
+        <tr>
+          <td>{{ PCplotFitParameter[1]?.prob_left}}</td>
+          <td>{{ PCplotFitParameter[1]?.threshold}}</td>
+          <td>{{ PCplotFitParameter[1]?.bias}}</td>
+          <td>{{ PCplotFitParameter[1]?.lapse_low}}</td>
+          <td>{{ PCplotFitParameter[1]?.lapse_high}}</td>
+        </tr>
+        <tr>
+          <td>{{ PCplotFitParameter[2]?.prob_left}}</td>
+          <td>{{ PCplotFitParameter[2]?.threshold}}</td>
+          <td>{{ PCplotFitParameter[2]?.bias}}</td>
+          <td>{{ PCplotFitParameter[2]?.lapse_low}}</td>
+          <td>{{ PCplotFitParameter[2]?.lapse_high}}</td>
+        </tr>
+      </table>
+    
+      <div class="behavior-plots" *ngIf="session">
+        <app-session-psych-plot [sessionData]="session" [dialogClosed]="dialogClosedSPC" (openSPCplot)="openDialog($event)" (psychCurveFitPars)="fitParsReady($event)"></app-session-psych-plot>
+        <app-session-rtc-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTC" (openSRTCplot)="openDialog($event)"></app-session-rtc-plot>
+        <app-session-rttn-plot [sessionData]="session" [dialogClosed]="dialogClosedSRTTN" (openSRTTNplot)="openDialog($event)"></app-session-rttn-plot>
+      </div>
+    </div>
+    <br>
+    <!-- <hr>
+    <div class="cell-list-section" *ngIf="session">
+      <app-cell-list [sessionInfo]="session"></app-cell-list>
+    </div> -->
+  
   </div>
-  <br>
-  <!-- <hr>
-  <div class="cell-list-section" *ngIf="session">
-    <app-cell-list [sessionInfo]="session"></app-cell-list>
-  </div> -->
- 
-</div>
+</div>  
