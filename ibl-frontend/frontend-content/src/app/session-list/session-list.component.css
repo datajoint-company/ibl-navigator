@@ -219,7 +219,7 @@ mat-checkbox.mouse_gender_menu_chbox {
 /* XL (1200px and up) */
 @media only screen and (min-width: 1200px) {
     .session-list-container {
-        width: auto;
+        width: inherit; 
         margin-left: 8.333333333%;
         margin-right: 8.333333333%;
     }
