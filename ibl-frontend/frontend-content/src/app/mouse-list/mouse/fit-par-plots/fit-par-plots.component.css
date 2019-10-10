@@ -1,6 +1,4 @@
 .fitParImgLegend {
-  width: 100%;
-  max-width: 800px;
   padding: 10px 20px;
 }
 
@@ -13,6 +11,10 @@
   .fit-par-plot-container:hover {
     overflow-x: auto;
   }
+  .fitParImgLegend {
+    width: 75%;
+    max-width: 500px;
+  }
 }
 
 /* small laptop (768px and up) */
@@ -23,6 +25,10 @@
   }
   .fit-par-plot-container:hover {
     overflow-x: auto;
+  }
+  .fitParImgLegend {
+    width: 80%;
+    max-width: 650px;
   }
 }
 
@@ -40,4 +46,8 @@
     width: 100%;
     overflow-x: auto;   
   } */
+  .fitParImgLegend {
+    width: 85%;
+    max-width: 720px;
+  }
 }
