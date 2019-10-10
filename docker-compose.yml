@@ -8,6 +8,7 @@ services:
     - DJ_USER=maho
     - DJ_HOST=datajoint.internationalbrainlab.org
     - AWS_DEFAULT_REGION=us-east-1
+    - WORKER_COUNT=4
     env_file: ./.env
     healthcheck:
       test: curl --fail http://localhost:5000/v0/lab || exit 1
