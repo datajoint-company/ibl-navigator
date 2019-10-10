@@ -1,4 +1,7 @@
 .contrastheatmap-container {
     width: 100%;
+    overflow-x: hidden;
+}
+.contrastheatmap-container:hover {
     overflow-x: auto;
 }
