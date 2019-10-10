@@ -59,22 +59,34 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   mediumScreenLayout = {
     'font.size': '10.5',
     width: '340',
+    height: '350',
     'margin.l': '40',
-    'legend.font.size': '9'
+    'legend.font.size': '9',
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.orientation': 'v',
   };
 
   mediumScreenLayout_RTC = {
     'xaxis.range': [-35, 35],
     'font.size': '10.5',
     width: '380',
+    height: '350',
     'margin.l': '40',
-    'legend.font.size': '9'
+    'legend.font.size': '9',
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.orientation': 'v',
   };
 
   mediumScreenPsychCurveLayout = {
     'font.size': '10.5',
     'legend.font.size': '9',
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.orientation': 'v',
     width: '440',
+    height: '350',
     'margin.l': '40',
   };
 
@@ -96,20 +108,32 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   mediumLargeScreenLayout = {
     'font.size': '11',
     width: '440',
-    'legend.font.size': '9.5'
+    height: '350',
+    'legend.font.size': '9.5',
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.orientation': 'v',
   };
 
   mediumLargeScreenLayout_RTC = {
     'xaxis.range': [-35, 35],
     'font.size': '11',
     width: '480',
-    'legend.font.size': '9.5'
+    height: '350',
+    'legend.font.size': '9.5',
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.orientation': 'v',
   };
 
   mediumLargeScreenPsychCurveLayout = {
     'font.size': '11',
     width: '542',
-    'legend.font.size': '9.5'
+    height: '350',
+    'legend.font.size': '9.5',
+    'legend.x': '1',
+    'legend.y': '0.5',
+    'legend.orientation': 'v',
   };
 
   mediumLargeScreenDataStyle_RTC = {
@@ -137,20 +161,46 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   defaultScreenLayout_RTTN = {
     'font.size': '12',
     'legend.font.size': '12',
-    width: '500'
+    // width: '500',
+    width: '480',
+    height: '400',
+    'margin.left': '0',
+    'yaxis.x': '0',
+    'legend.x': '0',
+    'legend.y': '-0.4',
+    'legend.orientation': 'h',
+    // 'legend.type': 'grid'
   };
 
   defaultScreenLayout_PC = {
     'font.size': '12',
     'legend.font.size': '12',
-    width: '602'
+    // width: '602',
+    width: '480',
+    height: '500',
+    'margin.left' : '0',
+    'yaxis.x': '0',
+    'legend.x': '0',
+    'legend.y': '-0.4',
+    'legend.orientation': 'h',
+    // 'legend.type': 'grid',
+    // 'legend.xanchor': 'left'
   };
 
   defaultScreenLayout_RTC = {
     'xaxis.range': [-35, 35],
     'font.size': '12',
     'legend.font.size': '12',
-    width: '540'
+    // width: '540',
+    width: '480',
+    height: '500',
+    'margin.left': '0',
+    'yaxis.x': '0',
+    'legend.x': '0',
+    'legend.y': '-0.4',
+    'legend.orientation': 'h',
+    // 'legend.type': 'grid',
+    // 'legend.xanchor': 'left'
   };
 
   defaultScreenDataStyle = {
@@ -287,7 +337,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             datePsychPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
             datePsychPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
             datePsychPlot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
-            datePsychPlot['layout']['legend'] = { x: '1', y: '0.5' };
+            datePsychPlot['layout']['legend'] = { x: '1', y: '0.5', orientation: 'v', font: {size: '12'} };
             this.loadingPlots[index] = false;
             const plotConfig1 = Object.assign({}, this.plotConfig,
               { toImageButtonOptions:
