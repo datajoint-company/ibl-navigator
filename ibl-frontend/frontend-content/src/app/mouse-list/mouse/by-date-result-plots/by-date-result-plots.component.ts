@@ -197,7 +197,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     'margin.left': '0',
     'yaxis.x': '0',
     'legend.x': '0',
-    'legend.y': '-0.4',
+    'legend.y': '-0.5',
     'legend.orientation': 'h',
     // 'legend.type': 'grid',
     // 'legend.xanchor': 'left'

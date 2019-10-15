@@ -83,7 +83,8 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   mediumLargeScreenLayout = {
     font: { size: '11' },
     'margin.l': '65',
-    width: '519',
+    // width: '519',
+    width: '638',
     height: '380'
   };
 
@@ -94,7 +95,8 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   defaultScreenLayout = {
     font: { size: '12' },
     'margin.l': '65',
-    width: '601',
+    // width: '601',
+    width: '720',
     height: '400',
   };
 
@@ -134,9 +136,12 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           const TCSDplot = toPlot['trial_counts_session_duration'];
           this.dataLen = TCSDplot['data'].length;
           TCSDplot['layout']['legend'] = {
-            orientation: 'h',
-            x: '0.00',
-            y: '-0.09',
+            // orientation: 'h',
+            // x: '-0.00',
+            // y: '-0.09',
+            orientation: 'v',
+            x: '1.2',
+            y: '0.5',
             font: {size: '10.5'}
           };
           TCSDplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
