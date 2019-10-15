@@ -8,7 +8,8 @@ services:
     # - DJ_USER=maho
     # - DJ_HOST=datajoint.internationalbrainlab.org
     - DJ_USER=ibl-navigator
-    - DJ_HOST=datajoint-public.internationalbrainlab.org
+    # - DJ_HOST=datajoint-public.internationalbrainlab.org
+    - DJ_HOST=datajoint-rds-public-new.cyuksi65nrdq.us-east-1.rds.amazonaws.com # temporary
     - AWS_DEFAULT_REGION=us-east-1
     env_file: ./.env
     ports:

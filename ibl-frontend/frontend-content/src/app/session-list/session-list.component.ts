@@ -487,7 +487,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   resetFilter() {
     // console.log('resetting filter');
     this.loading = true;
-    this.allSessionsService.retrieveSessions({'__order': 'session_start_time DESC'});
+    this.allSessionsService.retrieveSessions({ '__order': 'lab_name ASC, session_start_time DESC', 'nplot': 1});
     this.filterStoreService.clearSessionFilter();
     this.allSessionsService.getNewSessionsLoadedListener()
       .subscribe((sessionsAll: any) => {
