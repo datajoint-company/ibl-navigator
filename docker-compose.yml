@@ -9,8 +9,7 @@ services:
     # - DJ_USER=maho
     - DJ_USER=ibl-navigator # for public demo
     # - DJ_HOST=datajoint.internationalbrainlab.org
-    # - DJ_HOST=datajoint-public.internationalbrainlab.org # for public demo
-    - DJ_HOST=datajoint-rds-public.cyuksi65nrdq.us-east-1.rds.amazonaws.com #temporary
+    - DJ_HOST=datajoint-public.internationalbrainlab.org # for public demo
     - AWS_DEFAULT_REGION=us-east-1
     - WORKER_COUNT=4
     env_file: ./.env
@@ -32,7 +31,7 @@ services:
   ibl-navigator:
     # build: ./ibl-frontend
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-dev3 # add -dev ending to testdev tag
-    image: registry.vathes.com/ibl-navigator/frontend:v0.0-public6 # for public demo
+    image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:
     # - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
     # - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy

@@ -1,6 +1,9 @@
 .animatedPCplot-container {
     display: flex;
     flex-direction: row;
+    overflow: hidden;
+}
+.animatedPCplot-container:hover {
     overflow: auto;
 }
 
@@ -18,12 +21,15 @@
     .animatedPCplot-container {
         display: flex;
         flex-direction: column;
+        width: 100vw;
+        overflow-x: auto;
     }
 
     .animatedPlot {
         width: 100%;
         overflow: auto;
     }
+    
     .eachSessionDetails {
         margin-top: 5px;
         margin-left: 5px;
@@ -34,8 +40,11 @@
 @media only screen and (min-width: 768px) {
     .animatedPlot {
         width: 600px;
-        overflow: auto;
+        overflow: hidden;
         /* border: 2px solid purple; */
+    }
+    .animatedPlot:hover {
+        overflow: auto;
     }
     .eachSessionDetails {
         margin-top: 50px;

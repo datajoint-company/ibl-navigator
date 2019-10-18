@@ -7,7 +7,9 @@
 .row {
     margin: 0;
 }
-
+a.logolink * {
+    float: left;
+}
 .nav-item a {
     color: #03a2da;
 }

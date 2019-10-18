@@ -52,7 +52,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   smallScreenLayout = {
     font: { size: '10' },
     'margin.l': '48',
-    width: '418',
+    width: '550',
     height: '300'
   };
 
@@ -82,7 +82,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   mediumLargeScreenLayout = {
     font: { size: '11' },
     'margin.l': '70',
-    width: '530',
+    // width: '530',
+    width: '640',
     height: '380'
   };
 
@@ -93,7 +94,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   defaultScreenLayout = {
     font: { size: '12' },
     'margin.l': '70',
-    width: '612',
+    // width: '612',
+    width: '722',
     height: '400'
   };
 
@@ -131,9 +133,12 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           const performanceRTplot = toPlot['performance_reaction_time'];
           this.dataLen = performanceRTplot['data'].length;
           performanceRTplot['layout']['legend'] = {
-            orientation: 'h',
-            x: '0',
-            y: '-0.09',
+            // orientation: 'h',
+            // x: '0',
+            // y: '-0.09',
+            orientation: 'v',
+            x: '1.2',
+            y: '0.5',
             font: { size: '10.5' }
           };
           performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';

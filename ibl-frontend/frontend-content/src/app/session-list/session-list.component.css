@@ -82,7 +82,10 @@ label {
 }
 
 .loading-icon {
-    text-align: center;
+    margin-left: 40%;
+    margin-top: 37px;
+    position: absolute;
+    z-index: 999;
 }
 
 .loading-icon img {
@@ -279,7 +282,9 @@ mat-checkbox.mouse_gender_menu_chbox {
 
 /* XXXL (2200px and up) */
 @media only screen and (min-width: 2200px) {
-
+    .loading-icon {
+        margin-left: 700px;
+    }
 }
 
 

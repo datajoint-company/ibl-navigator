@@ -4,7 +4,7 @@
     List of Sessions
   </h4>
   <button mat-raised-button class="btn" *ngIf="!filterExpanded" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
-  <button class="btn" *ngIf="filterExpanded" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
+  <button mat-raised-button class="btn" *ngIf="filterExpanded" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
   <button *ngIf="!filterExpanded" class="btn btn-reset" mat-raised-button (click)="clearControl()">Reset Filter</button>
 
 
@@ -167,7 +167,9 @@
     </div>
     
   </form>
-
+  <div class="loading-icon" *ngIf="loading">
+    <img src="assets/images/loading_icon.gif">
+  </div>
   <div class="table-container">
   <table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
 
@@ -236,9 +238,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns; let session" routerLink="/session/{{session?.session_uuid}}"></tr>
   </table>
   </div>
-  <div class="loading-icon" *ngIf="loading">
-    <img src="assets/images/loading_icon.gif">
-  </div>
+  
   <mat-paginator [pageSize]="pageSize"
               [pageSizeOptions]="pageSizeOptions"
               showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>
