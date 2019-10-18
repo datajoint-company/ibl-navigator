@@ -37,7 +37,7 @@ services:
     # - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy
     # - PROD_NODE_API=https://djcompute.internationalbrainlab.org/api # for client deploy
     # - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org # for client deploy
-    - PROD_NODE_BACKEND=https://data.internationalbrainlab.org/api # for public demo deploy
+    - PROD_NODE_BACKEND=https://testdata.internationalbrainlab.org/api # for public demo deploy
     # - PROD_NODE_BACKEND=http://localhost:3333
     # - DEV_NODE_API=http://localhost:9000/api
     # - DEV_NODE_BACKEND=http://localhost:9000
@@ -79,7 +79,7 @@ services:
       # - SUBDOMAINS=testdev # for testdev deploy
       - URL=internationalbrainlab.org # for client or public demo deploy
       # - SUBDOMAINS=djcompute # for client deploy
-      - SUBDOMAINS=data # for public demo deploy
+      - SUBDOMAINS=testdata # for public demo deploy
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
       - STAGING=true # UNcomment for testdev
@@ -117,7 +117,7 @@ services:
       # - SUBDOMAINS=testdev # for testdev deploy
       - URL=internationalbrainlab.org # for client or public demo deploy
       # - SUBDOMAINS=djcompute # for client deploy
-      - SUBDOMAINS=data # for public demo deploy
+      - SUBDOMAINS=testdata # for public demo deploy
       - NODE_SERVER=http://ibl-node-server:3333
       - FRONTEND_SERVER=http://ibl-navigator:8080
       - LETSENCRYPT_SERVER=http://letsencrypt:80
