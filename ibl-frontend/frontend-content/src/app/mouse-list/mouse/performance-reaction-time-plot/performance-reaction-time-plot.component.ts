@@ -52,7 +52,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   smallScreenLayout = {
     font: { size: '10' },
     'margin.l': '48',
-    width: '418',
+    width: '550',
     height: '300'
   };
 

@@ -54,7 +54,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   smallScreenLayout = {
     font: { size: '10' },
     'margin.l': '46',
-    width: '409',
+    width: '550',
     height: '300'
   };
 
