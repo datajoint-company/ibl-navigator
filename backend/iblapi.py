@@ -187,17 +187,23 @@ def handle_q(subpath, args, proj, **kwargs):
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
 
     ret = []
+    
     if subpath == 'sessionpage':
-        q = (acquisition.Session().aggr(
+        sess_proj = acquisition.Session().aggr(
+            acquisition.SessionProject().proj('session_project', dummy2='"x"') * dj.U('dummy2'),
+            session_project='IFNULL(session_project, "unassigned")',
+            keep_all_rows=True
+        )
+        psych_curve = acquisition.Session().aggr(
             # plotting_behavior.SessionPsychCurve(),
             plotting_behavior.SessionPsychCurve().proj(dummy='"x"') * dj.U('dummy'),
             #  nplot='count(distinct(concat(subject_uuid, session_start_time)))',
-             nplot='count(dummy)',
-             keep_all_rows=True)
-             * acquisition.Session() * acquisition.SessionProject() * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
-             & ((reference.Lab() * reference.LabMember())
+            nplot='count(dummy)',
+            keep_all_rows=True)
+        q = (acquisition.Session() * sess_proj * psych_curve * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+            & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name'))
-             & args)
+            & args)
     elif subpath == 'subjpage':
         print('Args are:', args)
         proj_restr = None
