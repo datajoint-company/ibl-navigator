@@ -4,11 +4,19 @@ services:
   iblapi:
     # build: ./backend
     image: registry.vathes.com/ibl-navigator/iblapi:v0.0-dev4 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
     - DJ_USER=maho
+    # - DJ_USER=ibl-navigator # for public demo
     - DJ_HOST=datajoint.internationalbrainlab.org
+    # - DJ_HOST=datajoint-public.internationalbrainlab.org # for public demo
     - AWS_DEFAULT_REGION=us-east-1
+    # - WORKER_COUNT=4 # for public demo?
     env_file: ./.env
+    # healthcheck: # healthcheck from publicdemo branch
+    #   test: curl --fail http://localhost:5000/v0/lab || exit 1
+    #   timeout: 3s
+    #   retries: 20
     # volumes:
     #   - ./backend:/src/iblapi
     # ports:
@@ -20,14 +28,20 @@ services:
   ibl-navigator:
     # build: ./ibl-frontend
     image: registry.vathes.com/ibl-navigator/frontend:v0.0-dev4 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:
     # - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
     - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy
     # - PROD_NODE_API=https://djcompute.internationalbrainlab.org/api # for client deploy
     # - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org # for client deploy
+    # - PROD_NODE_BACKEND=https://data.internationalbrainlab.org/api # for public demo deploy
     # - PROD_NODE_BACKEND=http://localhost:3333
     # - DEV_NODE_API=http://localhost:9000/api
     # - DEV_NODE_BACKEND=http://localhost:9000
+    # healthcheck: # healthcheck from publicdemo 
+    #   test: curl --fail http://localhost:8080 || exit 1
+    #   timeout: 3s
+    #   retries: 20
     # ports:
     #   - "8080:8080"
     networks:
@@ -35,11 +49,16 @@ services:
   ibl-node-server:
     # build: ./node_server
     image: registry.vathes.com/ibl-navigator/node-server:v0.0-dev6 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:
     - NODE_ENV=development
     - DEMO_USERNAME=ibluser
     - PY_BACKEND=http://iblapi:5000
     env_file: .env
+    # healthcheck: # healthcheck from publicdemo
+    #   test: curl --fail http://localhost:3333/version || exit 1
+    #   timeout: 3s
+    #   retries: 20
     # volumes:
     #   - ./node_server:/src
     # ports:
@@ -48,14 +67,16 @@ services:
       - main
   letsencrypt:
     image: linuxserver/letsencrypt:latest
+    # image: linuxserver/letsencrypt:amd64-0.38.0-ls62 # from publicdemo
     environment:
       - PUID=1000
       - PGID=1000
       - EMAIL=admin@vathes.com
       - URL=datajoint.io # for testdev deploy
+      # - URL=internationalbrainlab.org # for client or public demo deploy
       - SUBDOMAINS=testdev # for testdev deploy
-      # - URL=internationalbrainlab.org # for client deploy
       # - SUBDOMAINS=djcompute # for client deploy
+      # - SUBDOMAINS=data # for public demo deploy
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
       - STAGING=true # UNcomment for testdev
@@ -87,12 +108,22 @@ services:
   nginx:
     # build: ./nginx
     image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev5
+    # image: registry.vathes.com/ibl-navigator/nginx:v0.0-public2 # for public deploy ?
     environment:
       - URL=datajoint.io # for testdev deploy
+      # - URL=internationalbrainlab.org # for client or public demo deploy
       - SUBDOMAINS=testdev # for testdev deploy
+      # - SUBDOMAINS=djcompute # for client deploy
+      # - SUBDOMAINS=data # for public demo deploy
       - NODE_SERVER=http://ibl-node-server:3333
       - FRONTEND_SERVER=http://ibl-navigator:8080
       - LETSENCRYPT_SERVER=http://letsencrypt:80
+    # healthcheck: # healthcheck from publicdemo
+    #   test: wget --no-check-certificate --quiet --tries=1 --spider https://localhost:443 || exit 1
+    #   # wget --quiet --tries=1 --spider https://data.internationalbrainlab.org:443 || exit 1
+    #   timeout: 5s
+    #   retries: 300
+    #   interval: 1s
     ports:
       - "80:80"
       - "443:443"
