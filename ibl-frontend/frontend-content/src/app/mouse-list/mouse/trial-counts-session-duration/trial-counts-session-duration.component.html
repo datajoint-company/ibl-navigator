@@ -2,7 +2,10 @@
   src="assets/images/loading_icon.gif" width="180px"> -->
 <div class="TCSDplot-container">
   <div #trialCountsSessionDurationPlot></div>
-  <div *ngIf="TCSDPlotIsAvailable !== null && !TCSDPlotIsAvailable">
+  <div *ngIf="plotLoading">
+    <p>Trial count session duration plot loading...</p>
+  </div>
+  <div *ngIf="TCSDPlotIsAvailable !== null && !TCSDPlotIsAvailable && plotLoading == false">
     <p>Trial count session duration plot not available</p>
   </div>
 </div>

@@ -13,6 +13,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   d3 = Plotly.d3;
   newScreenWidth;
   WIWPlotIsAvailable: boolean;
+  plotLoading: boolean;
   // svgDownloadIcon = {
   //   'width': 1000,
   //   'height': 1000,
@@ -139,6 +140,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const screenSizeInitial = window.innerWidth;
     const element = this.el.nativeElement;
     const subjectInfo = { 'subject_uuid': this.mouseInfo['subject_uuid'] };
@@ -158,6 +160,7 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
           WIWplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           WIWplot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           WIWplot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
+          this.plotLoading = false;
           this.WIWPlotIsAvailable = true;
           this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_water_intake_weight_plot';
@@ -175,7 +178,8 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('water intake and weight plot not available for this mouse');
+          // console.log('water intake and weight plot not available for this mouse');
+          this.plotLoading = false;
           this.WIWPlotIsAvailable = false;
           this.WIWPlotAvailability.emit(this.WIWPlotIsAvailable);
         }

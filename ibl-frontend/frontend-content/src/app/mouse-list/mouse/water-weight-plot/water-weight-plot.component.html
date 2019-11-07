@@ -1,6 +1,9 @@
 <div class="WWI-container">
     <div #waterIntake_weight_plot></div>
-    <div *ngIf="WIWPlotIsAvailable !== null && !WIWPlotIsAvailable">
+    <div *ngIf="plotLoading">
+        <p>Water intake and weight plot loading...</p>
+    </div>
+    <div *ngIf="WIWPlotIsAvailable !== null && !WIWPlotIsAvailable && plotLoading == false">
         <p>Water intake and weight plot not available for this mouse</p>
     </div>
 </div>

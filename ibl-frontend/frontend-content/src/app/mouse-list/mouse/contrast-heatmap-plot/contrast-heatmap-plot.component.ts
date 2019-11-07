@@ -12,6 +12,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   d3 = Plotly.d3;
   newScreenWidth;
   contrastHeatmapPlotIsAvailable: boolean;
+  plotLoading: boolean;
   plotConfig = {
     // responsive: true,
     showLink: false,
@@ -116,6 +117,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const screenSizeInitial = window.innerWidth;
     const element = this.elem.nativeElement;
     this.mousePlotsService.getContrastHeatMapPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
@@ -138,6 +140,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           contrastHeatmapPlot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
           contrastHeatmapPlot['layout']['paper_bgcolor'] = 'rgba(0, 0, 0, 0)';
           contrastHeatmapPlot['layout']['modebar'] = { bgcolor: 'rgba(255, 255, 255, 0)' };
+          this.plotLoading = false;
           this.contrastHeatmapPlotIsAvailable = true;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot';
@@ -155,6 +158,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
           }
         } else {
           console.log('contrast heatmap plot unavailable');
+          this.plotLoading = false;
           this.contrastHeatmapPlotIsAvailable = false;
           this.contrastHeatmapPlotAvailability.emit(this.contrastHeatmapPlotIsAvailable);
         }

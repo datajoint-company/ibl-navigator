@@ -14,6 +14,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   newScreenWidth;
   dataLen: number;
   PRTPlotIsAvailable: boolean;
+  plotLoading: boolean;
   plotConfig = {
     responsive: false,
     showLink: false,
@@ -119,6 +120,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const screenSizeInitial = window.innerWidth;
     const element = this.el.nativeElement;
     this.mousePlotsService.getPerformaceRTPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
@@ -160,7 +162,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
               this.defaultScreenDataStyle['line.width'].push('2');
             }
           }
-
+          this.plotLoading = false;
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';
@@ -177,7 +179,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('performance reaction time plot not available');
+          // console.log('performance reaction time plot not available');
+          this.plotLoading = false;
           this.PRTPlotIsAvailable = false;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
         }
