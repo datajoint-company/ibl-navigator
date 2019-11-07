@@ -2,7 +2,10 @@
 @media only screen and (max-width: 768px) {
   .fit-par-plot-container {
     width: 100%;
-    overflow-x: scroll;
+    overflow-x: hidden;
+  }
+  .fit-par-plot-container:hover {
+    overflow-x: auto;
   }
 }
 
@@ -10,7 +13,10 @@
 @media only screen and (min-width: 768px) {
   .fit-par-plot-container {
     width: 100%;
-    overflow-x: scroll;
+    overflow-x: hidden;
+  }
+  .fit-par-plot-container:hover {
+    overflow-x: auto;
   }
 }
 
