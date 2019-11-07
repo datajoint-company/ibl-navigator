@@ -90,6 +90,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
         // console.log('params loading sessions: ', params);
         if (Object.entries(params).length === 0) {
           params = this.filterStoreService.retrieveSessionFilter();
+          if (!params) {
+            params = { 'nplot': 1 };
+            this.updateMenu();
+          }
         }
         for (const key in params) {
           if (key === '__json') {
@@ -474,7 +478,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   resetFilter() {
     // console.log('resetting filter');
     this.loading = true;
-    this.allSessionsService.retrieveSessions({'__order': 'session_start_time DESC'});
+    this.allSessionsService.retrieveSessions({ '__order': 'session_start_time DESC', 'nplot': 1});
     this.filterStoreService.clearSessionFilter();
     this.allSessionsService.getNewSessionsLoadedListener()
       .subscribe((sessionsAll: any) => {
