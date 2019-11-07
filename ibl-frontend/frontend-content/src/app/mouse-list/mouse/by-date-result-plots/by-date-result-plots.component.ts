@@ -498,10 +498,10 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               }
             }
           } else {
-            this.loadingPlots[5] = false;
             this.loadingPlots[6] = false;
             this.loadingPlots[7] = false;
-            console.log('date reaction time trial number plot unavailable');
+            this.loadingPlots[8] = false;
+            // console.log('date reaction time trial number plot unavailable');
           }
         });
     });
