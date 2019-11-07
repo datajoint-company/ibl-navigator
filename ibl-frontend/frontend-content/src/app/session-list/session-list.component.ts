@@ -35,6 +35,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     nplot_control: new FormControl()
   });
   loading = true;
+  filterExpanded;
   sessions;
   allSessions;
   sessionDateFilter: Function;
@@ -83,6 +84,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.session_menu = {};
     this.loading = true;
     this.session_menu['sex'] = { F: null, M: null, U: null };
+    if (window.innerWidth < 1250 || window.innerHeight < 750) {
+      this.filterExpanded = false;
+    } else {
+      this.filterExpanded = true;
+    }
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState();
     // console.log('tableState: ', tableState);
     this.route.queryParams
