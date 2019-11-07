@@ -24,6 +24,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     projects_control: new FormControl()
   });
   loading = true;
+  filterExpanded;
   mice;
   allMice;
   miceBirthdayFilter: Function;
@@ -57,6 +58,11 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.mice_menu = {};
     // this.loading = true;
     this.mice_menu['sex'] = { F: null, M: null, U: null };
+    if (window.innerWidth < 1250 || window.innerHeight < 750) {
+      this.filterExpanded = false;
+    } else {
+      this.filterExpanded = true;
+    }
     const tableState: [number, number, Object] = this.filterStoreService.retrieveMouseTableState();
     const filters = this.filterStoreService.retrieveMouseFilter();
     for (const key in filters) {
