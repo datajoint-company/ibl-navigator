@@ -3,6 +3,7 @@ version: '2.4'
 services:     
   iblapi:
     # build: ./backend
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.1 # for client deploy
     image: registry.vathes.com/ibl-navigator/iblapi:v0.0-dev5 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
@@ -27,6 +28,7 @@ services:
       - main
   ibl-navigator:
     # build: ./ibl-frontend
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.0 # for client deploy
     image: registry.vathes.com/ibl-navigator/frontend:v0.0-dev5 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:
@@ -48,6 +50,7 @@ services:
       - main
   ibl-node-server:
     # build: ./node_server
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.0 # for client deploy
     image: registry.vathes.com/ibl-navigator/node-server:v0.0-dev7 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:
@@ -108,6 +111,7 @@ services:
     #     condition: service_healthy
   nginx:
     # build: ./nginx
+    # image: registry.vathes.com/ibl-navigator/nginx:v0.0 # for client deploy
     image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev6
     # image: registry.vathes.com/ibl-navigator/nginx:v0.0-public2 # for public deploy ?
     environment:
