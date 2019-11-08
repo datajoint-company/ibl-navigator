@@ -4,7 +4,7 @@ services:
   iblapi:
     # build: ./backend
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.1 # for client deploy
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.0-dev5 # add -dev ending to testdev tag
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.1-dev1 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
     - DJ_USER=maho
@@ -29,7 +29,7 @@ services:
   ibl-navigator:
     # build: ./ibl-frontend
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0 # for client deploy
-    image: registry.vathes.com/ibl-navigator/frontend:v0.0-dev5 # add -dev ending to testdev tag
+    image: registry.vathes.com/ibl-navigator/frontend:v0.1-dev1 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:
     # - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
@@ -51,7 +51,7 @@ services:
   ibl-node-server:
     # build: ./node_server
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0 # for client deploy
-    image: registry.vathes.com/ibl-navigator/node-server:v0.0-dev7 # add -dev ending to testdev tag
+    image: registry.vathes.com/ibl-navigator/node-server:v0.1-dev1 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:
     - NODE_ENV=development
@@ -112,7 +112,7 @@ services:
   nginx:
     # build: ./nginx
     # image: registry.vathes.com/ibl-navigator/nginx:v0.0 # for client deploy
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev6
+    image: registry.vathes.com/ibl-navigator/nginx:v0.1-dev1
     # image: registry.vathes.com/ibl-navigator/nginx:v0.0-public2 # for public deploy ?
     environment:
       - URL=datajoint.io # for testdev deploy
