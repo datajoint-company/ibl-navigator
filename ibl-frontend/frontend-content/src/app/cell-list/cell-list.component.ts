@@ -63,8 +63,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   constructor(public cellListService: CellListService) { }
   @HostListener('window:keyup', ['$event']) keyEvent(event) {
-    console.log('listening to key event');
-    console.log(event.key);
     if (event.key === 'ArrowUp') {
       this.navigate_cell_plots({}, 'up');
     } else if (event.key === 'ArrowDown') {
@@ -72,9 +70,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
   @HostListener('window:scroll', ['$event']) onWindowScroll(event) {
-    console.log('listening to scroll event');
-    console.log(window.pageYOffset);
-    console.log(event);
     if (window.pageYOffset > 640) {
       this.showController = true;
     } else {
@@ -167,7 +162,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.cellListService.retrieveRasterList(queryInfo);
         this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
           .subscribe((rasterPlotList) => {
-            console.log('raster plot list - ', rasterPlotList);
+            // console.log('raster plot list - ', rasterPlotList);
             this.rasterPlotList = rasterPlotList;
             const timeA = new Date();
             for (const raster of Object.values(rasterPlotList)) {
@@ -182,6 +177,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 mode: 'markers',
                 marker: { opacity: '0'}
               };
+              if (raster['mark_label']) {
+                dataCopy[4]['name'] = dataCopy[4]['name'].replace('event', raster['mark_label']);
+                dataCopy[5]['name'] = dataCopy[5]['name'].replace('event', raster['mark_label']);
+                dataCopy[6]['name'] = dataCopy[6]['name'].replace('event', raster['mark_label']);
+              }
               this.raster_data.push(dataCopy);
               // this.raster_data.push(currentTemplate['data']);
 
@@ -199,8 +199,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 yref: 'y'
               }];
               // layoutCopy['images'][0]['source'] = 'http://' + raster['plotting_data_link'];
-              titleJoined = `${currentTemplate.layout.title.text} ${raster['mark_label']}`;
-              layoutCopy['title.text'] = titleJoined;
+              titleJoined = `${currentTemplate.layout.title.text}${raster['event']}`;
+              layoutCopy['title'] = {
+                text: titleJoined,
+                x: currentTemplate.layout.title.x,
+                y: currentTemplate.layout.title.y,
+              };
               layoutCopy['yaxis'] = {range: raster['plot_ylim']};
               layoutCopy['width'] = 658;
               layoutCopy['height'] = 420;
@@ -208,8 +212,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               this.raster_layout.push(layoutCopy);
               this.raster_config.push({});
             }
-            console.log('layout - ', this.raster_layout);
-            console.log('data - ', this.raster_data);
+            // console.log('raster layout - ', this.raster_layout);
+            // console.log('raster data - ', this.raster_data);
+            
       });
     });
 
@@ -231,7 +236,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrievePsthTemplates();
     this.psthTemplatesSubscription = this.cellListService.getPsthTemplatesLoadedListener()
       .subscribe((template) => {
-        console.log('psth template retrieved');
+        // console.log('psth template retrieved');
         for (const [index, temp] of Object.entries(template)) {
           if (temp['psth_template_idx'] === parseInt(index, 10)) {
             this.psthTemplates.push(temp['psth_data_template']);
@@ -240,7 +245,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.cellListService.retrievePSTHList(psthQueryInfo);
         this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
           .subscribe((psthPlotList) => {
-            console.log('psth plot list - ', psthPlotList);
+            // console.log('psth plot list - ', psthPlotList);
             this.psthPlotList = psthPlotList;
             const timeA = new Date();
             for (const psth of Object.values(psthPlotList)) {
@@ -285,8 +290,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               this.psth_layout.push(layoutCopy);
               this.psth_config.push({});
             }
-            console.log('psth layout - ', this.psth_layout);
-            console.log('psth data - ', this.psth_data);
+            // console.log('psth layout - ', this.psth_layout);
+            // console.log('psth data - ', this.psth_data);
           });
       });
 
@@ -346,11 +351,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
-    console.log('cluster selected from cluster plot!');
-    console.log(element);
     const rows = element.querySelectorAll('tr');
-    console.log('printing rows');
-    console.log(rows);
     this.targetClusterId = this.clickedClusterId;
     if (data['points'] && data['points'][0]['customdata']) {
       this.clickedClusterId = data['points'][0]['customdata'];
@@ -376,12 +377,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   clusterSelectedTable(cluster_id) {
-    console.log('cluster selected from table!');
     const element = this.el_nav.nativeElement.children[1];
-    console.log(cluster_id);
+    // console.log(cluster_id);
     const rows = element.querySelectorAll('tr');
-    console.log('printing rows');
-    console.log(rows);
     this.clickedClusterId = cluster_id;
     this.targetClusterId = this.clickedClusterId;
     // const psthQueryInfo = {};
@@ -401,16 +399,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   navigate_cell_plots(event, direction) {
-    console.log('going', direction, 'the list of cells');
+    // console.log('going', direction, 'the list of cells');
     if (direction === 'up') {
-      console.log('arrow upped!');
       if (this.clickedClusterId - 1 > -1) {
         this.clickedClusterId -= 1;
         this.targetClusterId = this.clickedClusterId;
       }
     }
     if (direction === 'down') {
-      console.log('arrow down!');
       if (this.clickedClusterId + 1 < this.plot_data[0]['x'].length + 1) {
         this.clickedClusterId += 1;
         this.targetClusterId = this.clickedClusterId;
@@ -433,7 +429,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   order_by_event(eventType) {
-    console.log('event order selected!: ', eventType);
+    // console.log('event order selected!: ', eventType);
     this.eventType = eventType;
     const queryInfo = {};
     queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -448,8 +444,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveRasterList(queryInfo);
     this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
       .subscribe((rasterPlotList) => {
-        console.log('rasterplot list data');
-        console.log(rasterPlotList);
+        // console.log('rasterplot list data');
+        // console.log(rasterPlotList);
         this.rasterPlotList = rasterPlotList;
         for (const raster of Object.values(rasterPlotList)) {
           const p_idx = raster['probe_idx'];
@@ -492,8 +488,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrievePSTHList(psthQueryInfo);
     this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
       .subscribe((psthPlotList) => {
-        console.log('psth list data');
-        console.log(psthPlotList);
+        // console.log('psth list data');
+        // console.log(psthPlotList);
         this.psthPlotList = psthPlotList;
         for (const psth of Object.values(psthPlotList)) {
 
@@ -518,7 +514,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   order_by_sorting(sortType) {
-    console.log('sort order selected!: ', sortType);
+    // console.log('sort order selected!: ', sortType);
     this.sortType = sortType;
     const queryInfo = {};
     queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -533,8 +529,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveRasterList(queryInfo);
     this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
       .subscribe((rasterPlotList) => {
-        console.log('rasterplot list data');
-        console.log(rasterPlotList);
+        // console.log('rasterplot list data');
+        // console.log(rasterPlotList);
         this.rasterPlotList = rasterPlotList;
         for (const raster of Object.values(rasterPlotList)) {
           const p_idx = raster['probe_idx'];
