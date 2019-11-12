@@ -226,7 +226,13 @@ def handle_q(subpath, args, proj, **kwargs):
         lab_name = subject.Subject.aggr(subject.SubjectLab(), lab_name='IFNULL(lab_name, "missing")', keep_all_rows=True)
         user_name = subject.Subject.aggr(subject.SubjectUser(), responsible_user='IFNULL(responsible_user, "unassigned")')
 
-        q = subject.Subject() * lab_name * user_name * projects & args & proj_restr
+        dead_mice = subject.Subject().aggr(
+            # subject.Death().proj(dummy='"x"') * dj.U('dummy'),
+            subject.Death().proj('death_date') * dj.U('death_date'),
+            death_date='IFNULL(death_date, 0)',
+            keep_all_rows=True)
+        
+        q = subject.Subject() * dead_mice *lab_name * user_name * projects & args & proj_restr
     elif subpath == 'dailysummary':
         # find the latest summary geneartion for each lab
         latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(

@@ -111,6 +111,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
         // this.dataSource.sort = this.sort;
         // this.dataSource.paginator = this.paginator;
         this.createMenu(mice);
+        console.log('mice fetched for all menu: ', mice);
       });
   }
 
