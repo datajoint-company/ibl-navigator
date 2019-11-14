@@ -159,11 +159,16 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
               this.mediumScreenDataStyle['line.width'].push('0.25');
               this.mediumLargeScreenDataStyle['line.width'].push('0.35');
               this.defaultScreenDataStyle['line.width'].push('0.5');
-            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
-              datum['hoverinfo'] = 'x';
+            } else if (datum['name'].startsWith('first day') || datum['name'].startsWith('mouse became')) {
+              // datum['hoverinfo'] = 'x';
+              const text = `${datum['x'][0]}: ${datum['name']}`;
+              datum['text'] = text;
+              datum['hoverinfo'] = 'text';
+
               this.mediumScreenDataStyle['line.width'].push('1');
               this.mediumLargeScreenDataStyle['line.width'].push('1.5');
               this.defaultScreenDataStyle['line.width'].push('2');
+
             } else {
               this.mediumScreenDataStyle['line.width'].push('1');
               this.mediumLargeScreenDataStyle['line.width'].push('1.5');
@@ -187,6 +192,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           } else {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
+          console.log('plot data: ', TCSDplot['data']);
         } else {
           // console.log('trial counts session duration plot unavailable for this mouse');
           this.plotLoading = false;
