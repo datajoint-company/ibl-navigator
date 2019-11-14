@@ -59,6 +59,11 @@ form {
     width: 100%;
 }
 
+.vital_status_filter {
+    margin-left: 15px;
+    margin-top: 7px;
+}
+
 label {
     font-weight: 500;
 }
@@ -125,8 +130,6 @@ mat-checkbox.mouse_gender_menu_chbox {
     display: flex;
     flex-direction: row;
 };
-
-
 
 
 

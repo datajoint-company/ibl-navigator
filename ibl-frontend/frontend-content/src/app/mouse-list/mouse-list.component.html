@@ -83,6 +83,7 @@
           {{ gender.key }}</mat-checkbox>
       </div>
     </div>
+    
   </div>
   <div class="filter-buttons">
     <div>
@@ -90,6 +91,11 @@
     </div>
     <div>
       <button mat-raised-button (click)="clearFilter()">Reset Filter</button>
+    </div>
+    <div class="vital_status_filter">
+      <mat-checkbox class="vital_status_chbox" [checked]="hideDeadMice" (change)="toggleMiceVitalStatus()">
+        Only show alive mice
+      </mat-checkbox>
     </div>
   </div>
 </div>
@@ -119,6 +125,11 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Line </th>
     <td mat-cell *matCellDef="let mouse"> {{mouse.subject_line}} </td>
   </ng-container>
+
+  <ng-container matColumnDef="death_date">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Vital Status </th>
+    <td mat-cell *matCellDef="let mouse"> {{mouse.death_date=='0'? 'Alive' : 'Deceased (' + mouse.death_date + ')' }}</td>
+  </ng-container>
   
   <ng-container matColumnDef="responsible_user">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
@@ -141,8 +152,7 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns; let mouse"
-    routerLink="/mouse/{{mouse?.subject_uuid}}"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns; let mouse" routerLink="/mouse/{{mouse?.subject_uuid}}"></tr>
 </table>
 </div>
 
