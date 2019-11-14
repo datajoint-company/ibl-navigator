@@ -69,10 +69,10 @@
     <div class="mouse-field-filters form-section">
       <mat-form-field>
         <label>Lab</label>
-        <input matInput type="text" name="lab_name" formControlName="lab_name_control" [matAutocomplete]="autoCompLN"
+        <input matInput type="text" name="session_lab" formControlName="session_lab_control" [matAutocomplete]="autoCompLN"
           (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompLN="matAutocomplete">
-          <mat-option *ngFor="let lab of filteredLabNameOptions | async" [value]="lab" (click)="updateMenu()">
+          <mat-option *ngFor="let lab of filteredSessionLabOptions | async" [value]="lab" (click)="updateMenu()">
             {{ lab }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -173,9 +173,9 @@
 <div class="table-container">
 <table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
 
-  <ng-container matColumnDef="lab_name">
+  <ng-container matColumnDef="session_lab">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
-    <td mat-cell *matCellDef="let session"> {{session.lab_name}} </td>
+    <td mat-cell *matCellDef="let session"> {{session.session_lab}} </td>
   </ng-container>
   
   <ng-container matColumnDef="subject_nickname">

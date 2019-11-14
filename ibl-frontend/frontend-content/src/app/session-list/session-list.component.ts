@@ -24,7 +24,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       session_range_start_control: new FormControl(),
       session_range_end_control: new FormControl()
     }),
-    lab_name_control: new FormControl(),
+    session_lab_control: new FormControl(),
     subject_nickname_control: new FormControl(),
     session_project_control: new FormControl(),
     subject_uuid_control: new FormControl(),
@@ -45,7 +45,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   dateRangeToggle: boolean;
   filteredTaskProtocolOptions: Observable<string[]>;
   filteredSessionUuidOptions: Observable<string[]>;
-  filteredLabNameOptions: Observable<string[]>;
+  filteredSessionLabOptions: Observable<string[]>;
   filteredSubjectNicknameOptions: Observable<string[]>;
   filteredSessionProjectOptions: Observable<string[]>;
   filteredSubjectUuidOptions: Observable<string[]>;
@@ -53,7 +53,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filteredResponsibleUserOptions: Observable<string[]>;
   session_menu: any;
   // setup for the table columns
-  displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date', 'session_start_time',
+  displayedColumns: string[] = ['session_lab', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
                               'session_uuid', 'sex', 'subject_uuid', 'nplot', 'session_project'];
   nplotMap: any = { '0': '', '1': '\u2714' };
@@ -126,11 +126,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
             }
             if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
               this.dateRangeToggle = false;
-              console.log('loggin date range[0]- ', dateRange[0]);
+              // console.log('loggin date range[0]- ', dateRange[0]);
               this.session_filter_form.controls.session_start_time_control.patchValue(moment.utc(dateRange[0]));
             } else if (dateRange[0] !== '') {
               this.dateRangeToggle = true;
-              console.log('loggin date range[1]- ', dateRange[1]);
+              // console.log('loggin date range[1]- ', dateRange[1]);
               this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(moment.utc(dateRange[0]));
               this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(moment.utc(dateRange[1]));
             }
@@ -159,7 +159,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
       });
     // TODO: create menu content using separate api designated for menu instead of getting all session info
-    this.allSessionsService.getAllSessionMenu({'__order': 'lab_name'});
+    this.allSessionsService.getAllSessionMenu({'__order': 'session_lab'});
     this.allSessionMenuSubscription = this.allSessionsService.getAllSessionMenuLoadedListener()
       .subscribe((sessions_all: any) => {
         this.allSessions = sessions_all;
@@ -185,7 +185,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   private createMenu(sessions) {
     this.session_menu = {};
     const keys = ['task_protocol', 'session_start_time',
-    'session_uuid', 'lab_name', 'subject_birth_date', 'subject_line',
+    'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
     for (const key of keys) {
       if (key !== 'sex') {
@@ -227,10 +227,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.sessionMinDate = new Date(Math.min(...sessionSeconds));
     this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
 
-    this.filteredLabNameOptions = this.session_filter_form.controls.lab_name_control.valueChanges
+    this.filteredSessionLabOptions = this.session_filter_form.controls.session_lab_control.valueChanges
       .pipe(
         startWith(''),
-        map(value => this._filter(value, 'lab_name'))
+        map(value => this._filter(value, 'session_lab'))
       );
 
     this.filteredSubjectNicknameOptions = this.session_filter_form.controls.subject_nickname_control.valueChanges
@@ -310,7 +310,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
     const menuRequest = this.filterRequests();
     if (Object.entries(menuRequest).length > 1) {
-      menuRequest['order__'] = 'lab_name';
+      menuRequest['order__'] = 'session_lab';
       this.allSessionsService.getSessionMenu(menuRequest);
       this.allSessionsService.getSessionMenuLoadedListener()
         .subscribe((sessions: any) => {
@@ -328,7 +328,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
     const referenceMenuReq = this.filterRequests(focusOn);
     if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
-      referenceMenuReq['order__'] = 'lab_name';
+      referenceMenuReq['order__'] = 'session_lab';
       this.allSessionsService.getSessionMenu(referenceMenuReq);
       this.allSessionsService.getSessionMenuLoadedListener()
         .subscribe((sessions: any) => {
@@ -348,8 +348,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const requestFilter = {};
     let requestJSONstring = '';
     filterList.forEach(filter => {
-      // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
-      const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
+      // filter is [["session_lab_control", "somelab"], ["subject_nickname_control", null]...]
+      const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'session_lab_control'
       if (filter[1] && filterKey !== focusedField) {
         if (filterKey === 'sex' && this.genderSelected(filter[1])) {
           // only accepts single selection - this case the last selection.
