@@ -124,8 +124,12 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
           for (const datum of TCSDplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
               datum['hoverinfo'] = 'skip';
-            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
-              datum['hoverinfo'] = 'x';
+            } else if (datum['name'].startsWith('first day') || datum['name'].startsWith('mouse became')) {
+              // datum['hoverinfo'] = 'x';
+              const text = `${datum['x'][0]}: ${datum['name']}`;
+              datum['text'] = text;
+              datum['hoverinfo'] = 'text';
+
             }
           }
           // PRTplotInfo['layout']['width'] = '535';
@@ -139,8 +143,12 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
           for (const datum of PRTplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
               datum['hoverinfo'] = 'skip';
-            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
-              datum['hoverinfo'] = 'x';
+            } else if (datum['name'].startsWith('first day') || datum['name'].startsWith('mouse became')) {
+              // datum['hoverinfo'] = 'x';
+              const text = `${datum['x'][0]}: ${datum['name']}`;
+              datum['text'] = text;
+              datum['hoverinfo'] = 'text';
+
             }
           }
           // CHplotInfo['layout']['width'] = '540';
