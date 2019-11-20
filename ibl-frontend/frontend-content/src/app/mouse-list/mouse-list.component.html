@@ -87,10 +87,10 @@
   </div>
   <div class="filter-buttons">
     <div>
-      <button mat-raised-button (click)="applyFilter()">Apply Filter</button>
+      <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
     </div>
     <div>
-      <button mat-raised-button (click)="clearFilter()">Reset Filter</button>
+      <button mat-raised-button class="btn btn-reset" (click)="clearFilter()">Reset Filter</button>
     </div>
     <div class="vital_status_filter">
       <mat-checkbox class="vital_status_chbox" [checked]="hideDeadMice" (change)="toggleMiceVitalStatus()">

@@ -5,7 +5,6 @@
 </h4>
 <button mat-raised-button class="btn" *ngIf="!filterExpanded" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
 <button mat-raised-button class="btn" *ngIf="filterExpanded" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
-<button *ngIf="!filterExpanded" class="btn btn-reset" mat-raised-button (click)="clearControl()">Reset Filter</button>
 
 
 <form [formGroup]="session_filter_form">
@@ -147,22 +146,23 @@
             (click)="updateMenu()">{{ responsible_user }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <div class="nplot_filter">
-        <mat-checkbox class="nplot_chbox" name="nplot" formControlName="nplot_control" (change)="updateMenu()">
-          Limit search to sessions with plots available
-        </mat-checkbox>
-      </div>
+
       
 
     </div>
   </div>
   <br>
-  <div *ngIf="filterExpanded">
+  <div *ngIf="filterExpanded" class="form-submit-button-area">
     <div>
-      <button mat-raised-button (click)="applyFilter()">Apply Filter</button>
+      <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
     </div>
     <div>
-      <button mat-raised-button (click)="clearControl()">Reset Filter</button>
+      <button mat-raised-button class="btn btn-reset" (click)="clearControl()">Reset Filter</button>
+    </div>
+    <div class="nplot_status_filter">
+      <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
+        Only show session with plots
+      </mat-checkbox>
     </div>
   </div>
 
@@ -230,7 +230,6 @@
 
   <ng-container matColumnDef="nplot">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Plot Availability </th>
-    <!-- <td mat-cell *matCellDef="let session"> {{ session.nplot }} </td> -->
     <td mat-cell *matCellDef="let session" class="to-center"> {{session.nplot.toString() | i18nSelect: nplotMap}} </td>
   </ng-container>
   

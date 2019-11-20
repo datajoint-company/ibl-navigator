@@ -31,8 +31,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     sex_control: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
     subject_birth_date_control: new FormControl(),
     subject_line_control: new FormControl(),
-    responsible_user_control: new FormControl(),
-    nplot_control: new FormControl()
+    responsible_user_control: new FormControl()
   });
   loading = true;
   filterExpanded;
@@ -52,6 +51,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filteredSubjectLineOptions: Observable<string[]>;
   filteredResponsibleUserOptions: Observable<string[]>;
   session_menu: any;
+
+  hideMissingPlots = false;
   // setup for the table columns
   displayedColumns: string[] = ['session_lab', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
@@ -97,7 +98,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         if (Object.entries(params).length === 0) {
           params = this.filterStoreService.retrieveSessionFilter();
           if (!params) {
-            params = { 'nplot': 1 };
             this.updateMenu();
           }
         }
@@ -439,8 +439,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
                   requestJSONstring += rangeEnd;
                 }
             }
-          } else if (filterKey === 'nplot') {
-              filter[1] ? requestFilter[filterKey] = 1 : requestFilter[filterKey] = 0;
           } else {
             requestFilter[filterKey] = filter[1];
           }
@@ -484,7 +482,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   resetFilter() {
     // console.log('resetting filter');
     this.loading = true;
-    this.allSessionsService.retrieveSessions({ '__order': 'session_start_time DESC', 'nplot': 1});
+    this.allSessionsService.retrieveSessions({ '__order': 'session_start_time DESC'});
     this.filterStoreService.clearSessionFilter();
     this.allSessionsService.getNewSessionsLoadedListener()
       .subscribe((sessionsAll: any) => {
@@ -558,6 +556,25 @@ export class SessionListComponent implements OnInit, OnDestroy {
   sessionSelected(session) {
     // console.log(session);
     this.selectedSession = session;
+  }
+
+  toggleNplotStatus() {
+    if (!this.hideMissingPlots) {
+      const sessionWithPlots = [];
+      for (const session of this.sessions) {
+        if (session.nplot === 1) {
+          sessionWithPlots.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithPlots);
+    } else {
+      this.dataSource = new MatTableDataSource(this.sessions);
+    }
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data, header) => data[header];
+    this.dataSource.paginator = this.paginator;
+
+    this.hideMissingPlots = !this.hideMissingPlots;
   }
 
 }
