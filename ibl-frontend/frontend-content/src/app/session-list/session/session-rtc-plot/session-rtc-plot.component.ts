@@ -14,11 +14,12 @@ export class SessionRTCPlotComponent implements OnInit, OnDestroy {
   newScreenWidth;
   plotInfo = [];
   RTCPlotIsAvailable: boolean;
+  plotLoading: boolean;
   plotConfig = {
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
@@ -115,6 +116,7 @@ export class SessionRTCPlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const element = this.el.nativeElement;
     const img_png = this.d3.select('#SRTCpngExport');
     const initialScreenSize = window.innerWidth;
@@ -127,6 +129,7 @@ export class SessionRTCPlotComponent implements OnInit, OnDestroy {
           // console.log('subject_uuid: ', rtcPlotData[0]['subject_uuid']);
           // console.log('session_start_time: ', rtcPlotData[0]['session_start_time']);
           this.plotInfo = rtcPlotData[0]['plotting_data'];
+          this.plotLoading = false;
           this.RTCPlotIsAvailable = true;
           this.RTCPlotAvailability.emit(this.RTCPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = rtcPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_RTC_plot'
@@ -150,7 +153,8 @@ export class SessionRTCPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('psych plot not available for this session');
+          // console.log('psych plot not available for this session');
+          this.plotLoading = false;
           this.RTCPlotIsAvailable = false;
           this.RTCPlotAvailability.emit(this.RTCPlotIsAvailable);
           // Plotly.newPlot(element, [], this.mediumScreenLayout, { displayModeBar: false })

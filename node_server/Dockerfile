@@ -18,12 +18,6 @@ COPY ./ /src/
 # RUN \
 #     mv /src/check-auth.js /src/middleware/
 
-HEALTHCHECK       \
-    --timeout=3s \ 
-    --retries=20  \
-    CMD           \
-        curl --fail http://localhost:3333/api/version || exit 1
-
 CMD node /src/server.js
 # CMD nodemon /src/server.js
 # CMD tail -f /dev/null

@@ -1,8 +1,19 @@
+.fitParImgLegend {
+  padding: 10px 20px;
+}
+
 /* something small (under 768px) */
 @media only screen and (max-width: 768px) {
   .fit-par-plot-container {
     width: 100%;
-    overflow-x: scroll;
+    overflow-x: hidden;
+  }
+  .fit-par-plot-container:hover {
+    overflow-x: auto;
+  }
+  .fitParImgLegend {
+    width: 75%;
+    max-width: 500px;
   }
 }
 
@@ -10,7 +21,14 @@
 @media only screen and (min-width: 768px) {
   .fit-par-plot-container {
     width: 100%;
-    overflow-x: scroll;
+    overflow-x: hidden;
+  }
+  .fit-par-plot-container:hover {
+    overflow-x: auto;
+  }
+  .fitParImgLegend {
+    width: 80%;
+    max-width: 650px;
   }
 }
 
@@ -24,8 +42,8 @@
 
 /* desktop (1440px and up) */
 @media only screen and (min-width: 1440px) {
-  /* .fit-par-plot-container {
-    width: 100%;
-    overflow-x: scroll;   
-  } */
+  .fitParImgLegend {
+    width: 85%;
+    max-width: 720px;
+  }
 }

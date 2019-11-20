@@ -31,18 +31,20 @@ Before building, make sure `build: ./ibl-frontend` is UNcommented in docker-comp
 `docker-compose build ibl-navigator` once that's built,
 `docker push registry.vathes.com/ibl-navigator/frontend:v0.0`
 
+commentout the `build: ./ibl-frontend`
+
 repeat for other 3 `iblapi` `node-server` `nginx` and push to appropriate directory. Update the tags accordingly as well.
 
-commentout the `build: ./ibl-frontend` repeat for other 3.
-
 for testdev deploy
+comment out test/* directory in `.dockerignore` (until proper storage solution is in place)
 for test dev mode, make sure `STAGING=true` for nginx > environment setting.
-
+comment out the test/* directory in `.dockerignore`
 switch to the `-k` flag line CMD in Dockerfile for nginx
 
 `ssh testdev` go to `ibl-navigator`
 `docker-compose down` to stop what's already running
-`git pull origin master` to get the latest from `mahos/ibl-navigator` repo.
+`git pull origin dev` to get the latest from `mahos/ibl-navigator` repo.
+make sure to move over to the `dev` branch by `git checkout dev`
 `docker login registry.vathes.com` to docker to get access.
 `docker-compose pull` to get the ibl-navigator container
 `docker-compose up --build -d`
@@ -51,7 +53,7 @@ switch to the `-k` flag line CMD in Dockerfile for nginx
 
 for real deploy
 for client deploy mode, comment out `STAGING=true` for nginx > environment setting.
-
+MAKE SURE the test/* directory in `.dockerignore` is NOT commented out (test/ directory needs to be ignored!).
 switch to the line without the `-k` flag CMD in Dockerfile for nginx
 
 `ssh djcompute` go to `nagivator-deployer/ibl-navigator`

@@ -1,3 +1,25 @@
+.table-container {
+    width: 100%;
+    overflow-x: auto !important;
+}
+
+tr.mat-row:hover {
+    background-color: rgba(0, 83, 145, .05);
+    cursor: pointer;
+}
+
+.loading-icon {
+    text-align: center;
+    /* position: absolute;
+    margin-left: 40%;
+    margin-top: 37px;
+    z-index: 999; */
+}
+
+.loading-icon img {
+    width: 100px;
+}
+
 .subject-list-container {
     padding-top: 20px;
 }
@@ -16,6 +38,16 @@ form {
     width: 100%;
 } 
 
+.filterExpand {
+    height: auto;
+    visibility: visible;
+}
+.filterCollapse,
+.filterCollapse * {
+    height: 0;
+    visibility: hidden;
+}
+
 .mat-datepicker-toggle{
     position:absolute;
     font-size: 3em;
@@ -25,6 +57,11 @@ form {
 
 .filters {
     width: 100%;
+}
+
+.vital_status_filter {
+    margin-left: 15px;
+    margin-top: 7px;
 }
 
 label {
@@ -51,6 +88,17 @@ mat-form-field.short {
     margin-top: 10px;
     display: flex;
     flex-direction: row;
+    float: left;
+    width: 100%;
+}
+
+.btn-reset {
+    border: 2px solid rgb(180, 69, 134) !important;
+}
+.btn-reset:hover {
+    border: 2px solid rgb(180, 69, 134) !important;
+    background-color: rgb(180, 69, 134) !important;
+    color: white;
 }
 
 button.mat-raised-button {
@@ -83,22 +131,13 @@ mat-checkbox.mouse_gender_menu_chbox {
     flex-direction: row;
 };
 
-tr.mat-row:hover {
-    background-color: rgba(0, 83, 145, .05);
-    cursor: pointer;
-}
 
-.loading-icon {
-    text-align: center;
-}
 
-.loading-icon img {
-    width: 100px;
-}
-
-.table-container {
-    width: 100%;
-    overflow-x: scroll;
+/* XXXL (2200px and up) */
+@media only screen and (min-width: 2200px) {
+    .loading-icon {
+        margin-left: 700px;
+    }
 }
 
 

@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
-const BACKEND_API_URL = environment.api_url;
+const BACKEND_API_URL = environment.backend_url;
 
 @Injectable({
   providedIn: 'root'

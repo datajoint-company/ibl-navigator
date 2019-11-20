@@ -1,9 +1,14 @@
+
 <div class="session-list-container">
 <h4>
-  Filter Sessions
+  List of Sessions
 </h4>
+<button mat-raised-button class="btn" *ngIf="!filterExpanded" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
+<button mat-raised-button class="btn" *ngIf="filterExpanded" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
+
+
 <form [formGroup]="session_filter_form">
-  <div class="filters col-12">
+  <div [class]="filterExpanded ? 'filters col-12 filterExpand':'filters col-12 filterCollapse'">
     <div class="session-field-filters form-section">
       <mat-form-field class="long">
         <label for="">Task Protocol</label>
@@ -63,10 +68,10 @@
     <div class="mouse-field-filters form-section">
       <mat-form-field>
         <label>Lab</label>
-        <input matInput type="text" name="lab_name" formControlName="lab_name_control" [matAutocomplete]="autoCompLN"
+        <input matInput type="text" name="session_lab" formControlName="session_lab_control" [matAutocomplete]="autoCompLN"
           (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompLN="matAutocomplete">
-          <mat-option *ngFor="let lab of filteredLabNameOptions | async" [value]="lab" (click)="updateMenu()">
+          <mat-option *ngFor="let lab of filteredSessionLabOptions | async" [value]="lab" (click)="updateMenu()">
             {{ lab }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -111,6 +116,7 @@
         <mat-datepicker #DOBPicker></mat-datepicker>
       </mat-form-field>
 
+
       <div class="mouse_gender_filter">
         <label>Gender</label>
         <div class="mouse_gender_menu" formArrayName="sex_control"> 
@@ -120,7 +126,7 @@
           </mat-checkbox>
         </div>
       </div>
-
+      <div class="cleardivider"></div>
       <mat-form-field>
         <label>Line</label>
         <input matInput type="text" name="subject_line" formControlName="subject_line_control" [matAutocomplete]="autoCompSL"
@@ -142,27 +148,34 @@
       </mat-form-field>
 
       
+
     </div>
   </div>
-  <div>
-    <button mat-raised-button (click)="applyFilter()">Apply Filter</button>
+  <br>
+  <div *ngIf="filterExpanded" class="form-submit-button-area">
+    <div>
+      <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
+    </div>
+    <div>
+      <button mat-raised-button class="btn btn-reset" (click)="clearControl()">Reset Filter</button>
+    </div>
+    <div class="nplot_status_filter">
+      <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
+        Only show session with plots
+      </mat-checkbox>
+    </div>
   </div>
-  <div>
-    <button mat-raised-button (click)="clearControl()">Reset Filter</button>
-  </div>
-  <div class="nplot_filter">
-    <mat-checkbox class="nplot_chbox" name="nplot" formControlName="nplot_control" (change)="updateMenu()">
-      Only show sessions with plots available
-    </mat-checkbox>
-  </div>
-</form>
 
+</form>
+<div class="loading-icon" *ngIf="loading">
+  <img src="assets/images/loading_icon.gif">
+</div>
 <div class="table-container">
 <table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
 
-  <ng-container matColumnDef="lab_name">
+  <ng-container matColumnDef="session_lab">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
-    <td mat-cell *matCellDef="let session"> {{session.lab_name}} </td>
+    <td mat-cell *matCellDef="let session"> {{session.session_lab}} </td>
   </ng-container>
   
   <ng-container matColumnDef="subject_nickname">
@@ -217,7 +230,6 @@
 
   <ng-container matColumnDef="nplot">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Plot Availability </th>
-    <!-- <td mat-cell *matCellDef="let session"> {{ session.nplot }} </td> -->
     <td mat-cell *matCellDef="let session" class="to-center"> {{session.nplot.toString() | i18nSelect: nplotMap}} </td>
   </ng-container>
   
@@ -225,9 +237,7 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns; let session" routerLink="/session/{{session?.session_uuid}}"></tr>
 </table>
 </div>
-<div class="loading-icon" *ngIf="loading">
-  <img src="assets/images/loading_icon.gif">
-</div>
+
 <mat-paginator [pageSize]="pageSize"
             [pageSizeOptions]="pageSizeOptions"
             showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>

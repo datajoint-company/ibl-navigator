@@ -7,9 +7,17 @@ services:
     environment:
     - DJ_USER=maho
     - DJ_HOST=datajoint.internationalbrainlab.org
+    # - DJ_USER=ibl-navigator # from publicdemo
+    # - DJ_HOST=datajoint-public.internationalbrainlab.org # from publicdemo
+    # - AWS_DEFAULT_REGION=us-east-1 # from publicdemo
+    - WORKER_COUNT=4
     env_file: ./.env
     ports:
       - "5555:5000"
+    healthcheck: # from publicdemo
+      test: curl --fail http://localhost:5000/v0/lab || exit 1
+      timeout: 3s
+      retries: 20
     entrypoint: ["/src/iblapi/run-ibl-api.prod.sh"]
     #entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
     networks:
@@ -22,6 +30,10 @@ services:
     volumes:
       - ./ibl-frontend/frontend-content/src:/frontend/src
       - ./ibl-frontend/frontend-content/angular.json:/frontend/angular.json
+    healthcheck: # from publicdemo
+      test: curl --fail http://localhost:9000 || exit 1
+      timeout: 3s
+      retries: 20
     ports:
       - "9000:9000"
     networks:
@@ -42,6 +54,10 @@ services:
       - DEMO_USERNAME=ibluser
       - PY_BACKEND=http://iblapi:5000
     env_file: .env
+    healthcheck: # from publicdemo
+      test: curl --fail http://localhost:3333/version || exit 1
+      timeout: 3s
+      retries: 20
     ports:
       - "3333:3333"
     networks:

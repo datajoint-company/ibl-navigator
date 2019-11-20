@@ -1,10 +1,20 @@
 div.summary-plots {
     display: flex;
     flex-direction: row;
+    height: 330px;
+    overflow: hidden;
 }
 
 div.dailyplot {
     float: left;
     width: 355px;
-    overflow-x: auto;
+    overflow: hidden;
+}
+
+div.summary-plots:hover {
+    overflow: auto;
+}
+
+div.dailyplot:hover {
+    overflow: auto;
 }

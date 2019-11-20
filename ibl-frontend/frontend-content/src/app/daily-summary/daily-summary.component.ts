@@ -66,7 +66,7 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'latest_session_ingested',
     'latest_training_status', 'latest_task_protocol', 'n_sessions_current_protocol',
-    'projects', 'latest_session_on_flatiron', 'subject_uuid', 'detail_link', 'expand_collapse'];
+    'projects', 'latest_session_on_flatiron', 'data_update_status', 'subject_uuid', 'detail_link', 'expand_collapse'];
 
   displayedPlots: string[] = ['water_weight', 'performance_reaction_time',
     'trial_counts_session_duration', 'contrast_heatmap'];

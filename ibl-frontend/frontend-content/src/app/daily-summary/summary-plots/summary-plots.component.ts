@@ -100,12 +100,16 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
                 { filename: this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot' }
             });
           WWIplotInfo['layout']['legend']['bgcolor'] = 'rgba(0, 0, 0, 0)';
-          WWIplotInfo['layout']['height'] = '300';
-          WWIplotInfo['layout']['width'] = '480';
+          // WWIplotInfo['layout']['width'] = '420';
+          // WWIplotInfo['layout']['height'] = '300';
+          WWIplotInfo['layout']['height'] = '500';
+          WWIplotInfo['layout']['width'] = '385';
           WWIplotInfo['layout']['margin'] =  {l: '35'};
           WWIplotInfo['layout']['legend'] = {
             font: {size: '9.75'},
-            x: '1.08'
+            y: '-1.0',
+            x: '0',
+            // x: '1'
           };
           for (const datum of WWIplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
@@ -113,47 +117,69 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
             }
           }
 
-          // TCSDplotInfo['layout']['width'] = '535';
+          // TCSDplotInfo['layout']['width'] = '485';
           TCSDplotInfo['layout']['width'] = '360';
-          TCSDplotInfo['layout']['height'] = '300';
+          // TCSDplotInfo['layout']['height'] = '300';
+          TCSDplotInfo['layout']['height'] = '400';
           TCSDplotInfo['layout']['legend'] = {
-            orientation: 'h',
-            y: '-0.09', font: {size: '9.75'},
+            // orientation: 'h',
+            // x: '1',
+            y: '-0.8',
+            x: '0',
+            font: {size: '9.75'},
             bgcolor: 'rgba(0, 0, 0, 0)',
           };
           for (const datum of TCSDplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
               datum['hoverinfo'] = 'skip';
-            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
-              datum['hoverinfo'] = 'x';
+            } else if (datum['name'].startsWith('first day') || datum['name'].startsWith('mouse became')) {
+              // datum['hoverinfo'] = 'x';
+              const text = `${datum['x'][0]}: ${datum['name']}`;
+              datum['text'] = text;
+              datum['hoverinfo'] = 'text';
+
             }
           }
-          // PRTplotInfo['layout']['width'] = '535';
+          // PRTplotInfo['layout']['width'] = '485';
           PRTplotInfo['layout']['width'] = '360';
-          PRTplotInfo['layout']['height'] = '300';
+          // PRTplotInfo['layout']['height'] = '300';
+          PRTplotInfo['layout']['height'] = '400';
           PRTplotInfo['layout']['legend'] = {
-            orientation: 'h',
+            // orientation: 'h',
             bgcolor: 'rgba(0, 0, 0, 0)',
-            y: '-0.09', font: { size: '9.75' }
+            y: '-0.8',
+            x: '0',
+            font: { size: '9.75' }
           };
           for (const datum of PRTplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
               datum['hoverinfo'] = 'skip';
-            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
-              datum['hoverinfo'] = 'x';
+            } else if (datum['name'].startsWith('first day') || datum['name'].startsWith('mouse became')) {
+              // datum['hoverinfo'] = 'x';
+              const text = `${datum['x'][0]}: ${datum['name']}`;
+              datum['text'] = text;
+              datum['hoverinfo'] = 'text';
+
             }
           }
-          // CHplotInfo['layout']['width'] = '540';
+          // CHplotInfo['layout']['width'] = '485';
+          CHplotInfo['layout']['height'] = '400';
           CHplotInfo['layout']['width'] = '370';
-          CHplotInfo['layout']['height'] = '300';
+          // CHplotInfo['layout']['height'] = '300';
           CHplotInfo['layout']['legend'] = {
-            orientation: 'h',
+            // orientation: 'h',
             bgcolor: 'rgba(0, 0, 0, 0)',
-            y: '-0.12', font: { size: '9.75' }
+            y: '-0.8',
+            x: '0',
+            // y: '-0.12',
+            font: { size: '9.75' }
           };
           for (const datum of CHplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
               datum['hoverinfo'] = 'skip';
+            } else if (datum['xgap']) {
+              datum['xgap'] = '0.25';
+              datum['ygap'] = '0.5';
             }
           }
           Plotly.newPlot(WWIplotElem, WWIplotInfo['data'], WWIplotInfo['layout'], plotConfigWWI);

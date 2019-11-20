@@ -1,6 +1,10 @@
 <div class="fit-par-plot-container">
     <div #fitParPlots></div>
-    <div *ngIf="fitParPlotsAreAvailable !== null && !fitParPlotsAreAvailable">
+    <img class="fitParImgLegend" src="assets/images/PMFSchematic.png">
+    <div *ngIf="plotLoading">
+        <p>Fit parameter plot loading...</p>
+    </div>
+    <div *ngIf="fitParPlotsAreAvailable !== null && !fitParPlotsAreAvailable && plotLoading == false">
         <p>Fit parameter plots not available</p>
     </div>
 </div>

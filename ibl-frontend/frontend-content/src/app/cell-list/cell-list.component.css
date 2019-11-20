@@ -1,16 +1,39 @@
 .clusterListTable thead th {
     position: sticky;
     top: -3px;
+    z-index: 99;
 }
 
 .clusterListTable tbody {
     cursor: pointer;
 }
 
+td span.oi {
+    z-index: 30;
+    position: relative;
+}
+
+.plots-navigator {
+    position: fixed;
+    z-index: 999;
+    display: inline-flex;
+    flex-direction: row;
+    right: 0;
+    bottom: 200px;
+}
+
 .clusterListContainer {
     height: 400px;
     overflow-y: auto;
+}
 
+.plots-navigator-buttons {
+    margin-right: 5px;
+    margin-top: 8px;
+}
+
+.plots-navigator-buttons span:hover {
+    cursor: pointer;
 }
 
 .rasterPlotSelectors {
@@ -22,3 +45,4 @@
     display: flex;
     flex-direction: column;
 }
+

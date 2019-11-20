@@ -11,6 +11,8 @@ declare var Plotly: any;
   styleUrls: ['./animated-psych-curve-plot.component.css']
 })
 export class AnimatedPsychCurvePlotComponent implements OnInit {
+  allSessions;
+
   currentFrame;
   current_frame_session_info;
   showInfo;
@@ -23,10 +25,21 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
     this.showInfo = false;
     const initialScreenSize = window.innerWidth;
     const element = this.element.nativeElement;
+    // get list of sessions for the mouse here for later use showing/jumping to session info
+    this.allSessionsService.retrieveSessions(
+      { 'subject_uuid': this.mouseInfo['subject_uuid'] });
+    this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
+      .subscribe(sessionInfo => {
+        // console.log('all session for mouse (' + this.mouseInfo['subject_nickname'] + '): ', sessionInfo);
+        this.allSessions = sessionInfo;
+      });
+
+    // get all session plots for the mouse for animating
     this.mousePlotsService.getAnimatedPCplot({ 'subject_uuid': this.mouseInfo['subject_uuid']});
     this.AnimPCplotSubscription = this.mousePlotsService.getAnimatedPCplotLoadedListener()
       .subscribe((plotInfo: any) => {
         if (plotInfo && plotInfo.length > 1) {
+
           let data = [];
           // const data = plotInfo[plotInfo.length - 1]['plotting_data']['data'];
           if (plotInfo[0]['plotting_data']['data'].length < 6) {
@@ -148,68 +161,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
           } else {
             data = plotInfo[0]['plotting_data']['data'];
           }
-          // const data = [
-          //   {
-          //       marker: {
-          //         color: 'orange',
-          //         size: '6'
-          //       },
-          //       mode: 'markers',
-          //       name: 'p_left = 0.2, data',
-          //       x: [],
-          //       y: [],
-          //       type: 'scatter'
-          //     },
-          //     {
-          //       marker: {
-          //         color: 'orange'
-          //       },
-          //       name: 'p_left = 0.2 model fits',
-          //       x: [],
-          //       y: [],
-          //       type: 'scatter'
-          //     },
-          //     {
-          //       marker: {
-          //         color: 'black',
-          //         size: '6'
-          //       },
-          //       mode: 'markers',
-          //       name: 'p_left = 0.5, data',
-          //       x: [],
-          //       y: [],
-          //       type: 'scatter'
-          //     },
-          //     {
-          //       marker: {
-          //         color: 'black'
-          //       },
-          //       name: 'p_left = 0.5 model fits',
-          //       x: [],
-          //       y: [],
-          //       type: 'scatter'
-          //     },
-          //   {
-          //       marker: {
-          //         color: 'cornflowerblue',
-          //         size: '6'
-          //       },
-          //       mode: 'markers',
-          //       name: 'p_left = 0.8, data',
-          //       x: [],
-          //       y: [],
-          //       type: 'scatter'
-          //     },
-          //     {
-          //       marker: {
-          //         color: 'cornflowerblue'
-          //       },
-          //       name: 'p_left = 0.8 model fits',
-          //       x: [],
-          //       y: [],
-          //       type: 'scatter'
-          //     }
-          // ];
+
           const frames = [];
           for (let i = 0; i < plotInfo.length; i++) {
             const filledData = [{}, {}, {}, {}, {}, {}];
@@ -397,7 +349,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
               value: plotInfo[i]['session_start_time'],
               args: [[plotInfo[i]['session_start_time']], {
                 mode: 'immediate',
-                transition: { duration: 200 },
+                transition: { duration: 0 },
                 frame: { duration: 160, redraw: true },
               }]
             });
@@ -426,7 +378,7 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
               args: [null, {
                   mode: 'immediate',
                   fromcurrent: true,
-                  transition: { duration: 200 },
+                  transition: { duration: 0 },
                   frame: { duration: 160, redraw: true }
                 }],
               // label: 'Play'
@@ -489,11 +441,16 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
               .subscribe(sessionInfo => {
                 this.current_frame_session_info = sessionInfo[0];
              });
+            for (const session of this.allSessions) {
+              if (session['session_start_time'] === this.currentFrame) {
+                this.current_frame_session_info = session;
+              }
+            }
             const lookupInfo = setTimeout(() => {
               if (!this.showInfo) {
                 this.showInfo = true;
               }
-            }, 500);
+            }, 0);
           });
           // see if GIF download is possible
           // const images = [];
@@ -520,13 +477,12 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
       alert('run the animation/move the slider to choose a session');
       return;
     }
-    this.allSessionsService.retrieveSessions({'subject_uuid': this.mouseInfo['subject_uuid'], 'session_start_time': this.currentFrame});
-    this.sessionQuerySubscription = this.allSessionsService.getNewSessionsLoadedListener()
-      .subscribe(sessionInfo => {
-        // console.log('session retrieved! ID: ', sessionInfo[0]['session_uuid']);
-        // console.log(sessionInfo);
-        this.current_frame_session_info = sessionInfo[0];
-      });
+
+    for (const session of this.allSessions) {
+      if (session['session_start_time'] === this.currentFrame) {
+        this.current_frame_session_info = session;
+      }
+    }
   }
 
 }

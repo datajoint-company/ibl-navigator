@@ -16,6 +16,9 @@ from flask import Flask
 from flask import request
 from flask import abort
 
+import boto3
+s3_client = boto3.client('s3')
+
 API_VERSION = '0'
 app = Flask(__name__)
 API_PREFIX = '/v{}'.format(API_VERSION)
@@ -40,16 +43,16 @@ dj.config['stores'] = {
     'ephys': dict(
         protocol='s3',
         endpoint='s3.amazonaws.com',
-        access_key=os.environ.get('S3_ACCESS'),
-        secret_key=os.environ.get('S3_SECRET'),
+        access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
+        secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
         bucket='ibl-dj-external',
         location='/ephys'
     ),
     'plotting': dict(
         protocol='s3',
         endpoint='s3.amazonaws.com',
-        access_key=os.environ.get('S3_ACCESS'),
-        secret_key=os.environ.get('S3_SECRET'),
+        access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
+        secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
         bucket='ibl-dj-external',
         location='/plotting'
     )
@@ -112,8 +115,10 @@ reqmap = {
     'cluster': ephys.Cluster,
     'raster': plotting_ephys.Raster,
     'psth': plotting_ephys.Psth,
+    'psthdata': plotting_ephys.PsthDataVarchar,
+    'psthtemplate': plotting_ephys.PsthTemplate,
     'rasterbatch': plotting_ephys.RasterLink,
-    'rasterlight': plotting_ephys.RasterLinkOnly,
+    'rasterlight': plotting_ephys.RasterLinkS3,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
 dumps = DateTimeEncoder.dumps
@@ -165,7 +170,6 @@ def do_req(subpath):
         if proj:
             q = q.proj(*proj)
 
-
         from time import time
         start = time()
         print('about to fetch requested object')
@@ -187,7 +191,7 @@ def handle_q(subpath, args, proj, **kwargs):
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
 
     ret = []
-    
+    post_process = None
     if subpath == 'sessionpage':
         sess_proj = acquisition.Session().aggr(
             acquisition.SessionProject().proj('session_project', dummy2='"x"') * dj.U('dummy2'),
@@ -201,7 +205,7 @@ def handle_q(subpath, args, proj, **kwargs):
             nplot='count(dummy)',
             keep_all_rows=True)
         q = (acquisition.Session() * sess_proj * psych_curve * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
-            & ((reference.Lab() * reference.LabMember())
+             & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name'))
             & args)
     elif subpath == 'subjpage':
@@ -222,7 +226,13 @@ def handle_q(subpath, args, proj, **kwargs):
         lab_name = subject.Subject.aggr(subject.SubjectLab(), lab_name='IFNULL(lab_name, "missing")', keep_all_rows=True)
         user_name = subject.Subject.aggr(subject.SubjectUser(), responsible_user='IFNULL(responsible_user, "unassigned")')
 
-        q = subject.Subject() * lab_name * user_name * projects & args & proj_restr
+        dead_mice = subject.Subject().aggr(
+            # subject.Death().proj(dummy='"x"') * dj.U('dummy'),
+            subject.Death().proj('death_date') * dj.U('death_date'),
+            death_date='IFNULL(death_date, 0)',
+            keep_all_rows=True)
+        
+        q = subject.Subject() * dead_mice *lab_name * user_name * projects & args & proj_restr
     elif subpath == 'dailysummary':
         # find the latest summary geneartion for each lab
         latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
@@ -257,6 +267,14 @@ def handle_q(subpath, args, proj, **kwargs):
         q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
              & args).proj(..., *exclude_attrs)
         print(q)
+    elif subpath == 'rasterlight':
+        q = plotting_ephys.RasterLinkS3 & args
+        def post_process(ret):
+            return [{k: s3_client.generate_presigned_url(
+                    'get_object', 
+                    Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
+                    ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
+                    for i in ret]
     else:
         abort(404)
 
@@ -268,7 +286,7 @@ def handle_q(subpath, args, proj, **kwargs):
     # print('D type', ret.dtype)
     # print(ret)
     print('About to return ', len(ret), 'entries')
-    return dumps(ret)
+    return dumps(post_process(ret)) if post_process else dumps(ret)
 
 
 if is_gunicorn:
