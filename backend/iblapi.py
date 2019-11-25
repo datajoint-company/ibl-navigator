@@ -262,10 +262,10 @@ def handle_q(subpath, args, proj, **kwargs):
         print('fetching cluster plot info...')
         
         # specify attributes to exclude from the fetch to save bandwidth (in case no "proj" specified)
-        exclude_attrs = ('-cluster_mean_waveform', '-cluster_template_waveform', '-cluster_waveform_duration',
-                         '-cluster_spike_times', '-cluster_spike_depth', '-cluster_spike_amps')
-        q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
-             & args).proj(..., *exclude_attrs)
+        exclude_attrs = ('-cluster_waveform', '-cluster_template_waveform', '-cluster_metics',
+                         '-cluster_spike_times', '-cluster_spike_depths', '-cluster_spike_amps', '-cluster_peak_to_trough')
+        # q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
+        q = (ephys.Cluster & args).proj(..., *exclude_attrs)
         print(q)
     elif subpath == 'rasterlight':
         q = plotting_ephys.RasterLinkS3 & args

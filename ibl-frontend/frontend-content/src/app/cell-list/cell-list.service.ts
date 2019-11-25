@@ -26,16 +26,16 @@ export class CellListService {
   retrieveCellList(sessionInfo) {
     const mouse_id = sessionInfo['subject_uuid'];
     const session_time = sessionInfo['session_start_time'];
-    // console.log('retrieving for..');
-    // console.log('mouse_id: ', mouse_id);
-    // console.log('session_time: ', session_time);
+    console.log('retrieving for..');
+    console.log('mouse_id: ', mouse_id);
+    console.log('session_time: ', session_time);
     this.http.post(BACKEND_API_URL + `/plot/cluster`, {
       'subject_uuid': mouse_id,
       'session_start_time': session_time
     })
       .subscribe(
         (sessionCellData) => {
-          // console.log('retrieved cell Data!: ', Object.entries(sessionCellData).length)
+          console.log('retrieved cell Data!: ', Object.entries(sessionCellData).length)
           this.cellList = sessionCellData;
           this.cellListLoaded.next(this.cellList);
         },
@@ -47,13 +47,12 @@ export class CellListService {
   }
 
   retrieveRasterList(queryInfo) {
-    // console.log('printing raster queryInfo')
-    // console.log(queryInfo);
+    console.log('printing raster queryInfo: ', queryInfo);
     this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
     // this.http.post(BACKEND_API_URL + `/plot/raster`, queryInfo)
       .subscribe(
         (sessionRasterData) => {
-          // console.log('retrieved session\'s raster data!: ', Object.entries(sessionRasterData).length);
+          console.log('retrieved session\'s raster data!: ', sessionRasterData);
           this.rasterList = sessionRasterData;
           this.rasterListLoaded.next(this.rasterList);
         },
@@ -65,12 +64,11 @@ export class CellListService {
   }
 
   retrievePSTHList(queryInfo) {
-    // console.log('printing psth queryInfo');
-    // console.log(queryInfo);
+    console.log('printing psth queryInfo: ', queryInfo);
     this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
       .subscribe(
         (sessionPSTHData) => {
-          // console.log('psth data retrieved - ', sessionPSTHData);
+          console.log('psth data retrieved - ', sessionPSTHData);
           this.psthList = sessionPSTHData;
           this.psthListLoaded.next(this.psthList);
         },
@@ -85,7 +83,7 @@ export class CellListService {
     this.http.get(BACKEND_API_URL + `/plot/rastertemplate`)
       .subscribe(
         (rasterTemplates) => {
-          // console.log('just fetched raster templates from backend');
+          console.log('just fetched raster templates from backend');
           // console.log(rasterTemplates);
           // console.log('retrieved session\'s raster data!: ', Object.entries(sessionRasterData).length);
           this.rasterTemplates = rasterTemplates;
@@ -103,7 +101,7 @@ export class CellListService {
       .subscribe(
         (psthTemplates) => {
           console.log('just fetched PSTH template from backend');
-          console.log(psthTemplates);
+          // console.log(psthTemplates);
           this.psthTemplates = psthTemplates;
           this.psthTemplatesLoaded.next(this.psthTemplates);
         },

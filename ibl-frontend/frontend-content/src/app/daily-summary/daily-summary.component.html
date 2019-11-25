@@ -189,7 +189,7 @@
     </ng-container>
 
     <ng-container matColumnDef="daily_plots">
-      <td colspan="10" mat-cell class="plotsCell" *matCellDef="let summary"> 
+      <td colspan="12" mat-cell class="plotsCell" *matCellDef="let summary"> 
         <app-summary-plots [mouseInfo]="summary" [plotsCollapsed]="summary?.plotViewingStatus == null || summary?.plotViewingStatus ? expandedStyle : collapsedStyle"></app-summary-plots>
       </td>
     </ng-container>

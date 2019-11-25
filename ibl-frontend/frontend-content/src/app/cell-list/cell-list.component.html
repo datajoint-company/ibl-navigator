@@ -1,9 +1,13 @@
 <div *ngIf="cells">
   <h3>Cells</h3>
 </div>
-<!-- <p>id: {{ clickedClusterId }}</p> -->
+<div class="probe-selection-area" *ngIf="cells">
+  <label for="probe_idx">Select Probe Insertion Number:  </label>
+  <select name="probe_idx" (change)="probe_selected($event.target.value)">
+    <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{ probeIns }}</option>
+  </select>
+</div>
 <div class="row">
-  <!-- <div #clusterListNavPlot class="col-6" (click)="testMethod($event)"></div> -->
   <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (click)="clusterSelectedPlot($event)"></plotly-plot>
   <div class="plots-navigator" *ngIf="showController">
     <div *ngIf="cells" class="clusterListContainer">
@@ -13,15 +17,15 @@
           <th>Probe Index</th>
           <th>Cluster Depth</th>
           <th>Cluster Amp</th>
-          <th>Details</th>
+          <!-- <th>Details</th> -->
         </thead>
         <tbody>
-          <tr *ngFor="let cl of cells" (click)="clusterSelectedTable(cl.cluster_id)" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : ''}">
+          <tr *ngFor="let cl of cellsByProbeIns" (click)="clusterSelectedTable(cl.cluster_id)" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : ''}">
             <td>{{ cl.cluster_id }}</td>
             <td>{{ cl.probe_idx }}</td>
             <td>{{ cl.cluster_depth }}</td>
             <td>{{ cl.cluster_amp }}</td>
-            <td>
+            <!-- <td>
               <span class="oi oi-external-link" routerLink="/cell/{{cl?.subject_uuid}}/{{cl?.session_start_time}}/{{cl?.cluster_id}}">
                 <div hidden>
                   <td>{{ cl.cluster_id }}</td>
@@ -30,7 +34,7 @@
                   <td>{{ cl.cluster_amp }}</td>
                 </div>
               </span>
-            </td>
+            </td> -->
           </tr>
         </tbody>
       </table>
@@ -40,11 +44,7 @@
       <h3><span class="oi oi-arrow-circle-bottom" (click)="navigate_cell_plots($event, 'down')"></span></h3>
     </div>
   </div>
-  <!-- <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (click)="clusterSelected($event)">
-    </plotly-plot> -->
-  <!-- <div *ngIf="cells">
-    <app-raster-plots [clusterInfo]="cellOnFocus"></app-raster-plots>
-  </div> -->
+
   <div class="rasterPlotSelectors col-8">
     <div class="order-buttons col-4">
       <label for="event">Event</label>
@@ -63,17 +63,16 @@
         <option value="response - stim on" [disabled]="eventType==='feedback'">Response - Stim On</option>
       </select>
     </div>
-    <div class="order-buttons col-4">
+    <!-- <div class="order-buttons col-4">
       <label for="probe_idx">Probe Index</label>
       <select name="probe_idx">
         <option value=0 selected>0</option>
       </select>
-    </div>
+    </div> -->
   </div>
   <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot>
   <plotly-plot [data]="psth_data[targetClusterId]" [layout]="psth_layout[targetClusterId]" [config]="psth_config[targetClusterId]"></plotly-plot>
 
-  <!-- <plotly-plot [data]="psth_data" [layout]="psth_layout" [config]="psth_config"></plotly-plot> -->
 
   <br>
 </div>
