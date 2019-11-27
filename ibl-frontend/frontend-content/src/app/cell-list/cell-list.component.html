@@ -63,14 +63,9 @@
         <option value="response - stim on" [disabled]="eventType==='feedback'">Response - Stim On</option>
       </select>
     </div>
-    <!-- <div class="order-buttons col-4">
-      <label for="probe_idx">Probe Index</label>
-      <select name="probe_idx">
-        <option value=0 selected>0</option>
-      </select>
-    </div> -->
   </div>
-  <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot>
+  <!-- <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot> -->
+  <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot> 
   <plotly-plot [data]="psth_data[targetClusterId]" [layout]="psth_layout[targetClusterId]" [config]="psth_config[targetClusterId]"></plotly-plot>
 
 

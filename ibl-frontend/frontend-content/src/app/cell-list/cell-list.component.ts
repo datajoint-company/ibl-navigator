@@ -31,8 +31,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   rasterTemplates = [];
 
   psth_data = [];
-  psth_layout0 = {};
-  psth_config0 = {};
   psth_layout = [];
   psth_config = [];
   psthPlotList;
@@ -51,7 +49,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   sortType;
   probeIndex;
 
-  showController = false;
+  showController = true;
 
   private cellListSubscription: Subscription;
   private rasterListSubscription: Subscription;
@@ -74,10 +72,18 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     if (window.pageYOffset > 640) {
       this.showController = true;
     } else {
-      this.showController = false;
+      // this.showController = false;
     }
   }
   ngOnInit() {
+    this.plot_config = {
+      showLink: false,
+      showSendToCloud: false,
+      displaylogo: false,
+      modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+        'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
+    };
+
     console.log('window height: ', window.innerHeight);
     console.log('window screen height: ', window.screen.height);
     // const element = this.el_nav.nativeElement;
@@ -116,6 +122,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             }
           }
           console.log('probe indices: ', this.probeIndices);
+          console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
           // console.log('x_data is: ', x_data);
           // console.log('y_data is: ', y_data);
           // console.log('color_data is: ', color_data);
@@ -146,13 +153,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             hovermode: 'closest'
           };
 
-          this.plot_config = {
-            showLink: false,
-            showSendToCloud: false,
-            displaylogo: false,
-            modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
-                            'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
-          };
+          
         }
       });
     
@@ -178,59 +179,85 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.cellListService.retrieveRasterList(queryInfo);
         this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
           .subscribe((rasterPlotList) => {
-            // console.log('raster plot list - ', rasterPlotList);
+            console.log('initial raster plot list - ', rasterPlotList);
+            console.log('initial raster plot with query: ', queryInfo);
             this.rasterPlotList = rasterPlotList;
-            const timeA = new Date();
-            for (const raster of Object.values(rasterPlotList)) {
-              const currentTemplate = this.rasterTemplates[raster['template_idx']];
-              const dataCopy = Object.assign([], currentTemplate['data']);
-              dataCopy[0] = {
-                y: raster['plot_ylim'],
-                // y: [0, 147.2],
-                x: ['-1', '1'],
-                type: 'scatter',
-                showlegend: false,
-                mode: 'markers',
-                marker: { opacity: '0'}
-              };
-              if (raster['mark_label']) {
-                dataCopy[4]['name'] = dataCopy[4]['name'].replace('event', raster['mark_label']);
-                dataCopy[5]['name'] = dataCopy[5]['name'].replace('event', raster['mark_label']);
-                dataCopy[6]['name'] = dataCopy[6]['name'].replace('event', raster['mark_label']);
-              }
-              this.raster_data.push(dataCopy);
-              // this.raster_data.push(currentTemplate['data']);
+            for (const cluster of Object.values(this.cellsByProbeIns)) {
+              for (const raster of Object.values(rasterPlotList)) {
+                if (cluster['cluster_id'] === raster['cluster_id']) {
+                  const currentTemplate = this.rasterTemplates[raster['template_idx']];
+                  const dataCopy = Object.assign([], currentTemplate['data']);
+                  dataCopy[0] = {
+                    y: raster['plot_ylim'],
+                    // y: [0, 147.2],
+                    x: ['-1', '1'],
+                    type: 'scatter',
+                    showlegend: false,
+                    mode: 'markers',
+                    marker: { opacity: '0'}
+                  };
+                  if (raster['mark_label']) {
+                    dataCopy[4]['name'] = dataCopy[4]['name'].replace('event', raster['mark_label']);
+                    dataCopy[5]['name'] = dataCopy[5]['name'].replace('event', raster['mark_label']);
+                    dataCopy[6]['name'] = dataCopy[6]['name'].replace('event', raster['mark_label']);
+                  }
+                  this.raster_data.push(dataCopy);
+                  // this.raster_data.push(currentTemplate['data']);
 
-              const layoutCopy = Object.assign({}, currentTemplate['layout']);
-              layoutCopy['images'] = [{
-                // source: 'http://localhost:3333' + raster['plotting_data_link'],
-                source: raster['plotting_data_link'],
-                y: raster['plot_ylim'][1],
-                sizey: parseFloat(raster['plot_ylim'][1]) - parseFloat(raster['plot_ylim'][0]),
-                layer: 'below',
-                sizex: 2,
-                sizing: 'stretch',
-                x: '-1',
-                xref: 'x',
-                yref: 'y'
-              }];
-              // layoutCopy['images'][0]['source'] = 'http://' + raster['plotting_data_link'];
-              titleJoined = `${currentTemplate.layout.title.text}${raster['event']}`;
-              layoutCopy['title'] = {
-                text: titleJoined,
-                x: currentTemplate.layout.title.x,
-                y: currentTemplate.layout.title.y,
-              };
-              layoutCopy['yaxis'] = {range: raster['plot_ylim']};
-              layoutCopy['width'] = 658;
-              layoutCopy['height'] = 420;
-              // layoutCopy['template'] = {};
-              this.raster_layout.push(layoutCopy);
-              this.raster_config.push(this.plot_config);
+                  const layoutCopy = Object.assign({}, currentTemplate['layout']);
+                  layoutCopy['images'] = [{
+                    // source: 'http://localhost:3333' + raster['plotting_data_link'],
+                    source: raster['plotting_data_link'],
+                    y: raster['plot_ylim'][1],
+                    sizey: parseFloat(raster['plot_ylim'][1]) - parseFloat(raster['plot_ylim'][0]),
+                    layer: 'below',
+                    sizex: 2,
+                    sizing: 'stretch',
+                    x: '-1',
+                    xref: 'x',
+                    yref: 'y'
+                  }];
+                  // layoutCopy['images'][0]['source'] = 'http://' + raster['plotting_data_link'];
+                  titleJoined = `${currentTemplate.layout.title.text}${raster['event']}`;
+                  layoutCopy['title'] = {
+                    text: titleJoined,
+                    x: currentTemplate.layout.title.x,
+                    y: currentTemplate.layout.title.y,
+                  };
+                  layoutCopy['yaxis'] = {range: [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]};
+                  // layoutCopy['yaxis'] = { range: [0, 0] };
+                  console.log('plot ylim - ', raster['plot_ylim']);
+                  layoutCopy['width'] = 658;
+                  layoutCopy['height'] = 420;
+                  // layoutCopy['template'] = {};
+                  this.raster_layout.push(layoutCopy);
+                  // this.raster_config.push(this.plot_config);
+                  this.raster_config.push({});
+                  console.log('this.plot_config is ', this.plot_config);
+                } else { // in case of missing plot
+                  this.raster_data.push({
+                    type: 'scatter',
+                    showlegend: false});
+                  this.raster_layout.push({
+                    title: {
+                      text: 'missing raster plot',
+                    },
+                    images: {
+                      source: '/assets/images/plot_unavailable.png',
+                      layer: 'below',
+                      sizex: 2,
+                      sizing: 'stretch',
+                      x: '-1',
+                      xref: 'x',
+                      yref: 'y'
+                    }});
+                  this.raster_config.push(this.plot_config);
+                }
+              }
             }
-            // console.log('raster layout - ', this.raster_layout);
-            // console.log('raster data - ', this.raster_data);
-            
+            console.log('raster layout on nginit - ', this.raster_layout);
+            console.log('raster data on nginit - ', this.raster_data);
+            console.log('raster config on init - ', this.raster_config);
       });
     });
 
@@ -255,51 +282,59 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           .subscribe((psthPlotList) => {
             // console.log('psth plot list - ', psthPlotList);
             this.psthPlotList = psthPlotList;
-            const timeA = new Date();
-            for (const psth of Object.values(psthPlotList)) {
-              const currentTemplate = this.psthTemplates[psth['psth_template_idx']];
-              const dataCopy = Object.assign([], currentTemplate['data']);
-              // data = [left, right, incorrect, all]
-              dataCopy[0] = {
-                y: psth['psth_left'].split(','),
-                x: psth['psth_time'].split(','),
-                name: 'left trials',
-                mode: 'lines',
-                marker: { size: 6, color: 'green'}
-              };
-              dataCopy[1] = {
-                y: psth['psth_right'].split(','),
-                x: psth['psth_time'].split(','),
-                name: 'right trials',
-                mode: 'lines',
-                marker: { size: 6, color: 'blue' }
-              };
-              dataCopy[2] = {
-                y: psth['psth_incorrect'].split(','),
-                x: psth['psth_time'].split(','),
-                name: 'incorrect trials',
-                mode: 'lines',
-                marker: { size: 6, color: 'red' }
-              };
-              dataCopy[3] = {
-                y: psth['psth_all'].split(','),
-                x: psth['psth_time'].split(','),
-                name: 'all trials',
-                mode: 'lines',
-                marker: { size: 6, color: 'black' }
-              };
-              this.psth_data.push(dataCopy);
+            for (const cluster of Object.values(this.cellsByProbeIns)) {
+              for (const psth of Object.values(psthPlotList)) {
+                if (psth['cluster_id'] === cluster['cluster_id']) {
+                  const currentTemplate = this.psthTemplates[psth['psth_template_idx']];
+                  const dataCopy = Object.assign([], currentTemplate['data']);
+                  // data = [left, right, incorrect, all]
+                  dataCopy[0] = {
+                    y: psth['psth_left'].split(','),
+                    x: psth['psth_time'].split(','),
+                    name: 'left trials',
+                    mode: 'lines',
+                    marker: { size: 6, color: 'green'}
+                  };
+                  dataCopy[1] = {
+                    y: psth['psth_right'].split(','),
+                    x: psth['psth_time'].split(','),
+                    name: 'right trials',
+                    mode: 'lines',
+                    marker: { size: 6, color: 'blue' }
+                  };
+                  dataCopy[2] = {
+                    y: psth['psth_incorrect'].split(','),
+                    x: psth['psth_time'].split(','),
+                    name: 'incorrect trials',
+                    mode: 'lines',
+                    marker: { size: 6, color: 'red' }
+                  };
+                  dataCopy[3] = {
+                    y: psth['psth_all'].split(','),
+                    x: psth['psth_time'].split(','),
+                    name: 'all trials',
+                    mode: 'lines',
+                    marker: { size: 6, color: 'black' }
+                  };
+                  this.psth_data.push(dataCopy);
 
-              const layoutCopy = Object.assign({}, currentTemplate['layout']);
-              layoutCopy['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
-              layoutCopy['xaxis']['range'] = psth['psth_x_lim'].split(',');
-              layoutCopy['width'] = 658;
-              layoutCopy['height'] = 420;
-              this.psth_layout.push(layoutCopy);
-              this.psth_config.push(this.plot_config);
+                  const layoutCopy = Object.assign({}, currentTemplate['layout']);
+                  layoutCopy['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
+                  layoutCopy['xaxis']['range'] = psth['psth_x_lim'].split(',');
+                  layoutCopy['width'] = 658;
+                  layoutCopy['height'] = 420;
+                  this.psth_layout.push(layoutCopy);
+                  this.psth_config.push(this.plot_config);
+                } else {
+                  this.psth_data.push({});
+                  this.psth_layout.push({});
+                  this.psth_config.push(this.plot_config);
+                }
+              }
             }
             // console.log('psth layout - ', this.psth_layout);
             // console.log('psth data - ', this.psth_data);
+            console.log('psth config: ', this.psth_config);
           });
       });
 
@@ -309,7 +344,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('do check ran');
     // console.log('this.clicked cluster id: ', this.clickedClusterId);
     const markerColors = [];
-    if (this.plot_data) {
+    if (this.plot_data && this.plot_data[0]) {
       if (this.plot_data[0]['x'] && this.clickedClusterId > -1) {
         for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
           if (this.clickedClusterId === i) {
@@ -368,7 +403,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.cellsByProbeIns.push(entry);
       }
     }
-
+    console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
     this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
     this.plot_data = [{
@@ -447,16 +482,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveRasterList(queryInfo);
     this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
       .subscribe((rasterPlotList) => {
-        // console.log('rasterplot list data');
-        // console.log(rasterPlotList);
         this.rasterPlotList = rasterPlotList;
         for (const raster of Object.values(rasterPlotList)) {
 
           this.raster_data.push(this.rasterTemplates[raster['template_idx']]['data']);
-          // this.raster_data.push(raster['plotting_data']['data']);
           const newLayout = this.rasterTemplates[raster['template_idx']]['layout'];
           newLayout['images'] = [{
-                // source: 'http://localhost:3333' + raster['plotting_data_link'],
             source: raster['plotting_data_link'],
                 y: raster['plot_ylim'],
                 sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
@@ -470,13 +501,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.raster_layout.push(newLayout);
           this.raster_config.push(this.plot_config);
         }
+        console.log('raster layout on order by event - ', this.raster_layout);
       });
 
     const psthQueryInfo = {};
     psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
     psthQueryInfo['probe_idx'] = this.probeIndex;
-    // psthQueryInfo['cluster_revision'] = '0';
     psthQueryInfo['event'] = this.eventType;
     this.psth_data = [];
     this.psth_layout = [];
@@ -484,8 +515,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrievePSTHList(psthQueryInfo);
     this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
       .subscribe((psthPlotList) => {
-        // console.log('psth list data');
-        // console.log(psthPlotList);
         this.psthPlotList = psthPlotList;
         for (const psth of Object.values(psthPlotList)) {
 
@@ -504,7 +533,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           newLayout['xaxis']['range'] = psth['psth_x_lim'].split(',');
           this.psth_data.push(newData);
           this.psth_layout.push(newLayout);
-          this.psth_config.push({});
+          this.psth_config.push(this.plot_config);
         }
       });
   }
@@ -547,7 +576,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           // newLayout['images'][0]['source'] = 'http://localhost:3333' + raster['plotting_data_link'];
           this.raster_layout.push(newLayout);
 
-          this.raster_config.push(raster['plotting_data']['config']);
+          this.raster_config.push(this.plot_config);
         }
       });
   }
