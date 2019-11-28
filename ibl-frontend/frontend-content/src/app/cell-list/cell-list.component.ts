@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 
 import { CellListService } from './cell-list.service';
 
-// declare var Plotly: any;
+declare var Plotly: any;
 
 @Component({
   selector: 'app-cell-list',
@@ -23,6 +23,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   plot_layout;
   plot_config;
   cellOnFocus;
+
+  rasterLookup = {};
+  psthLookup = {};
 
   raster_data = [];
   raster_layout = [];
@@ -49,7 +52,52 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   sortType;
   probeIndex;
 
-  showController = true;
+  showController = false;
+
+  raster_psth_config = {
+    responsive: false,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+      'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
+
+  missing_raster_psth_config = {
+    responsive: false,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+      'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
+  };
 
   private cellListSubscription: Subscription;
   private rasterListSubscription: Subscription;
@@ -72,7 +120,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     if (window.pageYOffset > 640) {
       this.showController = true;
     } else {
-      // this.showController = false;
+      this.showController = false;
     }
   }
   ngOnInit() {
@@ -137,7 +185,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               size: 15,
               color: 'rgba(255, 255, 255, 0.2)',
               line: {
-                color: 'rgba(132, 0, 0, 0.5)',
+                color: 'rgba(220, 140, 140, 0.4)',
                 width: 2
               }
             }
@@ -178,94 +226,177 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         let titleJoined = '';
         this.cellListService.retrieveRasterList(queryInfo);
         this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
-          .subscribe((rasterPlotList) => {
-            console.log('initial raster plot list - ', rasterPlotList);
-            console.log('initial raster plot with query: ', queryInfo);
-            this.rasterPlotList = rasterPlotList;
-            for (const cluster of Object.values(this.cellsByProbeIns)) {
-              for (const raster of Object.values(rasterPlotList)) {
-                if (cluster['cluster_id'] === raster['cluster_id']) {
-                  const currentTemplate = this.rasterTemplates[raster['template_idx']];
-                  const dataCopy = Object.assign([], currentTemplate['data']);
-                  dataCopy[0] = {
-                    y: raster['plot_ylim'],
-                    // y: [0, 147.2],
-                    x: ['-1', '1'],
-                    type: 'scatter',
-                    showlegend: false,
-                    mode: 'markers',
-                    marker: { opacity: '0'}
-                  };
-                  if (raster['mark_label']) {
-                    dataCopy[4]['name'] = dataCopy[4]['name'].replace('event', raster['mark_label']);
-                    dataCopy[5]['name'] = dataCopy[5]['name'].replace('event', raster['mark_label']);
-                    dataCopy[6]['name'] = dataCopy[6]['name'].replace('event', raster['mark_label']);
-                  }
-                  this.raster_data.push(dataCopy);
-                  // this.raster_data.push(currentTemplate['data']);
+             .subscribe((rasterPlotList) => {
+                this.updateRaster(rasterPlotList);
+             });
+      //     .subscribe((rasterPlotList) => {
+      //       console.log('initial raster plot list - ', rasterPlotList);
+      //       console.log('initial raster plot with query: ', queryInfo);
+      //       this.rasterPlotList = rasterPlotList;
+      //       // const rasterLookup = {};
+      //       const rasterDataLookup = {};
+      //       const rasterLayoutLookup = {};
+      //       const rasterConfigLookup = {};
+      //       for (const raster of Object.values(rasterPlotList)) {
+      //         const currentTemplate = deepCopy(this.rasterTemplates[raster['template_idx']]);
+      //         // let target_raster = this.rasterLookup[raster['cluster_id']];
+      //         this.rasterLookup[raster['cluster_id']] = { data: currentTemplate['data'],
+      //                                                layout: currentTemplate['layout'],
+      //                                                config: this.raster_psth_config};
+      //         this.rasterLookup[raster['cluster_id']]['data'][0]['y'] = raster['plot_ylim'];
+      //         if (raster['mark_label']) {
+      //           this.rasterLookup[raster['cluster_id']]['data'][4]['name'] =
+      //             this.rasterLookup[raster['cluster_id']]['data'][4]['name'].replace('event', raster['mark_label']);
+      //           this.rasterLookup[raster['cluster_id']]['data'][5]['name'] =
+      //             this.rasterLookup[raster['cluster_id']]['data'][5]['name'].replace('event', raster['mark_label']);
+      //           this.rasterLookup[raster['cluster_id']]['data'][6]['name'] =
+      //             this.rasterLookup[raster['cluster_id']]['data'][6]['name'].replace('event', raster['mark_label']);
+      //         }
+      //         this.rasterLookup[raster['cluster_id']]['layout']['images'] = [{
+      //           source: raster['plotting_data_link'],
+      //           y: raster['plot_ylim'][1],
+      //           sizey: parseFloat(raster['plot_ylim'][1]) - parseFloat(raster['plot_ylim'][0]),
+      //           layer: 'below',
+      //           sizex: 2,
+      //           sizing: 'stretch',
+      //           x: '-1',
+      //           xref: 'x',
+      //           yref: 'y'
+      //         }];
+      //         titleJoined = `${currentTemplate.layout.title.text}${raster['event']}`;
+      //         this.rasterLookup[raster['cluster_id']]['layout']['title'] = {
+      //           text: titleJoined,
+      //           x: currentTemplate.layout.title.x,
+      //           y: currentTemplate.layout.title.y,
+      //         };
+      //         this.rasterLookup[raster['cluster_id']]['layout']['yaxis'] = {
+      //           range: [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
+      //         };
+      //         this.rasterLookup[raster['cluster_id']]['layout']['width'] = 658;
+      //         this.rasterLookup[raster['cluster_id']]['layout']['height'] = 420;
+      //         this.raster_psth_config['toImageButtonOptions']['filename'] =
+      //           `rasterplot_${this.sessionInfo['session_start_time']}(cluster_${raster['cluster_id']})`;
+      //       }
+      //       console.log('raster-lookup: ', this.rasterLookup);
+      //       console.log('this.rasterLookup[Object.keys(this.rasterLookup)[0]]:', this.rasterLookup[Object.keys(this.rasterLookup)[0]]);
 
-                  const layoutCopy = Object.assign({}, currentTemplate['layout']);
-                  layoutCopy['images'] = [{
-                    // source: 'http://localhost:3333' + raster['plotting_data_link'],
-                    source: raster['plotting_data_link'],
-                    y: raster['plot_ylim'][1],
-                    sizey: parseFloat(raster['plot_ylim'][1]) - parseFloat(raster['plot_ylim'][0]),
-                    layer: 'below',
-                    sizex: 2,
-                    sizing: 'stretch',
-                    x: '-1',
-                    xref: 'x',
-                    yref: 'y'
-                  }];
-                  // layoutCopy['images'][0]['source'] = 'http://' + raster['plotting_data_link'];
-                  titleJoined = `${currentTemplate.layout.title.text}${raster['event']}`;
-                  layoutCopy['title'] = {
-                    text: titleJoined,
-                    x: currentTemplate.layout.title.x,
-                    y: currentTemplate.layout.title.y,
-                  };
-                  layoutCopy['yaxis'] = {range: [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]};
-                  // layoutCopy['yaxis'] = { range: [0, 0] };
-                  console.log('plot ylim - ', raster['plot_ylim']);
-                  layoutCopy['width'] = 658;
-                  layoutCopy['height'] = 420;
-                  // layoutCopy['template'] = {};
-                  this.raster_layout.push(layoutCopy);
-                  // this.raster_config.push(this.plot_config);
-                  this.raster_config.push({});
-                  console.log('this.plot_config is ', this.plot_config);
-                } else { // in case of missing plot
-                  this.raster_data.push({
-                    type: 'scatter',
-                    showlegend: false});
-                  this.raster_layout.push({
-                    title: {
-                      text: 'missing raster plot',
-                    },
-                    images: {
-                      source: '/assets/images/plot_unavailable.png',
-                      layer: 'below',
-                      sizex: 2,
-                      sizing: 'stretch',
-                      x: '-1',
-                      xref: 'x',
-                      yref: 'y'
-                    }});
-                  this.raster_config.push(this.plot_config);
-                }
-              }
-            }
-            console.log('raster layout on nginit - ', this.raster_layout);
-            console.log('raster data on nginit - ', this.raster_data);
-            console.log('raster config on init - ', this.raster_config);
-      });
+      //       console.log('logginng cellsByProbeINs:', this.cellsByProbeIns)
+      //       // for (const cluster of Object.values(this.cellsByProbeIns)) {
+      //       for (const cluster of this.cellsByProbeIns) {
+      //         console.log(`going through the rasterLookup(${cluster['cluster_id']}): `, this.rasterLookup[cluster['cluster_id']]);
+      //         if (!this.rasterLookup[cluster['cluster_id']]) {
+      //           this.rasterLookup[cluster['cluster_id']] = {
+      //             data: deepCopy(this.rasterLookup[Object.keys(this.rasterLookup)[0]]['data']),
+      //             layout: deepCopy(this.rasterLookup[Object.keys(this.rasterLookup)[0]]['layout']),
+      //             config: this.missing_raster_psth_config
+      //           };
+      //           this.rasterLookup[cluster['cluster_id']]['data'][0]['showLegend'] = false;
+
+      //           this.rasterLookup[cluster['cluster_id']]['layout']['images'][0] = {
+      //               source: '/assets/images/plot_unavailable.png',
+      //               // source: 'http://images5.fanpop.com/image/photos/28900000/Puppy-random-cute-group-28917493-500-333.jpg',
+      //               layer: 'below',
+      //               sizex: 2,
+      //               sizing: 'stretch',
+      //               x: '-1',
+      //               xref: 'x',
+      //               yref: 'y'
+      //             };
+      //           this.rasterLookup[cluster['cluster_id']]['layout']['title']['text'] = 'Missing Raster Plot';
+      //         } else {
+      //           console.log('else for cluster_id: ', cluster['cluster_id']);
+      //           console.log(`rasterLookup[${cluster['cluster_id']}]: `, this.rasterLookup[cluster['cluster_id']]);
+      //         }
+      //         // for (const raster of Object.values(rasterPlotList)) {
+      //         //   if (cluster['cluster_id'] === raster['cluster_id']) {
+      //         //     const currentTemplate = this.rasterTemplates[raster['template_idx']];
+      //         //     const dataCopy = Object.assign([], currentTemplate['data']);
+      //         //     dataCopy[0] = {
+      //         //       y: raster['plot_ylim'],
+      //         //       x: ['-1', '1'],
+      //         //       type: 'scatter',
+      //         //       showlegend: false,
+      //         //       mode: 'markers',
+      //         //       marker: { opacity: '0'}
+      //         //     };
+      //         //     if (raster['mark_label']) {
+      //         //       dataCopy[4]['name'] = dataCopy[4]['name'].replace('event', raster['mark_label']);
+      //         //       dataCopy[5]['name'] = dataCopy[5]['name'].replace('event', raster['mark_label']);
+      //         //       dataCopy[6]['name'] = dataCopy[6]['name'].replace('event', raster['mark_label']);
+      //         //     }
+      //         //     this.raster_data.push(dataCopy);
+
+      //         //     const layoutCopy = Object.assign({}, currentTemplate['layout']);
+      //         //     layoutCopy['images'] = [{
+      //         //       source: raster['plotting_data_link'],
+      //         //       y: raster['plot_ylim'][1],
+      //         //       sizey: parseFloat(raster['plot_ylim'][1]) - parseFloat(raster['plot_ylim'][0]),
+      //         //       layer: 'below',
+      //         //       sizex: 2,
+      //         //       sizing: 'stretch',
+      //         //       x: '-1',
+      //         //       xref: 'x',
+      //         //       yref: 'y'
+      //         //     }];
+      //         //     titleJoined = `${currentTemplate.layout.title.text}${raster['event']}`;
+      //         //     layoutCopy['title'] = {
+      //         //       text: titleJoined,
+      //         //       x: currentTemplate.layout.title.x,
+      //         //       y: currentTemplate.layout.title.y,
+      //         //     };
+      //         //     layoutCopy['yaxis'] = {range: [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]};
+      //         //     // layoutCopy['yaxis'] = { range: [0, 0] };
+      //         //     console.log('plot ylim - ', raster['plot_ylim']);
+      //         //     layoutCopy['width'] = 658;
+      //         //     layoutCopy['height'] = 420;
+      //         //     // layoutCopy['template'] = {};
+      //         //     this.raster_layout.push(layoutCopy);
+      //         //     this.raster_psth_config['toImageButtonOptions']['filename'] =
+      //         //       `rasterplot_${cluster['session_start_time']}(cluster_${cluster['cluster_id']})`;
+
+      //         //     this.raster_config.push(this.raster_psth_config);
+      //           // }
+      //           //   else { // in case of missing plot
+      //           //   const currentTemplate = this.rasterTemplates[raster['template_idx']];
+      //           //   const dataCopy = Object.assign([], currentTemplate['data']);
+      //           //   dataCopy[0] = {
+      //           //     // y: [0, 147.2],
+      //           //     x: ['-1', '1'],
+      //           //     type: 'scatter',
+      //           //     showlegend: false,
+      //           //     mode: 'markers',
+      //           //     marker: { opacity: '0' }
+      //           //   };
+      //           //   this.raster_data.push(dataCopy);
+      //           //   const layoutCopy = Object.assign({}, currentTemplate['layout']);
+      //           //   layoutCopy['title'] = {
+      //           //     text: 'missing raster plot'
+      //           //   };
+      //           //   layoutCopy['images'] = {
+      //           //     source: '/assets/images/plot_unavailable.png',
+      //           //     layer: 'below',
+      //           //     sizex: 2,
+      //           //     sizing: 'stretch',
+      //           //     x: '-1',
+      //           //     xref: 'x',
+      //           //     yref: 'y'
+      //           //   };
+      //           //   this.raster_layout.push(layoutCopy);
+      //           //   this.raster_config.push(this.missing_raster_psth_config);
+      //           // }
+      //         // }
+      //       }
+      //       console.log('raster layout on nginit - ', this.raster_layout);
+      //       console.log('raster data on nginit - ', this.raster_data);
+      //       console.log('raster config on init - ', this.raster_config);
+      //       console.log('raster look up: ', this.rasterLookup);
+      // });
     });
 
     const psthQueryInfo = {};
     psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
     psthQueryInfo['probe_idx'] = this.probeIndex;
-    // psthQueryInfo['cluster_revision'] = '0';
     psthQueryInfo['event'] = this.eventType;
 
     this.cellListService.retrievePsthTemplates();
@@ -280,61 +411,66 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.cellListService.retrievePSTHList(psthQueryInfo);
         this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
           .subscribe((psthPlotList) => {
+            this.updatePSTH(psthPlotList);
             // console.log('psth plot list - ', psthPlotList);
-            this.psthPlotList = psthPlotList;
-            for (const cluster of Object.values(this.cellsByProbeIns)) {
-              for (const psth of Object.values(psthPlotList)) {
-                if (psth['cluster_id'] === cluster['cluster_id']) {
-                  const currentTemplate = this.psthTemplates[psth['psth_template_idx']];
-                  const dataCopy = Object.assign([], currentTemplate['data']);
-                  // data = [left, right, incorrect, all]
-                  dataCopy[0] = {
-                    y: psth['psth_left'].split(','),
-                    x: psth['psth_time'].split(','),
-                    name: 'left trials',
-                    mode: 'lines',
-                    marker: { size: 6, color: 'green'}
-                  };
-                  dataCopy[1] = {
-                    y: psth['psth_right'].split(','),
-                    x: psth['psth_time'].split(','),
-                    name: 'right trials',
-                    mode: 'lines',
-                    marker: { size: 6, color: 'blue' }
-                  };
-                  dataCopy[2] = {
-                    y: psth['psth_incorrect'].split(','),
-                    x: psth['psth_time'].split(','),
-                    name: 'incorrect trials',
-                    mode: 'lines',
-                    marker: { size: 6, color: 'red' }
-                  };
-                  dataCopy[3] = {
-                    y: psth['psth_all'].split(','),
-                    x: psth['psth_time'].split(','),
-                    name: 'all trials',
-                    mode: 'lines',
-                    marker: { size: 6, color: 'black' }
-                  };
-                  this.psth_data.push(dataCopy);
+            // this.psthPlotList = psthPlotList;
+            // for (const cluster of Object.values(this.cellsByProbeIns)) {
+            //   for (const psth of Object.values(psthPlotList)) {
+            //     if (psth['cluster_id'] === cluster['cluster_id']) {
+            //       const currentTemplate = this.psthTemplates[psth['psth_template_idx']];
+            //       const dataCopy = Object.assign([], currentTemplate['data']);
+            //       // data = [left, right, incorrect, all]
+            //       dataCopy[0] = {
+            //         y: psth['psth_left'].split(','),
+            //         x: psth['psth_time'].split(','),
+            //         name: 'left trials',
+            //         mode: 'lines',
+            //         marker: { size: 6, color: 'green'}
+            //       };
+            //       dataCopy[1] = {
+            //         y: psth['psth_right'].split(','),
+            //         x: psth['psth_time'].split(','),
+            //         name: 'right trials',
+            //         mode: 'lines',
+            //         marker: { size: 6, color: 'blue' }
+            //       };
+            //       dataCopy[2] = {
+            //         y: psth['psth_incorrect'].split(','),
+            //         x: psth['psth_time'].split(','),
+            //         name: 'incorrect trials',
+            //         mode: 'lines',
+            //         marker: { size: 6, color: 'red' }
+            //       };
+            //       dataCopy[3] = {
+            //         y: psth['psth_all'].split(','),
+            //         x: psth['psth_time'].split(','),
+            //         name: 'all trials',
+            //         mode: 'lines',
+            //         marker: { size: 6, color: 'black' }
+            //       };
+            //       this.psth_data.push(dataCopy);
 
-                  const layoutCopy = Object.assign({}, currentTemplate['layout']);
-                  layoutCopy['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
-                  layoutCopy['xaxis']['range'] = psth['psth_x_lim'].split(',');
-                  layoutCopy['width'] = 658;
-                  layoutCopy['height'] = 420;
-                  this.psth_layout.push(layoutCopy);
-                  this.psth_config.push(this.plot_config);
-                } else {
-                  this.psth_data.push({});
-                  this.psth_layout.push({});
-                  this.psth_config.push(this.plot_config);
-                }
-              }
-            }
-            // console.log('psth layout - ', this.psth_layout);
-            // console.log('psth data - ', this.psth_data);
-            console.log('psth config: ', this.psth_config);
+            //       const layoutCopy = Object.assign({}, currentTemplate['layout']);
+            //       layoutCopy['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
+            //       layoutCopy['xaxis']['range'] = psth['psth_x_lim'].split(',');
+            //       layoutCopy['width'] = 658;
+            //       layoutCopy['height'] = 420;
+            //       this.psth_layout.push(layoutCopy);
+            //       this.raster_psth_config['toImageButtonOptions']['filename'] =
+            //         `rasterplot_${cluster['session_start_time']}(cluster_${cluster['cluster_id']})`;
+
+            //       this.psth_config.push(this.raster_psth_config);
+            //       // this.psth_config.push(this.plot_config);
+            //     } else {
+            //       this.psth_data.push({});
+            //       this.psth_layout.push({});
+            //       this.psth_config.push(this.missing_raster_psth_config);
+            //     }
+            //   }
+            // }
+            // // console.log('psth layout - ', this.psth_layout);
+            // // console.log('psth data - ', this.psth_data);
+            // console.log('psth config: ', this.psth_config);
           });
       });
 
@@ -350,12 +486,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           if (this.clickedClusterId === i) {
             markerColors.push('rgba(0, 0, 0, 1)'); // black
           } else {
-            markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
+            markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
           }
         }
       } else {
         for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-          markerColors.push('rgba(132, 0, 0, 0.5)'); // regular red
+          markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
         }
       }
       this.plot_data[0]['marker']['line']['color'] = markerColors;
@@ -382,7 +518,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   probe_selected(probeInsNum) {
-    console.log('probe insertions selected: ', probeInsNum);
+    // console.log('probe insertions selected: ', probeInsNum);
     const x_data = [];
     const y_data = [];
     const id_data = [];
@@ -391,7 +527,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.plot_data = [];
     this.cellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
-    console.log('probeInsNum type: ', typeof probeInsNum)
+    // console.log('probeInsNum type: ', typeof probeInsNum)
     for (let entry of Object.values(this.cells)) {
       if (entry['probe_idx'] === parseInt(probeInsNum, 10)) {
         console.log('inputting new data for probe: ', probeInsNum);
@@ -403,7 +539,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.cellsByProbeIns.push(entry);
       }
     }
-    console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
+    // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
     this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
     this.plot_data = [{
@@ -423,8 +559,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }];
     this.targetClusterId = 0;
     this.clickedClusterId = this.targetClusterId;
-    console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
-  
+    // console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
     this.order_by_event(this.eventType);
   }
 
@@ -473,36 +608,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
     queryInfo['probe_idx'] = this.probeIndex;
-    // queryInfo['cluster_revision'] = '0';
     queryInfo['event'] = this.eventType;
     queryInfo['sort_by'] = this.sortType;
-    this.raster_data = [];
-    this.raster_layout = [];
-    this.raster_config = [];
+    this.rasterLookup = {};
     this.cellListService.retrieveRasterList(queryInfo);
     this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
       .subscribe((rasterPlotList) => {
-        this.rasterPlotList = rasterPlotList;
-        for (const raster of Object.values(rasterPlotList)) {
-
-          this.raster_data.push(this.rasterTemplates[raster['template_idx']]['data']);
-          const newLayout = this.rasterTemplates[raster['template_idx']]['layout'];
-          newLayout['images'] = [{
-            source: raster['plotting_data_link'],
-                y: raster['plot_ylim'],
-                sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
-                layer: 'below',
-                sizex: '2',
-                sizing: 'stretch',
-                x: '-1',
-                xref: 'x',
-                yref: 'y'
-              }];
-          this.raster_layout.push(newLayout);
-          this.raster_config.push(this.plot_config);
-        }
-        console.log('raster layout on order by event - ', this.raster_layout);
+        console.log('updating raster - rasterLookup should be empty: ', this.rasterLookup);
+        this.updateRaster(rasterPlotList);
       });
+
 
     const psthQueryInfo = {};
     psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -515,70 +630,311 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrievePSTHList(psthQueryInfo);
     this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
       .subscribe((psthPlotList) => {
-        this.psthPlotList = psthPlotList;
-        for (const psth of Object.values(psthPlotList)) {
+        this.updatePSTH(psthPlotList);
+        // this.psthPlotList = psthPlotList;
+        // for (const psth of Object.values(psthPlotList)) {
 
-          const newData = this.psthTemplates[psth['psth_template_idx']]['data'];
-          newData[0]['y'] = psth['psth_left'].split(',');
-          newData[0]['x'] = psth['psth_time'].split(',');
-          newData[1]['y'] = psth['psth_right'].split(',');
-          newData[1]['x'] = psth['psth_time'].split(',');
-          newData[2]['y'] = psth['psth_incorrect'].split(',');
-          newData[2]['x'] = psth['psth_time'].split(',');
-          newData[3]['y'] = psth['psth_all'].split(',');
-          newData[3]['x'] = psth['psth_time'].split(',');
+        //   const newData = this.psthTemplates[psth['psth_template_idx']]['data'];
+        //   newData[0]['y'] = psth['psth_left'].split(',');
+        //   newData[0]['x'] = psth['psth_time'].split(',');
+        //   newData[1]['y'] = psth['psth_right'].split(',');
+        //   newData[1]['x'] = psth['psth_time'].split(',');
+        //   newData[2]['y'] = psth['psth_incorrect'].split(',');
+        //   newData[2]['x'] = psth['psth_time'].split(',');
+        //   newData[3]['y'] = psth['psth_all'].split(',');
+        //   newData[3]['x'] = psth['psth_time'].split(',');
 
-          const newLayout = this.psthTemplates[psth['psth_template_idx']]['layout'];
-          newLayout['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
-          newLayout['xaxis']['range'] = psth['psth_x_lim'].split(',');
-          this.psth_data.push(newData);
-          this.psth_layout.push(newLayout);
-          this.psth_config.push(this.plot_config);
-        }
+        //   const newLayout = this.psthTemplates[psth['psth_template_idx']]['layout'];
+        //   newLayout['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
+        //   newLayout['xaxis']['range'] = psth['psth_x_lim'].split(',');
+        //   this.psth_data.push(newData);
+        //   this.psth_layout.push(newLayout);
+        //   this.psth_config.push(this.plot_config);
+        // }
       });
   }
 
   order_by_sorting(sortType) {
-    // console.log('sort order selected!: ', sortType);
     this.sortType = sortType;
     const queryInfo = {};
     queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
     queryInfo['probe_idx'] = this.probeIndex;
-    // queryInfo['cluster_revision'] = '0';
     queryInfo['event'] = this.eventType;
     queryInfo['sort_by'] = this.sortType;
+    this.rasterLookup = {};
     this.raster_data = [];
     this.raster_layout = [];
     this.raster_config = [];
     this.cellListService.retrieveRasterList(queryInfo);
     this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
       .subscribe((rasterPlotList) => {
-        // console.log('rasterplot list data');
-        // console.log(rasterPlotList);
-        this.rasterPlotList = rasterPlotList;
-        for (const raster of Object.values(rasterPlotList)) {
-
-          this.raster_data.push(this.rasterTemplates[raster['template_idx']]['data']);
-          const newLayout = this.rasterTemplates[raster['template_idx']]['layout'];
-          newLayout['images'] = [{
-            // source: 'http://localhost:3333' + raster['plotting_data_link'],
-            source: raster['plotting_data_link'],
-            y: raster['plot_ylim'],
-            sizey: raster['plot_ylim'][1] - raster['plot_ylim'][0],
-            layer: 'below',
-            sizex: '2',
-            sizing: 'stretch',
-            x: '-1',
-            xref: 'x',
-            yref: 'y'
-          }];
-          // newLayout['images'][0]['source'] = 'http://localhost:3333' + raster['plotting_data_link'];
-          this.raster_layout.push(newLayout);
-
-          this.raster_config.push(this.plot_config);
-        }
+        this.updateRaster(rasterPlotList);
       });
   }
 
+  updatePSTH(psthPlotList) {
+    console.log('psth plot list - ', psthPlotList);
+    this.psthPlotList = psthPlotList;
+    for (const psth of psthPlotList) {
+      const currentTemplate = deepCopy(this.psthTemplates[psth['psth_template_idx']]);
+      this.psthLookup[psth['cluster_id']] = {
+        data: currentTemplate['data'],
+        layout: currentTemplate['layout'],
+        config: this.raster_psth_config
+      };
+      this.psthLookup[psth['cluster_id']]['data'][0] = {
+        y: psth['psth_left'] ? psth['psth_left'].split(',') : [],
+        x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+        name: 'left trials',
+        mode: 'lines',
+        marker: { size: 6, color: 'green' }
+      };
+      this.psthLookup[psth['cluster_id']]['data'][1] = {
+        y: psth['psth_right'] ? psth['psth_right'].split(',') : [],
+        x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+        name: 'right trials',
+        mode: 'lines',
+        marker: { size: 6, color: 'blue' }
+      };
+      this.psthLookup[psth['cluster_id']]['data'][2] = {
+        y: psth['psth_incorrect'] ? psth['psth_incorrect'].split(',') : [],
+        x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+        name: 'incorrect trials',
+        mode: 'lines',
+        marker: { size: 6, color: 'red' }
+      };
+      this.psthLookup[psth['cluster_id']]['data'][3] = {
+        y: psth['psth_all'] ? psth['psth_all'].split(',') : [],
+        x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+        name: 'all trials',
+        mode: 'lines',
+        marker: { size: 6, color: 'black' }
+      };
+      // this.psth_data.push(dataCopy);
+
+      this.psthLookup[psth['cluster_id']]['layout']['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
+      this.psthLookup[psth['cluster_id']]['layout']['xaxis']['range'] = psth['psth_x_lim'] ? psth['psth_x_lim'].split(',') : [];
+      this.psthLookup[psth['cluster_id']]['layout']['width'] = 658;
+      this.psthLookup[psth['cluster_id']]['layout']['height'] = 420;
+      // this.psth_layout.push(layoutCopy);
+      this.raster_psth_config['toImageButtonOptions']['filename'] =
+        `rasterplot_${this.session['session_start_time']}(cluster_${psth['cluster_id']})`;
+
+      // this.psth_config.push(this.raster_psth_config);
+      // this.psth_config.push(this.plot_config);
+    }
+
+    const dummyData = {
+      marker: {
+        opacity: '0'
+      },
+      mode: 'markers',
+      type: 'scatter',
+      x: ['-1', '1'],
+      y: ['0', '3']
+    };
+
+    const dummyLayout = {
+      height: 420,
+      width: 658,
+      margin: {
+        b: 40,
+        l: 50,
+        r: 30,
+        t: 80,
+        pad: 0
+      }
+    };
+    for (const cluster of this.cellsByProbeIns) {
+      if (!this.psthLookup[cluster['cluster_id']]) {
+        this.psthLookup[cluster['cluster_id']] = {
+          data: this.psthLookup[Object.keys(this.psthLookup)[0]] ? deepCopy(this.psthLookup[Object.keys(this.psthLookup)[0]]['data']) : dummyData,
+          layout: this.psthLookup[Object.keys(this.psthLookup)[0]] ?
+                  deepCopy(this.psthLookup[Object.keys(this.psthLookup)[0]]['layout']) : dummyLayout,
+          config: this.missing_raster_psth_config
+        };
+        this.psthLookup[cluster['cluster_id']]['layout']['height'] = 420;
+        this.psthLookup[cluster['cluster_id']]['layout']['width'] = 658;
+        this.psthLookup[cluster['cluster_id']]['layout']['xaxis'] = {
+          range: ['-1', '1'],
+          type: 'linear'
+        };
+        this.psthLookup[cluster['cluster_id']]['layout']['yaxis'] = {
+          range: ['0', '3'],
+          type: 'linear'
+        };
+        this.psthLookup[cluster['cluster_id']]['layout']['images'] = [{
+          source: '/assets/images/plot_unavailable.png',
+          layer: 'below',
+          sizex: 2,
+          sizey: 3,
+          sizing: 'stretch',
+          x: '-1',
+          y: '3',
+          xref: 'x',
+          yref: 'y'
+        }];
+        this.psthLookup[cluster['cluster_id']]['layout']['title'] = {
+          text : 'Missing PSTH Plot'
+        };
+      } else {
+        // console.log('else for cluster_id: ', cluster['cluster_id']);
+        // console.log(`rasterLookup[${cluster['cluster_id']}]: `, this.rasterLookup[cluster['cluster_id']]);
+      }
+    }
+    // for (const cluster of Object.values(this.cellsByProbeIns)) {
+    //   for (const psth of Object.values(psthPlotList)) {
+    //     if (psth['cluster_id'] === cluster['cluster_id']) {
+    //       console.log('psth for cluster_id match - :', psth['cluster_id']);
+    //       const currentTemplate = this.psthTemplates[psth['psth_template_idx']];
+    //       const dataCopy = Object.assign([], currentTemplate['data']);
+    //       // data = [left, right, incorrect, all]
+    //       dataCopy[0] = {
+    //         y: psth['psth_left'] ? psth['psth_left'].split(',') : [],
+    //         x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+    //         name: 'left trials',
+    //         mode: 'lines',
+    //         marker: { size: 6, color: 'green' }
+    //       };
+    //       dataCopy[1] = {
+    //         y: psth['psth_right'] ? psth['psth_right'].split(',') : [],
+    //         x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+    //         name: 'right trials',
+    //         mode: 'lines',
+    //         marker: { size: 6, color: 'blue' }
+    //       };
+    //       dataCopy[2] = {
+    //         y: psth['psth_incorrect'] ? psth['psth_incorrect'].split(',') : [],
+    //         x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+    //         name: 'incorrect trials',
+    //         mode: 'lines',
+    //         marker: { size: 6, color: 'red' }
+    //       };
+    //       dataCopy[3] = {
+    //         y: psth['psth_all'] ? psth['psth_all'].split(',') : [],
+    //         x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+    //         name: 'all trials',
+    //         mode: 'lines',
+    //         marker: { size: 6, color: 'black' }
+    //       };
+    //       this.psth_data.push(dataCopy);
+
+    //       const layoutCopy = Object.assign({}, currentTemplate['layout']);
+    //       layoutCopy['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
+    //       layoutCopy['xaxis']['range'] = psth['psth_x_lim'] ? psth['psth_x_lim'].split(',') : [];
+    //       layoutCopy['width'] = 658;
+    //       layoutCopy['height'] = 420;
+    //       this.psth_layout.push(layoutCopy);
+    //       this.raster_psth_config['toImageButtonOptions']['filename'] =
+    //         `rasterplot_${cluster['session_start_time']}(cluster_${cluster['cluster_id']})`;
+
+    //       this.psth_config.push(this.raster_psth_config);
+    //       // this.psth_config.push(this.plot_config);
+    //     } else {
+    //       this.psth_data.push({});
+    //       this.psth_layout.push({});
+    //       this.psth_config.push(this.missing_raster_psth_config);
+    //     }
+    //   }
+    // }
+    console.log('psth lookup: ', this.psthLookup);
+  }
+
+  updateRaster(rasterPlotList) {
+    this.rasterPlotList = rasterPlotList;
+    for (const raster of rasterPlotList) {
+      const currentTemplate = deepCopy(this.rasterTemplates[raster['template_idx']]);
+      this.rasterLookup[raster['cluster_id']] = {
+        data: currentTemplate['data'],
+        layout: currentTemplate['layout'],
+        config: this.raster_psth_config
+      };
+      this.rasterLookup[raster['cluster_id']]['data'][0]['y'] = raster['plot_ylim'];
+      if (raster['mark_label']) {
+        this.rasterLookup[raster['cluster_id']]['data'][4]['name'] =
+          this.rasterLookup[raster['cluster_id']]['data'][4]['name'].replace('event', raster['mark_label']);
+        this.rasterLookup[raster['cluster_id']]['data'][5]['name'] =
+          this.rasterLookup[raster['cluster_id']]['data'][5]['name'].replace('event', raster['mark_label']);
+        this.rasterLookup[raster['cluster_id']]['data'][6]['name'] =
+          this.rasterLookup[raster['cluster_id']]['data'][6]['name'].replace('event', raster['mark_label']);
+      }
+      let image_link = raster['plotting_data_link'];
+      if (image_link === '') {
+        image_link = '/assets/images/plot_unavailable.png';
+      }
+      this.rasterLookup[raster['cluster_id']]['layout']['images'] = [{
+        source: image_link,
+        y: raster['plot_ylim'][1],
+        sizey: parseFloat(raster['plot_ylim'][1]) - parseFloat(raster['plot_ylim'][0]),
+        layer: 'below',
+        sizex: 2,
+        sizing: 'stretch',
+        x: '-1',
+        xref: 'x',
+        yref: 'y'
+      }];
+      const titleJoined = `${currentTemplate.layout.title.text}${raster['event']}`;
+      this.rasterLookup[raster['cluster_id']]['layout']['title'] = {
+        text: titleJoined,
+        x: currentTemplate.layout.title.x,
+        y: currentTemplate.layout.title.y,
+      };
+      this.rasterLookup[raster['cluster_id']]['layout']['yaxis'] = {
+        range: [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
+      };
+      this.rasterLookup[raster['cluster_id']]['layout']['width'] = 658;
+      this.rasterLookup[raster['cluster_id']]['layout']['height'] = 420;
+      this.raster_psth_config['toImageButtonOptions']['filename'] =
+        `rasterplot_${this.sessionInfo['session_start_time']}(cluster_${raster['cluster_id']})`;
+    }
+
+    // console.log('logginng cellsByProbeINs:', this.cellsByProbeIns);
+    for (const cluster of this.cellsByProbeIns) {
+      // console.log(`going through the rasterLookup(${cluster['cluster_id']}): `, this.rasterLookup[cluster['cluster_id']]);
+      if (!this.rasterLookup[cluster['cluster_id']]) {
+        this.rasterLookup[cluster['cluster_id']] = {
+          data: deepCopy(this.rasterLookup[Object.keys(this.rasterLookup)[0]]['data']),
+          layout: deepCopy(this.rasterLookup[Object.keys(this.rasterLookup)[0]]['layout']),
+          config: this.missing_raster_psth_config
+        };
+        this.rasterLookup[cluster['cluster_id']]['data'][0]['showlegend'] = false;
+        this.rasterLookup[cluster['cluster_id']]['data'][1]['showlegend'] = false;
+        this.rasterLookup[cluster['cluster_id']]['data'][2]['showlegend'] = false;
+        this.rasterLookup[cluster['cluster_id']]['data'][3]['showlegend'] = false;
+
+        this.rasterLookup[cluster['cluster_id']]['layout']['height'] = 420;
+        this.rasterLookup[cluster['cluster_id']]['layout']['width'] = 658;
+        this.rasterLookup[cluster['cluster_id']]['layout']['xaxis'] = {
+          range: ['-1', '1'],
+          type: 'linear'
+        };
+        this.rasterLookup[cluster['cluster_id']]['layout']['yaxis'] = {
+          range: ['0', '3'],
+          type: 'linear'
+        };
+        this.rasterLookup[cluster['cluster_id']]['layout']['images'][0] = {
+          source: '/assets/images/plot_unavailable.png',
+          layer: 'below',
+          sizex: 2,
+          sizey: 3,
+          x: '1',
+          y: '3',
+          sizing: 'stretch',
+          xref: 'x',
+          yref: 'y'
+        };
+        this.rasterLookup[cluster['cluster_id']]['layout']['title']['text'] = 'Missing Raster Plot';
+      } else {
+        // console.log('else for cluster_id: ', cluster['cluster_id']);
+        // console.log(`rasterLookup[${cluster['cluster_id']}]: `, this.rasterLookup[cluster['cluster_id']]);
+      }
+    }
+      console.log('raster look up: ', this.rasterLookup);
+    }
 }
+
+function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+

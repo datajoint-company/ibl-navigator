@@ -2,7 +2,7 @@
   <h3>Cells</h3>
 </div>
 <div class="probe-selection-area" *ngIf="cells">
-  <label for="probe_idx">Select Probe Insertion Number:  </label>
+  <label for="probe_idx">Select Probe Insertion Index:  </label>
   <select name="probe_idx" (change)="probe_selected($event.target.value)">
     <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{ probeIns }}</option>
   </select>
@@ -64,9 +64,20 @@
       </select>
     </div>
   </div>
-  <!-- <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot> -->
-  <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot> 
-  <plotly-plot [data]="psth_data[targetClusterId]" [layout]="psth_layout[targetClusterId]" [config]="psth_config[targetClusterId]"></plotly-plot>
+ 
+ 
+  <!-- <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot>  -->
+  <div *ngIf="rasterLookup[targetClusterId]">
+    <plotly-plot [data]="rasterLookup[targetClusterId]['data']" [layout]="rasterLookup[targetClusterId]['layout']" [config]="rasterLookup[targetClusterId]['config']"></plotly-plot> 
+
+    <!-- <plotly-plot [data]="rasterLookup[targetClusterId] ? rasterLookup[targetClusterId]['data']: {}" [layout]="rasterLookup[targetClusterId]?rasterLookup[targetClusterId]['layout']: {}" [config]="rasterLookup[targetClusterId]? rasterLookup[targetClusterId]['config']: {}"></plotly-plot>  -->
+    <!-- <div>rasterLookup[{{targetClusterId}}][layout]: {{rasterLookup[targetClusterId]['layout'] | json}}</div> -->
+  </div>
+  
+  <div *ngIf="psthLookup[targetClusterId]">
+    <plotly-plot [data]="psthLookup[targetClusterId]['data']" [layout]="psthLookup[targetClusterId]['layout']" [config]="psthLookup[targetClusterId]['config']"></plotly-plot> 
+  </div>
+  <!-- <plotly-plot [data]="psth_data[targetClusterId]" [layout]="psth_layout[targetClusterId]" [config]="psth_config[targetClusterId]"></plotly-plot> -->
 
 
   <br>

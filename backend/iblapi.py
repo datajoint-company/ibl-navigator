@@ -113,11 +113,11 @@ reqmap = {
     'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
     'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
     'cluster': ephys.Cluster,
-    'raster': plotting_ephys.Raster,
-    'psth': plotting_ephys.Psth,
+    # 'raster': plotting_ephys.Raster,
+    # 'psth': plotting_ephys.Psth,
     'psthdata': plotting_ephys.PsthDataVarchar,
     'psthtemplate': plotting_ephys.PsthTemplate,
-    'rasterbatch': plotting_ephys.RasterLink,
+    # 'rasterbatch': plotting_ephys.RasterLink,
     'rasterlight': plotting_ephys.RasterLinkS3,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
@@ -270,11 +270,21 @@ def handle_q(subpath, args, proj, **kwargs):
     elif subpath == 'rasterlight':
         q = plotting_ephys.RasterLinkS3 & args
         def post_process(ret):
-            return [{k: s3_client.generate_presigned_url(
-                    'get_object', 
-                    Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
-                    ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
-                    for i in ret]
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['plotting_data_link'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
+            # return [{k: s3_client.generate_presigned_url(
+            #         'get_object', 
+            #         Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
+            #         ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
+            #         for i in ret]
     else:
         abort(404)
 
