@@ -26,9 +26,6 @@ export class CellListService {
   retrieveCellList(sessionInfo) {
     const mouse_id = sessionInfo['subject_uuid'];
     const session_time = sessionInfo['session_start_time'];
-    // console.log('retrieving for..');
-    // console.log('mouse_id: ', mouse_id);
-    // console.log('session_time: ', session_time);
     this.http.post(BACKEND_API_URL + `/plot/cluster`, {
       'subject_uuid': mouse_id,
       'session_start_time': session_time
@@ -47,13 +44,11 @@ export class CellListService {
   }
 
   retrieveRasterList(queryInfo) {
-    // console.log('printing raster queryInfo')
-    // console.log(queryInfo);
     this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
     // this.http.post(BACKEND_API_URL + `/plot/raster`, queryInfo)
       .subscribe(
         (sessionRasterData) => {
-          // console.log('retrieved session\'s raster data!: ', Object.entries(sessionRasterData).length);
+          // console.log('retrieved session\'s raster data!: ', sessionRasterData);
           this.rasterList = sessionRasterData;
           this.rasterListLoaded.next(this.rasterList);
         },
@@ -65,8 +60,7 @@ export class CellListService {
   }
 
   retrievePSTHList(queryInfo) {
-    // console.log('printing psth queryInfo');
-    // console.log(queryInfo);
+    // console.log('printing psth queryInfo: ', queryInfo);
     this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
       .subscribe(
         (sessionPSTHData) => {
@@ -102,8 +96,8 @@ export class CellListService {
     this.http.get(BACKEND_API_URL + `/plot/psthtemplate`)
       .subscribe(
         (psthTemplates) => {
-          console.log('just fetched PSTH template from backend');
-          console.log(psthTemplates);
+          // console.log('just fetched PSTH template from backend');
+          // console.log(psthTemplates);
           this.psthTemplates = psthTemplates;
           this.psthTemplatesLoaded.next(this.psthTemplates);
         },
