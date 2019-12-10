@@ -117,7 +117,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
   @HostListener('window:scroll', ['$event']) onWindowScroll(event) {
     // console.log('logging scroll event - ', event);
-    if (window.pageYOffset > 640) {
+    if (window.pageYOffset > 640 || window.innerHeight > 1720) {
+      this.showController = true;
+    } else if (window.innerWidth > 1420) {
       this.showController = true;
     } else {
       this.showController = false;
@@ -541,7 +543,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         // console.log(`rasterLookup[${cluster['cluster_id']}]: `, this.rasterLookup[cluster['cluster_id']]);
       }
     }
-    console.log('psth lookup: ', this.psthLookup);
+    // console.log('psth lookup: ', this.psthLookup);
   }
 
   updateRaster(rasterPlotList) {
@@ -648,7 +650,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         // console.log(`rasterLookup[${cluster['cluster_id']}]: `, this.rasterLookup[cluster['cluster_id']]);
       }
     }
-      console.log('raster look up: ', this.rasterLookup);
+      // console.log('raster look up: ', this.rasterLookup);
     }
 }
 

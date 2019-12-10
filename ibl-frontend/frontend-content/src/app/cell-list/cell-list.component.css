@@ -8,19 +8,23 @@
     cursor: pointer;
 }
 
+.clusterListTable * {
+    font-size: 0.8rem;
+}
+
 td span.oi {
     z-index: 30;
     position: relative;
 }
 
-.plots-navigator {
+/* .plots-navigator {
     position: fixed;
     z-index: 999;
     display: inline-flex;
     flex-direction: row;
     right: 0;
     bottom: 200px;
-}
+} */
 
 .clusterListContainer {
     height: 400px;
@@ -45,4 +49,46 @@ td span.oi {
     display: flex;
     flex-direction: column;
 }
+
+/* M (768px and up) */
+@media only screen and (max-width: 900px) {
+    .plots-navigator {
+        position: fixed;
+        z-index: 999;
+        display: inline-flex;
+        flex-direction: row;
+        right: 0;
+        bottom: 200px;
+    }
+    .clusterListTable * {
+        font-size: 0.72rem;
+    }
+} 
+
+/* L (900px and up) */
+@media only screen and (min-width: 901px) {
+    .plots-navigator {
+        position: fixed;
+        z-index: 999;
+        display: inline-flex;
+        flex-direction: row;
+        right: 0;
+        bottom: 200px;
+    }
+
+} 
+
+/* L (1420px and up) */
+@media only screen and (min-width: 1420px) {
+    .plots-navigator {
+        position: relative;
+        z-index: 999;
+        display: inline-flex;
+        flex-direction: row;
+        right: 0;
+        bottom: 0px;
+    }
+
+} 
+
 
