@@ -132,8 +132,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
     };
 
-    console.log('window height: ', window.innerHeight);
-    console.log('window screen height: ', window.screen.height);
+    // console.log('window height: ', window.innerHeight);
+    // console.log('window screen height: ', window.screen.height);
     // const element = this.el_nav.nativeElement;
     this.session = this.sessionInfo;
     // initial setting for plots viewer
@@ -142,7 +142,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.targetClusterId = 0;
     this.clickedClusterId = this.targetClusterId;
     this.probeIndex = 0;
-    
+
     this.cellListService.retrieveCellList(this.sessionInfo);
     this.cellListSubscription = this.cellListService.getCellListLoadedListener()
       .subscribe((cellListData) => {
@@ -169,8 +169,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               this.cellsByProbeIns.push(entry);
             }
           }
-          console.log('probe indices: ', this.probeIndices);
-          console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
+          // console.log('probe indices: ', this.probeIndices);
+          // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
           // console.log('x_data is: ', x_data);
           // console.log('y_data is: ', y_data);
           // console.log('color_data is: ', color_data);
@@ -183,10 +183,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             mode: 'markers',
             marker: {
               size: 15,
-              color: 'rgba(255, 255, 255, 0.2)',
+              color: 'rgba(255, 255, 255, 0.05)',
               line: {
-                color: 'rgba(220, 140, 140, 0.4)',
-                width: 2
+                color: 'rgba(220, 140, 140, 0.6)',
+                width: 1.7
               }
             }
           }];
@@ -217,7 +217,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveRasterTemplates();
     this.rasterTemplateSubscription = this.cellListService.getRasterTemplatesLoadedListener()
       .subscribe((templates) => {
-        console.log('raster templates retrieved');
+        // console.log('raster templates retrieved');
         for (const [index, temp] of Object.entries(templates)) {
           if (temp['template_idx'] === parseInt(index, 10)) {
             this.rasterTemplates.push(temp['raster_data_template']);
@@ -308,7 +308,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('probeInsNum type: ', typeof probeInsNum)
     for (let entry of Object.values(this.cells)) {
       if (entry['probe_idx'] === parseInt(probeInsNum, 10)) {
-        console.log('inputting new data for probe: ', probeInsNum);
+        // console.log('inputting new data for probe: ', probeInsNum);
         id_data.push(entry['cluster_id']);
         size_data.push(entry['channel_id']);
         y_data.push(entry['cluster_depth']);
@@ -392,7 +392,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveRasterList(queryInfo);
     this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
       .subscribe((rasterPlotList) => {
-        console.log('updating raster - rasterLookup should be empty: ', this.rasterLookup);
+        // console.log('updating raster - rasterLookup should be empty: ', this.rasterLookup);
         this.updateRaster(rasterPlotList);
       });
 
@@ -432,14 +432,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   updatePSTH(psthPlotList) {
-    console.log('psth plot list - ', psthPlotList);
+    // console.log('psth plot list - ', psthPlotList);
     this.psthPlotList = psthPlotList;
     for (const psth of psthPlotList) {
       const currentTemplate = deepCopy(this.psthTemplates[psth['psth_template_idx']]);
+      const psthConfigCopy = { ...this.raster_psth_config };
+      psthConfigCopy['toImageButtonOptions'] = {
+        filename: `PSTHplot_${this.session['session_start_time']}(cluster_${psth['cluster_id']})`,
+        scale: 1
+      };
       this.psthLookup[psth['cluster_id']] = {
         data: currentTemplate['data'],
         layout: currentTemplate['layout'],
-        config: this.raster_psth_config
+        config: psthConfigCopy
+        // config: this.raster_psth_config,
       };
       this.psthLookup[psth['cluster_id']]['data'][0] = {
         y: psth['psth_left'] ? psth['psth_left'].split(',') : [],
@@ -469,18 +475,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         mode: 'lines',
         marker: { size: 6, color: 'black' }
       };
-      // this.psth_data.push(dataCopy);
 
       this.psthLookup[psth['cluster_id']]['layout']['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
       this.psthLookup[psth['cluster_id']]['layout']['xaxis']['range'] = psth['psth_x_lim'] ? psth['psth_x_lim'].split(',') : [];
       this.psthLookup[psth['cluster_id']]['layout']['width'] = 658;
       this.psthLookup[psth['cluster_id']]['layout']['height'] = 420;
-      // this.psth_layout.push(layoutCopy);
-      this.raster_psth_config['toImageButtonOptions']['filename'] =
-        `rasterplot_${this.session['session_start_time']}(cluster_${psth['cluster_id']})`;
 
-      // this.psth_config.push(this.raster_psth_config);
-      // this.psth_config.push(this.plot_config);
     }
 
     const dummyData = {
@@ -548,10 +548,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.rasterPlotList = rasterPlotList;
     for (const raster of rasterPlotList) {
       const currentTemplate = deepCopy(this.rasterTemplates[raster['template_idx']]);
+      const rasterConfigCopy = { ...this.raster_psth_config };
+      rasterConfigCopy['toImageButtonOptions'] = {
+        filename: `rasterplot_${this.session['session_start_time']}(cluster_${raster['cluster_id']})`,
+        scale: 1
+      };
       this.rasterLookup[raster['cluster_id']] = {
         data: currentTemplate['data'],
         layout: currentTemplate['layout'],
-        config: this.raster_psth_config
+        config: rasterConfigCopy,
+        // config: this.raster_psth_config
       };
       this.rasterLookup[raster['cluster_id']]['data'][0]['y'] = raster['plot_ylim'];
       if (raster['mark_label']) {
@@ -566,6 +572,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       if (image_link === '') {
         image_link = '/assets/images/plot_unavailable.png';
       }
+
       this.rasterLookup[raster['cluster_id']]['layout']['images'] = [{
         source: image_link,
         y: raster['plot_ylim'][1],
@@ -588,13 +595,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       };
       this.rasterLookup[raster['cluster_id']]['layout']['width'] = 658;
       this.rasterLookup[raster['cluster_id']]['layout']['height'] = 420;
-      this.raster_psth_config['toImageButtonOptions']['filename'] =
-        `rasterplot_${this.sessionInfo['session_start_time']}(cluster_${raster['cluster_id']})`;
+
+      if (this.sortType === 'trial_id') {
+        this.rasterLookup[raster['cluster_id']]['data'][1]['showlegend'] = false;
+        this.rasterLookup[raster['cluster_id']]['data'][2]['showlegend'] = false;
+        this.rasterLookup[raster['cluster_id']]['data'][3]['showlegend'] = false;
+        this.rasterLookup[raster['cluster_id']]['layout']['width'] = 530;
+      }
     }
 
     // console.log('logginng cellsByProbeINs:', this.cellsByProbeIns);
     for (const cluster of this.cellsByProbeIns) {
-      // console.log(`going through the rasterLookup(${cluster['cluster_id']}): `, this.rasterLookup[cluster['cluster_id']]);
       if (!this.rasterLookup[cluster['cluster_id']]) {
         if (this.rasterLookup[Object.keys(this.rasterLookup)[0]]) {
           this.rasterLookup[cluster['cluster_id']] = {
