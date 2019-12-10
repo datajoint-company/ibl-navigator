@@ -113,11 +113,11 @@ reqmap = {
     'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
     'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
     'cluster': ephys.Cluster,
-    'raster': plotting_ephys.Raster,
-    'psth': plotting_ephys.Psth,
+    # 'raster': plotting_ephys.Raster,
+    # 'psth': plotting_ephys.Psth,
     'psthdata': plotting_ephys.PsthDataVarchar,
     'psthtemplate': plotting_ephys.PsthTemplate,
-    'rasterbatch': plotting_ephys.RasterLink,
+    # 'rasterbatch': plotting_ephys.RasterLink,
     'rasterlight': plotting_ephys.RasterLinkS3,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
@@ -262,19 +262,29 @@ def handle_q(subpath, args, proj, **kwargs):
         print('fetching cluster plot info...')
         
         # specify attributes to exclude from the fetch to save bandwidth (in case no "proj" specified)
-        exclude_attrs = ('-cluster_mean_waveform', '-cluster_template_waveform', '-cluster_waveform_duration',
-                         '-cluster_spike_times', '-cluster_spike_depth', '-cluster_spike_amps')
-        q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
-             & args).proj(..., *exclude_attrs)
+        exclude_attrs = ('-cluster_waveform', '-cluster_template_waveform', '-cluster_metics',
+                         '-cluster_spike_times', '-cluster_spike_depths', '-cluster_spike_amps', '-cluster_peak_to_trough')
+        # q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
+        q = (ephys.Cluster & args).proj(..., *exclude_attrs)
         print(q)
     elif subpath == 'rasterlight':
         q = plotting_ephys.RasterLinkS3 & args
         def post_process(ret):
-            return [{k: s3_client.generate_presigned_url(
-                    'get_object', 
-                    Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
-                    ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
-                    for i in ret]
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['plotting_data_link'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
+            # return [{k: s3_client.generate_presigned_url(
+            #         'get_object', 
+            #         Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
+            #         ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
+            #         for i in ret]
     else:
         abort(404)
 

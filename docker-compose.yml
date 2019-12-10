@@ -3,7 +3,11 @@ version: '2.4'
 services:     
   iblapi:
     # build: ./backend
+<<<<<<< HEAD
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.2 # for client deploy
+=======
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.1 # for client deploy
+>>>>>>> 2aaf592d41babf33d38718f3d45bebd8ae634c04
     image: registry.vathes.com/ibl-navigator/iblapi:v0.1-dev2 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
@@ -28,7 +32,11 @@ services:
       - main
   ibl-navigator:
     # build: ./ibl-frontend
+<<<<<<< HEAD
     # image: registry.vathes.com/ibl-navigator/frontend:v0.1 # for client deploy
+=======
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.0 # for client deploy
+>>>>>>> 2aaf592d41babf33d38718f3d45bebd8ae634c04
     image: registry.vathes.com/ibl-navigator/frontend:v0.1-dev2 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:
@@ -48,7 +56,11 @@ services:
       - main
   ibl-node-server:
     # build: ./node_server
+<<<<<<< HEAD
     # image: registry.vathes.com/ibl-navigator/node-server:v0.1 # for client deploy
+=======
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.0 # for client deploy
+>>>>>>> 2aaf592d41babf33d38718f3d45bebd8ae634c04
     image: registry.vathes.com/ibl-navigator/node-server:v0.1-dev2 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:

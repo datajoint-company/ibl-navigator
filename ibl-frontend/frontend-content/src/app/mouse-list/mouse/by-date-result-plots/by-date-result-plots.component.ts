@@ -333,7 +333,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
         }
       });
     this.getRecent3DatesLoadedListener().subscribe((dates) => {
-      this.mousePlotsService.getDateRTContrastPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC' });
+      this.mousePlotsService.getDateRTContrastPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC', '__limit': '3' });
       this.dateRTContrastPlotSubscription = this.mousePlotsService.getDateRTContrastPlotLoadedListener()
         .subscribe((DRTCplotInfo: any) => {
           if (DRTCplotInfo && DRTCplotInfo.length > 0) {
@@ -419,7 +419,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             console.log('date reaction time contrast plot unavailable');
           }
         });
-      this.mousePlotsService.getDateRTTrialNumPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC' });
+      this.mousePlotsService.getDateRTTrialNumPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC', '__limit': '3' });
       this.dateRTTrialNumPlotSubscription = this.mousePlotsService.getDateRTTrialNumPlotLoadedListener()
         .subscribe((plotInfo: any) => {
           if (plotInfo && plotInfo.length > 0) {
