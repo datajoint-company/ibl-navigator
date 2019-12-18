@@ -160,6 +160,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           const size_data = [];
           const color_data = [];
           this.cellsByProbeIns = [];
+          this.sortedCellsByProbeIns = [];
 
           for (let entry of Object.values(cellListData)) {
             if (!this.probeIndices.includes(entry['probe_idx'])) {
@@ -172,10 +173,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               x_data.push(entry['cluster_amp']);
               color_data.push(entry['cluster_id']);
               this.cellsByProbeIns.push(entry);
+              // this.sortedCellsByProbeIns.push(entry);
             }
           }
-
-          console.log('sample data: ', this.cellsByProbeIns[3]);
+          this.sortedCellsByProbeIns = this.cellsByProbeIns;
+          console.log('sample data from cellsByProbeIns: ', this.cellsByProbeIns[3]);
+          console.log('sample data from sortedCellsByProbeIns: ', this.sortedCellsByProbeIns[3]);
 
           // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
           // console.log('x_data is: ', x_data);
@@ -266,7 +269,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     if (this.plot_data && this.plot_data[0]) {
       if (this.plot_data[0]['x'] && this.clickedClusterIndex > -1) {
         for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-          if (this.clickedClusterIndex === i) {
+          // if (this.clickedClusterIndex === i) {
+          if (this.clickedClusterId === i) {
             markerColors.push('rgba(0, 0, 0, 1)'); // black
           } else {
             markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
@@ -309,6 +313,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     const color_data = [];
     this.plot_data = [];
     this.cellsByProbeIns = [];
+    this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
     // console.log('probeInsNum type: ', typeof probeInsNum)
     for (let entry of Object.values(this.cells)) {
@@ -320,6 +325,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         x_data.push(entry['cluster_amp']);
         color_data.push(entry['cluster_id']);
         this.cellsByProbeIns.push(entry);
+        // this.sortedCellsByProbeIns.push(entry);
       }
     }
     // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
@@ -371,7 +377,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   clusterSelectedTable(cluster_id) {
-    for (const [index, cluster] of Object.entries(this.cellsByProbeIns)) {
+    // for (const [index, cluster] of Object.entries(this.cellsByProbeIns)) {
+    for (const [index, cluster] of Object.entries(this.sortedCellsByProbeIns)) {
       if (cluster['cluster_id'] === cluster_id) {
         this.clickedClusterIndex = parseInt(index, 10);
         this.clickedClusterId = cluster_id;
@@ -393,7 +400,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.clickedClusterIndex += 1;
       }
     }
-    this.clickedClusterId = this.cellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
+    // this.clickedClusterId = this.cellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
+    this.clickedClusterId = this.sortedCellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
   }
 
   order_by_event(eventType) {
@@ -521,7 +529,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         pad: 0
       }
     };
-    for (const cluster of this.cellsByProbeIns) {
+    // for (const cluster of this.cellsByProbeIns) {
+    for (const cluster of this.sortedCellsByProbeIns) {
       if (!this.psthLookup[cluster['cluster_id']]) {
         this.psthLookup[cluster['cluster_id']] = {
           data: this.psthLookup[Object.keys(this.psthLookup)[0]] ? deepCopy(this.psthLookup[Object.keys(this.psthLookup)[0]]['data']) : dummyData,
@@ -622,7 +631,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     // console.log('logginng cellsByProbeINs:', this.cellsByProbeIns);
-    for (const cluster of this.cellsByProbeIns) {
+    // for (const cluster of this.cellsByProbeIns) {
+    for (const cluster of this.sortedCellsByProbeIns) {
       if (!this.rasterLookup[cluster['cluster_id']]) {
         if (this.rasterLookup[Object.keys(this.rasterLookup)[0]]) {
           this.rasterLookup[cluster['cluster_id']] = {
@@ -669,7 +679,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     sortData(sort: Sort) {
-      const data = this.cellsByProbeIns.slice();
+      console.log('sorting activated: ', sort);
+      // const data = this.cellsByProbeIns.slice();
+      const data = this.sortedCellsByProbeIns.slice();
       if (!sort.active || sort.direction === '') {
         this.sortedCellsByProbeIns = data;
         return;
