@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 
 import { CellListService } from './cell-list.service';
 
+import { Sort } from '@angular/material/sort';
+
 declare var Plotly: any;
 
 @Component({
@@ -18,7 +20,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   clickedClusterIndex: number;
   cellsByProbeIns = [];
   sortedCellsByProbeIns = [];
-  // probeIndices = [];
 
   plot_data;
   plot_layout;
@@ -51,6 +52,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   eventType;
   sortType;
   probeIndex;
+  probeIndices = [];
 
   showController = false;
 
@@ -145,6 +147,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.clickedClusterIndex = 0;
     this.probeIndex = 0;
 
+
     this.cellListService.retrieveCellList(this.sessionInfo);
     this.cellListSubscription = this.cellListService.getCellListLoadedListener()
       .subscribe((cellListData) => {
@@ -159,6 +162,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.cellsByProbeIns = [];
 
           for (let entry of Object.values(cellListData)) {
+            if (!this.probeIndices.includes(entry['probe_idx'])) {
+              this.probeIndices.push(entry['probe_idx']);
+            }
             if (entry['probe_idx'] === this.probeIndex) {
               id_data.push(entry['cluster_id']);
               size_data.push(entry['channel_id']);
@@ -169,7 +175,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             }
           }
 
-          // console.log('sample data: ', this.cellsByProbeIns[3]);
+          console.log('sample data: ', this.cellsByProbeIns[3]);
 
           // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
           // console.log('x_data is: ', x_data);
@@ -661,9 +667,31 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
       // console.log('raster look up: ', this.rasterLookup);
     }
+
+    sortData(sort: Sort) {
+      const data = this.cellsByProbeIns.slice();
+      if (!sort.active || sort.direction === '') {
+        this.sortedCellsByProbeIns = data;
+        return;
+      }
+
+      this.sortedCellsByProbeIns = data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        switch (sort.active) {
+          case 'cluster_id': return compare(a.cluster_id, b.cluster_id, isAsc);
+          case 'cluster_depth': return compare(a.cluster_depth, b.cluster_depth, isAsc);
+          case 'cluster_amp': return compare(a.cluster_amp, b.cluster_amp, isAsc);
+          default: return 0;
+        }
+      });
+    }
 }
 
 function deepCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
+}
+
+function compare(a: number | string, b: number | string, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
 
