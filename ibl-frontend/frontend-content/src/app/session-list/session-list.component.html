@@ -241,7 +241,8 @@
   <ng-container matColumnDef="nprobe">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Ephys Availability </th>
     <td mat-cell *matCellDef="let session" class="to-center">
-      <div *ngIf="session.nprobe">&#x2705;</div><div *ngIf="!session.nprobe"></div>
+      <!-- <div *ngIf="session.nprobe">&#9889;</div><div *ngIf="!session.nprobe"></div> -->
+      <div *ngIf="session.nprobe"><span class="oi oi-flash"></span></div><div *ngIf="!session.nprobe"></div>
     </td>
   </ng-container>
   

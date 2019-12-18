@@ -560,7 +560,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   toggleNplotStatus() {
-    if (!this.hideMissingPlots) {
+    if (!this.hideMissingPlots && !this.hideMissingEphys) {
       const sessionWithPlots = [];
       for (const session of this.sessions) {
         if (session.nplot === 1) {
@@ -568,6 +568,22 @@ export class SessionListComponent implements OnInit, OnDestroy {
         }
       }
       this.dataSource = new MatTableDataSource(sessionWithPlots);
+    } else if (!this.hideMissingPlots && this.hideMissingEphys) {
+      const sessionWithPlotsAndEphys = [];
+      for (const session of this.sessions) {
+        if (session.nplot === 1 && session.nprobe > 0) {
+          sessionWithPlotsAndEphys.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithPlotsAndEphys);
+    } else if (this.hideMissingPlots && this.hideMissingEphys) {
+      const sessionWithEphys = [];
+      for (const session of this.sessions) {
+        if (session.nprobe > 0) {
+          sessionWithEphys.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithEphys);
     } else {
       this.dataSource = new MatTableDataSource(this.sessions);
     }
@@ -579,7 +595,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   toggleNprobeStatus() {
-    if (!this.hideMissingEphys) {
+    if (!this.hideMissingEphys && !this.hideMissingPlots) {
       const sessionWithEphys = [];
       for (const session of this.sessions) {
         if (session.nprobe > 0) {
@@ -587,6 +603,22 @@ export class SessionListComponent implements OnInit, OnDestroy {
         }
       }
       this.dataSource = new MatTableDataSource(sessionWithEphys);
+    } else if (!this.hideMissingEphys && this.hideMissingPlots) {
+      const sessionWithEphysAndPlots = [];
+      for (const session of this.sessions) {
+        if (session.nprobe > 0 && session.nplot === 1) {
+          sessionWithEphysAndPlots.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithEphysAndPlots);
+    } else if (this.hideMissingEphys && this.hideMissingPlots) {
+      const sessionWithPlots = [];
+      for (const session of this.sessions) {
+        if (session.nplot === 1) {
+          sessionWithPlots.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithPlots);
     } else {
       this.dataSource = new MatTableDataSource(this.sessions);
     }
