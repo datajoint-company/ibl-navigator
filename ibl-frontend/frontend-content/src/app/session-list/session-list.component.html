@@ -164,6 +164,11 @@
         Only show session with plots
       </mat-checkbox>
     </div>
+    <div class="nprobe_status_filter">
+      <mat-checkbox class="nprobe_status_chbox" [checked]="hideMissingEphys" (change)="toggleNprobeStatus()">
+        Only show session with ephys data
+      </mat-checkbox>
+    </div>
   </div>
 
 </form>
@@ -231,6 +236,13 @@
   <ng-container matColumnDef="nplot">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Plot Availability </th>
     <td mat-cell *matCellDef="let session" class="to-center"> {{session.nplot.toString() | i18nSelect: nplotMap}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="nprobe">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Ephys Availability </th>
+    <td mat-cell *matCellDef="let session" class="to-center">
+      <div *ngIf="session.nprobe">&#x2705;</div><div *ngIf="!session.nprobe"></div>
+    </td>
   </ng-container>
   
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

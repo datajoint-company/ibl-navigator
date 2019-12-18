@@ -204,7 +204,11 @@ def handle_q(subpath, args, proj, **kwargs):
             #  nplot='count(distinct(concat(subject_uuid, session_start_time)))',
             nplot='count(dummy)',
             keep_all_rows=True)
-        q = (acquisition.Session() * sess_proj * psych_curve * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+        ephys_data = acquisition.Session().aggr(
+            ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
+            nprobe='count(dummy2)',
+            keep_all_rows=True)
+        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name'))
             & args)

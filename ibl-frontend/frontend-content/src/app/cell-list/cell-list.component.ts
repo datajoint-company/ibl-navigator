@@ -177,8 +177,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             }
           }
           this.sortedCellsByProbeIns = this.cellsByProbeIns;
-          console.log('sample data from cellsByProbeIns: ', this.cellsByProbeIns[3]);
-          console.log('sample data from sortedCellsByProbeIns: ', this.sortedCellsByProbeIns[3]);
+          // console.log('sample data from cellsByProbeIns: ', this.cellsByProbeIns[3]);
+          // console.log('sample data from sortedCellsByProbeIns: ', this.sortedCellsByProbeIns[3]);
 
           // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
           // console.log('x_data is: ', x_data);
@@ -354,7 +354,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
     const rows = element.querySelectorAll('tr');
-    console.log('data in clusterSelectedPlot: ', data);
+    // console.log('data in clusterSelectedPlot: ', data);
     if (data['points'] && data['points'][0]['customdata']) {
       this.clickedClusterId = data['points'][0]['customdata'];
 
@@ -679,7 +679,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     sortData(sort: Sort) {
-      console.log('sorting activated: ', sort);
+      // console.log('sorting activated: ', sort);
       // const data = this.cellsByProbeIns.slice();
       const data = this.sortedCellsByProbeIns.slice();
       if (!sort.active || sort.direction === '') {
