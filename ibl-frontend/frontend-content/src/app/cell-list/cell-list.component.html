@@ -65,19 +65,19 @@
     </div>
   
   
-    <!-- <plotly-plot [data]="raster_data[targetClusterId]" [layout]="raster_layout[targetClusterId]" [config]="raster_config[targetClusterId]"></plotly-plot>  -->
+    <!-- <plotly-plot [data]="raster_data[clickedClusterId]" [layout]="raster_layout[clickedClusterId]" [config]="raster_config[clickedClusterId]"></plotly-plot>  -->
     <div class="row">
-      <div *ngIf="rasterLookup[targetClusterId]">
-        <plotly-plot [data]="rasterLookup[targetClusterId]['data']" [layout]="rasterLookup[targetClusterId]['layout']" [config]="rasterLookup[targetClusterId]['config']"></plotly-plot> 
+      <div *ngIf="rasterLookup[clickedClusterId]">
+        <plotly-plot [data]="rasterLookup[clickedClusterId]['data']" [layout]="rasterLookup[clickedClusterId]['layout']" [config]="rasterLookup[clickedClusterId]['config']"></plotly-plot> 
 
-        <!-- <plotly-plot [data]="rasterLookup[targetClusterId] ? rasterLookup[targetClusterId]['data']: {}" [layout]="rasterLookup[targetClusterId]?rasterLookup[targetClusterId]['layout']: {}" [config]="rasterLookup[targetClusterId]? rasterLookup[targetClusterId]['config']: {}"></plotly-plot>  -->
-        <!-- <div>rasterLookup[{{targetClusterId}}][layout]: {{rasterLookup[targetClusterId]['layout'] | json}}</div> -->
+        <!-- <plotly-plot [data]="rasterLookup[clickedClusterId] ? rasterLookup[clickedClusterId]['data']: {}" [layout]="rasterLookup[clickedClusterId]?rasterLookup[clickedClusterId]['layout']: {}" [config]="rasterLookup[clickedClusterId]? rasterLookup[clickedClusterId]['config']: {}"></plotly-plot>  -->
+        <!-- <div>rasterLookup[{{clickedClusterId}}][layout]: {{rasterLookup[clickedClusterId]['layout'] | json}}</div> -->
       </div>
       
-      <div *ngIf="psthLookup[targetClusterId]">
-        <plotly-plot [data]="psthLookup[targetClusterId]['data']" [layout]="psthLookup[targetClusterId]['layout']" [config]="psthLookup[targetClusterId]['config']"></plotly-plot> 
+      <div *ngIf="psthLookup[clickedClusterId]">
+        <plotly-plot [data]="psthLookup[clickedClusterId]['data']" [layout]="psthLookup[clickedClusterId]['layout']" [config]="psthLookup[clickedClusterId]['config']"></plotly-plot> 
       </div>
-    <!-- <plotly-plot [data]="psth_data[targetClusterId]" [layout]="psth_layout[targetClusterId]" [config]="psth_config[targetClusterId]"></plotly-plot> -->
+    <!-- <plotly-plot [data]="psth_data[clickedClusterId]" [layout]="psth_layout[clickedClusterId]" [config]="psth_config[clickedClusterId]"></plotly-plot> -->
     </div>
 
     <br>

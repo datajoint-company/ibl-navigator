@@ -15,9 +15,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   cells: any;
   session: any;
   clickedClusterId: number;
+  clickedClusterIndex: number;
   cellsByProbeIns = [];
   sortedCellsByProbeIns = [];
-  probeIndices = [];
+  // probeIndices = [];
 
   plot_data;
   plot_layout;
@@ -43,7 +44,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   testPlotLayout;
 
   targetClusterRowInfo = [];
-  targetClusterId;
   targetClusterDepth;
   targetClusterAmp;
   targetProbeIndex;
@@ -141,8 +141,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // initial setting for plots viewer
     this.eventType = 'feedback';
     this.sortType = 'trial_id';
-    this.targetClusterId = 0;
-    this.clickedClusterId = this.targetClusterId;
+    this.clickedClusterId = 0;
+    this.clickedClusterIndex = 0;
     this.probeIndex = 0;
 
     this.cellListService.retrieveCellList(this.sessionInfo);
@@ -159,9 +159,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.cellsByProbeIns = [];
 
           for (let entry of Object.values(cellListData)) {
-            if (!this.probeIndices.includes(entry['probe_idx'])) {
-              this.probeIndices.push(entry['probe_idx']);
-            }
             if (entry['probe_idx'] === this.probeIndex) {
               id_data.push(entry['cluster_id']);
               size_data.push(entry['channel_id']);
@@ -171,7 +168,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               this.cellsByProbeIns.push(entry);
             }
           }
-          // console.log('probe indices: ', this.probeIndices);
+
+          // console.log('sample data: ', this.cellsByProbeIns[3]);
+
           // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
           // console.log('x_data is: ', x_data);
           // console.log('y_data is: ', y_data);
@@ -202,8 +201,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             },
             hovermode: 'closest'
           };
-
-          
         }
       });
     
@@ -261,9 +258,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('this.clicked cluster id: ', this.clickedClusterId);
     const markerColors = [];
     if (this.plot_data && this.plot_data[0]) {
-      if (this.plot_data[0]['x'] && this.clickedClusterId > -1) {
+      if (this.plot_data[0]['x'] && this.clickedClusterIndex > -1) {
         for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-          if (this.clickedClusterId === i) {
+          if (this.clickedClusterIndex === i) {
             markerColors.push('rgba(0, 0, 0, 1)'); // black
           } else {
             markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
@@ -337,8 +334,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
       }
     }];
-    this.targetClusterId = 0;
-    this.clickedClusterId = this.targetClusterId;
+    this.clickedClusterId = 0;
     // console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
     this.order_by_event(this.eventType);
   }
@@ -346,39 +342,52 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
     const rows = element.querySelectorAll('tr');
-    this.targetClusterId = this.clickedClusterId;
+    console.log('data in clusterSelectedPlot: ', data);
     if (data['points'] && data['points'][0]['customdata']) {
       this.clickedClusterId = data['points'][0]['customdata'];
-      rows[this.clickedClusterId].scrollIntoView({
-                                      behavior: 'smooth',
-                                      block: 'center'});
+
+      let rowIndex = 0;
+      for (const row of rows) {
+        if (this.clickedClusterId === parseInt(row['innerText'].split('	')[0], 10)) {
+          this.clickedClusterIndex = rowIndex;
+          row.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+        rowIndex += 1;
+      }
+      // rows[this.clickedClusterId].scrollIntoView({
+      //                                 behavior: 'smooth',
+      //                                 block: 'center'});
     }
 
   }
 
   clusterSelectedTable(cluster_id) {
-    const element = this.el_nav.nativeElement.children[1];
-    // console.log(cluster_id);
-    const rows = element.querySelectorAll('tr');
-    this.clickedClusterId = cluster_id;
-    this.targetClusterId = this.clickedClusterId;
+    for (const [index, cluster] of Object.entries(this.cellsByProbeIns)) {
+      if (cluster['cluster_id'] === cluster_id) {
+        this.clickedClusterIndex = parseInt(index, 10);
+        this.clickedClusterId = cluster_id;
+      }
+    }
+    // this.clickedClusterId = cluster_id;
 
   }
 
   navigate_cell_plots(event, direction) {
     // console.log('going', direction, 'the list of cells');
     if (direction === 'up') {
-      if (this.clickedClusterId - 1 > -1) {
-        this.clickedClusterId -= 1;
-        this.targetClusterId = this.clickedClusterId;
+      if (this.clickedClusterIndex - 1 > -1) {
+        this.clickedClusterIndex -= 1;
       }
     }
     if (direction === 'down') {
-      if (this.clickedClusterId + 1 < this.plot_data[0]['x'].length + 1) {
-        this.clickedClusterId += 1;
-        this.targetClusterId = this.clickedClusterId;
+      if (this.clickedClusterIndex + 1 < this.plot_data[0]['x'].length) {
+        this.clickedClusterIndex += 1;
       }
     }
+    this.clickedClusterId = this.cellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
   }
 
   order_by_event(eventType) {
