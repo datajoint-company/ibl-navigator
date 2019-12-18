@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 
 import { CellListService } from './cell-list.service';
 
+import { Sort } from '@angular/material/sort';
+
 declare var Plotly: any;
 
 @Component({
@@ -15,9 +17,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   cells: any;
   session: any;
   clickedClusterId: number;
+  clickedClusterIndex: number;
   cellsByProbeIns = [];
   sortedCellsByProbeIns = [];
-  probeIndices = [];
 
   plot_data;
   plot_layout;
@@ -43,7 +45,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   testPlotLayout;
 
   targetClusterRowInfo = [];
-  targetClusterId;
   targetClusterDepth;
   targetClusterAmp;
   targetProbeIndex;
@@ -51,6 +52,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   eventType;
   sortType;
   probeIndex;
+  probeIndices = [];
 
   showController = false;
 
@@ -141,9 +143,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // initial setting for plots viewer
     this.eventType = 'feedback';
     this.sortType = 'trial_id';
-    this.targetClusterId = 0;
-    this.clickedClusterId = this.targetClusterId;
+    this.clickedClusterId = 0;
+    this.clickedClusterIndex = 0;
     this.probeIndex = 0;
+
 
     this.cellListService.retrieveCellList(this.sessionInfo);
     this.cellListSubscription = this.cellListService.getCellListLoadedListener()
@@ -157,6 +160,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           const size_data = [];
           const color_data = [];
           this.cellsByProbeIns = [];
+          this.sortedCellsByProbeIns = [];
 
           for (let entry of Object.values(cellListData)) {
             if (!this.probeIndices.includes(entry['probe_idx'])) {
@@ -169,9 +173,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               x_data.push(entry['cluster_amp']);
               color_data.push(entry['cluster_id']);
               this.cellsByProbeIns.push(entry);
+              // this.sortedCellsByProbeIns.push(entry);
             }
           }
-          // console.log('probe indices: ', this.probeIndices);
+          this.sortedCellsByProbeIns = this.cellsByProbeIns;
+          // console.log('sample data from cellsByProbeIns: ', this.cellsByProbeIns[3]);
+          // console.log('sample data from sortedCellsByProbeIns: ', this.sortedCellsByProbeIns[3]);
+
           // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
           // console.log('x_data is: ', x_data);
           // console.log('y_data is: ', y_data);
@@ -202,8 +210,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             },
             hovermode: 'closest'
           };
-
-          
         }
       });
     
@@ -261,8 +267,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('this.clicked cluster id: ', this.clickedClusterId);
     const markerColors = [];
     if (this.plot_data && this.plot_data[0]) {
-      if (this.plot_data[0]['x'] && this.clickedClusterId > -1) {
+      if (this.plot_data[0]['x'] && this.clickedClusterIndex > -1) {
         for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
+          // if (this.clickedClusterIndex === i) {
           if (this.clickedClusterId === i) {
             markerColors.push('rgba(0, 0, 0, 1)'); // black
           } else {
@@ -306,6 +313,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     const color_data = [];
     this.plot_data = [];
     this.cellsByProbeIns = [];
+    this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
     // console.log('probeInsNum type: ', typeof probeInsNum)
     for (let entry of Object.values(this.cells)) {
@@ -317,6 +325,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         x_data.push(entry['cluster_amp']);
         color_data.push(entry['cluster_id']);
         this.cellsByProbeIns.push(entry);
+        // this.sortedCellsByProbeIns.push(entry);
       }
     }
     // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
@@ -337,8 +346,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
       }
     }];
-    this.targetClusterId = 0;
-    this.clickedClusterId = this.targetClusterId;
+    this.clickedClusterId = 0;
     // console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
     this.order_by_event(this.eventType);
   }
@@ -346,39 +354,54 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
     const rows = element.querySelectorAll('tr');
-    this.targetClusterId = this.clickedClusterId;
+    // console.log('data in clusterSelectedPlot: ', data);
     if (data['points'] && data['points'][0]['customdata']) {
       this.clickedClusterId = data['points'][0]['customdata'];
-      rows[this.clickedClusterId].scrollIntoView({
-                                      behavior: 'smooth',
-                                      block: 'center'});
+
+      let rowIndex = 0;
+      for (const row of rows) {
+        if (this.clickedClusterId === parseInt(row['innerText'].split('	')[0], 10)) {
+          this.clickedClusterIndex = rowIndex;
+          row.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+        rowIndex += 1;
+      }
+      // rows[this.clickedClusterId].scrollIntoView({
+      //                                 behavior: 'smooth',
+      //                                 block: 'center'});
     }
 
   }
 
   clusterSelectedTable(cluster_id) {
-    const element = this.el_nav.nativeElement.children[1];
-    // console.log(cluster_id);
-    const rows = element.querySelectorAll('tr');
-    this.clickedClusterId = cluster_id;
-    this.targetClusterId = this.clickedClusterId;
+    // for (const [index, cluster] of Object.entries(this.cellsByProbeIns)) {
+    for (const [index, cluster] of Object.entries(this.sortedCellsByProbeIns)) {
+      if (cluster['cluster_id'] === cluster_id) {
+        this.clickedClusterIndex = parseInt(index, 10);
+        this.clickedClusterId = cluster_id;
+      }
+    }
+    // this.clickedClusterId = cluster_id;
 
   }
 
   navigate_cell_plots(event, direction) {
     // console.log('going', direction, 'the list of cells');
     if (direction === 'up') {
-      if (this.clickedClusterId - 1 > -1) {
-        this.clickedClusterId -= 1;
-        this.targetClusterId = this.clickedClusterId;
+      if (this.clickedClusterIndex - 1 > -1) {
+        this.clickedClusterIndex -= 1;
       }
     }
     if (direction === 'down') {
-      if (this.clickedClusterId + 1 < this.plot_data[0]['x'].length + 1) {
-        this.clickedClusterId += 1;
-        this.targetClusterId = this.clickedClusterId;
+      if (this.clickedClusterIndex + 1 < this.plot_data[0]['x'].length) {
+        this.clickedClusterIndex += 1;
       }
     }
+    // this.clickedClusterId = this.cellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
+    this.clickedClusterId = this.sortedCellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
   }
 
   order_by_event(eventType) {
@@ -506,7 +529,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         pad: 0
       }
     };
-    for (const cluster of this.cellsByProbeIns) {
+    // for (const cluster of this.cellsByProbeIns) {
+    for (const cluster of this.sortedCellsByProbeIns) {
       if (!this.psthLookup[cluster['cluster_id']]) {
         this.psthLookup[cluster['cluster_id']] = {
           data: this.psthLookup[Object.keys(this.psthLookup)[0]] ? deepCopy(this.psthLookup[Object.keys(this.psthLookup)[0]]['data']) : dummyData,
@@ -607,7 +631,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     // console.log('logginng cellsByProbeINs:', this.cellsByProbeIns);
-    for (const cluster of this.cellsByProbeIns) {
+    // for (const cluster of this.cellsByProbeIns) {
+    for (const cluster of this.sortedCellsByProbeIns) {
       if (!this.rasterLookup[cluster['cluster_id']]) {
         if (this.rasterLookup[Object.keys(this.rasterLookup)[0]]) {
           this.rasterLookup[cluster['cluster_id']] = {
@@ -652,9 +677,33 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
       // console.log('raster look up: ', this.rasterLookup);
     }
+
+    sortData(sort: Sort) {
+      // console.log('sorting activated: ', sort);
+      // const data = this.cellsByProbeIns.slice();
+      const data = this.sortedCellsByProbeIns.slice();
+      if (!sort.active || sort.direction === '') {
+        this.sortedCellsByProbeIns = data;
+        return;
+      }
+
+      this.sortedCellsByProbeIns = data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        switch (sort.active) {
+          case 'cluster_id': return compare(a.cluster_id, b.cluster_id, isAsc);
+          case 'cluster_depth': return compare(a.cluster_depth, b.cluster_depth, isAsc);
+          case 'cluster_amp': return compare(a.cluster_amp, b.cluster_amp, isAsc);
+          default: return 0;
+        }
+      });
+    }
 }
 
 function deepCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
+}
+
+function compare(a: number | string, b: number | string, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
 

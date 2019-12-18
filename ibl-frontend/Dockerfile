@@ -70,10 +70,9 @@ RUN set -ex \
 # CMD [ "node" ]
 
 #######
+RUN apt-get update
 
 COPY ./frontend-content /frontend
-
-RUN apt-get update
 
 RUN \
     cd /frontend && \

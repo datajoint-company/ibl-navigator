@@ -53,10 +53,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
   session_menu: any;
 
   hideMissingPlots = false;
+  hideMissingEphys = false;
   // setup for the table columns
   displayedColumns: string[] = ['session_lab', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
-                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'session_project'];
+                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project'];
   nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
@@ -559,7 +560,58 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   toggleNplotStatus() {
-    if (!this.hideMissingPlots) {
+    if (!this.hideMissingPlots && !this.hideMissingEphys) {
+      const sessionWithPlots = [];
+      for (const session of this.sessions) {
+        if (session.nplot === 1) {
+          sessionWithPlots.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithPlots);
+    } else if (!this.hideMissingPlots && this.hideMissingEphys) {
+      const sessionWithPlotsAndEphys = [];
+      for (const session of this.sessions) {
+        if (session.nplot === 1 && session.nprobe > 0) {
+          sessionWithPlotsAndEphys.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithPlotsAndEphys);
+    } else if (this.hideMissingPlots && this.hideMissingEphys) {
+      const sessionWithEphys = [];
+      for (const session of this.sessions) {
+        if (session.nprobe > 0) {
+          sessionWithEphys.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithEphys);
+    } else {
+      this.dataSource = new MatTableDataSource(this.sessions);
+    }
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data, header) => data[header];
+    this.dataSource.paginator = this.paginator;
+
+    this.hideMissingPlots = !this.hideMissingPlots;
+  }
+
+  toggleNprobeStatus() {
+    if (!this.hideMissingEphys && !this.hideMissingPlots) {
+      const sessionWithEphys = [];
+      for (const session of this.sessions) {
+        if (session.nprobe > 0) {
+          sessionWithEphys.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithEphys);
+    } else if (!this.hideMissingEphys && this.hideMissingPlots) {
+      const sessionWithEphysAndPlots = [];
+      for (const session of this.sessions) {
+        if (session.nprobe > 0 && session.nplot === 1) {
+          sessionWithEphysAndPlots.push(session);
+        }
+      }
+      this.dataSource = new MatTableDataSource(sessionWithEphysAndPlots);
+    } else if (this.hideMissingEphys && this.hideMissingPlots) {
       const sessionWithPlots = [];
       for (const session of this.sessions) {
         if (session.nplot === 1) {
@@ -574,7 +626,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.dataSource.sortingDataAccessor = (data, header) => data[header];
     this.dataSource.paginator = this.paginator;
 
-    this.hideMissingPlots = !this.hideMissingPlots;
+    this.hideMissingEphys = !this.hideMissingEphys;
   }
 
 }

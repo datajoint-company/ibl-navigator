@@ -196,6 +196,11 @@ mat-checkbox.mouse_gender_menu_chbox {
     margin-top: 7px;
 }
 
+.nprobe_status_filter {
+    margin-left: 15px;
+    margin-top: 7px;
+}
+
 /* for different screen sizes */
 /* XS and S (768px and down) */
 @media only screen and (max-width: 768px) {
