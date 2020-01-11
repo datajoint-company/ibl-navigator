@@ -48,8 +48,8 @@ services:
       - main
   ibl-node-server:
     # build: ./node_server
-    # image: registry.vathes.com/ibl-navigator/node-server:v0.2 # for client deploy
-    image: registry.vathes.com/ibl-navigator/node-server:v0.1-dev2 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.3 # for client deploy
+    image: registry.vathes.com/ibl-navigator/node-server:v0.1-dev3 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:
     - NODE_ENV=development
