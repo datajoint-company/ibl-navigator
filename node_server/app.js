@@ -402,21 +402,19 @@ app.post('/plot/cluster', checkAuth, (req, res) => {
     const timeX = new Date()
     console.log('requesting cluster list at time: ', timeX, 'request: ', req.body);
     
-    res.send({})
-    console.log('just sent back an empty dummy body for cluster request');
-    // request.post(flask_backend + '/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
-    //     if (error) {
-    //         console.error('error [cluster nav list fetch]: ', error);
-    //         res.status(500).end();
-    //         // res.status(500).send(error.toString());
-    //         return;
-    //     }
-    //     const timeY = new Date()
-    //     console.log('cluster list took ', timeY - timeX, ' ms')
-    //     console.log('printing body for cluster: ', body);
-    //     res.send(body);
-    //     console.log('cluster body just got sent back');
-    // })
+    request.post(flask_backend + '/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [cluster nav list fetch]: ', error);
+            res.status(500).end();
+            // res.status(500).send(error.toString());
+            return;
+        }
+        const timeY = new Date()
+        console.log('cluster list took ', timeY - timeX, ' ms')
+        console.log('printing body for cluster: ', body);
+        res.send(body);
+        console.log('cluster body just got sent back');
+    })
 })
 
 app.post('/plot/raster', checkAuth, (req, res) => {
@@ -458,7 +456,7 @@ app.post('/plot/rasterbatch', checkAuth, (req, res) => {
         const timeZ = new Date()
         console.log('rasters batch took ', timeZ - timeA, ' ms to receive from backend')
         console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
-        console.log('printing body for raster: ', body);
+        console.log('printing body length for raster: ', body.length);
         res.send(body);
         console.log('raster batch just got sent back');
     })
@@ -477,7 +475,7 @@ app.post('/plot/psthbatch', checkAuth, (req, res) => {
         const timeZ = new Date()
         console.log('psth data batch took ', timeZ - timeA, ' ms to receive from backend')
         console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
-        console.log('printing body for psth: ', body);
+        console.log('printing body for psth: ', body.length);
         res.send(body);
         console.log('psth batch just got sent back');
     })
