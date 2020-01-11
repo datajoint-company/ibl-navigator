@@ -3,8 +3,8 @@ version: '2.4'
 services:     
   iblapi:
     # build: ./backend
-    # image: registry.vathes.com/ibl-navigator/iblapi:v0.3 # for client deploy
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.1-dev3 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.4 # for client deploy
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.1-dev4 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
     - DJ_USER=maho
