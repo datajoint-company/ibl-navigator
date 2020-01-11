@@ -404,7 +404,7 @@ app.post('/plot/cluster', checkAuth, (req, res) => {
     
     request.post(flask_backend + '/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error [cluster nav list fetch]: ', error);
+            console.log('error [cluster nav list fetch]: ', error);
             res.status(500).end();
             // res.status(500).send(error.toString());
             return;
