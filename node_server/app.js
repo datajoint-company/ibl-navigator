@@ -10,6 +10,9 @@ const jwt = require('jsonwebtoken');
 const checkAuth = require('./middleware/check-auth');
 // const serveStatic = require('serve-static')
 
+request.debug = true;
+
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -402,9 +405,12 @@ app.post('/plot/cluster', checkAuth, (req, res) => {
     const timeX = new Date()
     console.log('requesting cluster list at time: ', timeX, 'request: ', req.body);
     
-    request.post(flask_backend + '/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/clusternavplot', { form: req.body, timeout: 120000 }, function (error, httpResponse, body) {
+        console.log('requested clusternav info backend api and something came back');
         if (error) {
             console.error('error [cluster nav list fetch]: ', error);
+            console.log('error code: ', error.code);
+            console.log('error was connection timeout: ', error.connect);
             res.status(500).end();
             // res.status(500).send(error.toString());
             return;
