@@ -9,12 +9,21 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent implements OnInit {
   // title = 'pipeline-viewer';
+  smallScreen: boolean;
   isLoggedIn = false;
+  menuCollapsed: boolean;
   userIsAuthenticated;
   authListenerSubscription = new Subscription();
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
+    if (window.innerWidth < 431) {
+      this.menuCollapsed = true;
+      this.smallScreen = true;
+    } else {
+      this.smallScreen = false;
+      this.menuCollapsed = false;
+    }
     this.authListenerSubscription = this.authService.getAuthStatusListener()
       .subscribe(loginStatus => {
         this.userIsAuthenticated = loginStatus[0];

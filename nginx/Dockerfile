@@ -13,3 +13,11 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 # COPY ./fullchain.pem /etc/letsencrypt/live/testdev.datajoint.io/fullchain.pem
 # COPY ./privkey.pem /etc/letsencrypt/live/testdev.datajoint.io/privkey.pem
+
+# HEALTHCHECK \ # from public demo
+#     --interval=1s \
+#     --timeout=5s \
+#     --retries=300 \
+#     CMD \
+#         wget --no-check-certificate --quiet --tries=1 --spider https://localhost:443 || exit 1
+#         # wget --quiet --tries=20 --spider https://testdev.datajoint.io:443 || exit 1

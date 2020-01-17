@@ -14,6 +14,7 @@ declare var Plotly: any;
 export class FitParPlotsComponent implements OnInit, OnDestroy {
   d3 = Plotly.d3;
   fitParPlotsAreAvailable: boolean;
+  plotLoading: boolean;
   dataLen: number;
   newScreenWidth;
   plotConfig = {
@@ -21,7 +22,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
@@ -171,6 +172,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const screenSizeInitial = window.innerWidth;
     const element = this.elem.nativeElement;
 
@@ -197,7 +199,11 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
               this.mediumScreenDataStyle['line.width'].push('0.25');
               this.mediumLargeScreenDataStyle['line.width'].push('0.35');
               this.defaultScreenDataStyle['line.width'].push('0.5');
-            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
+            } else if (datum['name'].startsWith('first day') || datum['name'].startsWith('mouse became')) {
+              const text = `${datum['x'][0]}: ${datum['name']}`;
+              datum['text'] = text;
+              datum['hoverinfo'] = 'text';
+
               this.mediumScreenDataStyle['line.width'].push('1');
               this.mediumLargeScreenDataStyle['line.width'].push('1.5');
               this.defaultScreenDataStyle['line.width'].push('2');
@@ -207,6 +213,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
               this.defaultScreenDataStyle['line.width'].push('1');
             }
           }
+          this.plotLoading = false;
           this.fitParPlotsAreAvailable = true;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_fit parameters_plot';
@@ -223,6 +230,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
+          this.plotLoading = false;
           this.fitParPlotsAreAvailable = false;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
           console.log('fit parameters plots not available');

@@ -3,10 +3,14 @@ version: '2.4'
 services:     
   iblapi:
     # build: ./backend
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.0-dev5 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.4 # for client deploy
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.1-dev4 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
     - DJ_USER=maho
+    # - DJ_USER=ibl-navigator # for public demo
     - DJ_HOST=datajoint.internationalbrainlab.org
+    # - DJ_HOST=datajoint-public.internationalbrainlab.org # for public demo
     - AWS_DEFAULT_REGION=us-east-1
     - WORKER_COUNT=4
     env_file: ./.env
@@ -27,12 +31,13 @@ services:
     #cpu_period: 100ms
   ibl-navigator:
     # build: ./ibl-frontend
-    image: registry.vathes.com/ibl-navigator/frontend:v0.0-dev5 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.2 # for client deploy
+    image: registry.vathes.com/ibl-navigator/frontend:v0.1-dev3 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:
-    # - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
     - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy
-    # - PROD_NODE_API=https://djcompute.internationalbrainlab.org/api # for client deploy
-    # - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org # for client deploy
+    # - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org/api # for client deploy
+    # - PROD_NODE_BACKEND=https://data.internationalbrainlab.org/api # for public demo deploy
     # - PROD_NODE_BACKEND=http://localhost:3333
     # - DEV_NODE_API=http://localhost:9000/api
     # - DEV_NODE_BACKEND=http://localhost:9000
@@ -46,7 +51,9 @@ services:
       - main
   ibl-node-server:
     # build: ./node_server
-    image: registry.vathes.com/ibl-navigator/node-server:v0.0-dev7 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.3 # for client deploy
+    image: registry.vathes.com/ibl-navigator/node-server:v0.1-dev3 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:
     - NODE_ENV=development
     - DEMO_USERNAME=ibluser
@@ -65,14 +72,16 @@ services:
       - main
   letsencrypt:
     image: linuxserver/letsencrypt:amd64-0.38.0-ls62
+    # image: linuxserver/letsencrypt:amd64-0.38.0-ls62 # from publicdemo
     environment:
       - PUID=1000
       - PGID=1000
       - EMAIL=admin@vathes.com
       - URL=datajoint.io # for testdev deploy
+      # - URL=internationalbrainlab.org # for client or public demo deploy
       - SUBDOMAINS=testdev # for testdev deploy
-      # - URL=internationalbrainlab.org # for client deploy
       # - SUBDOMAINS=djcompute # for client deploy
+      # - SUBDOMAINS=data # for public demo deploy
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
       - STAGING=true # UNcomment for testdev
@@ -103,10 +112,15 @@ services:
     #     condition: service_healthy
   nginx:
     # build: ./nginx
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev6
+    # image: registry.vathes.com/ibl-navigator/nginx:v0.1 # for client deploy
+    image: registry.vathes.com/ibl-navigator/nginx:v0.1-dev2
+    # image: registry.vathes.com/ibl-navigator/nginx:v0.0-public2 # for public deploy ?
     environment:
       - URL=datajoint.io # for testdev deploy
+      # - URL=internationalbrainlab.org # for client or public demo deploy
       - SUBDOMAINS=testdev # for testdev deploy
+      # - SUBDOMAINS=djcompute # for client deploy
+      # - SUBDOMAINS=data # for public demo deploy
       - NODE_SERVER=http://ibl-node-server:3333
       - FRONTEND_SERVER=http://ibl-navigator:8080
       - LETSENCRYPT_SERVER=http://letsencrypt:80

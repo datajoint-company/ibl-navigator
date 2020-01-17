@@ -66,7 +66,7 @@ const appRoutes: Routes = [
   { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'plot', component: ViewSamplePlotsComponent },
-  { path: 'cells', component: CellListComponent },
+  // { path: 'cells', component: CellListComponent },
   { path: 'water-weight', component: WaterWeightPlotComponent},
   {
     path: 'mouse/:mouseUUID',
@@ -80,21 +80,21 @@ const appRoutes: Routes = [
       canActivateChild: [AuthGuard],
       component: MouseListComponent
   },
-  {
-    path: 'cell',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    children: [{
-      path: ':mouseID',
-      children: [{
-        path: ':sessionTime',
-        children: [{
-          path: ':clusterID',
-          component: CellComponent
-        }]
-      }]
-    }]
-  },
+  // {
+  //   path: 'cell',
+  //   canActivate: [AuthGuard],
+  //   canActivateChild: [AuthGuard],
+  //   children: [{
+  //     path: ':mouseID',
+  //     children: [{
+  //       path: ':sessionTime',
+  //       children: [{
+  //         path: ':clusterID',
+  //         component: CellComponent
+  //       }]
+  //     }]
+  //   }]
+  // },
   {
     path: 'session/:sessionID',
     canActivate: [AuthGuard],
@@ -112,10 +112,6 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
     component: DailySummaryComponent
   },
-  {
-    path: 'testRaster',
-    component: ViewSamplePlotsComponent
-  }
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
   // { path: '**', redirectTo: '/not-found' }
 ];

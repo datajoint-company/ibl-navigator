@@ -46,9 +46,12 @@
  
   .table-container {
     width: 100vw;
-    overflow-x: scroll;
+    overflow-x: hidden;
     border: 2px solid rgb(219, 219, 219);
     border-right: 1px solid transparent;   
+  }
+  .table-container:hover {
+    overflow-x: auto;
   }
 
   ::-webkit-scrollbar {
@@ -70,8 +73,14 @@
     table-layout: fixed;
   }
  
-  table tr td {
-      overflow-x: scroll;
+  table tr td,
+  table tr td * {
+      overflow-x: hidden;
+  }
+
+  table tr td:hover,
+  table tr td *:hover {
+      overflow-x: auto;
   }
 
   .table-container {
@@ -87,7 +96,11 @@
   }
  
   table tr td {
-      overflow-x: scroll;
+      overflow-x: hidden;
+  }
+
+  table tr td:hover {
+      overflow-x: auto;
   }
 
   .table-container {
@@ -101,7 +114,11 @@
     table-layout: fixed;
   }
   table tr td {
-      overflow-x: scroll;
+      overflow-x: hidden;
+  }
+
+  table tr td:hover {
+      overflow-x: auto;
   }
 
 }

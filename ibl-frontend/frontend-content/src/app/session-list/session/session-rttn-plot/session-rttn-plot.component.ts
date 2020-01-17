@@ -14,11 +14,12 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
   newScreenWidth;
   plotInfo = [];
   RTTNPlotIsAvailable: boolean;
+  plotLoading: boolean;
   plotConfig = {
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
@@ -112,6 +113,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const element = this.el.nativeElement;
     const initialScreenSize = window.innerWidth;
     const img_png = this.d3.select('#SRTTNpngExport');
@@ -124,6 +126,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
           // console.log('subject_uuid: ', rttnPlotData[0]['subject_uuid']);
           // console.log('session_start_time: ', rttnPlotData[0]['session_start_time']);
           this.plotInfo = rttnPlotData[0]['plotting_data'];
+          this.plotLoading = false;
           this.RTTNPlotIsAvailable = true;
           this.RTTNPlotAvailability.emit(this.RTTNPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = rttnPlotData[0]['session_start_time'].split('T').join('_') + '_' + this.sessionData['subject_nickname'] + '_session_RTTN_plot'
@@ -148,7 +151,8 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('psych plot not available for this session');
+          // console.log('psych plot not available for this session');
+          this.plotLoading = false;
           this.RTTNPlotIsAvailable = false;
           this.RTTNPlotAvailability.emit(this.RTTNPlotIsAvailable);
         }
@@ -162,7 +166,7 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
   }
 
   plotClicked(event) {
-    console.log('session RTTN plot clicked');
+    // console.log('session RTTN plot clicked');
     this.openSRTTNplot.emit({ showSRTTNplot: true });
   }
 

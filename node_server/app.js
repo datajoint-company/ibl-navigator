@@ -10,6 +10,9 @@ const jwt = require('jsonwebtoken');
 const checkAuth = require('./middleware/check-auth');
 // const serveStatic = require('serve-static')
 
+request.debug = false;
+
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -188,7 +191,9 @@ app.post('/sessions', checkAuth, (req, res) => {
     
     request.post(flask_backend + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [session list fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         // console.log(body);
         res.send(body);
@@ -250,7 +255,9 @@ app.post('/mice', checkAuth, (req, res) => {
     // });
     request.post(flask_backend + '/v0/_q/subjpage', {form: req.body}, function(error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [mice list fetch]: ', error);
+            res.status(500).end();
+            return;
         }
 
         res.send(body);
@@ -262,7 +269,9 @@ app.post('/summary', checkAuth, (req, res) => {
 
     request.post(flask_backend + '/v0/_q/dailysummary', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [daily summary fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         // console.log(body);
         res.send(body);
@@ -272,7 +281,9 @@ app.post('/summary', checkAuth, (req, res) => {
 app.post('/plot/session-psych-plotData', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/sessionpsych', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [session psych plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -282,7 +293,9 @@ app.post('/plot/session-RTC-plotData', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/sessionRTC', { form: req.body }, function (error, httpResponse, body) {
 
         if (error) {
-            console.error('error: ', error);
+            console.error('error [session RTC plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -291,7 +304,9 @@ app.post('/plot/session-RTC-plotData', checkAuth, (req, res) => {
 app.post('/plot/session-RTTN-plotData', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/sessionRTTN', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [session RTTN plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -300,7 +315,9 @@ app.post('/plot/session-RTTN-plotData', checkAuth, (req, res) => {
 app.post('/plot/waterWeightPlot', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/waterweight', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [water weight plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -309,7 +326,9 @@ app.post('/plot/waterWeightPlot', checkAuth, (req, res) => {
 app.post('/plot/trialCountsSessionDurationPlot', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/TCsessionduration', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [TCSD plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         // let info = JSON.parse(body)
         res.send(body);
@@ -319,7 +338,9 @@ app.post('/plot/trialCountsSessionDurationPlot', checkAuth, (req, res) => {
 app.post('/plot/performanceReactionTimePlot', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/performanceRT', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [PRT plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -328,7 +349,9 @@ app.post('/plot/performanceReactionTimePlot', checkAuth, (req, res) => {
 app.post('/plot/contrastHeatmapPlot', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/contrastheatmap', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [contrast heatmap plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -337,7 +360,9 @@ app.post('/plot/contrastHeatmapPlot', checkAuth, (req, res) => {
 app.post('/plot/fitParametersPlot', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/fitpars', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [fit paramter plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -346,7 +371,9 @@ app.post('/plot/fitParametersPlot', checkAuth, (req, res) => {
 app.post('/plot/datePsychCurvePlot', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/datepsych', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [by date psych curve plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -355,7 +382,9 @@ app.post('/plot/datePsychCurvePlot', checkAuth, (req, res) => {
 app.post('/plot/dateReactionTimeContrastPlot', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/dateRTcontrast', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [by date RTC plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -364,7 +393,9 @@ app.post('/plot/dateReactionTimeContrastPlot', checkAuth, (req, res) => {
 app.post('/plot/dateReactionTimeTrialNumberPlot', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/dateRTtrial', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [by date RTTN plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -372,14 +403,23 @@ app.post('/plot/dateReactionTimeTrialNumberPlot', checkAuth, (req, res) => {
 
 app.post('/plot/cluster', checkAuth, (req, res) => {
     const timeX = new Date()
-    console.log('requesting cluster list: ', timeX);
-    request.post(flask_backend + '/v0/_q/clusternavplot', { form: req.body }, function (error, httpResponse, body) {
+    // console.log('requesting cluster list at time: ', timeX, 'request: ', req.body);
+    
+    request.post(flask_backend + '/v0/_q/clusternavplot', { form: req.body, timeout: 120000 }, function (error, httpResponse, body) {
+        // console.log('requested clusternav info backend api and something came back');
         if (error) {
-            console.error('error: ', error);
+            console.error('error [cluster nav list fetch]: ', error);
+            console.log('error code: ', error.code);
+            console.log('error was connection timeout: ', error.connect);
+            res.status(500).end();
+            // res.status(500).send(error.toString());
+            return;
         }
         const timeY = new Date()
         console.log('cluster list took ', timeY - timeX, ' ms')
+        console.log('printing body length for cluster: ', body.length);
         res.send(body);
+        // console.log('cluster body just got sent back');
     })
 })
 
@@ -388,7 +428,9 @@ app.post('/plot/raster', checkAuth, (req, res) => {
     console.log('requesting rasters to backend: ', timeA);
     request.post(flask_backend + '/v0/raster', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error  [raster(old) plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         const timeB = new Date()
         console.log('rasters took ', timeB - timeA, ' ms to receive from backend')
@@ -399,7 +441,9 @@ app.post('/plot/raster', checkAuth, (req, res) => {
 app.post('/plot/psth', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/psth', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [psth(old) plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         res.send(body);
     })
@@ -408,40 +452,50 @@ app.post('/plot/psth', checkAuth, (req, res) => {
 app.post('/plot/rasterbatch', checkAuth, (req, res) => {
     // req.setTimeout(60000);
     const timeA = new Date()
-    console.log('requesting rasters light batch to backend: ', timeA);
+    console.log('requesting rasters light batch to backend at time: ', timeA, 'request: ', req.body);
     request.post(flask_backend + '/v0/_q/rasterlight', { form: req.body, timeout: 180000 }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [raster batch plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         const timeZ = new Date()
         console.log('rasters batch took ', timeZ - timeA, ' ms to receive from backend')
         console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        console.log('printing body length for raster: ', body.length);
         res.send(body);
+        // console.log('raster batch just got sent back');
     })
 })
 
 app.post('/plot/psthbatch', checkAuth, (req, res) => {
     // req.setTimeout(60000);
     const timeA = new Date()
-    console.log('requesting psth batch to backend: ', timeA);
+    console.log('requesting psth batch to backend at time: ', timeA, 'request: ', req.body);
     request.post(flask_backend + '/v0/psthdata', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [psth batch plot fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         const timeZ = new Date()
         console.log('psth data batch took ', timeZ - timeA, ' ms to receive from backend')
         console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        console.log('printing body length for psth: ', body.length);
         res.send(body);
+        // console.log('psth batch just got sent back');
     })
 })
 app.get('/plot/psthtemplate', checkAuth, (req, res) => {
     const time1 = new Date()
     request.get(flask_backend + '/v0/psthtemplate', function (error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [psth plot template fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         const time2 = new Date()
-        console.log('psth template took ', time2 - time1, ' ms to receive from backend')
+        // console.log('psth template took ', time2 - time1, ' ms to receive from backend')
         res.send(body);
     })
 })
@@ -449,10 +503,12 @@ app.get('/plot/rastertemplate', checkAuth, (req, res) => {
     const time1 = new Date()
     request.get(flask_backend + '/v0/rastertemplate', function(error, httpResponse, body) {
         if (error) {
-            console.error('error: ', error);
+            console.error('error [raster plot template fetch]: ', error);
+            res.status(500).end();
+            return;
         }
         const time2 = new Date()
-        console.log('rasters templates took ', time2 - time1, ' ms to receive from backend')
+        // console.log('rasters templates took ', time2 - time1, ' ms to receive from backend')
         res.send(body);
     })
 })

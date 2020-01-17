@@ -1,6 +1,9 @@
 <div class="PRTplot-container">
     <div #performanceReactionTimePlot></div>
-    <div *ngIf="PRTPlotIsAvailable !== null && !PRTPlotIsAvailable">
+    <div *ngIf="plotLoading">
+        <p>Performance reaction time plot loading...</p>
+    </div>
+    <div *ngIf="PRTPlotIsAvailable !== null && !PRTPlotIsAvailable && plotLoading == false">
         <p>Performance reaction time plot not available</p>
     </div>
 </div>

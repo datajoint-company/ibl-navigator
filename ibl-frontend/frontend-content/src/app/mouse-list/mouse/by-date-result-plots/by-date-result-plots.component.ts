@@ -19,7 +19,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
@@ -269,15 +269,14 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
     // const elPsych3 = this.elPsych3.nativeElement;
     // const elRTContrast3 = this.elRTContrast3.nativeElement;
     // const elRTTrialNum3 = this.elRTTrialNum3.nativeElement;
-    this.mousePlotsService.getDatePsychPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC'});
+    this.mousePlotsService.getDatePsychPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC', '__limit': '3'});
     this.datePsychPlotSubscription = this.mousePlotsService.getDatePsychPlotLoadedListener()
       .subscribe((psychCurveInfo: any) => {
         if (psychCurveInfo && psychCurveInfo.length > 0) {
           this.byDateResultPlotsAreAvailable = true;
           this.byDateResultPlotsAvailability.emit(this.byDateResultPlotsAreAvailable);
           this.datePsychPlotList = psychCurveInfo;
-          const recent3 = psychCurveInfo.slice(0, 3);
-          // console.log('recent3 is...', recent3);
+          const recent3 = psychCurveInfo;
           recent3.forEach((plot, index) => {
             this.recent3dates.push(plot['session_date']);
             const datePsychPlot = plot['plotting_data'];
@@ -334,7 +333,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
         }
       });
     this.getRecent3DatesLoadedListener().subscribe((dates) => {
-      this.mousePlotsService.getDateRTContrastPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC' });
+      this.mousePlotsService.getDateRTContrastPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC', '__limit': '3' });
       this.dateRTContrastPlotSubscription = this.mousePlotsService.getDateRTContrastPlotLoadedListener()
         .subscribe((DRTCplotInfo: any) => {
           if (DRTCplotInfo && DRTCplotInfo.length > 0) {
@@ -420,7 +419,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             console.log('date reaction time contrast plot unavailable');
           }
         });
-      this.mousePlotsService.getDateRTTrialNumPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC' });
+      this.mousePlotsService.getDateRTTrialNumPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC', '__limit': '3' });
       this.dateRTTrialNumPlotSubscription = this.mousePlotsService.getDateRTTrialNumPlotLoadedListener()
         .subscribe((plotInfo: any) => {
           if (plotInfo && plotInfo.length > 0) {
@@ -498,10 +497,10 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
               }
             }
           } else {
-            this.loadingPlots[5] = false;
             this.loadingPlots[6] = false;
             this.loadingPlots[7] = false;
-            console.log('date reaction time trial number plot unavailable');
+            this.loadingPlots[8] = false;
+            // console.log('date reaction time trial number plot unavailable');
           }
         });
     });

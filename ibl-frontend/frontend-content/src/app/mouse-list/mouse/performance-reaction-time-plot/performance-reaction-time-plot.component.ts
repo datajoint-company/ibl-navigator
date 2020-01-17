@@ -14,12 +14,13 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   newScreenWidth;
   dataLen: number;
   PRTPlotIsAvailable: boolean;
+  plotLoading: boolean;
   plotConfig = {
     responsive: false,
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
@@ -51,7 +52,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   smallScreenLayout = {
     font: { size: '10' },
     'margin.l': '48',
-    width: '418',
+    // width: '418',
+    width: '550',
     height: '300'
   };
 
@@ -81,7 +83,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   mediumLargeScreenLayout = {
     font: { size: '11' },
     'margin.l': '70',
-    width: '530',
+    // width: '530',
+    width: '640',
     height: '380'
   };
 
@@ -92,7 +95,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   defaultScreenLayout = {
     font: { size: '12' },
     'margin.l': '70',
-    width: '612',
+    // width: '612',
+    width: '722',
     height: '400'
   };
 
@@ -119,6 +123,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const screenSizeInitial = window.innerWidth;
     const element = this.el.nativeElement;
     this.mousePlotsService.getPerformaceRTPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
@@ -129,9 +134,12 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
           const performanceRTplot = toPlot['performance_reaction_time'];
           this.dataLen = performanceRTplot['data'].length;
           performanceRTplot['layout']['legend'] = {
-            orientation: 'h',
-            x: '0',
-            y: '-0.09',
+            // orientation: 'h',
+            // x: '0',
+            // y: '-0.09',
+            orientation: 'v',
+            x: '1.2',
+            y: '0.5',
             font: { size: '10.5' }
           };
           performanceRTplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
@@ -149,8 +157,12 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
               this.mediumScreenDataStyle['line.width'].push('0.25');
               this.mediumLargeScreenDataStyle['line.width'].push('0.35');
               this.defaultScreenDataStyle['line.width'].push('0.5');
-            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
-              datum['hoverinfo'] = 'x';
+            } else if (datum['name'].startsWith('first day') || datum['name'].startsWith('mouse became')) {
+              // datum['hoverinfo'] = 'x';
+              const text = `${datum['x'][0]}: ${datum['name']}`;
+              datum['text'] = text;
+              datum['hoverinfo'] = 'text';
+
               this.mediumScreenDataStyle['line.width'].push('1');
               this.mediumLargeScreenDataStyle['line.width'].push('1.5');
               this.defaultScreenDataStyle['line.width'].push('2');
@@ -160,7 +172,7 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
               this.defaultScreenDataStyle['line.width'].push('2');
             }
           }
-
+          this.plotLoading = false;
           this.PRTPlotIsAvailable = true;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] = this.mouseInfo['subject_nickname'] + '_performance_RT_plot';
@@ -177,7 +189,8 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('performance reaction time plot not available');
+          // console.log('performance reaction time plot not available');
+          this.plotLoading = false;
           this.PRTPlotIsAvailable = false;
           this.PRPPlotAvailability.emit(this.PRTPlotIsAvailable);
         }

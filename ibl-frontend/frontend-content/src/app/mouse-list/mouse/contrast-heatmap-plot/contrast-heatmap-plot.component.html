@@ -1,6 +1,9 @@
 <div class="contrastheatmap-container">
   <div #contrastHeatmapPlot></div>
-  <div *ngIf="contrastHeatmapPlotIsAvailable !== null && !contrastHeatmapPlotIsAvailable">
+  <div *ngIf="plotLoading">
+    <p>Contrast heatmap plot loading...</p>
+  </div>
+  <div *ngIf="contrastHeatmapPlotIsAvailable !== null && !contrastHeatmapPlotIsAvailable && plotLoading == false">
     <p>Contrast heatmap plot not available</p>
   </div>
 </div>

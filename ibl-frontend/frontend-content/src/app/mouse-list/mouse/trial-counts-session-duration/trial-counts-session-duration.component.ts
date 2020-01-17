@@ -14,13 +14,14 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   newScreenWidth;
   dataLen: number;
   TCSDPlotIsAvailable: boolean;
+  plotLoading: boolean;
   loading = true;
   plotConfig = {
     responsive: false,
     showLink: false,
     showSendToCloud: false,
     displaylogo: false,
-    modeBarButtonsToRemove: ['toImage'],
+    modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
     modeBarButtonsToAdd: [
       {
         name: 'toPngImage',
@@ -53,7 +54,8 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   smallScreenLayout = {
     font: { size: '10' },
     'margin.l': '46',
-    width: '409',
+    // width: '409',
+    width: '550',
     height: '300'
   };
 
@@ -82,7 +84,8 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   mediumLargeScreenLayout = {
     font: { size: '11' },
     'margin.l': '65',
-    width: '519',
+    // width: '519',
+    width: '638',
     height: '380'
   };
 
@@ -93,7 +96,8 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   defaultScreenLayout = {
     font: { size: '12' },
     'margin.l': '65',
-    width: '601',
+    width: '720',
+    // width: '601',
     height: '400',
   };
 
@@ -121,6 +125,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const screenSizeInitial = window.innerWidth;
     const element = this.el.nativeElement;
     this.mousePlotsService.getTCSessionDurationPlot({'subject_uuid': this.mouseInfo['subject_uuid']});
@@ -132,9 +137,12 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           const TCSDplot = toPlot['trial_counts_session_duration'];
           this.dataLen = TCSDplot['data'].length;
           TCSDplot['layout']['legend'] = {
-            orientation: 'h',
-            x: '0.00',
-            y: '-0.09',
+            // orientation: 'h',
+            // x: '0.00',
+            // y: '-0.09',
+            orientation: 'v',
+            x: '1.2',
+            y: '0.5',
             font: {size: '10.5'}
           };
           TCSDplot['layout']['plot_bgcolor'] = 'rgba(0, 0, 0, 0)';
@@ -151,18 +159,23 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
               this.mediumScreenDataStyle['line.width'].push('0.25');
               this.mediumLargeScreenDataStyle['line.width'].push('0.35');
               this.defaultScreenDataStyle['line.width'].push('0.5');
-            } else if (datum['name'] === 'first day got trained' || datum['name'] === 'first day got biased') {
-              datum['hoverinfo'] = 'x';
+            } else if (datum['name'].startsWith('first day') || datum['name'].startsWith('mouse became')) {
+              // datum['hoverinfo'] = 'x';
+              const text = `${datum['x'][0]}: ${datum['name']}`;
+              datum['text'] = text;
+              datum['hoverinfo'] = 'text';
+
               this.mediumScreenDataStyle['line.width'].push('1');
               this.mediumLargeScreenDataStyle['line.width'].push('1.5');
               this.defaultScreenDataStyle['line.width'].push('2');
+
             } else {
               this.mediumScreenDataStyle['line.width'].push('1');
               this.mediumLargeScreenDataStyle['line.width'].push('1.5');
               this.defaultScreenDataStyle['line.width'].push('2');
             }
           }
-
+          this.plotLoading = false;
           this.TCSDPlotIsAvailable = true;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);
           this.loading = false;
@@ -179,8 +192,10 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
           } else {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
+          // console.log('plot data: ', TCSDplot['data']);
         } else {
-          console.log('trial counts session duration plot unavailable for this mouse');
+          // console.log('trial counts session duration plot unavailable for this mouse');
+          this.plotLoading = false;
           this.TCSDPlotIsAvailable = false;
           this.loading = false;
           this.TCSDPlotAvailability.emit(this.TCSDPlotIsAvailable);

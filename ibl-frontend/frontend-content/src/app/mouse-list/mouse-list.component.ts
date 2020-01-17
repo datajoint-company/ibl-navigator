@@ -24,13 +24,15 @@ export class MouseListComponent implements OnInit, OnDestroy {
     projects_control: new FormControl()
   });
   loading = true;
+  filterExpanded;
   mice;
   allMice;
   miceBirthdayFilter: Function;
   mice_menu: any;
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date',
-    'projects', 'subject_line', 'responsible_user', 'sex', 'subject_uuid'];
+    'projects', 'subject_line', 'responsible_user', 'sex', 'death_date', 'subject_uuid'];
+  hideDeadMice = false;
 
   // setup for the paginator
   dataSource;
@@ -57,6 +59,11 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.mice_menu = {};
     // this.loading = true;
     this.mice_menu['sex'] = { F: null, M: null, U: null };
+    if (window.innerWidth < 1250 || window.innerHeight < 750) {
+      this.filterExpanded = false;
+    } else {
+      this.filterExpanded = true;
+    }
     const tableState: [number, number, Object] = this.filterStoreService.retrieveMouseTableState();
     const filters = this.filterStoreService.retrieveMouseFilter();
     for (const key in filters) {
@@ -259,6 +266,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
           this.mice = mice;
           this.dataSource = new MatTableDataSource(this.mice);
           this.dataSource.sort = this.sort;
+          this.dataSource.sortingDataAccessor = (data, header) => data[header];
           this.dataSource.paginator = this.paginator;
       });
     } else {
@@ -347,6 +355,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
         this.allMice = mice;
         this.dataSource = new MatTableDataSource(this.mice);
         this.dataSource.sort = this.sort;
+        this.dataSource.sortingDataAccessor = (data, header) => data[header];
         this.dataSource.paginator = this.paginator;
       });
   }
@@ -390,5 +399,24 @@ export class MouseListComponent implements OnInit, OnDestroy {
       sorter[event.active] = { 'direction': event.direction };
     }
     this.filterStoreService.storeMouseTableState(pageIndex, pageSize, sorter);
+  }
+
+  toggleMiceVitalStatus() {
+    if (!this.hideDeadMice) {
+      const aliveMice = [];
+      for (const mouse of this.mice) {
+        if (mouse.death_date === '0') {
+          aliveMice.push(mouse);
+        }
+      }
+      this.dataSource = new MatTableDataSource(aliveMice);
+    } else {
+      this.dataSource = new MatTableDataSource(this.mice);
+    }
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data, header) => data[header];
+    this.dataSource.paginator = this.paginator;
+
+    this.hideDeadMice = !this.hideDeadMice;
   }
 }

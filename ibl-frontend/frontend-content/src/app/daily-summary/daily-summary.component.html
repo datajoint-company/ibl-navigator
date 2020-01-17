@@ -164,6 +164,11 @@
       <td mat-cell *matCellDef="let summary"> {{summary.n_sessions_current_protocol}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="data_update_status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Data Status </th>
+      <td mat-cell *matCellDef="let summary"> {{summary.data_update_status }} </td>
+    </ng-container>
+
     <ng-container matColumnDef="detail_link">
       <th mat-header-cell *matHeaderCellDef> See Mouse Details </th>
       <td mat-cell *matCellDef="let summary"> 
@@ -184,7 +189,7 @@
     </ng-container>
 
     <ng-container matColumnDef="daily_plots">
-      <td colspan="10" mat-cell class="plotsCell" *matCellDef="let summary"> 
+      <td colspan="12" mat-cell class="plotsCell" *matCellDef="let summary"> 
         <app-summary-plots [mouseInfo]="summary" [plotsCollapsed]="summary?.plotViewingStatus == null || summary?.plotViewingStatus ? expandedStyle : collapsedStyle"></app-summary-plots>
       </td>
     </ng-container>

@@ -16,6 +16,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   plotInfo = [];
   plotFitPars;
   psychPlotIsAvailable: boolean;
+  plotLoading: boolean;
   // svgDownloadIcon = {
   //   'width': 1000,
   //   'height': 1000,
@@ -35,7 +36,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
       showLink: false,
       showSendToCloud: false,
       displaylogo: false,
-      modeBarButtonsToRemove: ['toImage'],
+      modeBarButtonsToRemove: ['toImage', 'select2d', 'lasso2d'],
       modeBarButtonsToAdd: [
         {
           name: 'toPngImage',
@@ -130,6 +131,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    this.plotLoading = true;
     const element = this.el.nativeElement;
     const initialScreenSize = window.innerWidth;
     const img_png = this.d3.select('#SPCpngExport');
@@ -144,8 +146,9 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
         if (psychPlotData[0]) {
           this.plotFitPars = psychPlotData[0]['fit_pars'];
           this.psychCurveFitPars.emit(this.plotFitPars);
-          console.log('fit parameter retrieved: ', this.plotFitPars);
+          // console.log('fit parameter retrieved: ', this.plotFitPars);
           this.plotInfo = psychPlotData[0]['plotting_data'];
+          this.plotLoading = false;
           this.psychPlotIsAvailable = true;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
           this.plotConfig['toImageButtonOptions']['filename'] =
@@ -172,7 +175,8 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
             Plotly.update(element, this.defaultScreenDataStyle, this.defaultScreenLayout);
           }
         } else {
-          console.log('psych plot not available for this session');
+          // console.log('psych plot not available for this session');
+          this.plotLoading = false;
           this.psychPlotIsAvailable = false;
           this.psychPlotAvailability.emit(this.psychPlotIsAvailable);
           // Plotly.newPlot(element, [], this.mediumScreenLayout, {displayModeBar: false })

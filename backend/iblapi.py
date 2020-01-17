@@ -113,11 +113,11 @@ reqmap = {
     'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
     'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
     'cluster': ephys.Cluster,
-    'raster': plotting_ephys.Raster,
-    'psth': plotting_ephys.Psth,
+    # 'raster': plotting_ephys.Raster,
+    # 'psth': plotting_ephys.Psth,
     'psthdata': plotting_ephys.PsthDataVarchar,
     'psthtemplate': plotting_ephys.PsthTemplate,
-    'rasterbatch': plotting_ephys.RasterLink,
+    # 'rasterbatch': plotting_ephys.RasterLink,
     'rasterlight': plotting_ephys.RasterLinkS3,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
@@ -193,16 +193,25 @@ def handle_q(subpath, args, proj, **kwargs):
     ret = []
     post_process = None
     if subpath == 'sessionpage':
-        q = (acquisition.Session().aggr(
+        sess_proj = acquisition.Session().aggr(
+            acquisition.SessionProject().proj('session_project', dummy2='"x"') * dj.U('dummy2'),
+            session_project='IFNULL(session_project, "unassigned")',
+            keep_all_rows=True
+        )
+        psych_curve = acquisition.Session().aggr(
             # plotting_behavior.SessionPsychCurve(),
             plotting_behavior.SessionPsychCurve().proj(dummy='"x"') * dj.U('dummy'),
             #  nplot='count(distinct(concat(subject_uuid, session_start_time)))',
-             nplot='count(dummy)',
-             keep_all_rows=True)
-             * acquisition.Session() * acquisition.SessionProject() * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+            nplot='count(dummy)',
+            keep_all_rows=True)
+        ephys_data = acquisition.Session().aggr(
+            ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
+            nprobe='count(dummy2)',
+            keep_all_rows=True)
+        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
              & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name'))
-             & args)
+            & args)
     elif subpath == 'subjpage':
         print('Args are:', args)
         proj_restr = None
@@ -221,7 +230,13 @@ def handle_q(subpath, args, proj, **kwargs):
         lab_name = subject.Subject.aggr(subject.SubjectLab(), lab_name='IFNULL(lab_name, "missing")', keep_all_rows=True)
         user_name = subject.Subject.aggr(subject.SubjectUser(), responsible_user='IFNULL(responsible_user, "unassigned")')
 
-        q = subject.Subject() * lab_name * user_name * projects & args & proj_restr
+        dead_mice = subject.Subject().aggr(
+            # subject.Death().proj(dummy='"x"') * dj.U('dummy'),
+            subject.Death().proj('death_date') * dj.U('death_date'),
+            death_date='IFNULL(death_date, 0)',
+            keep_all_rows=True)
+        
+        q = subject.Subject() * dead_mice *lab_name * user_name * projects & args & proj_restr
     elif subpath == 'dailysummary':
         # find the latest summary geneartion for each lab
         latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
@@ -251,19 +266,29 @@ def handle_q(subpath, args, proj, **kwargs):
         print('fetching cluster plot info...')
         
         # specify attributes to exclude from the fetch to save bandwidth (in case no "proj" specified)
-        exclude_attrs = ('-cluster_mean_waveform', '-cluster_template_waveform', '-cluster_waveform_duration',
-                         '-cluster_spike_times', '-cluster_spike_depth', '-cluster_spike_amps')
-        q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
-             & args).proj(..., *exclude_attrs)
+        exclude_attrs = ('-cluster_waveforms', '-cluster_waveforms_channels', '-cluster_peak_to_trough', '-cluster_spikes_templates',
+                         '-cluster_spikes_times', '-cluster_spikes_depths', '-cluster_spikes_amps', '-cluster_spikes_samples')
+        # q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
+        q = (ephys.Cluster & args).proj(..., *exclude_attrs)
         print(q)
     elif subpath == 'rasterlight':
         q = plotting_ephys.RasterLinkS3 & args
         def post_process(ret):
-            return [{k: s3_client.generate_presigned_url(
-                    'get_object', 
-                    Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
-                    ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
-                    for i in ret]
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['plotting_data_link'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
+            # return [{k: s3_client.generate_presigned_url(
+            #         'get_object', 
+            #         Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
+            #         ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
+            #         for i in ret]
     else:
         abort(404)
 
