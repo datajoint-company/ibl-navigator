@@ -43,8 +43,12 @@ ol a:hover {
     text-decoration: none;
 }
 
+.home-middle-container,
 .home-bottom-container {
     height: auto;
+}
+
+.home-middle-container {
     background-color: #ecececc0;
 }
 
@@ -53,6 +57,8 @@ ol a:hover {
 }
 .detail-container p.detail-text {
     padding: 18px 0 0;
+}
+.detail-container .detail-text {
     font-size: 1.25rem;
 }
 .figures {
@@ -113,6 +119,7 @@ ol {
         background-size: 200%;
         background-position: center;
     }
+    .home-middle-container,
     .home-bottom-container {
         height: auto;
     }
@@ -160,7 +167,8 @@ ol {
         background-size: 175%;
         background-position: center bottom;
     }
-   .home-bottom-container {
+    .home-middle-container,
+    .home-bottom-container {
         height: auto;
         background-size: 200%;
     }
@@ -198,7 +206,7 @@ ol {
 
 /* L (992px to 1200px) */
 @media only screen and (min-width: 993px) and (max-width: 1200px) {
-    .home-bottom-container {
+    .home-middle-container {
         min-height: 800px;
     }
     .top-text-container {
@@ -257,6 +265,7 @@ ol {
         background-position: -150px;
         height: auto;
     }
+    .home-middle-container,
     .home-bottom-container {
         height: auto;
     }
@@ -280,6 +289,7 @@ ol {
         background-position: -400px;
         height: auto;
     }
+    .home-middle-container,
     .home-bottom-container {
         height: auto;
     }
