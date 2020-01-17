@@ -62,9 +62,12 @@ ol a:hover {
 }
 
 .each-figure {
-    max-height: 320px;
     margin: 0px 18px;
     text-align: center;
+}
+
+.text-image-wide {
+    max-height: 250px;
 }
 
 .text-image {
@@ -72,10 +75,18 @@ ol a:hover {
     max-height: 300px;
 }
 
-.figure-caption {
-    margin-top: 8px;
-    
+.figure-caption,
+.figure-caption-long {
+    margin-top: 8px;  
+    color: #6c757d; 
+    font-size: 0.88rem;
 }
+
+.figure-caption-long {
+    text-align: left;
+}
+
+ 
 
 #fig3 {
     width: 250px;
@@ -131,6 +142,9 @@ ol {
         max-width: 50vw;
         max-height: auto;
     }
+    .text-image-wide {
+        max-width: 66vw;
+    }
 
 } 
 
@@ -163,14 +177,16 @@ ol {
         justify-content: flex-start;
     }
     .each-figure {
-        max-height: 275px;
         margin: 0px 8px;
         float: left;
     }
 
-    .text-image {
+    .text-image  {
         max-width: 220px;
         max-height: 220px;
+    }
+    .text-image-wide {
+        max-height: 200px;
     }
  
 } 
@@ -194,7 +210,6 @@ ol {
         font-size: 1.15rem;
     }
     .each-figure {
-        max-height: 275px;
         margin: 0px 12px;
     }
 
@@ -202,6 +217,10 @@ ol {
         max-width: 250px;
         max-height: 250px;
     }
+    .text-image-wide {
+        max-height: 180px;
+    }
+
 } 
 
 /* XL (1200px to 1600) */
@@ -220,6 +239,11 @@ ol {
     .detail-container p.detail-text {
         font-size: 1.2rem;
     }
+
+    .text-image-wide {
+        max-height: 200px;
+    }
+
 }
 
 /* XXL (1600px to 2200px) */

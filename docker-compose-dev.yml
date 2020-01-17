@@ -10,7 +10,8 @@ services:
     - DJ_USER=ibl-navigator
     - DJ_HOST=datajoint-public.internationalbrainlab.org
     # - DJ_HOST=datajoint-rds-public-new.cyuksi65nrdq.us-east-1.rds.amazonaws.com # temporary
-    - AWS_DEFAULT_REGION=us-east-1
+    # - AWS_DEFAULT_REGION=us-east-1
+    - WORKER_COUNT=4
     env_file: ./.env
     ports:
       - "5555:5000"
