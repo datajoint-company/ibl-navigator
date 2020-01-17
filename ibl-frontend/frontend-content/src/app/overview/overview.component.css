@@ -48,6 +48,11 @@ ol a:hover {
     height: auto;
 }
 
+.home-bottom-container {
+    padding-bottom: 35px;
+    border-bottom: 1px solid lightgray;
+}
+
 .home-middle-container {
     background-color: #ecececc0;
 }
@@ -57,9 +62,10 @@ ol a:hover {
 }
 .detail-container p.detail-text {
     padding: 18px 0 0;
-}
-.detail-container .detail-text {
     font-size: 1.25rem;
+}
+.detail-container ol {
+    font-size: 1.15rem;
 }
 .figures {
     display: inline-flex;
