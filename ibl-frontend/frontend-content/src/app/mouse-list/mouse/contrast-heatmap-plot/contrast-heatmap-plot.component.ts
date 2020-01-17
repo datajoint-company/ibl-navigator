@@ -64,7 +64,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
 
 
   mediumScreenDataStyle = {
-    colorbar: { thickness: '7' }
+    'colorbar.thickness' : '7' 
   };
   mediumScreenLayout = {
     font: { size: '10.5' },
@@ -74,7 +74,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   };
 
   mediumLargeScreenDataStyle = {
-    colorbar: { thickness: '6' }
+    'colorbar.thickness': '6'
   };
   mediumLargeScreenLayout = {
     font: { size: '11' },
@@ -84,7 +84,7 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
   };
 
   defaultScreenDataStyle = {
-    colorbar: { thickness: '7' }
+    'colorbar.thickness':'7'
   };
   defaultScreenLayout = {
     font: { size: '12' },
