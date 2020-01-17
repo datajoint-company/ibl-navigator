@@ -74,7 +74,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - EMAIL=admin@vathes.com
+      - EMAIL=service-health@vathes.com
       # - URL=datajoint.io # for testdev deploy
       # - SUBDOMAINS=testdev # for testdev deploy
       - URL=internationalbrainlab.org # for client or public demo deploy
@@ -111,7 +111,7 @@ services:
   nginx:
     # build: ./nginx
     # image: registry.vathes.com/ibl-navigator/nginx:v0.0-dev5
-    image: registry.vathes.com/ibl-navigator/nginx:v0.0-public2 # for public deploy ?
+    image: registry.vathes.com/ibl-navigator/nginx:v0.0-public3 # for public deploy ?
     environment:
       # - URL=datajoint.io # for testdev deploy
       # - SUBDOMAINS=testdev # for testdev deploy

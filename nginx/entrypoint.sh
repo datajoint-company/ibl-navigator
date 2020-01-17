@@ -1,5 +1,10 @@
 #! /bin/sh
 
+update_cert() {
+    nginx -s reload
+    echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Certs updated. Notify email: ${EMAIL}."
+}
+
 sed -i "s|{{SUBDOMAINS}}|${SUBDOMAINS}|g" /etc/nginx/conf.d/base.conf
 sed -i "s|{{URL}}|${URL}|g" /etc/nginx/conf.d/base.conf
 sed -i "s|{{NODE_SERVER}}|${NODE_SERVER}|g" /etc/nginx/conf.d/base.conf
@@ -16,19 +21,19 @@ sed -i "s|{{LETSENCRYPT_SERVER}}|${LETSENCRYPT_SERVER}|g" /ssl.conf
 # nginx -g "daemon off;"
 nginx
 
-echo "Waiting for initial certs"
+echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Waiting for initial certs"
 while [ ! -d /etc/letsencrypt/archive/${SUBDOMAINS}.${URL} ]; do
     sleep 5
 done
 
-echo "Enabling SSL feature"
+echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Enabling SSL feature"
 mv /ssl.conf /etc/nginx/conf.d/ssl.conf
-nginx -s reload
+update_cert
 
-inotifywait -m /etc/letsencrypt/archive/${SUBDOMAINS}.${URL} |
+inotifywait -m /etc/letsencrypt/live/${SUBDOMAINS}.${URL} |
     while read path action file; do
         if [ "$(echo $action | grep MODIFY)" ] || [ "$(echo $action | grep CREATE)" ] || [ "$(echo $action | grep MOVE)" ]; then
-            echo "Renewal: Reloading NGINX since $file issue $action event"
-            nginx -s reload
+            echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Renewal: Reloading NGINX since \`$file\` issue \`$action\` event"
+            update_cert
         fi
     done
