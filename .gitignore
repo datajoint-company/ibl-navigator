@@ -56,3 +56,6 @@ dj_local_conf.json*
 # docker
 .env
 ibl-djcompute.pem
+
+# certs
+letsencrypt-keys
