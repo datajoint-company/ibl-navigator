@@ -2,7 +2,7 @@
 
 update_cert() {
     nginx -s reload
-    echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Certs updated. Notify email: ${EMAIL}."
+    echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Certs updated."
 }
 
 sed -i "s|{{SUBDOMAINS}}|${SUBDOMAINS}|g" /etc/nginx/conf.d/base.conf
