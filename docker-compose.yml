@@ -26,6 +26,9 @@ services:
     # entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
     networks:
       - main
+    # cpus: 0.65
+    #cpu_quota: 100000
+    #cpu_period: 100ms
   ibl-navigator:
     # build: ./ibl-frontend
     image: registry.vathes.com/ibl-navigator/frontend:v0.3 # for client deploy
@@ -73,11 +76,11 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - EMAIL=admin@vathes.com
-      # - URL=datajoint.io # for testdev deploy
-      - URL=internationalbrainlab.org # for client or public demo deploy
-      # - SUBDOMAINS=testdev # for testdev deploy
-      - SUBDOMAINS=djcompute # for client deploy
+      - EMAIL=service-health@vathes.com
+      - URL=datajoint.io # for testdev deploy
+      # - URL=internationalbrainlab.org # for client or public demo deploy
+      - SUBDOMAINS=testdev # for testdev deploy
+      # - SUBDOMAINS=djcompute # for client deploy
       # - SUBDOMAINS=data # for public demo deploy
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
@@ -109,8 +112,8 @@ services:
     #     condition: service_healthy
   nginx:
     # build: ./nginx
-    image: registry.vathes.com/ibl-navigator/nginx:v0.1 # for client deploy
-    # image: registry.vathes.com/ibl-navigator/nginx:v0.1-dev2
+    # image: registry.vathes.com/ibl-navigator/nginx:v0.1 # for client deploy
+    image: registry.vathes.com/ibl-navigator/nginx:v0.1-dev3
     # image: registry.vathes.com/ibl-navigator/nginx:v0.0-public2 # for public deploy ?
     environment:
       # - URL=datajoint.io # for testdev deploy
