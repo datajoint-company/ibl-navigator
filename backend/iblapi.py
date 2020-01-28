@@ -268,8 +268,9 @@ def handle_q(subpath, args, proj, **kwargs):
         # specify attributes to exclude from the fetch to save bandwidth (in case no "proj" specified)
         exclude_attrs = ('-cluster_waveforms', '-cluster_waveforms_channels', '-cluster_peak_to_trough', '-cluster_spikes_templates',
                          '-cluster_spikes_times', '-cluster_spikes_depths', '-cluster_spikes_amps', '-cluster_spikes_samples')
-        # q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
-        q = (ephys.Cluster & args).proj(..., *exclude_attrs)
+        
+        # q = (ephys.Cluster & args).proj(..., *exclude_attrs)
+        q = (ephys.Cluster & args).proj(..., *exclude_attrs) * ephys.Cluster.ClusterMetrics.proj('firing_rate')
         print(q)
     elif subpath == 'rasterlight':
         q = plotting_ephys.RasterLinkS3 & args

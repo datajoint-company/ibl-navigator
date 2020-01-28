@@ -693,6 +693,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           case 'cluster_id': return compare(a.cluster_id, b.cluster_id, isAsc);
           case 'cluster_depth': return compare(a.cluster_depth, b.cluster_depth, isAsc);
           case 'cluster_amp': return compare(a.cluster_amp, b.cluster_amp, isAsc);
+          case 'firing_rate': return compare(a.firing_rate, b.firing_rate, isAsc);
           default: return 0;
         }
       });

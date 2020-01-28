@@ -17,6 +17,7 @@
             <th>Probe Index</th>
             <th mat-sort-header="cluster_depth">Cluster Depth</th>
             <th mat-sort-header="cluster_amp">Cluster Amp</th>
+            <th mat-sort-header="firing_rate">Firing Rate</th>
             <!-- <th>Details</th> -->
           </thead>
           <tbody>
@@ -27,6 +28,7 @@
               <td>{{ cl.probe_idx }}</td>
               <td>{{ cl.cluster_depth }}</td>
               <td>{{ cl.cluster_amp }}</td>
+              <td>{{ cl.firing_rate }}</td>
               <!-- <td>
                 <span class="oi oi-external-link" routerLink="/cell/{{cl?.subject_uuid}}/{{cl?.session_start_time}}/{{cl?.cluster_id}}">
                   <div hidden>
