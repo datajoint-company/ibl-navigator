@@ -54,6 +54,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   probeIndex;
   probeIndices = [];
 
+  cluster_amp_data = [];
+  cluster_depth_data = [];
+  firing_rate_data = [];
+  toPlot_x = 'cluster_amp';
+  toPlot_y = 'cluster_depth';
+
   showController = false;
 
   raster_psth_config = {
@@ -100,6 +106,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
       'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
   };
+
+
 
   private cellListSubscription: Subscription;
   private rasterListSubscription: Subscription;
@@ -154,8 +162,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         if (Object.entries(cellListData).length > 0) {
           this.cells = cellListData;
           this.cellOnFocus = this.cells[2];
-          const x_data = [];
-          const y_data = [];
+          // const cluster_amp_data = [];
+          // const cluster_depth_data = [];
+          // const firing_rate_data = [];
+          this.cluster_amp_data = [];
+          this.cluster_depth_data = [];
+          this.firing_rate_data = [];
           const id_data = [];
           const size_data = [];
           const color_data = [];
@@ -169,8 +181,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             if (entry['probe_idx'] === this.probeIndex) {
               id_data.push(entry['cluster_id']);
               size_data.push(entry['channel_id']);
-              y_data.push(entry['cluster_depth']);
-              x_data.push(entry['cluster_amp']);
+              this.cluster_depth_data.push(entry['cluster_depth']);
+              this.cluster_amp_data.push(entry['cluster_amp']);
+              this.firing_rate_data.push(entry['firing_rate']);
               color_data.push(entry['cluster_id']);
               this.cellsByProbeIns.push(entry);
               // this.sortedCellsByProbeIns.push(entry);
@@ -181,13 +194,15 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           // console.log('sample data from sortedCellsByProbeIns: ', this.sortedCellsByProbeIns[3]);
 
           // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
-          // console.log('x_data is: ', x_data);
-          // console.log('y_data is: ', y_data);
+          // console.log('cluster_amp_data is: ', cluster_amp_data);
+          // console.log('cluster_depth_data is: ', cluster_depth_data);
           // console.log('color_data is: ', color_data);
           // console.log('size_data is: ', size_data);
           this.plot_data = [{
-            x: x_data,
-            y: y_data,
+            // x: this.cluster_amp_data,
+            // y: this.cluster_depth_data,
+            x: this[`${this.toPlot_x}_data`],
+            y: this[`${this.toPlot_y}_data`],
             customdata: id_data,
             text: id_data,
             mode: 'markers',
@@ -202,12 +217,47 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           }];
 
           this.plot_layout = {
-            yaxis: {
-              title: 'cluster depth (µm)'
-            },
-            xaxis: {
-              title: 'cluster amp (µV)'
-            },
+            // yaxis: {
+            //   title: 'cluster depth (µm)',
+            // },
+            // xaxis: {
+            //   title: 'cluster amp (µV)'
+            // },
+            updatemenus: [{
+              y: 0.55,
+              x: -0.1,
+              yanchor: 'top',
+              buttons: [{
+                method: 'restyle',
+                args: ['selected_y', 'cluster_depth'],
+                label: 'cluster depth (µm)'
+              }, {
+                method: 'restyle',
+                args: ['selected_y', 'cluster_amp'],
+                label: 'cluster amp (µV)'
+              }, {
+                method: 'restyle',
+                args: ['selected_y', 'firing_rate'],
+                label: 'firing rate'
+              }]
+            },{
+              x: 0.3,
+              y: -0.15,
+              direction: 'right',
+              buttons: [{
+                method: 'restyle',
+                args: ['selected_x', 'cluster_amp'],
+                label: 'cluster amp (µV)'
+              }, {
+                method: 'restyle',
+                args: ['selected_x', 'cluster_depth'],
+                label: 'cluster depth (µm)'
+              }, {
+                method: 'restyle',
+                args: ['selected_x', 'firing_rate'],
+                label: 'firing rate'
+              }]
+            }],
             hovermode: 'closest'
           };
         }
@@ -306,8 +356,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   probe_selected(probeInsNum) {
     // console.log('probe insertions selected: ', probeInsNum);
-    const x_data = [];
-    const y_data = [];
+    // const cluster_amp_data = [];
+    // const cluster_depth_data = [];
+    // const firing_rate_data = [];
+    this.cluster_amp_data = [];
+    this.cluster_depth_data = [];
+    this.firing_rate_data = [];
     const id_data = [];
     const size_data = [];
     const color_data = [];
@@ -321,8 +375,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         // console.log('inputting new data for probe: ', probeInsNum);
         id_data.push(entry['cluster_id']);
         size_data.push(entry['channel_id']);
-        y_data.push(entry['cluster_depth']);
-        x_data.push(entry['cluster_amp']);
+        this.cluster_depth_data.push(entry['cluster_depth']);
+        this.cluster_amp_data.push(entry['cluster_amp']);
+        this.firing_rate_data.push(entry['firing_rate']);
         color_data.push(entry['cluster_id']);
         this.cellsByProbeIns.push(entry);
         // this.sortedCellsByProbeIns.push(entry);
@@ -332,8 +387,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
     this.plot_data = [{
-      x: x_data,
-      y: y_data,
+      // x: this.cluster_amp_data,
+      // y: this.cluster_depth_data,
+      x: this[`${this.toPlot_x}_data`],
+      y: this[`${this.toPlot_y}_data`],
       customdata: id_data,
       text: id_data,
       mode: 'markers',
@@ -402,6 +459,19 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
     // this.clickedClusterId = this.cellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
     this.clickedClusterId = this.sortedCellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
+  }
+
+  restylePlot(data) {
+    console.log('restyling the plot: ', data);
+    if (data[0]['selected_y']) {
+      let selected_plot = data[0]['selected_y'];
+      this.plot_data[0].y = this[`${selected_plot}_data`];
+      this.toPlot_y = selected_plot;
+    } else if (data[0]['selected_x']) {
+      let selected_plot = data[0]['selected_x'];
+      this.plot_data[0].x = this[`${selected_plot}_data`];
+      this.toPlot_x = selected_plot;
+    }
   }
 
   order_by_event(eventType) {
