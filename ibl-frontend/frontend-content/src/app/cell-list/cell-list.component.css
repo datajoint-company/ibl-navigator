@@ -7,7 +7,9 @@
 .clusterListTable tbody {
     cursor: pointer;
 }
-
+plotly-plot {
+    height: 550px;
+}
 .clusterListTable * {
     font-size: 0.8rem;
 }

@@ -3,8 +3,8 @@ version: '2.4'
 services:     
   iblapi:
     # build: ./backend
-    # image: registry.vathes.com/ibl-navigator/iblapi:v0.3 # for client deploy
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.1-dev3 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.4 # for client deploy
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.1-dev4 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
     - DJ_USER=maho
@@ -26,10 +26,13 @@ services:
     # entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
     networks:
       - main
+    # cpus: 0.65
+    #cpu_quota: 100000
+    #cpu_period: 100ms
   ibl-navigator:
     # build: ./ibl-frontend
-    # image: registry.vathes.com/ibl-navigator/frontend:v0.2 # for client deploy
-    image: registry.vathes.com/ibl-navigator/frontend:v0.1-dev3 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.4 # for client deploy
+    image: registry.vathes.com/ibl-navigator/frontend:v0.1-dev4 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:
     - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy
@@ -48,8 +51,8 @@ services:
       - main
   ibl-node-server:
     # build: ./node_server
-    # image: registry.vathes.com/ibl-navigator/node-server:v0.2 # for client deploy
-    image: registry.vathes.com/ibl-navigator/node-server:v0.1-dev2 # add -dev ending to testdev tag
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.3 # for client deploy
+    image: registry.vathes.com/ibl-navigator/node-server:v0.1-dev3 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:
     - NODE_ENV=development
@@ -73,7 +76,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - EMAIL=admin@vathes.com
+      - EMAIL=service-health@vathes.com
       - URL=datajoint.io # for testdev deploy
       # - URL=internationalbrainlab.org # for client or public demo deploy
       - SUBDOMAINS=testdev # for testdev deploy
@@ -110,7 +113,7 @@ services:
   nginx:
     # build: ./nginx
     # image: registry.vathes.com/ibl-navigator/nginx:v0.1 # for client deploy
-    image: registry.vathes.com/ibl-navigator/nginx:v0.1-dev2
+    image: registry.vathes.com/ibl-navigator/nginx:v0.1-dev3
     # image: registry.vathes.com/ibl-navigator/nginx:v0.0-public2 # for public deploy ?
     environment:
       - URL=datajoint.io # for testdev deploy

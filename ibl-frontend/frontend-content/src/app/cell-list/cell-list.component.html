@@ -7,7 +7,7 @@
     </select>
   </div>
   <div class="row">
-    <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (click)="clusterSelectedPlot($event)"></plotly-plot>
+    <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     <div class="plots-navigator" *ngIf="showController">
       <div *ngIf="cells" class="clusterListContainer">
         <table matSort (matSortChange)="sortData($event)" class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable>
@@ -17,6 +17,7 @@
             <th>Probe Index</th>
             <th mat-sort-header="cluster_depth">Cluster Depth</th>
             <th mat-sort-header="cluster_amp">Cluster Amp</th>
+            <th mat-sort-header="firing_rate">Firing Rate</th>
             <!-- <th>Details</th> -->
           </thead>
           <tbody>
@@ -27,6 +28,7 @@
               <td>{{ cl.probe_idx }}</td>
               <td>{{ cl.cluster_depth }}</td>
               <td>{{ cl.cluster_amp }}</td>
+              <td>{{ cl.firing_rate }}</td>
               <!-- <td>
                 <span class="oi oi-external-link" routerLink="/cell/{{cl?.subject_uuid}}/{{cl?.session_start_time}}/{{cl?.cluster_id}}">
                   <div hidden>
