@@ -468,7 +468,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   restylePlot(data) {
-    console.log('restyling the plot: ', data);
+    // console.log('restyling the plot: ', data);
     if (data[0]['selected_y']) {
       let selected_plot = data[0]['selected_y'];
       this.plot_data[0].y = this[`${selected_plot}_data`];
