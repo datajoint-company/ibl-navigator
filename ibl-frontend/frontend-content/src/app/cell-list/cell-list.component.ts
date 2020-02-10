@@ -153,7 +153,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.sortType = 'trial_id';
     this.clickedClusterId = 0;
     this.clickedClusterIndex = 0;
-    this.probeIndex = 0;
+    this.probeIndex;
 
 
     this.cellListService.retrieveCellList(this.sessionInfo);
@@ -173,6 +173,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           const color_data = [];
           this.cellsByProbeIns = [];
           this.sortedCellsByProbeIns = [];
+
+          let probeIndexListing = [];
+          for (let entry of Object.values(cellListData)) {
+            probeIndexListing.push(entry['probe_idx']);
+          }
+          this.probeIndex = Math.min(...probeIndexListing);
 
           for (let entry of Object.values(cellListData)) {
             if (!this.probeIndices.includes(entry['probe_idx'])) {
