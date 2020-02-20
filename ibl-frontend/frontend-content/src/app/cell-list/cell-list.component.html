@@ -10,10 +10,11 @@
     <div class="gc-filter-area">
       <label for="gc-filter">Select Good Cluster Criterion Filter:&nbsp;&nbsp;  </label>
       <select name="gc-filter" (change)="gcfilter_selected($event.target.value)">
-        <option *ngFor="let gcfilter of gcfilter_types" [value]="gcfilter" [selected]="gcfilter == gcfilter_types[0]">{{ gcfilter }}</option>
+        <option *ngFor="let gcfilter of gcfilter_types | keyvalue" [value]="gcfilter.key" [selected]="gcfilter == gcfilter_types[0]">{{ gcfilter.value }}</option>
       </select>
     </div>
-</span>
+  </span>
+  <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
   <div class="row">
     <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     <div class="plots-navigator" *ngIf="showController">

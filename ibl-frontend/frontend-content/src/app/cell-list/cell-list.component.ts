@@ -54,7 +54,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   probeIndex;
   probeIndices = [];
 
-  gcfilter_types = ['show all'];
+  gcfilter_types = {0: 'show all'};
+  goodClusters = [];
 
   cluster_amp_data = [];
   cluster_depth_data = [];
@@ -113,6 +114,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   private cellListSubscription: Subscription;
   private gcCriteriaSubscription: Subscription;
+  private goodClusterSubscription: Subscription;
   private rasterListSubscription: Subscription;
   private psthListSubscription: Subscription;
   private rasterTemplateSubscription: Subscription;
@@ -163,10 +165,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.gcCriteriaSubscription = this.cellListService.getGCCriteriaLoadedListener()
       .subscribe((criteria) => {
         if (Object.entries(criteria).length > 0) {
-          // console.log('good cluster criteria loaded: ', criteria);
           for (let criterion of Object.values(criteria)) {
-            // console.log(criterion['criterion_description']);
-            this.gcfilter_types.push(criterion['criterion_description'])
+            this.gcfilter_types[criterion['criterion_id']] = criterion['criterion_description']
           }
         }
       })
@@ -224,7 +224,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             // y: this.cluster_depth_data,
             x: this[`${this.toPlot_x}_data`],
             y: this[`${this.toPlot_y}_data`],
-            customdata: id_data,
+            customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
             text: id_data,
             mode: 'markers',
             marker: {
@@ -344,16 +344,28 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           if (this.clickedClusterId === i) {
             markerColors.push('rgba(0, 0, 0, 1)'); // black
           } else {
-            markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+            
+            if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
+              markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+            } else if (this.plot_data[0]['customdata.is_good_cluster']) {
+              markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
+            } else {
+              markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+            }
           }
         }
       } else {
         for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-          markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+          if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
+            markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+          } else if (this.plot_data[0]['customdata.is_good_cluster']) {
+            markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
+          } else {
+            markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+          }
         }
       }
       this.plot_data[0]['marker']['line']['color'] = markerColors;
-      // console.log('markerColors: ', markerColors);
     }
 
   }
@@ -372,6 +384,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
     if (this.psthListSubscription) {
       this.psthListSubscription.unsubscribe();
+    }
+    if (this.gcCriteriaSubscription) {
+      this.gcCriteriaSubscription.unsubscribe();
     }
   }
 
@@ -412,7 +427,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       // y: this.cluster_depth_data,
       x: this[`${this.toPlot_x}_data`],
       y: this[`${this.toPlot_y}_data`],
-      customdata: id_data,
+      customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
       text: id_data,
       mode: 'markers',
       marker: {
@@ -429,17 +444,61 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.order_by_event(this.eventType);
   }
 
-  gcfilter_selected(filter) {
-    console.log('selected filter: ', filter);
+  gcfilter_selected(filterID) {
+    console.log('gcfilter: ', filterID);
+    console.log('type of filter: ', typeof filterID);
+    console.log('selected filter criterion id: ', filterID);
+    let goodFilterQueryInfo = {};
+    goodFilterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    goodFilterQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    goodFilterQueryInfo['probe_idx'] = this.probeIndex;
+    goodFilterQueryInfo['criterion_id'] = parseInt(filterID, 10);
+    console.log('querying for good cluster with: ', goodFilterQueryInfo);
+    this.cellListService.retrieveGoodClusters(goodFilterQueryInfo);
+    this.goodClusterSubscription = this.cellListService.getGoodClustersLoadedListener()
+      .subscribe((goodClusterList) => {
+        if (Object.entries(goodClusterList).length > 0) {
+          console.log('good clusters retrieved! length: ', goodClusterList.length);
+   
+          const id_data = [];
+          const is_good_data = [];
+          const color_data = [];
+          // this.cellsByProbeIns = [];
+          this.plot_data[0]['customdata'] = {};
+          this.plot_data[0]['marker']['line']['color'] = [];
+          for (let entry of Object.values(goodClusterList)) {
+            if (entry['probe_idx'] === this.probeIndex) {
+              id_data.push(entry['cluster_id']);
+              color_data.push(entry['cluster_id']);
+              is_good_data.push(entry['is_good']);
+              if (entry['is_good']) {
+                color_data.push('rgba(132, 0, 0, 0.5)');
+                this.goodClusters.push(entry['cluster_id']);
+              } else {
+                color_data.push('rgba(0, 0, 0, 0.2)')
+              }
+              // this.cellsByProbeIns.push(entry);
+            }
+          }
+          // this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
+          this.plot_data[0]['customdata.id'] = id_data;
+          this.plot_data[0]['customdata.is_good_cluster'] = is_good_data;
+          this.plot_data[0]['marker.line.color'] = color_data;
+          
+          this.clickedClusterId = 0;
+          // console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
+          this.order_by_event(this.eventType);
+        }
+      })
   }
 
   clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
     const rows = element.querySelectorAll('tr');
     // console.log('data in clusterSelectedPlot: ', data);
-    if (data['points'] && data['points'][0]['customdata']) {
-      this.clickedClusterId = data['points'][0]['customdata'];
+    if (data['points'] && data['points'][0]['customdata.id']) {
+      this.clickedClusterId = data['points'][0]['customdata.id'];
 
       let rowIndex = 0;
       for (const row of rows) {
