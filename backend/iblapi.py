@@ -116,9 +116,10 @@ reqmap = {
     'datepsych': plotting_behavior.DatePsychCurve,
     'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
     'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
-    'clusterMetrics': ephys.DefaultCluster.Metrics,
+    'clustermetrics': ephys.DefaultCluster.Metrics,
     # 'cluster': ephys.Cluster,
-    'cluster': ephys.DefaultCluster, # temp table for testing
+    'goodcluster': ephys.GoodCluster,
+    'goodclustercriterion': ephys.GoodClusterCriterion,
     ## 'raster': plotting_ephys.Raster,
     ## 'psth': plotting_ephys.Psth,
     'psthdata': plotting_ephys.PsthDataVarchar,
