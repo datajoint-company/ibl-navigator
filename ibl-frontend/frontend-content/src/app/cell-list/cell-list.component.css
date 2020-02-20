@@ -33,6 +33,14 @@ td span.oi {
     overflow-y: auto;
 }
 
+.cluster-nav-filters {
+    display: flex;
+}
+
+.cluster-nav-filters .gc-filter-area {
+    margin-left: 12px;
+}
+
 .plots-navigator-buttons {
     margin-right: 5px;
     margin-top: 8px;

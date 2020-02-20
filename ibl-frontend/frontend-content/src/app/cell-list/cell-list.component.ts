@@ -54,6 +54,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   probeIndex;
   probeIndices = [];
 
+  gcfilter_types = ['show all'];
+
   cluster_amp_data = [];
   cluster_depth_data = [];
   firing_rate_data = [];
@@ -110,6 +112,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
 
   private cellListSubscription: Subscription;
+  private gcCriteriaSubscription: Subscription;
   private rasterListSubscription: Subscription;
   private psthListSubscription: Subscription;
   private rasterTemplateSubscription: Subscription;
@@ -155,6 +158,18 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.clickedClusterIndex = 0;
     this.probeIndex;
 
+
+    this.cellListService.retrieveGCFilterTypes();
+    this.gcCriteriaSubscription = this.cellListService.getGCCriteriaLoadedListener()
+      .subscribe((criteria) => {
+        if (Object.entries(criteria).length > 0) {
+          // console.log('good cluster criteria loaded: ', criteria);
+          for (let criterion of Object.values(criteria)) {
+            // console.log(criterion['criterion_description']);
+            this.gcfilter_types.push(criterion['criterion_description'])
+          }
+        }
+      })
 
     this.cellListService.retrieveCellList(this.sessionInfo);
     this.cellListSubscription = this.cellListService.getCellListLoadedListener()
@@ -412,6 +427,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.clickedClusterId = 0;
     // console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
     this.order_by_event(this.eventType);
+  }
+
+  gcfilter_selected(filter) {
+    console.log('selected filter: ', filter);
+
   }
 
   clusterSelectedPlot(data) {
