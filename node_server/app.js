@@ -440,8 +440,8 @@ app.post('/plot/goodcluster', checkAuth, (req, res) => {
     })
 })
 
-app.post('/plot/gccriterion', checkAuth, (req, res) => {
-    request.post(flask_backend + '/v0/goodclustercriterion', { form: req.body, timeout: 120000 }, function (error, httpResponse, body) {
+app.get('/plot/gccriterion', checkAuth, (req, res) => {
+    request.get(flask_backend + '/v0/goodclustercriterion', function (error, httpResponse, body) {
         if (error) {
             console.error(error);
             console.log('error code: ', error.code);
