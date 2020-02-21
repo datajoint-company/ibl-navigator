@@ -110,7 +110,7 @@ button.mat-raised-button:hover {
 
 
 
-.mouse_gender_filter {
+.mouse_sex_filter {
     padding-top: 12px;
     padding-bottom: 3px;
     margin-top: 11px;
@@ -119,16 +119,16 @@ button.mat-raised-button:hover {
     float: left;  
 }
 
-.mouse_gender_menu mat-checkbox#genderU {
+.mouse_sex_menu mat-checkbox#sexU {
     visibility: hidden;
 }
 
-mat-checkbox.mouse_gender_menu_chbox {
+mat-checkbox.mouse_sex_menu_chbox {
     margin-right: 12px;
 }
 
 
-.mouse_gender_menu {
+.mouse_sex_menu {
     display: flex;
     flex-direction: row;
 };

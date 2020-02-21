@@ -76,13 +76,13 @@
         </mat-autocomplete>
       </mat-form-field>
 
-      <div class="mouse_gender_filter">
-        <label>Gender</label>
-        <div class="mouse_gender_menu" formArrayName="sex_control">
+      <div class="mouse_sex_filter">
+        <label>Sex</label>
+        <div class="mouse_sex_menu" formArrayName="sex_control">
           <mat-checkbox [name]="mice_menu.sex" [formControlName]="i"
             *ngFor="let gender of mice_menu.sex | keyvalue; let i=index" [value]="gender.key" (change)="stepBackMenu($event)"
-            class='mouse_gender_menu_chbox'
-            [id]="gender.key == 'U' ? 'genderU' : ''">
+            class='mouse_sex_menu_chbox'
+            [id]="gender.key == 'U' ? 'sexU' : ''">
             {{ gender.key }}</mat-checkbox>
         </div>
       </div>
@@ -139,7 +139,7 @@
       </ng-container>
 
       <ng-container matColumnDef="sex">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Sex </th>
         <td mat-cell *matCellDef="let mouse"> {{mouse.sex}} </td>
       </ng-container>
 
