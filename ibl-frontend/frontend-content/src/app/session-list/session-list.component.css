@@ -171,7 +171,7 @@ button:hover {
     color: white;
 }
 
-.mouse_gender_filter {
+.mouse_sex_filter {
     top: 8px;
     padding-top: 4px;
     padding-bottom: 0px;
@@ -182,21 +182,21 @@ button:hover {
     float: left;
 }
 
-.mouse_gender_filter label {
+.mouse_sex_filter label {
     margin-bottom: 0px;
 }
 
-.mouse_gender_menu mat-checkbox#genderU {
+.mouse_sex_menu mat-checkbox#sexU {
     visibility: hidden;
 }
 
-mat-checkbox.mouse_gender_menu_chbox {
+mat-checkbox.mouse_sex_menu_chbox {
     margin-right: 12px;
 }
-.mouse_gender_menu_chbox label.mat-checkbox-layout {
+.mouse_sex_menu_chbox label.mat-checkbox-layout {
     margin-bottom: 0px;
 }
-.mouse_gender_menu{
+.mouse_sex_menu{
     display: flex;
     flex-direction: row;
 };
@@ -274,7 +274,7 @@ mat-checkbox.mouse_gender_menu_chbox {
 }
 
 @media only screen and (max-width: 639px) {
-    .mouse_gender_filter {
+    .mouse_sex_filter {
         /* margin-bottom: 20px; */
     }
 }
