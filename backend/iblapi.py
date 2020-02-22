@@ -247,15 +247,16 @@ def handle_q(subpath, args, proj, **kwargs):
             plotting_behavior.CumulativeSummary.PerformanceReactionTime & plotting_behavior.SubjectLatestDate
         # find latest plots for mouse with summary
         q = plots * mouse_we_care * projects & args & proj_restr
-    elif subpath == 'clusternavplot':
-        print('fetching cluster plot info...')
+    # elif subpath == 'clusternavplot':
+    #     print('fetching cluster plot info...')
         
-        # specify attributes to exclude from the fetch to save bandwidth (in case no "proj" specified)
-        exclude_attrs = ('-cluster_mean_waveform', '-cluster_template_waveform', '-cluster_waveform_duration',
-                         '-cluster_spike_times', '-cluster_spike_depth', '-cluster_spike_amps')
-        q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
-             & args).proj(..., *exclude_attrs)
-        print(q)
+    #     # specify attributes to exclude from the fetch to save bandwidth (in case no "proj" specified)
+    #     exclude_attrs = ('-cluster_mean_waveform', '-cluster_template_waveform', '-cluster_waveform_duration',
+    #                      '-cluster_spike_times', '-cluster_spike_depth', '-cluster_spike_amps')
+    #     q = (ephys.Cluster * ephys.ChannelGroup.Channel * ephys.Probe.Channel
+    #          & args).proj(..., *exclude_attrs)
+    #     print(q)
+    
     # elif subpath == 'rasterlight':
     #     q = plotting_ephys.RasterLinkS3
     #     def post_process(ret):
