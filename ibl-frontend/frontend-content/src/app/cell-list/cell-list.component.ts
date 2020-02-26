@@ -21,6 +21,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   cellsByProbeIns = [];
   sortedCellsByProbeIns = [];
 
+  selectedGoodFilter = 0;
+
   plot_data;
   plot_layout;
   plot_config;
@@ -339,6 +341,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     const markerColors = [];
     if (this.plot_data && this.plot_data[0]) {
       if (this.plot_data[0]['x'] && this.clickedClusterIndex > -1) {
+        // console.log('clicked index: ', this.clickedClusterIndex)
+        // console.log('clicked id: ', this.clickedClusterId)
         for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
           // if (this.clickedClusterIndex === i) {
           if (this.clickedClusterId === i) {
@@ -442,24 +446,30 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.clickedClusterId = 0;
     // console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
     this.order_by_event(this.eventType);
+
+    if (this.selectedGoodFilter) {
+      this.gcfilter_selected(this.selectedGoodFilter);
+    }
   }
 
   gcfilter_selected(filterID) {
-    console.log('gcfilter: ', filterID);
-    console.log('type of filter: ', typeof filterID);
-    console.log('selected filter criterion id: ', filterID);
+    // console.log('gcfilter: ', filterID);
+    // console.log('type of filter: ', typeof filterID);
+    // console.log('selected filter criterion id: ', filterID);
+    this.selectedGoodFilter = parseInt(filterID, 10);
     let goodFilterQueryInfo = {};
     goodFilterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
     goodFilterQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     goodFilterQueryInfo['probe_idx'] = this.probeIndex;
     goodFilterQueryInfo['criterion_id'] = parseInt(filterID, 10);
-    console.log('querying for good cluster with: ', goodFilterQueryInfo);
-    this.cellListService.retrieveGoodClusters(goodFilterQueryInfo);
+    // console.log('querying for good cluster with: ', goodFilterQueryInfo);
+    if (goodFilterQueryInfo['criterion_id']) {
+      this.cellListService.retrieveGoodClusters(goodFilterQueryInfo);
     this.goodClusterSubscription = this.cellListService.getGoodClustersLoadedListener()
       .subscribe((goodClusterList) => {
         if (Object.entries(goodClusterList).length > 0) {
-          console.log('good clusters retrieved! length: ', goodClusterList.length);
-   
+          // console.log('good clusters retrieved! length: ', goodClusterList.length);
+          this.goodClusters = [];
           const id_data = [];
           const is_good_data = [];
           const color_data = [];
@@ -487,22 +497,52 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.plot_data[0]['marker.line.color'] = color_data;
           
           this.clickedClusterId = 0;
-          // console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
           this.order_by_event(this.eventType);
         }
       })
+
+    } else {
+      this.goodClusters = [];
+      const id_data = [];
+      const is_good_data = [];
+      const color_data = [];
+      this.plot_data[0]['customdata'] = {};
+      this.plot_data[0]['marker']['line']['color'] = [];
+      // this.cellsByProbeIns = [];
+      for (let entry of Object.values(this.cells)) {
+        if (entry['probe_idx'] === this.probeIndex) {
+          id_data.push(entry['cluster_id']);
+          color_data.push(entry['cluster_id']);
+          is_good_data.push(1);
+          // this.cellsByProbeIns.push(entry);
+          color_data.push('rgba(132, 0, 0, 0.5)');
+          
+        }
+      }
+
+      this.plot_data[0]['customdata.id'] = id_data;
+      this.plot_data[0]['customdata.is_good_cluster'] = is_good_data;
+      this.plot_data[0]['marker.line.color'] = color_data;
+
+      this.clickedClusterId = 0;
+      this.order_by_event(this.eventType);
+    }
+    
   }
 
   clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
     const rows = element.querySelectorAll('tr');
-    // console.log('data in clusterSelectedPlot: ', data);
-    if (data['points'] && data['points'][0]['customdata.id']) {
-      this.clickedClusterId = data['points'][0]['customdata.id'];
+    // console.log("data['points'][0] in clusterSelectedPlot: ", data['points'][0]);
+    // console.log("data['points'][0]['text'] in clusterSelectedPlot: ", data['points'][0]['text']);
+    // console.log("type of data['points'][0]['text']: ", typeof data['points'][0]['text']);
+    if (data['points'] && data['points'][0]['text']) {
+      this.clickedClusterId = data['points'][0]['text'];
 
       let rowIndex = 0;
       for (const row of rows) {
         if (this.clickedClusterId === parseInt(row['innerText'].split('	')[0], 10)) {
+          console.log("clickedClusterId matched! - row['innerText']: ", parseInt(row['innerText'].split('	')[0], 10));
           this.clickedClusterIndex = rowIndex;
           row.scrollIntoView({
             behavior: 'smooth',
@@ -511,9 +551,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
         rowIndex += 1;
       }
-      // rows[this.clickedClusterId].scrollIntoView({
-      //                                 behavior: 'smooth',
-      //                                 block: 'center'});
     }
 
   }

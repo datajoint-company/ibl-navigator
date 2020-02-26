@@ -19,6 +19,7 @@
     <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     <div class="plots-navigator" *ngIf="showController">
       <div *ngIf="cells" class="clusterListContainer">
+        goodClusters: {{ goodClusters.length }}
         <table matSort (matSortChange)="sortData($event)" class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable>
         <!-- <table class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable> -->
           <thead class="thead-light">
@@ -31,7 +32,7 @@
           </thead>
           <tbody>
             <!-- <tr *ngFor="let cl of cellsByProbeIns" (click)="clusterSelectedTable(cl.cluster_id)" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : ''}"> -->
-            <tr *ngFor="let cl of sortedCellsByProbeIns" (click)="clusterSelectedTable(cl.cluster_id)" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : ''}">
+            <tr *ngFor="let cl of sortedCellsByProbeIns" (click)="clusterSelectedTable(cl.cluster_id)" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : '', 'color': !goodClusters.includes(cl?.cluster_id) && goodClusters.length ? 'lightgrey' : ''}">
 
               <td>{{ cl.cluster_id }}</td>
               <td>{{ cl.probe_idx }}</td>
