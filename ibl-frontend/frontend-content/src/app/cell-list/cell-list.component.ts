@@ -630,6 +630,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   order_by_sorting(sortType) {
+    console.log('logging sortType: ', sortType);
     this.sortType = sortType;
     const queryInfo = {};
     queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -763,7 +764,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   updateRaster(rasterPlotList) {
+    console.log('logging rasterTemplates: ', this.rasterTemplates);
     this.rasterPlotList = rasterPlotList;
+    console.log('raster plot list: ', rasterPlotList)
     for (const raster of rasterPlotList) {
       const currentTemplate = deepCopy(this.rasterTemplates[raster['template_idx']]);
       const rasterConfigCopy = { ...this.raster_psth_config };
@@ -815,9 +818,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       this.rasterLookup[raster['cluster_id']]['layout']['height'] = 420;
 
       if (this.sortType === 'trial_id') {
-        this.rasterLookup[raster['cluster_id']]['data'][1]['showlegend'] = false;
-        this.rasterLookup[raster['cluster_id']]['data'][2]['showlegend'] = false;
-        this.rasterLookup[raster['cluster_id']]['data'][3]['showlegend'] = false;
+        // this.rasterLookup[raster['cluster_id']]['data'][1]['showlegend'] = false;
+        // this.rasterLookup[raster['cluster_id']]['data'][2]['showlegend'] = false;
+        // this.rasterLookup[raster['cluster_id']]['data'][3]['showlegend'] = false;
         this.rasterLookup[raster['cluster_id']]['layout']['width'] = 530;
       }
     }
@@ -832,10 +835,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             layout: deepCopy(this.rasterLookup[Object.keys(this.rasterLookup)[0]]['layout']),
             config: this.missing_raster_psth_config
           };
-          this.rasterLookup[cluster['cluster_id']]['data'][0]['showlegend'] = false;
-          this.rasterLookup[cluster['cluster_id']]['data'][1]['showlegend'] = false;
-          this.rasterLookup[cluster['cluster_id']]['data'][2]['showlegend'] = false;
-          this.rasterLookup[cluster['cluster_id']]['data'][3]['showlegend'] = false;
+          // this.rasterLookup[cluster['cluster_id']]['data'][0]['showlegend'] = false;
+          // this.rasterLookup[cluster['cluster_id']]['data'][1]['showlegend'] = false;
+          // this.rasterLookup[cluster['cluster_id']]['data'][2]['showlegend'] = false;
+          // this.rasterLookup[cluster['cluster_id']]['data'][3]['showlegend'] = false;
 
           this.rasterLookup[cluster['cluster_id']]['layout']['height'] = 420;
           this.rasterLookup[cluster['cluster_id']]['layout']['width'] = 658;

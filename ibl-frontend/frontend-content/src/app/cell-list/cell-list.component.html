@@ -19,7 +19,6 @@
     <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     <div class="plots-navigator" *ngIf="showController">
       <div *ngIf="cells" class="clusterListContainer">
-        goodClusters: {{ goodClusters.length }}
         <table matSort (matSortChange)="sortData($event)" class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable>
         <!-- <table class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable> -->
           <thead class="thead-light">
@@ -63,18 +62,26 @@
       <div class="order-buttons col-4">
         <label for="event">Event</label>
         <select name="event" (change)="order_by_event($event.target.value)">
-          <option value="feedback" selected [disabled]="sortType==='response - stim on'">Feedback</option>
+          <!-- <option value="feedback" selected [disabled]="sortType==='response - stim on'">Feedback</option>
           <option value="response" [disabled]="sortType==='feedback - stim on'">Response</option>
-          <option value="stim on" [disabled]="sortType==='feedback - response'">Stim On</option>
+          <option value="stim on" [disabled]="sortType==='feedback - response'">Stim On</option> -->
+
+          <option value="feedback" selected [disabled]="sortType==='feedback - stim on' || sortType==='contrast'">Feedback</option>
+          <option value="stim on" [disabled]="sortType==='feedback type'">Stim On</option>
         </select>
       </div>
       <div class="order-buttons col-4">
         <label for="sort_by">Sort By</label>
         <select name="sort_by" (change)="order_by_sorting($event.target.value)">
-          <option value="trial_id" selected>Trial ID</option>
+          <!-- <option value="trial_id" selected>Trial ID</option>
           <option value="feedback - response" [disabled]="eventType==='stim on'">Feedback - Response</option>
           <option value="feedback - stim on" [disabled]="eventType==='response'">Feedback - Stim On</option>
-          <option value="response - stim on" [disabled]="eventType==='feedback'">Response - Stim On</option>
+          <option value="response - stim on" [disabled]="eventType==='feedback'">Response - Stim On</option> -->
+
+          <option value="trial_id" selected>Trial ID</option>
+          <option value="feedback - stim on" [disabled]="eventType==='feedback'">Feedback - Stim On</option>
+          <option value="contrast" [disabled]="eventType==='feedback'">Contrast</option>
+          <option value="feedback type" [disabled]="eventType==='stim on'">Feedback Type</option>
         </select>
       </div>
     </div>
