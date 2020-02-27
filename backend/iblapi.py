@@ -122,7 +122,8 @@ reqmap = {
     'goodclustercriterion': ephys.GoodClusterCriterion,
     ## 'raster': plotting_ephys.Raster,
     ## 'psth': plotting_ephys.Psth,
-    'psthdata': plotting_ephys.PsthDataVarchar,
+    # 'psthdata': plotting_ephys.PsthDataVarchar,
+    'psthdata': plotting_ephys.Psth, # "temp" table for testing
     'psthtemplate': plotting_ephys.PsthTemplate,
     # 'rasterlight': plotting_ephys.RasterLinkS3,
     'rasterlight': plotting_ephys.Raster, # temp table for testing

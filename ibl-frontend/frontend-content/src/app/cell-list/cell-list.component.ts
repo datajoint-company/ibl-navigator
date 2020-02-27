@@ -314,18 +314,24 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     const psthQueryInfo = {};
     psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    psthQueryInfo['probe_idx'] = this.probeIndex;
+    if (this.probeIndex || this.probeIndex === 0) {
+      psthQueryInfo['probe_idx'] = this.probeIndex;
+    } else {
+      // console.log('this.probeIndex was NOT ready...that is not good');
+      // psthQueryInfo['probe_idx'] = 0;
+    }
     psthQueryInfo['event'] = this.eventType;
 
     this.cellListService.retrievePsthTemplates();
     this.psthTemplatesSubscription = this.cellListService.getPsthTemplatesLoadedListener()
       .subscribe((template) => {
-        // console.log('psth template retrieved');
+        // console.log('psth template retrieved - ', template);
         for (const [index, temp] of Object.entries(template)) {
           if (temp['psth_template_idx'] === parseInt(index, 10)) {
             this.psthTemplates.push(temp['psth_data_template']);
           }
         }
+        // console.log('about to retrieve psth with this query: ', psthQueryInfo);
         this.cellListService.retrievePSTHList(psthQueryInfo);
         this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
           .subscribe((psthPlotList) => {
@@ -542,7 +548,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       let rowIndex = 0;
       for (const row of rows) {
         if (this.clickedClusterId === parseInt(row['innerText'].split('	')[0], 10)) {
-          console.log("clickedClusterId matched! - row['innerText']: ", parseInt(row['innerText'].split('	')[0], 10));
+          // console.log("clickedClusterId matched! - row['innerText']: ", parseInt(row['innerText'].split('	')[0], 10));
           this.clickedClusterIndex = rowIndex;
           row.scrollIntoView({
             behavior: 'smooth',
@@ -631,7 +637,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   order_by_sorting(sortType) {
-    console.log('logging sortType: ', sortType);
+    // console.log('logging sortType: ', sortType);
     this.sortType = sortType;
     const queryInfo = {};
     queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -666,34 +672,79 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         config: psthConfigCopy
         // config: this.raster_psth_config,
       };
-      this.psthLookup[psth['cluster_id']]['data'][0] = {
-        y: psth['psth_left'] ? psth['psth_left'].split(',') : [],
-        x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
-        name: 'left trials',
-        mode: 'lines',
-        marker: { size: 6, color: 'green' }
-      };
-      this.psthLookup[psth['cluster_id']]['data'][1] = {
-        y: psth['psth_right'] ? psth['psth_right'].split(',') : [],
-        x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
-        name: 'right trials',
-        mode: 'lines',
-        marker: { size: 6, color: 'blue' }
-      };
-      this.psthLookup[psth['cluster_id']]['data'][2] = {
-        y: psth['psth_incorrect'] ? psth['psth_incorrect'].split(',') : [],
-        x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
-        name: 'incorrect trials',
-        mode: 'lines',
-        marker: { size: 6, color: 'red' }
-      };
-      this.psthLookup[psth['cluster_id']]['data'][3] = {
-        y: psth['psth_all'] ? psth['psth_all'].split(',') : [],
-        x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
-        name: 'all trials',
-        mode: 'lines',
-        marker: { size: 6, color: 'black' }
-      };
+      // this.psthLookup[psth['cluster_id']]['data'][0] = {
+      //   y: psth['psth_left'] ? psth['psth_left'].split(',') : [],
+      //   x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+      //   name: 'left trials',
+      //   mode: 'lines',
+      //   marker: { size: 6, color: 'green' }
+      // };
+      // this.psthLookup[psth['cluster_id']]['data'][1] = {
+      //   y: psth['psth_right'] ? psth['psth_right'].split(',') : [],
+      //   x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+      //   name: 'right trials',
+      //   mode: 'lines',
+      //   marker: { size: 6, color: 'blue' }
+      // };
+      // this.psthLookup[psth['cluster_id']]['data'][2] = {
+      //   y: psth['psth_incorrect'] ? psth['psth_incorrect'].split(',') : [],
+      //   x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+      //   name: 'incorrect trials',
+      //   mode: 'lines',
+      //   marker: { size: 6, color: 'red' }
+      // };
+      // this.psthLookup[psth['cluster_id']]['data'][3] = {
+      //   y: psth['psth_all'] ? psth['psth_all'].split(',') : [],
+      //   x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
+      //   name: 'all trials',
+      //   mode: 'lines',
+      //   marker: { size: 6, color: 'black' }
+      // };
+      for (let templateType of Object.entries(this.psthLookup[psth['cluster_id']]['data'])) {
+        // console.log('templateType: ', templateType);
+        this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = psth['psth_time'].split(',');
+        switch (templateType[0]) {
+          case '0':
+            // templateType[1]['y'] = psth['psth_left'];
+            this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left'].split(',');
+            break;
+          case '1':
+            // templateType[1]['y'] = psth['psth_left_upper'];
+            this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left_upper'].split(',');
+            break;
+          case '2':
+            this.psthLookup[psth['cluster_id']]['data'][2]['y'] = psth['psth_left_lower'].split(',');
+            break;
+          case '3':
+            this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right'].split(',');
+            break;
+          case '4':
+            this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right_upper'].split(',');
+            break;
+          case '5':
+            this.psthLookup[psth['cluster_id']]['data'][5]['y'] = psth['psth_right_lower'].split(',');
+            break;
+          case '6':
+            this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect'].split(',');
+            break;
+          case '7':
+            this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect_upper'].split(',');
+            break;
+          case '8':
+            this.psthLookup[psth['cluster_id']]['data'][8]['y'] = psth['psth_incorrect_lower'].split(',');
+            break;
+          case '9':
+            this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all'].split(',');
+            break;
+          case '10':
+            this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all_upper'].split(',');
+            break;
+          case '11':
+            this.psthLookup[psth['cluster_id']]['data'][11]['y'] = psth['psth_all_lower'].split(',');
+            break;
+        }
+      }
+      
 
       this.psthLookup[psth['cluster_id']]['layout']['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
       this.psthLookup[psth['cluster_id']]['layout']['xaxis']['range'] = psth['psth_x_lim'] ? psth['psth_x_lim'].split(',') : [];
@@ -765,9 +816,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   updateRaster(rasterPlotList) {
-    console.log('logging rasterTemplates: ', this.rasterTemplates);
+    // console.log('logging rasterTemplates: ', this.rasterTemplates);
     this.rasterPlotList = rasterPlotList;
-    console.log('raster plot list: ', rasterPlotList)
+    // console.log('raster plot list: ', rasterPlotList)
     for (const raster of rasterPlotList) {
       const currentTemplate = deepCopy(this.rasterTemplates[raster['template_idx']]);
       const rasterConfigCopy = { ...this.raster_psth_config };
@@ -835,24 +886,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         // console.log("this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']: ", this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']);
       }
 
-      if (this.sortType === 'feedback type') {
-        
-        this.rasterLookup[raster['cluster_id']]['data'] = this.rasterLookup[raster['cluster_id']]['data'].slice(0,3);
-        this.rasterLookup[raster['cluster_id']]['data'][1]['name'] = 'Correct';
-        this.rasterLookup[raster['cluster_id']]['data'][1]['mode'] = 'lines';
-        this.rasterLookup[raster['cluster_id']]['data'][1]['marker'] = {
-          'color': 'blue',
-          'opacity': 0.5,
-          'size': '8'
-        }
-        this.rasterLookup[raster['cluster_id']]['data'][2]['name'] = 'Incorrect';
-        this.rasterLookup[raster['cluster_id']]['data'][2]['mode'] = 'lines';
-        this.rasterLookup[raster['cluster_id']]['data'][2]['marker'] = {
-          'color': 'red',
-          'opacity': 0.5,
-          'size': '8'
-        }
-      }
 
     }
 
