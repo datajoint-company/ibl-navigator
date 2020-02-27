@@ -706,38 +706,38 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         switch (templateType[0]) {
           case '0':
             // templateType[1]['y'] = psth['psth_left'];
-            this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left'].split(',');
+            this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left_upper'].split(',');
             break;
           case '1':
             // templateType[1]['y'] = psth['psth_left_upper'];
-            this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left_upper'].split(',');
+            this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left'].split(',');
             break;
           case '2':
             this.psthLookup[psth['cluster_id']]['data'][2]['y'] = psth['psth_left_lower'].split(',');
             break;
           case '3':
-            this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right'].split(',');
+            this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right_upper'].split(',');
             break;
           case '4':
-            this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right_upper'].split(',');
+            this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right'].split(',');
             break;
           case '5':
             this.psthLookup[psth['cluster_id']]['data'][5]['y'] = psth['psth_right_lower'].split(',');
             break;
           case '6':
-            this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect'].split(',');
+            this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect_upper'].split(',');
             break;
           case '7':
-            this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect_upper'].split(',');
+            this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect'].split(',');
             break;
           case '8':
             this.psthLookup[psth['cluster_id']]['data'][8]['y'] = psth['psth_incorrect_lower'].split(',');
             break;
           case '9':
-            this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all'].split(',');
+            this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all_upper'].split(',');
             break;
           case '10':
-            this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all_upper'].split(',');
+            this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all'].split(',');
             break;
           case '11':
             this.psthLookup[psth['cluster_id']]['data'][11]['y'] = psth['psth_all_lower'].split(',');
@@ -748,7 +748,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
       this.psthLookup[psth['cluster_id']]['layout']['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
       this.psthLookup[psth['cluster_id']]['layout']['xaxis']['range'] = psth['psth_x_lim'] ? psth['psth_x_lim'].split(',') : [];
-      this.psthLookup[psth['cluster_id']]['layout']['width'] = 658;
+      this.psthLookup[psth['cluster_id']]['layout']['width'] = 770;
       this.psthLookup[psth['cluster_id']]['layout']['height'] = 420;
 
     }
@@ -783,8 +783,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                   deepCopy(this.psthLookup[Object.keys(this.psthLookup)[0]]['layout']) : dummyLayout,
           config: this.missing_raster_psth_config
         };
-        this.psthLookup[cluster['cluster_id']]['layout']['height'] = 420;
-        this.psthLookup[cluster['cluster_id']]['layout']['width'] = 658;
+        // this.psthLookup[cluster['cluster_id']]['layout']['height'] = 420;
+        // this.psthLookup[cluster['cluster_id']]['layout']['width'] = 658;
+        // this.psthLookup[cluster['cluster_id']]['layout']['height'] = 370;
+        // this.psthLookup[cluster['cluster_id']]['layout']['width'] = 800;
         this.psthLookup[cluster['cluster_id']]['layout']['xaxis'] = {
           range: ['-1', '1'],
           type: 'linear'
