@@ -598,6 +598,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   order_by_event(eventType) {
     // console.log('event order selected!: ', eventType);
+    this.sortType = 'trial_id';
     this.eventType = eventType;
     const queryInfo = {};
     queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -811,9 +812,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         x: currentTemplate.layout.title.x,
         y: currentTemplate.layout.title.y,
       };
-      this.rasterLookup[raster['cluster_id']]['layout']['yaxis'] = {
-        range: [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
-      };
+      // this.rasterLookup[raster['cluster_id']]['layout']['yaxis'] = {
+      //   range: [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
+      // };
+      this.rasterLookup[raster['cluster_id']]['layout']['yaxis']['range'] = [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
       this.rasterLookup[raster['cluster_id']]['layout']['width'] = 658;
       this.rasterLookup[raster['cluster_id']]['layout']['height'] = 420;
 
@@ -823,6 +825,35 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         // this.rasterLookup[raster['cluster_id']]['data'][3]['showlegend'] = false;
         this.rasterLookup[raster['cluster_id']]['layout']['width'] = 530;
       }
+
+      if (this.sortType === 'contrast') {
+        // console.log('raster.plot_contrast_tick_pos: ', raster['plot_contrast_tick_pos']);
+        // console.log('raster.plot_contrasts: ', raster['plot_contrasts']);
+        
+        this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']['tickvals'] = raster['plot_contrast_tick_pos'];
+        this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']['ticktext'] = raster['plot_contrasts'];
+        // console.log("this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']: ", this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']);
+      }
+
+      if (this.sortType === 'feedback type') {
+        
+        this.rasterLookup[raster['cluster_id']]['data'] = this.rasterLookup[raster['cluster_id']]['data'].slice(0,3);
+        this.rasterLookup[raster['cluster_id']]['data'][1]['name'] = 'Correct';
+        this.rasterLookup[raster['cluster_id']]['data'][1]['mode'] = 'lines';
+        this.rasterLookup[raster['cluster_id']]['data'][1]['marker'] = {
+          'color': 'blue',
+          'opacity': 0.5,
+          'size': '8'
+        }
+        this.rasterLookup[raster['cluster_id']]['data'][2]['name'] = 'Incorrect';
+        this.rasterLookup[raster['cluster_id']]['data'][2]['mode'] = 'lines';
+        this.rasterLookup[raster['cluster_id']]['data'][2]['marker'] = {
+          'color': 'red',
+          'opacity': 0.5,
+          'size': '8'
+        }
+      }
+
     }
 
     // console.log('logginng cellsByProbeINs:', this.cellsByProbeIns);

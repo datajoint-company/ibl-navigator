@@ -66,8 +66,10 @@
           <option value="response" [disabled]="sortType==='feedback - stim on'">Response</option>
           <option value="stim on" [disabled]="sortType==='feedback - response'">Stim On</option> -->
 
-          <option value="feedback" selected [disabled]="sortType==='feedback - stim on' || sortType==='contrast'">Feedback</option>
-          <option value="stim on" [disabled]="sortType==='feedback type'">Stim On</option>
+          <!-- <option value="feedback" selected [disabled]="sortType==='feedback - stim on' || sortType==='contrast'">Feedback</option>
+          <option value="stim on" [disabled]="sortType==='feedback type'">Stim On</option> -->
+          <option value="feedback" [selected]="eventType === 'feedback'">Feedback</option>
+          <option value="stim on" [selected]="eventType === 'stim on'">Stim On</option>
         </select>
       </div>
       <div class="order-buttons col-4">
@@ -78,10 +80,10 @@
           <option value="feedback - stim on" [disabled]="eventType==='response'">Feedback - Stim On</option>
           <option value="response - stim on" [disabled]="eventType==='feedback'">Response - Stim On</option> -->
 
-          <option value="trial_id" selected>Trial ID</option>
-          <option value="feedback - stim on" [disabled]="eventType==='feedback'">Feedback - Stim On</option>
-          <option value="contrast" [disabled]="eventType==='feedback'">Contrast</option>
-          <option value="feedback type" [disabled]="eventType==='stim on'">Feedback Type</option>
+          <option value="trial_id" [selected]="sortType === 'trial_id'">Trial ID</option>
+          <option value="feedback - stim on" [disabled]="eventType==='feedback'" [selected]="sortType === 'feedback - stim on'">Feedback - Stim On</option>
+          <option value="contrast" [disabled]="eventType==='feedback'" [selected]="sortType === 'contrast'">Contrast</option>
+          <option value="feedback type" [disabled]="eventType==='stim on'" [selected]="sortType === 'feedback type'">Feedback Type</option>
         </select>
       </div>
     </div>
