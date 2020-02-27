@@ -1,11 +1,20 @@
 <div *ngIf="cells">
   <h3>Cells</h3>
-  <div class="probe-selection-area">
-    <label for="probe_idx">Select Probe Insertion Index:  </label>
-    <select name="probe_idx" (change)="probe_selected($event.target.value)">
-      <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{ probeIns }}</option>
-    </select>
-  </div>
+  <span class="cluster-nav-filters">
+    <div class="probe-selection-area">
+      <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
+      <select name="probe_idx" (change)="probe_selected($event.target.value)">
+        <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{ probeIns }}</option>
+      </select>
+    </div>
+    <div class="gc-filter-area">
+      <label for="gc-filter">Select Good Cluster Criterion Filter:&nbsp;&nbsp;  </label>
+      <select name="gc-filter" (change)="gcfilter_selected($event.target.value)">
+        <option *ngFor="let gcfilter of gcfilter_types | keyvalue" [value]="gcfilter.key" [selected]="gcfilter == gcfilter_types[0]">{{ gcfilter.value }}</option>
+      </select>
+    </div>
+  </span>
+  <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
   <div class="row">
     <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     <div class="plots-navigator" *ngIf="showController">
@@ -15,19 +24,19 @@
           <thead class="thead-light">
             <th mat-sort-header="cluster_id">Cluster ID</th>
             <th>Probe Index</th>
-            <th mat-sort-header="cluster_depth">Cluster Depth</th>
-            <th mat-sort-header="cluster_amp">Cluster Amp</th>
+            <th mat-sort-header="cluster_depth">Cluster Depth (µm)</th>
+            <th mat-sort-header="cluster_amp">Cluster Amp (µV)</th>
             <th mat-sort-header="firing_rate">Firing Rate</th>
             <!-- <th>Details</th> -->
           </thead>
           <tbody>
             <!-- <tr *ngFor="let cl of cellsByProbeIns" (click)="clusterSelectedTable(cl.cluster_id)" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : ''}"> -->
-            <tr *ngFor="let cl of sortedCellsByProbeIns" (click)="clusterSelectedTable(cl.cluster_id)" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : ''}">
+            <tr *ngFor="let cl of sortedCellsByProbeIns" (click)="clusterSelectedTable(cl.cluster_id)" [ngStyle]="{'backgroundColor': cl?.cluster_id == clickedClusterId ? '#ffe5e5' : '', 'color': !goodClusters.includes(cl?.cluster_id) && goodClusters.length ? 'lightgrey' : ''}">
 
               <td>{{ cl.cluster_id }}</td>
               <td>{{ cl.probe_idx }}</td>
               <td>{{ cl.cluster_depth }}</td>
-              <td>{{ cl.cluster_amp }}</td>
+              <td>{{ cl.cluster_amp * 1000000 | number:'0.0-3'}}</td>
               <td>{{ cl.firing_rate }}</td>
               <!-- <td>
                 <span class="oi oi-external-link" routerLink="/cell/{{cl?.subject_uuid}}/{{cl?.session_start_time}}/{{cl?.cluster_id}}">
@@ -53,18 +62,28 @@
       <div class="order-buttons col-4">
         <label for="event">Event</label>
         <select name="event" (change)="order_by_event($event.target.value)">
-          <option value="feedback" selected [disabled]="sortType==='response - stim on'">Feedback</option>
+          <!-- <option value="feedback" selected [disabled]="sortType==='response - stim on'">Feedback</option>
           <option value="response" [disabled]="sortType==='feedback - stim on'">Response</option>
-          <option value="stim on" [disabled]="sortType==='feedback - response'">Stim On</option>
+          <option value="stim on" [disabled]="sortType==='feedback - response'">Stim On</option> -->
+
+          <!-- <option value="feedback" selected [disabled]="sortType==='feedback - stim on' || sortType==='contrast'">Feedback</option>
+          <option value="stim on" [disabled]="sortType==='feedback type'">Stim On</option> -->
+          <option value="feedback" [selected]="eventType === 'feedback'">Feedback</option>
+          <option value="stim on" [selected]="eventType === 'stim on'">Stim On</option>
         </select>
       </div>
       <div class="order-buttons col-4">
         <label for="sort_by">Sort By</label>
         <select name="sort_by" (change)="order_by_sorting($event.target.value)">
-          <option value="trial_id" selected>Trial ID</option>
+          <!-- <option value="trial_id" selected>Trial ID</option>
           <option value="feedback - response" [disabled]="eventType==='stim on'">Feedback - Response</option>
           <option value="feedback - stim on" [disabled]="eventType==='response'">Feedback - Stim On</option>
-          <option value="response - stim on" [disabled]="eventType==='feedback'">Response - Stim On</option>
+          <option value="response - stim on" [disabled]="eventType==='feedback'">Response - Stim On</option> -->
+
+          <option value="trial_id" [selected]="sortType === 'trial_id'">Trial ID</option>
+          <option value="feedback - stim on" [disabled]="eventType==='feedback'" [selected]="sortType === 'feedback - stim on'">Feedback - Stim On</option>
+          <option value="contrast" [disabled]="eventType==='feedback'" [selected]="sortType === 'contrast'">Contrast</option>
+          <option value="feedback type" [disabled]="eventType==='stim on'" [selected]="sortType === 'feedback type'">Feedback Type</option>
         </select>
       </div>
     </div>
