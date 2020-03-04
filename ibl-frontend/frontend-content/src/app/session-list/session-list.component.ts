@@ -37,6 +37,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filterExpanded;
   sessions;
   allSessions;
+  // currentlyLoadedSessions;
   sessionDateFilter: Function;
   miceBirthdayFilter: Function;
   sessionMinDate: Date;
@@ -91,7 +92,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     } else {
       this.filterExpanded = true;
     }
-    const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState();
+    const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState(); // PageIndex, PageSize, SortInfo
+    const tableState2: [number, number, Object, Object] = this.filterStoreService.retrieveSessionTableState2(); // PageIndex, PageSize, SortInfo, loadedSessions
     // console.log('tableState: ', tableState);
     this.route.queryParams
       .subscribe(params => {
@@ -156,19 +158,31 @@ export class SessionListComponent implements OnInit, OnDestroy {
           this.sort.active = Object.keys(tableState[2])[0];
           this.sort.direction = Object.values(tableState[2])[0].direction;
         }
-        this.applyFilter();
+        if (tableState2[3]) { // checks if there are any pre-loaded session upon returning
+          console.log('session stored in tableState2 is: ', tableState2);
+          this.applyPreloadedSessions(tableState2)
+
+        } else {
+          console.log('nothing found in session storage - applying regular filter');
+          this.applyFilter();
+        }
+        // this.applyFilter();
 
       });
     // TODO: create menu content using separate api designated for menu instead of getting all session info
     this.allSessionsService.getAllSessionMenu({'__order': 'session_lab'});
     this.allSessionMenuSubscription = this.allSessionsService.getAllSessionMenuLoadedListener()
       .subscribe((sessions_all: any) => {
+        console.log('initializing menu - loaded all sessions for menu')
         this.allSessions = sessions_all;
         this.createMenu(sessions_all);
       });
   }
 
   ngOnDestroy() {
+    console.log('destroying while storing these sessions: ', this.sessions);
+    this.filterStoreService.storeSessionTableState2(this.paginator.pageIndex, this.pageSize, this.sort, this.sessions)
+
     if (this.sessionsSubscription) {
       this.sessionsSubscription.unsubscribe();
     }
@@ -184,6 +198,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   private createMenu(sessions) {
+    console.log('now creating menu');
     this.session_menu = {};
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
@@ -458,7 +473,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
-
+    console.log('applying filter');
     this.loading = true;
     this.sessions = [];
     const request = this.filterRequests();
@@ -473,15 +488,38 @@ export class SessionListComponent implements OnInit, OnDestroy {
           this.dataSource = new MatTableDataSource(newSessions);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
-
         });
     } else {
-      this.resetFilter();
+      // this.resetFilter();
+      this.refreshData();
     }
   }
 
+  applyPreloadedSessions(storedTableInfo) { // PageIndex, PageSize, SortInfo, loadedSessions
+    console.log('trying to apply preloaded sessions');
+    this.dataSource = new MatTableDataSource(storedTableInfo[3]);
+    this.dataSource.sort = storedTableInfo[2];
+    this.dataSource.paginator = this.paginator
+    if (storedTableInfo[1]) {
+      console.log('printing datasource: ', this.dataSource.paginator)
+      console.log('printing this.paginator: ', this.paginator)
+      this.dataSource.paginator.pageSize = storedTableInfo[1];
+    } else {
+      this.dataSource.paginator.pageSize = this.pageSize
+    }
+
+    if (storedTableInfo[0]) {
+      this.dataSource.paginator.pageIndex = storedTableInfo[0];
+    } else {
+      this.dataSource.paginator.pageIndex = 0
+    }
+    
+    this.sessions = storedTableInfo[3];
+    this.loading = false;
+  }
+
   resetFilter() {
-    // console.log('resetting filter');
+    console.log('resetting filter');
     this.loading = true;
     this.allSessionsService.retrieveSessions({ '__order': 'session_start_time DESC'});
     this.filterStoreService.clearSessionFilter();
@@ -496,7 +534,35 @@ export class SessionListComponent implements OnInit, OnDestroy {
       });
   }
 
+  resetFilter_fast() {
+    console.log('new rest filter');
+
+    this.filterStoreService.clearSessionFilter();
+    this.sessions = this.allSessions;
+    this.dataSource = new MatTableDataSource(this.sessions);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
+  refreshData() {
+    console.log('refreshing data to newest:');
+    this.filterStoreService.refreshSessionTableState();
+    this.loading = true;
+    this.allSessionsService.retrieveSessions({ '__order': 'session_start_time DESC'});
+    this.allSessionsService.getNewSessionsLoadedListener()
+      .subscribe((sessionsAll: any) => {
+        this.loading = false;
+        this.sessions = sessionsAll;
+        this.allSessions = sessionsAll;
+        this.dataSource = new MatTableDataSource(sessionsAll);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      });
+    
+  }
+
   clearControl() {
+    console.log('clearing control and storage');
     for (const control in this.session_filter_form.controls) {
       const toReset = {}
       
@@ -514,8 +580,17 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.session_filter_form.patchValue(toReset); 
     }
     this.filterStoreService.clearSessionTableState();
+
+    // attempting to just reset the table and not the actual session
+    this.dataSource = new MatTableDataSource(this.allSessions);
+    this.dataSource.paginator = this.paginator;
+    this.sessions = this.allSessions
+    console.log('length of all sessions: ', this.allSessions.length);
+
     this.paginator.pageSize = 25;
     this.paginator.pageIndex = null;
+    
+
     // the below sort is to reset the arrow UI that doesn't go away after this.sort.active = '' 
     this.sort.sortables.forEach(sortItem => {
       this.sort.sort(sortItem);
@@ -533,7 +608,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
             queryParams: null
           });
       } else {
-        this.applyFilter();
+        // this.applyFilter();
       }
      });
   }
@@ -552,6 +627,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
     }
     this.filterStoreService.storeSessionTableState(pageIndex, pageSize, sorter);
+    this.filterStoreService.storeSessionTableState2(pageIndex, pageSize, sorter, this.sessions);
   }
 
   sessionSelected(session) {

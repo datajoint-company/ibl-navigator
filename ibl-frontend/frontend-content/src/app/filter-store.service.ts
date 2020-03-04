@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class FilterStoreService {
+  loadedSessions: Object;
   sessionFilter: Object;
   mouseFilter: Object;
   summaryFilter: Object;
@@ -36,12 +37,27 @@ export class FilterStoreService {
     // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo);
   }
 
+  storeSessionTableState2(pageIndex, pageSize, sorter, sessionList) {
+    this.loadedSessions = sessionList;
+    if (pageSize) {
+      this.sessionPageIndexInfo = pageIndex;
+      this.sessionPageSizeInfo = pageSize;
+    } else if (sorter) {
+      this.sessionSortInfo = sorter;
+    }
+    // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo);
+  }
+
   retrieveSessionFilter() {
     return this.sessionFilter;
   }
 
   retrieveSessionTableState() {
     return <[number, number, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo];
+  }
+  retrieveSessionTableState2() {
+    return <[number, number, Object, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, 
+      this.sessionSortInfo, this.loadedSessions];
   }
 
   clearSessionFilter() {
@@ -52,6 +68,11 @@ export class FilterStoreService {
     this.sessionPageIndexInfo = null;
     this.sessionPageSizeInfo = null;
     this.sessionSortInfo = {};
+    // this.loadedSessions = null;
+  }
+
+  refreshSessionTableState() {
+    this.loadedSessions = null;
   }
 
 // ========= Mouse List Filter Sticky ===============//
