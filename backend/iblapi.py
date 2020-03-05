@@ -34,14 +34,14 @@ def test_mkvmod(mod):
         mod, dj.config.get('database.prefix', '') + 'test_ibl_{}'.format(mod))
 
 
-subject = test_mkvmod('subject')
-reference = test_mkvmod('reference')
-action = test_mkvmod('action')
-acquisition = test_mkvmod('acquisition')
-plotting_behavior = test_mkvmod('plotting_behavior')
-analyses_behavior = test_mkvmod('analyses_behavior')
-plotting_ephys = test_mkvmod('plotting_ephys')
-ephys = test_mkvmod('ephys')
+subject = mkvmod('subject')
+reference = mkvmod('reference')
+action = mkvmod('action')
+acquisition = mkvmod('acquisition')
+plotting_behavior = mkvmod('plotting_behavior')
+analyses_behavior = mkvmod('analyses_behavior')
+plotting_ephys = mkvmod('plotting_ephys')
+ephys = mkvmod('ephys')
 
 dj.config['stores'] = {
     'ephys': dict(
@@ -123,10 +123,10 @@ reqmap = {
     ## 'raster': plotting_ephys.Raster,
     ## 'psth': plotting_ephys.Psth,
     # 'psthdata': plotting_ephys.PsthDataVarchar,
-    'psthdata': plotting_ephys.Psth, # "temp" table for testing
+    'psthdata': plotting_ephys.Psth, 
     'psthtemplate': plotting_ephys.PsthTemplate,
     # 'rasterlight': plotting_ephys.RasterLinkS3,
-    'rasterlight': plotting_ephys.Raster, # temp table for testing
+    'rasterlight': plotting_ephys.Raster,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
 dumps = DateTimeEncoder.dumps
