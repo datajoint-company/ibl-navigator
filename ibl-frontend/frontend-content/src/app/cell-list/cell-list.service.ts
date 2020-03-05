@@ -14,12 +14,16 @@ export class CellListService {
   private psthList;
   private rasterTemplates;
   private psthTemplates;
+  private gcCriteria;
+  private goodClusters;
 
   private cellListLoaded = new Subject();
   private rasterListLoaded = new Subject();
   private psthListLoaded = new Subject();
   private rasterTemplatesLoaded = new Subject();
   private psthTemplatesLoaded = new Subject();
+  private gcCriteriaLoaded = new Subject();
+  private goodClustersLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -108,6 +112,34 @@ export class CellListService {
       );
   }
 
+  retrieveGCFilterTypes() {
+    this.http.get(BACKEND_API_URL + `/plot/gccriterion`)
+      .subscribe(
+        (criteria) => {
+          this.gcCriteria = criteria;
+          this.gcCriteriaLoaded.next(this.gcCriteria);
+        },
+        (err: any) => {
+          console.log('error in retrieving good filter criteria');
+          console.error(err);
+        }
+      )
+  }
+
+  retrieveGoodClusters(GCqueryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/goodcluster`, GCqueryInfo)
+      .subscribe(
+        (goodCellData) => {
+          this.goodClusters = goodCellData;
+          this.goodClustersLoaded.next(this.goodClusters);
+        },
+        (err: any) => {
+          console.log('error in retrieving good clusters for: ', GCqueryInfo);
+          console.error(err);
+        }
+      );
+  }
+
   getCellListLoadedListener() {
     return this.cellListLoaded.asObservable();
   }
@@ -122,5 +154,11 @@ export class CellListService {
   }
   getPsthTemplatesLoadedListener() {
     return this.psthTemplatesLoaded.asObservable();
+  }
+  getGCCriteriaLoadedListener() {
+    return this.gcCriteriaLoaded.asObservable();
+  }
+  getGoodClustersLoadedListener() {
+    return this.goodClustersLoaded.asObservable();
   }
 }

@@ -423,6 +423,35 @@ app.post('/plot/cluster', checkAuth, (req, res) => {
     })
 })
 
+app.post('/plot/goodcluster', checkAuth, (req, res) => {
+    const timeX = new Date()
+    request.post(flask_backend + '/v0/goodcluster', { form: req.body, timeout: 120000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [good cluster list fetch]: ', error);
+            console.log('error code: ', error.code);
+            console.log('error was connection timeout: ', error.connect);
+            res.status(500).end();
+            return;
+        }
+        const timeY = new Date()
+        console.log('retrieving good cluster list took ', timeY - timeX, ' ms')
+        console.log('printing body length for good cluster list: ', body.length);
+        res.send(body);
+    })
+})
+
+app.get('/plot/gccriterion', checkAuth, (req, res) => {
+    request.get(flask_backend + '/v0/goodclustercriterion', function (error, httpResponse, body) {
+        if (error) {
+            console.error(error);
+            console.log('error code: ', error.code);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
+
 app.post('/plot/raster', checkAuth, (req, res) => {
     const timeA = new Date()
     console.log('requesting rasters to backend: ', timeA);

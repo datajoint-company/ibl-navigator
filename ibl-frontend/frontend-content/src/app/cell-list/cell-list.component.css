@@ -33,6 +33,14 @@ td span.oi {
     overflow-y: auto;
 }
 
+.cluster-nav-filters {
+    display: flex;
+}
+
+.cluster-nav-filters .gc-filter-area {
+    margin-left: 12px;
+}
+
 .plots-navigator-buttons {
     margin-right: 5px;
     margin-top: 8px;
@@ -50,6 +58,20 @@ td span.oi {
 .order-buttons {
     display: flex;
     flex-direction: column;
+}
+
+.order-button-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.order-button-content .radio-option {
+    padding-right: 15px;
+}
+
+.radio-option label {
+    margin-left: 2px;
+    margin-top: 2px;
 }
 
 /* M (768px and up) */

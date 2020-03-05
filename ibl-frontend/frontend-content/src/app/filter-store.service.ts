@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class FilterStoreService {
+  loadedSessions: Object;
   sessionFilter: Object;
   mouseFilter: Object;
   summaryFilter: Object;
@@ -36,12 +37,28 @@ export class FilterStoreService {
     // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo);
   }
 
+  storeSessionTableState2(pageIndex, pageSize, sorter, sessionList) {
+    // console.log('storing info to table state 2')
+    this.loadedSessions = sessionList;
+    if (pageSize) {
+      this.sessionPageIndexInfo = pageIndex;
+      this.sessionPageSizeInfo = pageSize;
+    } else if (sorter) {
+      this.sessionSortInfo = sorter;
+    }
+    // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
+  }
+
   retrieveSessionFilter() {
     return this.sessionFilter;
   }
 
   retrieveSessionTableState() {
     return <[number, number, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo];
+  }
+  retrieveSessionTableState2() {
+    return <[number, number, Object, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, 
+      this.sessionSortInfo, this.loadedSessions];
   }
 
   clearSessionFilter() {
@@ -51,7 +68,16 @@ export class FilterStoreService {
   clearSessionTableState() {
     this.sessionPageIndexInfo = null;
     this.sessionPageSizeInfo = null;
-    this.sessionSortInfo = {};
+    this.sessionSortInfo = null;
+    this.loadedSessions = null;
+    this.storeSessionTableState2(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
+  }
+
+  refreshSessionTableState() {
+    this.loadedSessions = null;
+    // console.log('refreshing table state to follows: ', this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions)
+    this.storeSessionTableState2(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
+
   }
 
 // ========= Mouse List Filter Sticky ===============//

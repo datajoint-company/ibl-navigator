@@ -29,6 +29,10 @@ def mkvmod(mod):
     return dj.create_virtual_module(
         mod, dj.config.get('database.prefix', '') + 'ibl_{}'.format(mod))
 
+def test_mkvmod(mod):
+    return dj.create_virtual_module(
+        mod, dj.config.get('database.prefix', '') + 'test_ibl_{}'.format(mod))
+
 
 subject = mkvmod('subject')
 reference = mkvmod('reference')
@@ -112,13 +116,17 @@ reqmap = {
     'datepsych': plotting_behavior.DatePsychCurve,
     'dateRTcontrast': plotting_behavior.DateReactionTimeContrast,
     'dateRTtrial': plotting_behavior.DateReactionTimeTrialNumber,
-    'cluster': ephys.Cluster,
-    # 'raster': plotting_ephys.Raster,
-    # 'psth': plotting_ephys.Psth,
-    'psthdata': plotting_ephys.PsthDataVarchar,
+    'clustermetrics': ephys.DefaultCluster.Metrics,
+    # 'cluster': ephys.Cluster,
+    'goodcluster': ephys.GoodCluster,
+    'goodclustercriterion': ephys.GoodClusterCriterion,
+    ## 'raster': plotting_ephys.Raster,
+    ## 'psth': plotting_ephys.Psth,
+    # 'psthdata': plotting_ephys.PsthDataVarchar,
+    'psthdata': plotting_ephys.Psth, 
     'psthtemplate': plotting_ephys.PsthTemplate,
-    # 'rasterbatch': plotting_ephys.RasterLink,
-    'rasterlight': plotting_ephys.RasterLinkS3,
+    # 'rasterlight': plotting_ephys.RasterLinkS3,
+    'rasterlight': plotting_ephys.Raster,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate
 }
 dumps = DateTimeEncoder.dumps
@@ -269,11 +277,12 @@ def handle_q(subpath, args, proj, **kwargs):
         exclude_attrs = ('-cluster_waveforms', '-cluster_waveforms_channels', '-cluster_peak_to_trough', '-cluster_spikes_templates',
                          '-cluster_spikes_times', '-cluster_spikes_depths', '-cluster_spikes_amps', '-cluster_spikes_samples')
         
-        # q = (ephys.Cluster & args).proj(..., *exclude_attrs)
-        q = (ephys.Cluster & args).proj(..., *exclude_attrs) * ephys.Cluster.ClusterMetrics.proj('firing_rate')
+        # q = (ephys.Cluster & args).proj(..., *exclude_attrs) * ephys.Cluster.ClusterMetrics.proj('firing_rate')
+        q = (ephys.DefaultCluster & args).proj(..., *exclude_attrs) * ephys.DefaultCluster.Metrics.proj('firing_rate') # for temp test table
         print(q)
     elif subpath == 'rasterlight':
-        q = plotting_ephys.RasterLinkS3 & args
+        # q = plotting_ephys.RasterLinkS3 & args
+        q = plotting_ephys.Raster & args # temp test table
         def post_process(ret):
             parsed_items = []
             for item in ret:

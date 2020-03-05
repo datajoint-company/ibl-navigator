@@ -117,10 +117,10 @@
       </mat-form-field>
 
 
-      <div class="mouse_gender_filter">
-        <label>Gender</label>
-        <div class="mouse_gender_menu" formArrayName="sex_control"> 
-          <mat-checkbox class="mouse_gender_menu_chbox" [name]="session_menu.sex" [formControlName]="i"
+      <div class="mouse_sex_filter">
+        <label>Sex</label>
+        <div class="mouse_sex_menu" formArrayName="sex_control"> 
+          <mat-checkbox class="mouse_sex_menu_chbox" [name]="session_menu.sex" [formControlName]="i"
             *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()">
             {{ sex.key }}
           </mat-checkbox>
@@ -158,6 +158,9 @@
     </div>
     <div>
       <button mat-raised-button class="btn btn-reset" (click)="clearControl()">Reset Filter</button>
+    </div>
+    <div>
+      <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>
     </div>
     <div class="nplot_status_filter">
       <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
@@ -229,7 +232,7 @@
   </ng-container>
 
   <ng-container matColumnDef="sex">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Sex </th>
     <td mat-cell *matCellDef="let session"class="to-center"> {{session.sex}} </td>
   </ng-container>
 
