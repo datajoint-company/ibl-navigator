@@ -60,6 +60,20 @@ td span.oi {
     flex-direction: column;
 }
 
+.order-button-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.order-button-content .radio-option {
+    padding-right: 15px;
+}
+
+.radio-option label {
+    margin-left: 2px;
+    margin-top: 2px;
+}
+
 /* M (768px and up) */
 @media only screen and (max-width: 900px) {
     .plots-navigator {

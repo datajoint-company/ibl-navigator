@@ -159,6 +159,9 @@
     <div>
       <button mat-raised-button class="btn btn-reset" (click)="clearControl()">Reset Filter</button>
     </div>
+    <div>
+      <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>
+    </div>
     <div class="nplot_status_filter">
       <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
         Only show session with plots

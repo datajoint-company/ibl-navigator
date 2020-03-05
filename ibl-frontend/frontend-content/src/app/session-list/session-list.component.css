@@ -159,6 +159,15 @@ button:hover {
     color: white;
 }
 
+.btn-refresh {
+    border: 2px solid rgb(167, 163, 165);
+}
+.btn-refresh:hover {
+    border: 2px solid rgb(167, 163, 165);
+    background-color: rgb(167, 163, 165);
+    color: white;
+}
+
 .mouse_sex_filter {
     padding-top: 12px;
     padding-bottom: 2px;
