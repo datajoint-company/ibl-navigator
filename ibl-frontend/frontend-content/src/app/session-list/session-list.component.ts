@@ -490,8 +490,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
           this.dataSource.paginator = this.paginator;
         });
     } else {
-      // this.resetFilter();
-      this.refreshData();
+      this.resetFilter();
+      // this.refreshData();
     }
   }
 
@@ -501,8 +501,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.dataSource.sort = storedTableInfo[2];
     this.dataSource.paginator = this.paginator
     if (storedTableInfo[1]) {
-      console.log('printing datasource: ', this.dataSource.paginator)
-      console.log('printing this.paginator: ', this.paginator)
+      // console.log('printing datasource: ', this.dataSource)
+      // console.log('printing this.paginator: ', this.paginator)
       this.dataSource.paginator.pageSize = storedTableInfo[1];
     } else {
       this.dataSource.paginator.pageSize = this.pageSize
@@ -534,15 +534,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       });
   }
 
-  resetFilter_fast() {
-    console.log('new rest filter');
-
-    this.filterStoreService.clearSessionFilter();
-    this.sessions = this.allSessions;
-    this.dataSource = new MatTableDataSource(this.sessions);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-  }
 
   refreshData() {
     console.log('refreshing data to newest:');
@@ -578,14 +569,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
         toReset[control] = '';
       }
       this.session_filter_form.patchValue(toReset); 
+      console.log('going through controls - ', control);
     }
-    this.filterStoreService.clearSessionTableState();
+    
 
-    // attempting to just reset the table and not the actual session
-    this.dataSource = new MatTableDataSource(this.allSessions);
-    this.dataSource.paginator = this.paginator;
-    this.sessions = this.allSessions
-    console.log('length of all sessions: ', this.allSessions.length);
+    // // attempting to just reset the table and not the actual session
+    // this.dataSource = new MatTableDataSource(this.allSessions);
+    // this.dataSource.paginator = this.paginator;
+    // this.sessions = this.allSessions
+    // console.log('length of all sessions: ', this.allSessions.length);
 
     this.paginator.pageSize = 25;
     this.paginator.pageIndex = null;
@@ -595,8 +587,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.sort.sortables.forEach(sortItem => {
       this.sort.sort(sortItem);
     });
-
+    
     this.sort.active = '';
+
+    this.filterStoreService.clearSessionTableState();
 
     // console.log(this.route.queryParams);
     this.route.queryParams.subscribe(param => {
@@ -608,7 +602,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
             queryParams: null
           });
       } else {
-        // this.applyFilter();
+        this.applyFilter();
       }
      });
   }

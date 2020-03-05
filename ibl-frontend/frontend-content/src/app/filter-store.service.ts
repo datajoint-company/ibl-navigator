@@ -38,6 +38,7 @@ export class FilterStoreService {
   }
 
   storeSessionTableState2(pageIndex, pageSize, sorter, sessionList) {
+    console.log('storing info to table state 2')
     this.loadedSessions = sessionList;
     if (pageSize) {
       this.sessionPageIndexInfo = pageIndex;
@@ -45,7 +46,7 @@ export class FilterStoreService {
     } else if (sorter) {
       this.sessionSortInfo = sorter;
     }
-    // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo);
+    console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
   }
 
   retrieveSessionFilter() {
@@ -67,8 +68,9 @@ export class FilterStoreService {
   clearSessionTableState() {
     this.sessionPageIndexInfo = null;
     this.sessionPageSizeInfo = null;
-    this.sessionSortInfo = {};
-    // this.loadedSessions = null;
+    this.sessionSortInfo = null;
+    this.loadedSessions = null;
+    this.storeSessionTableState2(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
   }
 
   refreshSessionTableState() {
