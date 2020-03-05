@@ -38,7 +38,7 @@ export class FilterStoreService {
   }
 
   storeSessionTableState2(pageIndex, pageSize, sorter, sessionList) {
-    console.log('storing info to table state 2')
+    // console.log('storing info to table state 2')
     this.loadedSessions = sessionList;
     if (pageSize) {
       this.sessionPageIndexInfo = pageIndex;
@@ -46,7 +46,7 @@ export class FilterStoreService {
     } else if (sorter) {
       this.sessionSortInfo = sorter;
     }
-    console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
+    // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
   }
 
   retrieveSessionFilter() {
@@ -75,6 +75,9 @@ export class FilterStoreService {
 
   refreshSessionTableState() {
     this.loadedSessions = null;
+    // console.log('refreshing table state to follows: ', this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions)
+    this.storeSessionTableState2(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
+
   }
 
 // ========= Mouse List Filter Sticky ===============//
