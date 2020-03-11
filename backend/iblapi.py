@@ -216,7 +216,7 @@ def handle_q(subpath, args, proj, **kwargs):
             ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
             nprobe='count(dummy2)',
             keep_all_rows=True)
-        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() * subject.SubjectLab() * subject.SubjectUser()
+        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() * subject.SubjectLab() * subject.SubjectUser() * analyses_behavior.SessionTrainingStatus()
              & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name'))
             & args)

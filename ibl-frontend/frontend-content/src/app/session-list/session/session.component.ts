@@ -36,7 +36,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.sessionSubscription = this.allSessionsService.getNewSessionsLoadedListener()
     .subscribe((session: any) => {
       this.session = session[0];
-      // console.log('session retrieved - ', session[0]);
+      console.log('session retrieved - ', session[0]);
       // console.log('logging session psych plot component stuff');
       // console.log(this.SPPComp.psychPlotAvailability);
     });

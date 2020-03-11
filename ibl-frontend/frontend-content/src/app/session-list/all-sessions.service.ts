@@ -72,8 +72,8 @@ export class AllSessionsService {
       .subscribe(
         (filteredSessionsData) => {
           this.retrievedSessions = filteredSessionsData;
-          // console.log('retrievedSessions data are: ');
-          // console.log(this.retrievedSessions);
+          console.log('retrievedSessions data are: ');
+          console.log(this.retrievedSessions);
           this.newSessionsLoaded.next(this.retrievedSessions);
         },
         (err: any) => {
