@@ -37,7 +37,7 @@
               <td>{{ cl.probe_idx }}</td>
               <td>{{ cl.cluster_depth }}</td>
               <td>{{ cl.cluster_amp * 1000000 | number:'0.0-3'}}</td>
-              <td>{{ cl.firing_rate }}</td>
+              <td>{{ cl.firing_rate | number:'0.0-3'}}</td>
               <!-- <td>
                 <span class="oi oi-external-link" routerLink="/cell/{{cl?.subject_uuid}}/{{cl?.session_start_time}}/{{cl?.cluster_id}}">
                   <div hidden>
