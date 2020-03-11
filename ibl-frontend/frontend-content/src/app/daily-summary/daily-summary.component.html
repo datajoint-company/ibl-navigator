@@ -171,8 +171,8 @@
 
     <ng-container matColumnDef="detail_link">
       <th mat-header-cell *matHeaderCellDef> See Mouse Details </th>
-      <td mat-cell *matCellDef="let summary"> 
-        <button class="accordion-toggle-button" mat-button routerLink="/mouse/{{summary?.subject_uuid}}"><span class="oi oi-external-link"></span></button> 
+      <td mat-cell *matCellDef="let summary" (contextmenu)="openDetail($event, summary?.subject_uuid)"> 
+        <button class="accordion-toggle-button" mat-button target="_blank" routerLink="/mouse/{{summary?.subject_uuid}}"><span class="oi oi-external-link"></span></button> 
       </td>
     </ng-container>
 
