@@ -2,6 +2,17 @@
     padding-top: 20px;
 }
 
+.session-header {
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.session-header span.badge {
+    height: 1.0rem;
+    margin-top: 4px;
+    margin-left: 5px;
+}
+
 .session-info-table {
     font-size: 85%;
     margin-left: 1%;

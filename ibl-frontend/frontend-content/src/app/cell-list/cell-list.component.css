@@ -1,7 +1,17 @@
+.cell-header {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.cell-header h6 {
+    margin-left: 5px;
+}
+
 .clusterListTable thead th {
     position: sticky;
     top: -3px;
     z-index: 99;
+    font-size: 0.7rem;
 }
 
 .clusterListTable tbody {
