@@ -1,5 +1,5 @@
 <div *ngIf="cells">
-  <h3>Cells</h3>
+  <div class="cell-header"><h3>Cells</h3><h6>(Total clusters for probe {{probeIndex}}: {{cellsByProbeIns.length}})</h6></div>
   <span class="cluster-nav-filters">
     <div class="probe-selection-area">
       <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
@@ -37,7 +37,7 @@
               <td>{{ cl.probe_idx }}</td>
               <td>{{ cl.cluster_depth }}</td>
               <td>{{ cl.cluster_amp * 1000000 | number:'0.0-3'}}</td>
-              <td>{{ cl.firing_rate }}</td>
+              <td>{{ cl.firing_rate | number:'0.0-3'}}</td>
               <!-- <td>
                 <span class="oi oi-external-link" routerLink="/cell/{{cl?.subject_uuid}}/{{cl?.session_start_time}}/{{cl?.cluster_id}}">
                   <div hidden>

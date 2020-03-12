@@ -557,4 +557,10 @@ export class DailySummaryComponent implements OnInit, OnDestroy {
     }
   }
 
+  openDetail(event, subjectID) {
+    console.log('right click!');
+    console.log(event);
+    console.log(subjectID);
+    window.open(`/mouse/${subjectID}`, "_blank")
+  }
 }

@@ -58,7 +58,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   // setup for the table columns
   displayedColumns: string[] = ['session_lab', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
-                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project'];
+                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'good4bmap'];
   nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
@@ -483,6 +483,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.allSessionsService.retrieveSessions2(request);
       this.reqSessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener2()
         .subscribe((newSessions: any) => {
+          // console.log('sessions loaded: ', newSessions);
           this.loading = false;
           this.sessions = newSessions;
           this.dataSource = new MatTableDataSource(newSessions);
