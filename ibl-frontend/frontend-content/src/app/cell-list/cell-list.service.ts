@@ -32,6 +32,7 @@ export class CellListService {
   private psthTemplates;
   private gcCriteria;
   private goodClusters;
+  private probeTrajectory;
 
   private cellListLoaded = new Subject();
   private rasterListLoaded = new Subject();
@@ -56,6 +57,7 @@ export class CellListService {
   private psthTemplatesLoaded = new Subject();
   private gcCriteriaLoaded = new Subject();
   private goodClustersLoaded = new Subject();
+  private probeTrajectoryLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -169,6 +171,20 @@ export class CellListService {
         },
         (err: any) => {
           console.log('error in retrieving good clusters for: ', GCqueryInfo);
+          console.error(err);
+        }
+      );
+  }
+
+  retrieveProbeTrajectory(trajQueryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/trajectory`, trajQueryInfo)
+      .subscribe(
+        (probeTrajData) => {
+          this.probeTrajectory = probeTrajData;
+          this.probeTrajectoryLoaded.next(this.probeTrajectory);
+        },
+        (err: any) => {
+          console.log('error in retrieving probe trajectory for: ', trajQueryInfo);
           console.error(err);
         }
       );
@@ -392,6 +408,9 @@ export class CellListService {
   }
   getGoodClustersLoadedListener() {
     return this.goodClustersLoaded.asObservable();
+  }
+  getProbeTrajectoryLoadedListener() {
+    return this.probeTrajectoryLoaded.asObservable();
   }
 
 
