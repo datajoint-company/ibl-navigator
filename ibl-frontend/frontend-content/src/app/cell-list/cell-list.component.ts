@@ -401,20 +401,26 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
           this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
             .subscribe((probeTraj) => {
-              this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
-              this.probeTrajInfo['LM'] = probeTraj[0].x;
-              this.probeTrajInfo['AP'] = probeTraj[0].y;
-              this.probeTrajInfo['z'] = probeTraj[0].z;
-              this.probeTrajInfo['depth'] = probeTraj[0].depth;
-              this.probeTrajInfo['angle'] = probeTraj[0].theta;
-              this.probeTrajInfo['phi'] = probeTraj[0].phi;
-              this.probeTrajInfo['roll'] = probeTraj[0].roll;
-              this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
-              if (probeTraj[0].x < 0) {
-                this.probeTrajInfo['hemisphere'] = 'left';
-              } else if (probeTraj[0].x > 0) {
-                this.probeTrajInfo['hemisphere'] = 'right'
-              }
+              // console.log('fetched requested probeTraj: ', probeTraj, ' - length - ', probeTraj.length);
+              if (probeTraj && probeTraj.length) {
+                this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+                this.probeTrajInfo['LM'] = probeTraj[0].x;
+                this.probeTrajInfo['AP'] = probeTraj[0].y;
+                this.probeTrajInfo['z'] = probeTraj[0].z;
+                this.probeTrajInfo['depth'] = probeTraj[0].depth;
+                this.probeTrajInfo['angle'] = probeTraj[0].theta;
+                this.probeTrajInfo['phi'] = probeTraj[0].phi;
+                this.probeTrajInfo['roll'] = probeTraj[0].roll;
+                this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
+                if (probeTraj[0].x < 0) {
+                  this.probeTrajInfo['hemisphere'] = 'left';
+                } else if (probeTraj[0].x > 0) {
+                  this.probeTrajInfo['hemisphere'] = 'right'
+                }
+                // console.log('probeTrajInfo: ', this.probeTrajInfo)
+              } 
+              
+              
             });
 
           //////////// end of filling probe trajectory info ////////////////
@@ -599,22 +605,25 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
     this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
       .subscribe((probeTraj) => {
+          this.probeTrajInfo = {};
         // console.log('probe trajectories retrieved - ', probeTraj)
-        this.probeTrajInfo = {};
-        this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
-        this.probeTrajInfo['LM'] = probeTraj[0].x;
-        this.probeTrajInfo['AP'] = probeTraj[0].y;
-        this.probeTrajInfo['z'] = probeTraj[0].z;
-        this.probeTrajInfo['depth'] = probeTraj[0].depth;
-        this.probeTrajInfo['angle'] = probeTraj[0].theta;
-        this.probeTrajInfo['phi'] = probeTraj[0].phi;
-        this.probeTrajInfo['roll'] = probeTraj[0].roll;
-        this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
-        if (probeTraj[0].x < 0) {
-          this.probeTrajInfo['hemisphere'] = 'left';
-        } else if (probeTraj[0].x > 0) {
-          this.probeTrajInfo['hemisphere'] = 'right'
+        if (probeTraj && probeTraj.length) {
+          this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+          this.probeTrajInfo['LM'] = probeTraj[0].x;
+          this.probeTrajInfo['AP'] = probeTraj[0].y;
+          this.probeTrajInfo['z'] = probeTraj[0].z;
+          this.probeTrajInfo['depth'] = probeTraj[0].depth;
+          this.probeTrajInfo['angle'] = probeTraj[0].theta;
+          this.probeTrajInfo['phi'] = probeTraj[0].phi;
+          this.probeTrajInfo['roll'] = probeTraj[0].roll;
+          this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
+          if (probeTraj[0].x < 0) {
+            this.probeTrajInfo['hemisphere'] = 'left';
+          } else if (probeTraj[0].x > 0) {
+            this.probeTrajInfo['hemisphere'] = 'right'
+          }
         }
+        
       });
 
     // reorganizing data for plotting with new selected probe
