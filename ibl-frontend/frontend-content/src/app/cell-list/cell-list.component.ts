@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, DoCheck, HostListener} from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 
 import { CellListService } from './cell-list.service';
 
@@ -45,7 +45,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   fullRasterPurse = {};
   fullPSTHPurse = {};
-
+  allRastersLoaded:boolean = false;
+  allPSTHsLoaded:boolean = false;
+  timeA;
+  timeB;
+  timeDiff;
+  
   testPlotData;
   testPlotLayout;
 
@@ -67,6 +72,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   firing_rate_data = [];
   toPlot_x = 'cluster_amp';
   toPlot_y = 'cluster_depth';
+
+  probeTrajInfo = {};
 
   showController = false;
 
@@ -122,6 +129,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private goodClusterSubscription: Subscription;
   private rasterListSubscription: Subscription;
   private psthListSubscription: Subscription;
+  private probeTrajectorySubscription: Subscription;
+
   private rasterListSubscription0: Subscription;
   private rasterListSubscription1: Subscription;
   private rasterListSubscription2: Subscription;
@@ -138,6 +147,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private psthListSubscription3: Subscription;
   private rasterTemplateSubscription: Subscription;
   private psthTemplatesSubscription: Subscription;
+
+  private fullRasterSubscription: Subscription;
+  private fullPSTHSubscription: Subscription;
+  private fullRasterPSTHSubscription: Subscription;
+  private fullRasterLoaded = new Subject();
+  private fullPSTHLoaded = new Subject();
+  private fullRasterPSTHLoaded = new Subject();
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
 
@@ -160,6 +176,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
   ngOnInit() {
+    this.timeA = new Date;
     this.plot_config = {
       showLink: false,
       showSendToCloud: false,
@@ -230,8 +247,26 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             }
           }
           this.sortedCellsByProbeIns = this.cellsByProbeIns;
-         
-          this.loadAllRaster_PSTH();
+          // console.log('cells by probe insertion: ', this.cellsByProbeIns);
+          
+
+          // .then((fullPlots) => {
+            // console.log('printing full plots returned from load all function: ', fullPlots);
+            // console.log('------------')
+            // console.log('full raster - : ', fullPlots[0])
+            // console.log('=============')
+            // console.log('this.probeIndex: ', this.probeIndex);
+            // console.log('first probe of rasters: ', fullPlots[0][this.probeIndex])
+            // console.log('this is the event/sort type: ', `${this.eventType}.${this.sortType}`);
+            // let fullRasters = fullPlots[0]
+            // let fullPSTHs = fullPlots[1]
+            // console.log('should be the same as first probe of rasters: ', fullPlots[0][0]);
+            // this.updateRaster(fullPlots[0.0][`${this.eventType}.${this.sortType}`]);
+            // this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+            // this.updatePSTH(fullPlots[1][this.probeIndex][this.eventType]);
+            // this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
+          // });
+
 
           this.plot_data = [{
             // x: this.cluster_amp_data,
@@ -295,61 +330,183 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             }],
             hovermode: 'closest'
           };
+          /////////////////////////////////////////old way/////////////////////////////////////////////////////
+          const queryInfo = {};
+          queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+          queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+          queryInfo['probe_idx'] = this.probeIndex;
+          if (this.probeIndex || this.probeIndex === 0) {
+            queryInfo['probe_idx'] = this.probeIndex;
+          } else {
+            // console.log('this.probeIndex was NOT ready for raster fetch...that is not good - coercing index to 0');
+            queryInfo['probe_idx'] = 0;
+          }
+          queryInfo['event'] = this.eventType;
+          queryInfo['sort_by'] = this.sortType;
+
+          this.cellListService.retrieveRasterTemplates();
+          this.rasterTemplateSubscription = this.cellListService.getRasterTemplatesLoadedListener()
+            .subscribe((templates) => {
+              // console.log('raster templates retrieved');
+              for (const [index, temp] of Object.entries(templates)) {
+                if (temp['template_idx'] === parseInt(index, 10)) {
+                  this.rasterTemplates.push(temp['raster_data_template']);
+                }
+              }
+              // console.log('initial raster query: ', queryInfo);
+              this.cellListService.retrieveRasterList(queryInfo);
+              this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
+                  .subscribe((rasterPlotList) => {
+                      // console.log('initial fetch of rasters: ', rasterPlotList);
+                      this.updateRaster(rasterPlotList);
+                  });
+          });
+
+          const psthQueryInfo = {};
+          psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+          psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+          if (this.probeIndex || this.probeIndex === 0) {
+            psthQueryInfo['probe_idx'] = this.probeIndex;
+          } else {
+            // console.log('this.probeIndex was NOT ready for psth fetch...that is not good - coercing index to 0');
+            psthQueryInfo['probe_idx'] = 0;
+          }
+          psthQueryInfo['event'] = this.eventType;
+
+          this.cellListService.retrievePsthTemplates();
+          this.psthTemplatesSubscription = this.cellListService.getPsthTemplatesLoadedListener()
+            .subscribe((template) => {
+              // console.log('psth template retrieved - ', template);
+              for (const [index, temp] of Object.entries(template)) {
+                if (temp['psth_template_idx'] === parseInt(index, 10)) {
+                  this.psthTemplates.push(temp['psth_data_template']);
+                }
+              }
+              // console.log('initial psth query: ', psthQueryInfo);
+              this.cellListService.retrievePSTHList(psthQueryInfo);
+              this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+                .subscribe((psthPlotList) => {
+                  // console.log('initial fetch of psth: ', psthPlotList);
+                  this.updatePSTH(psthPlotList);
+                });
+          });
+          ///////////////////////////end of old way/////////////////////////////////////
+          this.loadAllRaster_PSTH()
+
+          /// filling probe trajectory info with initial probeIndex value////
+          let probeTrajQueryInfo = {};
+          probeTrajQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+          probeTrajQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+          probeTrajQueryInfo['probe_idx'] = this.probeIndex;
+          this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
+          this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
+            .subscribe((probeTraj) => {
+              this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+              this.probeTrajInfo['LM'] = probeTraj[0].x;
+              this.probeTrajInfo['AP'] = probeTraj[0].y;
+              this.probeTrajInfo['z'] = probeTraj[0].z;
+              this.probeTrajInfo['depth'] = probeTraj[0].depth;
+              this.probeTrajInfo['angle'] = probeTraj[0].theta;
+              this.probeTrajInfo['phi'] = probeTraj[0].phi;
+              this.probeTrajInfo['roll'] = probeTraj[0].roll;
+              this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
+              if (probeTraj[0].x < 0) {
+                this.probeTrajInfo['hemisphere'] = 'left';
+              } else if (probeTraj[0].x > 0) {
+                this.probeTrajInfo['hemisphere'] = 'right'
+              }
+            });
+
+          //////////// end of filling probe trajectory info ////////////////
         }
       });
+
+      this.fullRasterSubscription = this.getFullRasterLoadedListener()
+        .subscribe((rasterToPlot) => {
+          // console.log('logging raster subscription content to initially plot: ', rasterToPlot);
+          // console.log('type of rasterToPlot: ', typeof rasterToPlot)
+          // this.updateRaster(rasterToPlot);
+          // this.updateRaster(fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+        });
+
+      this.fullPSTHSubscription = this.getFullPSTHLoadedListener()
+        .subscribe((PSTHtoPlot) => {
+          // console.log('logging PSTH content to initially plot: ', PSTHtoPlot);
+          // this.updatePSTH(PSTHtoPlot);
+          // this.updatePSTH(fullPSTHPurse[this.probeIndex][this.eventType]);
+        });
+
+    // if (this.fullRasterPurse[0].length) {
+    //   this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+    // } else {
+    //   console.log('rasterlist not ready yet')
+    // }
+    // if (this.fullPSTHPurse[0].length) {
+    //   this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
+    // } else {
+    //   console.log("psth list not ready yet")
+    // }
     
 
-    const queryInfo = {};
-    queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    queryInfo['probe_idx'] = this.probeIndex;
-    // queryInfo['cluster_revision'] = '0';
-    queryInfo['event'] = this.eventType;
-    queryInfo['sort_by'] = this.sortType;
+    // const queryInfo = {};
+    // queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    // queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    // queryInfo['probe_idx'] = this.probeIndex;
+    // if (this.probeIndex || this.probeIndex === 0) {
+    //   queryInfo['probe_idx'] = this.probeIndex;
+    // } else {
+    //   console.log('this.probeIndex was NOT ready for raster fetch...that is not good - coercing index to 0');
+    //   queryInfo['probe_idx'] = 0;
+    // }
+    // queryInfo['event'] = this.eventType;
+    // queryInfo['sort_by'] = this.sortType;
 
-    this.cellListService.retrieveRasterTemplates();
-    this.rasterTemplateSubscription = this.cellListService.getRasterTemplatesLoadedListener()
-      .subscribe((templates) => {
-        // console.log('raster templates retrieved');
-        for (const [index, temp] of Object.entries(templates)) {
-          if (temp['template_idx'] === parseInt(index, 10)) {
-            this.rasterTemplates.push(temp['raster_data_template']);
-          }
-        }
-        this.cellListService.retrieveRasterList(queryInfo);
-        this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
-             .subscribe((rasterPlotList) => {
-                this.updateRaster(rasterPlotList);
-             });
-    });
+    // this.cellListService.retrieveRasterTemplates();
+    // this.rasterTemplateSubscription = this.cellListService.getRasterTemplatesLoadedListener()
+    //   .subscribe((templates) => {
+    //     // console.log('raster templates retrieved');
+    //     for (const [index, temp] of Object.entries(templates)) {
+    //       if (temp['template_idx'] === parseInt(index, 10)) {
+    //         this.rasterTemplates.push(temp['raster_data_template']);
+    //       }
+    //     }
+    //     console.log('initial raster query: ', queryInfo);
+    //     this.cellListService.retrieveRasterList(queryInfo);
+    //     this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
+    //          .subscribe((rasterPlotList) => {
+    //             console.log('initial fetch of rasters: ', rasterPlotList);
+    //             this.updateRaster(rasterPlotList);
+    //          });
+    // });
 
-    const psthQueryInfo = {};
-    psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    if (this.probeIndex || this.probeIndex === 0) {
-      psthQueryInfo['probe_idx'] = this.probeIndex;
-    } else {
-      // console.log('this.probeIndex was NOT ready...that is not good');
-      // psthQueryInfo['probe_idx'] = 0;
-    }
-    psthQueryInfo['event'] = this.eventType;
+    // const psthQueryInfo = {};
+    // psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    // psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    // if (this.probeIndex || this.probeIndex === 0) {
+    //   psthQueryInfo['probe_idx'] = this.probeIndex;
+    // } else {
+    //   console.log('this.probeIndex was NOT ready for psth fetch...that is not good - coercing index to 0');
+    //   psthQueryInfo['probe_idx'] = 0;
+    // }
+    // psthQueryInfo['event'] = this.eventType;
 
-    this.cellListService.retrievePsthTemplates();
-    this.psthTemplatesSubscription = this.cellListService.getPsthTemplatesLoadedListener()
-      .subscribe((template) => {
-        // console.log('psth template retrieved - ', template);
-        for (const [index, temp] of Object.entries(template)) {
-          if (temp['psth_template_idx'] === parseInt(index, 10)) {
-            this.psthTemplates.push(temp['psth_data_template']);
-          }
-        }
-        // console.log('about to retrieve psth with this query: ', psthQueryInfo);
-        this.cellListService.retrievePSTHList(psthQueryInfo);
-        this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
-          .subscribe((psthPlotList) => {
-            this.updatePSTH(psthPlotList);
-          });
-      });
+    // this.cellListService.retrievePsthTemplates();
+    // this.psthTemplatesSubscription = this.cellListService.getPsthTemplatesLoadedListener()
+    //   .subscribe((template) => {
+    //     // console.log('psth template retrieved - ', template);
+    //     for (const [index, temp] of Object.entries(template)) {
+    //       if (temp['psth_template_idx'] === parseInt(index, 10)) {
+    //         this.psthTemplates.push(temp['psth_data_template']);
+    //       }
+    //     }
+    //     console.log('initial psth query: ', psthQueryInfo);
+    //     this.cellListService.retrievePSTHList(psthQueryInfo);
+    //     this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
+    //       .subscribe((psthPlotList) => {
+    //         console.log('initial fetch of psth: ', psthPlotList);
+    //         this.updatePSTH(psthPlotList);
+    //       });
+    //  });
 
   }
 
@@ -410,10 +567,15 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     if (this.gcCriteriaSubscription) {
       this.gcCriteriaSubscription.unsubscribe();
     }
+    if (this.rasterListSubscription0) {
+      this.rasterListSubscription0.unsubscribe();
+    }
+
   }
 
   probe_selected(probeInsNum) {
     // console.log('probe insertions selected: ', probeInsNum);
+
     // const cluster_amp_data = [];
     // const cluster_depth_data = [];
     // const firing_rate_data = [];
@@ -428,6 +590,34 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
     // console.log('probeInsNum type: ', typeof probeInsNum)
+
+    // requesting probe trajectory for selected probe 
+    let probeTrajQueryInfo = {};
+    probeTrajQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    probeTrajQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    probeTrajQueryInfo['probe_idx'] = this.probeIndex;
+    this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
+    this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
+      .subscribe((probeTraj) => {
+        // console.log('probe trajectories retrieved - ', probeTraj)
+        this.probeTrajInfo = {};
+        this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+        this.probeTrajInfo['LM'] = probeTraj[0].x;
+        this.probeTrajInfo['AP'] = probeTraj[0].y;
+        this.probeTrajInfo['z'] = probeTraj[0].z;
+        this.probeTrajInfo['depth'] = probeTraj[0].depth;
+        this.probeTrajInfo['angle'] = probeTraj[0].theta;
+        this.probeTrajInfo['phi'] = probeTraj[0].phi;
+        this.probeTrajInfo['roll'] = probeTraj[0].roll;
+        this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
+        if (probeTraj[0].x < 0) {
+          this.probeTrajInfo['hemisphere'] = 'left';
+        } else if (probeTraj[0].x > 0) {
+          this.probeTrajInfo['hemisphere'] = 'right'
+        }
+      });
+
+    // reorganizing data for plotting with new selected probe
     for (let entry of Object.values(this.cells)) {
       if (entry['probe_idx'] === parseInt(probeInsNum, 10)) {
         // console.log('inputting new data for probe: ', probeInsNum);
@@ -625,7 +815,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // queryInfo['event'] = this.eventType;
     // queryInfo['sort_by'] = this.sortType;
     this.rasterLookup = {};
-    // console.log('updating rasters with: ', this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`])
+    // console.log('sort by event - updating rasters with: ', this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`])
     this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
     // this.cellListService.retrieveRasterList(queryInfo);
     // this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
@@ -642,7 +832,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.psth_data = [];
     this.psth_layout = [];
     this.psth_config = [];
-    // console.log('updating psth with: ', this.fullPSTHPurse[this.probeIndex][this.eventType])
+    // console.log('sort by event - updating psth with: ', this.fullPSTHPurse[this.probeIndex][this.eventType])
     this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
     // this.cellListService.retrievePSTHList(psthQueryInfo);
     // this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
@@ -979,6 +1169,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   loadAllRaster_PSTH() {
+    let fullPlots;
+    let fullRasterPlots = {};
+    let fullPSTHPlots = {};
     // let rasterListSubscription: Subscription;
     // console.log('this.probeIndices: ', this.probeIndices);
     // event types: 'feedback' and 'stim on'
@@ -988,10 +1181,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     rasterQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     rasterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
     let count = 0
+    
     for (let probe of this.probeIndices) {
       
 
       this.fullRasterPurse[probe] = {};
+      fullRasterPlots[probe] = {};
       rasterQueryInfo['probe_idx'] = probe;
       
       for (let rasterType of rastersToLoad) {
@@ -1003,12 +1198,45 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this[`rasterListSubscription${count}`] = this.cellListService[`getRasterListLoadedListener${count}`]()
           .subscribe((rasterPlotList) => {
             this.fullRasterPurse[probe][rasterType] = rasterPlotList;
+            fullRasterPlots[probe][rasterType] = rasterPlotList
+            // console.log('Object.values(this.fullRasterPurse[probe]).length: ',  Object.values(this.fullRasterPurse[probe]).length)
             // console.log(rasterPlotList);
+            if (Object.values(this.fullRasterPurse).length == this.probeIndices.length && Object.values(this.fullRasterPurse[probe]).length == rastersToLoad.length) {
+            // if (Object.values(fullRasterPlots).length == this.probeIndices.length && Object.values(fullRasterPlots[probe]).length == rastersToLoad.length) {
+
+              // console.log('rasters are done loading - downloaded number of probes - ', Object.values(this.fullRasterPurse).length, ' - length of full raster purse: ', Object.values(this.fullRasterPurse[probe]).length);
+              this.allRastersLoaded = true;
+              if (this.allPSTHsLoaded && this.allRastersLoaded) {
+                // console.log('all done (raster side)')
+                // console.log(this.timeB - this.timeA)
+                this.timeDiff = this.timeB - this.timeA;
+                fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
+                // console.log('updating Raster with: ', this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // console.log('updating Raster with: ', fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // console.log('updating PSTH with: ', fullPSTHPlots[this.probeIndex][this.eventType]);
+                // console.log('probe index = ', this.probeIndex, ' - eventType = ', this.eventType, ' - sortType = ', this.sortType);
+                // this.updatePSTH(fullPSTHPlots[this.probeIndex][this.eventType]);
+                // this.updateRaster(fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
+                // this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
+                // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
+                // this.fullPSTHLoaded.next(fullPSTHPlots[this.probeIndex][this.eventType]);
+                // this.fullRasterLoaded.next(fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // this.fullPSTHLoaded.next(this.fullPSTHPurse[this.probeIndex][this.eventType]);
+                // this.fullRasterLoaded.next(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+              } else {
+                // console.log('all rasters are loaded, but not psth')
+                // console.log('Rasters: ', this.allRastersLoaded);
+                // console.log('PSTHs: ', this.allPSTHsLoaded);
+              }
+            }
           });
         count++
       }
     }
-    // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
+    
+    
 
     let psthsToLoad = ['feedback', 'stim on'];
     const psthQueryInfo = {};
@@ -1017,6 +1245,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     let psthCount = 0
     for (let probe of this.probeIndices) {
       this.fullPSTHPurse[probe] = {};
+      fullPSTHPlots[probe] = {}
       psthQueryInfo['probe_idx'] = probe;
       for (let ind in psthsToLoad) {
         psthQueryInfo['event'] = psthsToLoad[ind];
@@ -1024,16 +1253,67 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this[`psthListSubscription${psthCount}`] = this.cellListService[`getPSTHListLoadedListener${psthCount}`]()
           .subscribe((psthPlotList) => {
             this.fullPSTHPurse[probe][psthsToLoad[ind]] = psthPlotList;
+            fullPSTHPlots[probe][psthsToLoad[ind]] = psthPlotList;
+            if (Object.values(this.fullPSTHPurse).length == this.probeIndices.length && Object.values(this.fullPSTHPurse[probe]).length == psthsToLoad.length) {
+              // console.log('psths are done loading - downloaded number of probes: ', Object.values(this.fullPSTHPurse).length, '- full psth purse length - ', Object.values(this.fullPSTHPurse[probe]).length);
+              this.allPSTHsLoaded = true;
+              if (this.allPSTHsLoaded && this.allRastersLoaded) {
+                this.timeB = new Date;
+                // console.log('all done (psth side)')
+                // console.log(this.timeB - this.timeA)
+                this.timeDiff = this.timeB - this.timeA;
+                fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
+                // console.log('updating PSTH with: ', this.fullPSTHPurse[this.probeIndex][this.eventType]);
+                // console.log('updating PSTH with: ', fullPSTHPlots[this.probeIndex][this.eventType]);
+                // console.log('updating Raster with: ', fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // console.log('probe index - ', this.probeIndex, 'eventType - ', this.eventType);
+                // this.updatePSTH(psthPlotList);
+                // this.updatePSTH(fullPSTHPlots[this.probeIndex][this.eventType]);
+                // this.updateRaster(fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
+                // this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
+                // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
+                // this.fullPSTHLoaded.next(fullPSTHPlots[this.probeIndex][this.eventType]);
+                // this.fullRasterLoaded.next(fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+                // this.fullPSTHLoaded.next(this.fullPSTHPurse[this.probeIndex][this.eventType]);
+                // this.fullRasterLoaded.next(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+              } else {
+                // console.log('all psths are loaded, but not raster')
+                // console.log('Rasters: ', this.allRastersLoaded);
+                // console.log('PSTHs: ', this.allPSTHsLoaded);
+              }
+            }
           });
         psthCount++
       }
     }
-    // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
+    // return fullPlots;
   }
+
+  
+  getFullRasterLoadedListener() {
+    // console.log('inside the full raster loaded listener');
+    return this.fullRasterLoaded.asObservable();
+  }
+  getFullPSTHLoadedListener() {
+    // console.log('inside the full PSTH loaded listener');
+    return this.fullPSTHLoaded.asObservable();
+  }
+
 }
 
 function deepCopy(obj) {
-  return JSON.parse(JSON.stringify(obj));
+  try {
+    // console.log('trying to deepcopy the obj -', obj);
+    return JSON.parse(JSON.stringify(obj));
+  }
+  catch(err) {
+    console.error(err);
+    return obj
+    
+  }
+  // return JSON.parse(JSON.stringify(obj));
 }
 
 function compare(a: number | string, b: number | string, isAsc: boolean) {

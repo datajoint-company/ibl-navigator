@@ -423,6 +423,19 @@ app.post('/plot/cluster', checkAuth, (req, res) => {
     })
 })
 
+app.post('/plot/trajectory', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/_q/probetrajectory', { form: req.body, timeout: 12000}, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [probe trajectory fetch]: ', error);
+            console.log('error code: ', error.code);
+            console.log('error was connection timeout: ', error.connect);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
+
 app.post('/plot/goodcluster', checkAuth, (req, res) => {
     const timeX = new Date()
     request.post(flask_backend + '/v0/goodcluster', { form: req.body, timeout: 120000 }, function (error, httpResponse, body) {
@@ -434,8 +447,8 @@ app.post('/plot/goodcluster', checkAuth, (req, res) => {
             return;
         }
         const timeY = new Date()
-        console.log('retrieving good cluster list took ', timeY - timeX, ' ms')
-        console.log('printing body length for good cluster list: ', body.length);
+        // console.log('retrieving good cluster list took ', timeY - timeX, ' ms')
+        // console.log('printing body length for good cluster list: ', body.length);
         res.send(body);
     })
 })
