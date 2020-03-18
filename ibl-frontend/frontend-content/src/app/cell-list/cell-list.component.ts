@@ -401,8 +401,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
           this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
             .subscribe((probeTraj) => {
-              // console.log('fetched requested probeTraj: ', probeTraj, ' - length - ', probeTraj.length);
-              if (probeTraj && probeTraj.length) {
+              if (probeTraj && probeTraj[0]) {
+
                 this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
                 this.probeTrajInfo['LM'] = probeTraj[0].x;
                 this.probeTrajInfo['AP'] = probeTraj[0].y;
@@ -607,7 +607,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       .subscribe((probeTraj) => {
           this.probeTrajInfo = {};
         // console.log('probe trajectories retrieved - ', probeTraj)
-        if (probeTraj && probeTraj.length) {
+        if (probeTraj && probeTraj[0]) {
           this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
           this.probeTrajInfo['LM'] = probeTraj[0].x;
           this.probeTrajInfo['AP'] = probeTraj[0].y;
