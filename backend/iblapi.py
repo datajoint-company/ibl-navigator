@@ -285,7 +285,7 @@ def handle_q(subpath, args, proj, **kwargs):
 
         traj_latest = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
-        x, y, z, phi, theta, depth, roll, trajectory_source = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
+        # x, y, z, phi, theta, depth, roll, trajectory_source = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
         # q = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
         q = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))

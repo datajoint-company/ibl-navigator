@@ -18,6 +18,9 @@
     <b>LM</b>: {{probeTrajInfo.LM}}, <b>AP</b>: {{probeTrajInfo.AP}}, <b>z</b>: {{probeTrajInfo.z}}, <b>depth</b>: {{probeTrajInfo.depth}}, 
     <b>angle</b>: {{probeTrajInfo.angle}}, <b>hemisphere</b>: {{probeTrajInfo.hemisphere}}, <b>trajectory source</b>: {{probeTrajInfo.trajectory_source}}
   </div>
+  <div *ngIf="!probeTrajInfo || !probeTrajInfo.LM">
+    <p>No probe trajectory information found for the selected probe.</p>
+  </div>
   <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
   <div class="row">
     <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
