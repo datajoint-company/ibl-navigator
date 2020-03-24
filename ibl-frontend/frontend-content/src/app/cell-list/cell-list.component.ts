@@ -73,6 +73,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   toPlot_x = 'cluster_amp';
   toPlot_y = 'cluster_depth';
 
+  probeTrajInfo = {};
+
   showController = false;
 
   raster_psth_config = {
@@ -127,6 +129,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private goodClusterSubscription: Subscription;
   private rasterListSubscription: Subscription;
   private psthListSubscription: Subscription;
+  private probeTrajectorySubscription: Subscription;
+
   private rasterListSubscription0: Subscription;
   private rasterListSubscription1: Subscription;
   private rasterListSubscription2: Subscription;
@@ -389,7 +393,37 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           ///////////////////////////end of old way/////////////////////////////////////
           this.loadAllRaster_PSTH()
 
+          /// filling probe trajectory info with initial probeIndex value////
+          let probeTrajQueryInfo = {};
+          probeTrajQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+          probeTrajQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+          probeTrajQueryInfo['probe_idx'] = this.probeIndex;
+          this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
+          this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
+            .subscribe((probeTraj) => {
+              if (probeTraj && probeTraj[0]) {
 
+                this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+                this.probeTrajInfo['LM'] = probeTraj[0].x;
+                this.probeTrajInfo['AP'] = probeTraj[0].y;
+                this.probeTrajInfo['z'] = probeTraj[0].z;
+                this.probeTrajInfo['depth'] = probeTraj[0].depth;
+                this.probeTrajInfo['angle'] = probeTraj[0].theta;
+                this.probeTrajInfo['phi'] = probeTraj[0].phi;
+                this.probeTrajInfo['roll'] = probeTraj[0].roll;
+                this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
+                if (probeTraj[0].x < 0) {
+                  this.probeTrajInfo['hemisphere'] = 'left';
+                } else if (probeTraj[0].x > 0) {
+                  this.probeTrajInfo['hemisphere'] = 'right'
+                }
+                // console.log('probeTrajInfo: ', this.probeTrajInfo)
+              } 
+              
+              
+            });
+
+          //////////// end of filling probe trajectory info ////////////////
         }
       });
 
@@ -547,6 +581,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   probe_selected(probeInsNum) {
     // console.log('probe insertions selected: ', probeInsNum);
+
     // const cluster_amp_data = [];
     // const cluster_depth_data = [];
     // const firing_rate_data = [];
@@ -561,6 +596,37 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
     // console.log('probeInsNum type: ', typeof probeInsNum)
+
+    // requesting probe trajectory for selected probe 
+    let probeTrajQueryInfo = {};
+    probeTrajQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
+    probeTrajQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
+    probeTrajQueryInfo['probe_idx'] = this.probeIndex;
+    this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
+    this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
+      .subscribe((probeTraj) => {
+          this.probeTrajInfo = {};
+        // console.log('probe trajectories retrieved - ', probeTraj)
+        if (probeTraj && probeTraj[0]) {
+          this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+          this.probeTrajInfo['LM'] = probeTraj[0].x;
+          this.probeTrajInfo['AP'] = probeTraj[0].y;
+          this.probeTrajInfo['z'] = probeTraj[0].z;
+          this.probeTrajInfo['depth'] = probeTraj[0].depth;
+          this.probeTrajInfo['angle'] = probeTraj[0].theta;
+          this.probeTrajInfo['phi'] = probeTraj[0].phi;
+          this.probeTrajInfo['roll'] = probeTraj[0].roll;
+          this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
+          if (probeTraj[0].x < 0) {
+            this.probeTrajInfo['hemisphere'] = 'left';
+          } else if (probeTraj[0].x > 0) {
+            this.probeTrajInfo['hemisphere'] = 'right'
+          }
+        }
+        
+      });
+
+    // reorganizing data for plotting with new selected probe
     for (let entry of Object.values(this.cells)) {
       if (entry['probe_idx'] === parseInt(probeInsNum, 10)) {
         // console.log('inputting new data for probe: ', probeInsNum);

@@ -41,6 +41,7 @@ acquisition = mkvmod('acquisition')
 plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
+test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
 
 dj.config['stores'] = {
@@ -127,7 +128,10 @@ reqmap = {
     'psthtemplate': plotting_ephys.PsthTemplate,
     # 'rasterlight': plotting_ephys.RasterLinkS3,
     'rasterlight': plotting_ephys.Raster,
-    'rastertemplate': plotting_ephys.RasterLayoutTemplate
+    'rastertemplate': plotting_ephys.RasterLayoutTemplate,
+    'fulldriftmap': test_plotting_ephys.DriftMap,
+    'fulldriftmaptemplate': test_plotting_ephys.DriftMapTemplate
+
 }
 dumps = DateTimeEncoder.dumps
 
@@ -271,15 +275,24 @@ def handle_q(subpath, args, proj, **kwargs):
         # find latest plots for mouse with summary
         q = plots * mouse_we_care * projects & args & proj_restr
     elif subpath == 'clusternavplot':
-        print('fetching cluster plot info...')
-        
+        # print('fetching cluster plot info...')
+
         # specify attributes to exclude from the fetch to save bandwidth (in case no "proj" specified)
         exclude_attrs = ('-cluster_waveforms', '-cluster_waveforms_channels', '-cluster_peak_to_trough', '-cluster_spikes_templates',
                          '-cluster_spikes_times', '-cluster_spikes_depths', '-cluster_spikes_amps', '-cluster_spikes_samples')
         
         # q = (ephys.Cluster & args).proj(..., *exclude_attrs) * ephys.Cluster.ClusterMetrics.proj('firing_rate')
-        q = (ephys.DefaultCluster & args).proj(..., *exclude_attrs) * ephys.DefaultCluster.Metrics.proj('firing_rate') # for temp test table
+        q = (ephys.DefaultCluster & args).proj(..., *exclude_attrs) * ephys.DefaultCluster.Metrics.proj('firing_rate') 
         print(q)
+    elif subpath == 'probetrajectory':
+        traj = ephys.ProbeTrajectory * ephys.InsertionDataSource
+
+        traj_latest = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
+                      (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
+        # x, y, z, phi, theta, depth, roll, trajectory_source = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
+        # q = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
+        q = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
+                      (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
     elif subpath == 'rasterlight':
         # q = plotting_ephys.RasterLinkS3 & args
         q = plotting_ephys.Raster & args # temp test table
