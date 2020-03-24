@@ -41,6 +41,7 @@ acquisition = mkvmod('acquisition')
 plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
+test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
 
 dj.config['stores'] = {
@@ -127,7 +128,10 @@ reqmap = {
     'psthtemplate': plotting_ephys.PsthTemplate,
     # 'rasterlight': plotting_ephys.RasterLinkS3,
     'rasterlight': plotting_ephys.Raster,
-    'rastertemplate': plotting_ephys.RasterLayoutTemplate
+    'rastertemplate': plotting_ephys.RasterLayoutTemplate,
+    'fulldriftmap': test_plotting_ephys.DriftMap,
+    'fulldriftmaptemplate': test_plotting_ephys.DriftMapTemplate
+
 }
 dumps = DateTimeEncoder.dumps
 
