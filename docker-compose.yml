@@ -113,7 +113,7 @@ services:
   nginx:
     # build: ./nginx
     # image: registry.vathes.com/ibl-navigator/nginx:v0.1 # for client deploy
-    image: registry.vathes.com/ibl-navigator/nginx:v0.1-dev3
+    image: registry.vathes.com/ibl-navigator/nginx:v0.1-dev4
     # image: registry.vathes.com/ibl-navigator/nginx:v0.0-public2 # for public deploy ?
     environment:
       - URL=datajoint.io # for testdev deploy
