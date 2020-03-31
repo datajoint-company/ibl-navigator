@@ -59,15 +59,17 @@ import { SessionRTCPlotComponent } from './session-list/session/session-rtc-plot
 import { SessionRTTNPlotComponent } from './session-list/session/session-rttn-plot/session-rttn-plot.component';
 import { RasterPlotsComponent } from './cell-list/cell/raster-plots/raster-plots.component';
 import { PsthPlotsComponent } from './cell-list/cell/psth-plots/psth-plots.component';
+import { QualityControlComponent } from './quality-control/quality-control.component';
+import { DriftmapComponent } from './quality-control/driftmap/driftmap.component';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
 const appRoutes: Routes = [
   { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
-  { path: 'plot', component: ViewSamplePlotsComponent },
+  // { path: 'plot', component: ViewSamplePlotsComponent },
   // { path: 'cells', component: CellListComponent },
-  { path: 'water-weight', component: WaterWeightPlotComponent},
+  // { path: 'water-weight', component: WaterWeightPlotComponent},
   {
     path: 'mouse/:mouseUUID',
     canActivate: [AuthGuard],
@@ -112,6 +114,12 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
     component: DailySummaryComponent
   },
+  {
+    path: 'qc/:subjectID/:sessionStartTime',
+      canActivate: [AuthGuard],
+      canActivateChild: [AuthGuard],
+      component: QualityControlComponent
+  },
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
   // { path: '**', redirectTo: '/not-found' }
 ];
@@ -147,7 +155,9 @@ const appRoutes: Routes = [
     SessionRTTNPlotComponent,
     SessionPlotDialog,
     RasterPlotsComponent,
-    PsthPlotsComponent
+    PsthPlotsComponent,
+    QualityControlComponent,
+    DriftmapComponent
   ],
   imports: [
     CommonModule, PlotlyModule,

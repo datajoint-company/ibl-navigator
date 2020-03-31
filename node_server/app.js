@@ -554,6 +554,49 @@ app.get('/plot/rastertemplate', checkAuth, (req, res) => {
         res.send(body);
     })
 })
+
+// this probeinsertion is used for quality control page
+app.post('/plot/probeinsertion', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/probeinsertion', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [probe insertion]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
+
+app.post('/plot/driftmap', checkAuth, (req, res) => {
+    const timeA = new Date()
+    console.log('requesting drift map to backend at time: ', timeA, 'request: ', req.body);
+    request.post(flask_backend + '/v0/_q/fulldriftmap', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [full drift map]: ', error);
+            res.status(500).end();
+            return;
+        }
+        const timeB = new Date()
+        console.log('Drift map took ', timeB - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
+
+
+app.get('/plot/driftmaptemplate', checkAuth, (req, res) => {
+    request.get(flask_backend + '/v0/fulldriftmaptemplate', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [drift map template fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
+
+
+
 app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {
     let p = path.join(__dirname, `/test/raster/${req.params.mouse_id}/${req.params.session_time}/${req.params.probe_index}/${req.params.cluster_revision}/${req.params.event_type}/${req.params.sort_by}/0.png`)
     res.sendFile(p);
