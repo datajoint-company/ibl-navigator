@@ -60,6 +60,7 @@ import { SessionRTTNPlotComponent } from './session-list/session/session-rttn-pl
 import { RasterPlotsComponent } from './cell-list/cell/raster-plots/raster-plots.component';
 import { PsthPlotsComponent } from './cell-list/cell/psth-plots/psth-plots.component';
 import { QualityControlComponent } from './quality-control/quality-control.component';
+import { DriftmapComponent } from './quality-control/driftmap/driftmap.component';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -114,7 +115,7 @@ const appRoutes: Routes = [
     component: DailySummaryComponent
   },
   {
-    path: 'qc',
+    path: 'qc/:subjectID/:sessionStartTime',
       canActivate: [AuthGuard],
       canActivateChild: [AuthGuard],
       component: QualityControlComponent
@@ -155,7 +156,8 @@ const appRoutes: Routes = [
     SessionPlotDialog,
     RasterPlotsComponent,
     PsthPlotsComponent,
-    QualityControlComponent
+    QualityControlComponent,
+    DriftmapComponent
   ],
   imports: [
     CommonModule, PlotlyModule,
