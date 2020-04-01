@@ -30,10 +30,18 @@ echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Enabling SSL feature"
 mv /ssl.conf /etc/nginx/conf.d/ssl.conf
 update_cert
 
-inotifywait -m /etc/letsencrypt/live/${SUBDOMAINS}.${URL} |
-    while read path action file; do
-        if [ "$(echo $action | grep MODIFY)" ] || [ "$(echo $action | grep CREATE)" ] || [ "$(echo $action | grep MOVE)" ]; then
-            echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Renewal: Reloading NGINX since \`$file\` issue \`$action\` event"
-            update_cert
-        fi
-    done
+INIT_TIME=$(date +%s)
+LAST_MOD_TIME=$(date -r $(echo /etc/letsencrypt/live/${SUBDOMAINS}.${URL}/$(ls -t /etc/letsencrypt/live/${SUBDOMAINS}.${URL}/ | head -n 1)) +%s)
+DELTA=$(expr $LAST_MOD_TIME - $INIT_TIME)
+while true; do
+    CURR_FILEPATH=$(ls -t /etc/letsencrypt/live/${SUBDOMAINS}.${URL}/ | head -n 1)
+    CURR_LAST_MOD_TIME=$(date -r $(echo /etc/letsencrypt/live/${SUBDOMAINS}.${URL}/${CURR_FILEPATH}) +%s)
+    CURR_DELTA=$(expr $CURR_LAST_MOD_TIME - $INIT_TIME)
+    if [ "$DELTA" -lt "$CURR_DELTA" ]; then
+        echo "[$(date -u '+%Y-%m-%d %H:%M:%S')][DataJoint]: Renewal: Reloading NGINX since \`$CURR_FILEPATH\` changed."
+        update_cert
+        DELTA=$CURR_DELTA
+    else
+        sleep 5
+    fi
+done
