@@ -8,6 +8,7 @@ import { AllSessionsService } from './all-sessions.service';
 import { SessionComponent } from './session/session.component';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 
 @Component({
@@ -55,10 +56,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   hideMissingPlots = false;
   hideMissingEphys = false;
+  hideNG4BrainMap = false;
+  hideNotReady4Delay = false;
   // setup for the table columns
   displayedColumns: string[] = ['session_lab', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
-                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'good4bmap'];
+                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'ready4delay', 'good4bmap'];
   nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
@@ -690,74 +693,133 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.selectedSession = session;
   }
 
-  toggleNplotStatus() {
-    if (!this.hideMissingPlots && !this.hideMissingEphys) {
-      const sessionWithPlots = [];
-      for (const session of this.sessions) {
-        if (session.nplot === 1) {
-          sessionWithPlots.push(session);
-        }
-      }
-      this.dataSource = new MatTableDataSource(sessionWithPlots);
-    } else if (!this.hideMissingPlots && this.hideMissingEphys) {
-      const sessionWithPlotsAndEphys = [];
-      for (const session of this.sessions) {
-        if (session.nplot === 1 && session.nprobe > 0) {
-          sessionWithPlotsAndEphys.push(session);
-        }
-      }
-      this.dataSource = new MatTableDataSource(sessionWithPlotsAndEphys);
-    } else if (this.hideMissingPlots && this.hideMissingEphys) {
-      const sessionWithEphys = [];
-      for (const session of this.sessions) {
-        if (session.nprobe > 0) {
-          sessionWithEphys.push(session);
-        }
-      }
-      this.dataSource = new MatTableDataSource(sessionWithEphys);
-    } else {
-      this.dataSource = new MatTableDataSource(this.sessions);
+  // toggleNplotStatus() {
+  //   if (!this.hideMissingPlots && !this.hideMissingEphys) {
+  //     const sessionWithPlots = [];
+  //     for (const session of this.sessions) {
+  //       if (session.nplot === 1) {
+  //         sessionWithPlots.push(session);
+  //       }
+  //     }
+  //     this.dataSource = new MatTableDataSource(sessionWithPlots);
+  //   } else if (!this.hideMissingPlots && this.hideMissingEphys) {
+  //     const sessionWithPlotsAndEphys = [];
+  //     for (const session of this.sessions) {
+  //       if (session.nplot === 1 && session.nprobe > 0) {
+  //         sessionWithPlotsAndEphys.push(session);
+  //       }
+  //     }
+  //     this.dataSource = new MatTableDataSource(sessionWithPlotsAndEphys);
+  //   } else if (this.hideMissingPlots && this.hideMissingEphys) {
+  //     const sessionWithEphys = [];
+  //     for (const session of this.sessions) {
+  //       if (session.nprobe > 0) {
+  //         sessionWithEphys.push(session);
+  //       }
+  //     }
+  //     this.dataSource = new MatTableDataSource(sessionWithEphys);
+  //   } else {
+  //     this.dataSource = new MatTableDataSource(this.sessions);
+  //   }
+  //   this.dataSource.sort = this.sort;
+  //   this.dataSource.sortingDataAccessor = (data, header) => data[header];
+  //   this.dataSource.paginator = this.paginator;
+
+  //   this.hideMissingPlots = !this.hideMissingPlots;
+  // }
+
+  // toggleNprobeStatus() {
+  //   if (!this.hideMissingEphys && !this.hideMissingPlots) {
+  //     const sessionWithEphys = [];
+  //     for (const session of this.sessions) {
+  //       if (session.nprobe > 0) {
+  //         sessionWithEphys.push(session);
+  //       }
+  //     }
+  //     this.dataSource = new MatTableDataSource(sessionWithEphys);
+  //   } else if (!this.hideMissingEphys && this.hideMissingPlots) {
+  //     const sessionWithEphysAndPlots = [];
+  //     for (const session of this.sessions) {
+  //       if (session.nprobe > 0 && session.nplot === 1) {
+  //         sessionWithEphysAndPlots.push(session);
+  //       }
+  //     }
+  //     this.dataSource = new MatTableDataSource(sessionWithEphysAndPlots);
+  //   } else if (this.hideMissingEphys && this.hideMissingPlots) {
+  //     const sessionWithPlots = [];
+  //     for (const session of this.sessions) {
+  //       if (session.nplot === 1) {
+  //         sessionWithPlots.push(session);
+  //       }
+  //     }
+  //     this.dataSource = new MatTableDataSource(sessionWithPlots);
+  //   } else {
+  //     this.dataSource = new MatTableDataSource(this.sessions);
+  //   }
+  //   this.dataSource.sort = this.sort;
+  //   this.dataSource.sortingDataAccessor = (data, header) => data[header];
+  //   this.dataSource.paginator = this.paginator;
+
+  //   this.hideMissingEphys = !this.hideMissingEphys;
+  // }
+
+  updateSelection() {
+    let criteria = []
+    if (this.hideMissingPlots) {
+        criteria.push(_.map(this.sessions, x => x.nplot === 1));
     }
+​
+    if (this.hideMissingEphys) {
+        criteria.push(_.map(this.sessions, x => x.nprobe > 0));
+    }
+
+    if (this.hideNG4BrainMap) {
+      console.log('only show those good for brain map')
+      
+      criteria.push(_.map(this.sessions, x => x.good_enough_for_brainwide_map > 0));
+    }
+    
+    if (this.hideNotReady4Delay) {
+      console.log('only show those ready for delay')
+      criteria.push(_.map(this.sessions, x => x.training_status == 'ready4delay'));
+      // training_status: "ready4delay"
+    }
+​    
+    let selectedSessions = this.sessions;
+
+​    if (criteria.length > 0) {
+      let selection = _.map(_.zip(...criteria), (x) => _.every(x));
+      selectedSessions = _.filter(this.sessions, (x, i) => selection[i]);
+    }
+    
+    this.dataSource = new MatTableDataSource(selectedSessions);
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (data, header) => data[header];
     this.dataSource.paginator = this.paginator;
-
+  }
+  ​
+  toggleNplotStatus() {
+    // hide or show sessions that have missing session plots
     this.hideMissingPlots = !this.hideMissingPlots;
+    this.updateSelection();
+  }
+  ​
+  toggleNprobeStatus() {
+    // hide or show sessions that have missing ephys data (based on existence of probe insertion)
+    this.hideMissingEphys = !this.hideMissingEphys;
+    this.updateSelection();
   }
 
-  toggleNprobeStatus() {
-    if (!this.hideMissingEphys && !this.hideMissingPlots) {
-      const sessionWithEphys = [];
-      for (const session of this.sessions) {
-        if (session.nprobe > 0) {
-          sessionWithEphys.push(session);
-        }
-      }
-      this.dataSource = new MatTableDataSource(sessionWithEphys);
-    } else if (!this.hideMissingEphys && this.hideMissingPlots) {
-      const sessionWithEphysAndPlots = [];
-      for (const session of this.sessions) {
-        if (session.nprobe > 0 && session.nplot === 1) {
-          sessionWithEphysAndPlots.push(session);
-        }
-      }
-      this.dataSource = new MatTableDataSource(sessionWithEphysAndPlots);
-    } else if (this.hideMissingEphys && this.hideMissingPlots) {
-      const sessionWithPlots = [];
-      for (const session of this.sessions) {
-        if (session.nplot === 1) {
-          sessionWithPlots.push(session);
-        }
-      }
-      this.dataSource = new MatTableDataSource(sessionWithPlots);
-    } else {
-      this.dataSource = new MatTableDataSource(this.sessions);
-    }
-    this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (data, header) => data[header];
-    this.dataSource.paginator = this.paginator;
+  toggleG4BMviewStatus() {
+    // hide or show sessions that are not good enough for brain map
+    this.hideNG4BrainMap = !this.hideNG4BrainMap;
+    this.updateSelection();
+  }
 
-    this.hideMissingEphys = !this.hideMissingEphys;
+  toggleR4DviewStatus() {
+    // hide or show session that are not ready for delay
+    this.hideNotReady4Delay = !this.hideNotReady4Delay;
+    this.updateSelection();
   }
 
 }

@@ -97,6 +97,11 @@
         Only show alive mice
       </mat-checkbox>
     </div>
+    <div class="ready4delay_filter">
+      <mat-checkbox class="ready4delay_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
+        Only show mice with ready for delay training status
+      </mat-checkbox>
+    </div>
   </div>
 </div>
 </form>
@@ -119,6 +124,14 @@
   <ng-container matColumnDef="projects">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
     <td mat-cell *matCellDef="let mouse"> {{mouse.projects}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="ready4delay">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Ready for Delay</th>
+    <td mat-cell *matCellDef="let mouse" class="to-center">
+      <div *ngIf="mouse.ready4delay > 0"><span class="oi oi-lock-unlocked"></span></div>
+      <div *ngIf="mouse.ready4delay == 0"></div>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="subject_line">
@@ -148,7 +161,7 @@
 
   <ng-container matColumnDef="sex">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Sex </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.sex}} </td>
+    <td mat-cell *matCellDef="let mouse" class="to-center"> {{mouse.sex}} </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

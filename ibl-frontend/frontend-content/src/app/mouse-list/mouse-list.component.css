@@ -64,8 +64,17 @@ form {
     margin-top: 7px;
 }
 
+.ready4delay_filter {
+    margin-left: 15px;
+    margin-top: 7px;
+}
+
 label {
     font-weight: 500;
+}
+
+td.to-center {
+    text-align: center;
 }
 
 

@@ -11,6 +11,7 @@ declare var Plotly: any;
 })
 export class DriftmapComponent implements OnInit, OnDestroy {
   selected_probe_index;
+  driftmapLoading: boolean;
   driftmaps;
   driftmapTemplates = {};
 
@@ -26,6 +27,7 @@ export class DriftmapComponent implements OnInit, OnDestroy {
   constructor(public QCService: QualityControlService) { }
 
   ngOnInit() {
+    this.driftmapLoading = true;
     this.QCService.getDriftmapTemplates();
 
     this.driftmapTemplatesSubscription = this.QCService.getDriftmapTemplatesLoadedListener()
@@ -92,7 +94,18 @@ export class DriftmapComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
 
   }
-
+  donePlotting() {
+    console.log('DONE replotting the depth raster');
+    this.driftmapLoading = false;
+  }
+  plotInitialized() {
+    console.log('plot is now initialized.')
+    this.driftmapLoading = false;
+  }
+  probeChange(event) {
+    console.log('probe change event detected (plot component side) - ', event);
+    this.driftmapLoading = true;
+  }
 
 }
 
