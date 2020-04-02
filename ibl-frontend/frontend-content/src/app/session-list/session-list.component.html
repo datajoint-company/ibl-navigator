@@ -162,15 +162,29 @@
     <div>
       <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>
     </div>
-    <div class="nplot_status_filter">
-      <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
-        Only show session with plots
-      </mat-checkbox>
+    <div>
+      <div class="nplot_status_filter">
+        <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
+          Only show session with behavior plots
+        </mat-checkbox>
+      </div>
+      <div class="nprobe_status_filter">
+        <mat-checkbox class="nprobe_status_chbox" [checked]="hideMissingEphys" (change)="toggleNprobeStatus()">
+          Only show session with ephys data
+        </mat-checkbox>
+      </div>
     </div>
-    <div class="nprobe_status_filter">
-      <mat-checkbox class="nprobe_status_chbox" [checked]="hideMissingEphys" (change)="toggleNprobeStatus()">
-        Only show session with ephys data
-      </mat-checkbox>
+    <div>
+      <div class="nprobe_status_filter">
+        <mat-checkbox class="nprobe_status_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
+          Only show session with mouse ready for delay
+        </mat-checkbox>
+      </div>
+      <div class="nprobe_status_filter">
+        <mat-checkbox class="nprobe_status_chbox" [checked]="hideNG4BrainMap" (change)="toggleG4BMviewStatus()">
+          Only show session good for brainwide map
+        </mat-checkbox>
+      </div>
     </div>
   </div>
 
@@ -249,8 +263,16 @@
     </td>
   </ng-container>
 
+  <ng-container matColumnDef="ready4delay">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Ready for Delay</th>
+    <td mat-cell *matCellDef="let session" class="to-center">
+      <div *ngIf="session.training_status == 'ready4delay'"><span class="oi oi-lock-unlocked"></span></div>
+      <div *ngIf="!session.training_status != 'ready4delay'"></div>
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="good4bmap">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Good Enough for Brainwide Map</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Good for Brainwide Map</th>
     <td mat-cell *matCellDef="let session" class="to-center">
       <div *ngIf="session.good_enough_for_brainwide_map"><span class="oi oi-thumb-up"></span></div>
       <div *ngIf="!session.good_enough_for_brainwide_map"></div>
