@@ -24,11 +24,11 @@ export class QualityControlComponent implements OnInit, OnDestroy {
   private probeInsertionSubscription: Subscription;
 
   probeSwitch: EventEmitter<any> = new EventEmitter();
-  probeSwitch2: Observable = new Observable((observer) => {
-    if ("if change is detected in probeIndex value") {
-      observer.next()
-    }
-  });
+  // probeSwitch2: Observable = new Observable((observer) => {
+  //   if ("if change is detected in probeIndex value") {
+  //     observer.next()
+  //   }
+  // });
   constructor(private route: ActivatedRoute, public QCService: QualityControlService) { }
 
   ngOnInit() {

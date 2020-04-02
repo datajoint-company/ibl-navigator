@@ -486,7 +486,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.allSessionsService.retrieveSessions2(request);
       this.reqSessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener2()
         .subscribe((newSessions: any) => {
-          console.log('sessions loaded: ', newSessions);
+          // console.log('sessions loaded: ', newSessions);
           this.loading = false;
           this.sessions = newSessions;
           this.dataSource = new MatTableDataSource(newSessions);

@@ -267,7 +267,7 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Ready for Delay</th>
     <td mat-cell *matCellDef="let session" class="to-center">
       <div *ngIf="session.training_status == 'ready4delay'"><span class="oi oi-lock-unlocked"></span></div>
-      <div *ngIf="!session.training_status != 'ready4delay'"></div>
+      <div *ngIf="session.training_status != 'ready4delay'"></div>
     </td>
   </ng-container>
 

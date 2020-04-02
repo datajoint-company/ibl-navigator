@@ -17,8 +17,8 @@
           <option *ngFor="let probeIns of probeList" [value]="probeIns" [selected]="probeIns == probeList[0]">{{ probeIns }}</option>
         </select>
     </div>
-    <p>Probe insertion changed: {{ probeChanged }} / probeIndex: {{ probeIndex }}</p>
-    <p>probe switch event: {{probeSwitch | json}}</p>
+    <!-- <p>Probe insertion changed: {{ probeChanged }} / probeIndex: {{ probeIndex }}</p>
+    <p>probe switch event: {{probeSwitch | json}}</p> -->
     <div class="driftmap-section" *ngIf="driftmapInfo">
       <app-driftmap [driftmapInfo]="driftmapInfo" (probeSwitch)="probeChange($event)"></app-driftmap>
     </div>
