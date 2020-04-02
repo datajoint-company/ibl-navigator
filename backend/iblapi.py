@@ -240,6 +240,11 @@ def handle_q(subpath, args, proj, **kwargs):
         else:
             proj_restr = {}
 
+        ready4delay = subject.Subject().aggr(
+            (analyses_behavior.SessionTrainingStatus() & 'training_status = "ready4delay"'),
+            ready4delay='count(training_status)',
+            keep_all_rows=True)
+        
         lab_name = subject.Subject.aggr(subject.SubjectLab(), lab_name='IFNULL(lab_name, "missing")', keep_all_rows=True)
         user_name = subject.Subject.aggr(subject.SubjectUser(), responsible_user='IFNULL(responsible_user, "unassigned")')
 
@@ -249,7 +254,7 @@ def handle_q(subpath, args, proj, **kwargs):
             death_date='IFNULL(death_date, 0)',
             keep_all_rows=True)
         
-        q = subject.Subject() * dead_mice *lab_name * user_name * projects & args & proj_restr
+        q = subject.Subject() * dead_mice *lab_name * user_name * projects * ready4delay & args & proj_restr
     elif subpath == 'dailysummary':
         # find the latest summary geneartion for each lab
         latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
