@@ -127,7 +127,7 @@
   </ng-container>
 
   <ng-container matColumnDef="ready4delay">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Ready for Delay</th>
+    <th mat-header-cell *matHeaderCellDef> Ready for Delay</th>
     <td mat-cell *matCellDef="let mouse" class="to-center">
       <div *ngIf="mouse.ready4delay > 0"><span class="oi oi-lock-unlocked"></span></div>
       <div *ngIf="mouse.ready4delay == 0"></div>
