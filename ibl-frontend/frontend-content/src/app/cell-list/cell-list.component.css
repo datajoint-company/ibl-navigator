@@ -29,6 +29,10 @@ td span.oi {
     position: relative;
 }
 
+.quality-control-nav span {
+    cursor: pointer;
+}
+
 /* .plots-navigator {
     position: fixed;
     z-index: 999;

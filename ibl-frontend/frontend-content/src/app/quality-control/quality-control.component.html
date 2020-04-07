@@ -1,1 +1,27 @@
-<p>quality-control works!</p>
+<div class="session-info-container">  
+    <div class="session-header"><h5>Quality Control</h5></div>
+    <div class="row session-info-table">
+      <table class="table col-lg-6 col-sm-8 col-xs-12 table-striped table-bordered table-sm" >
+        <tr>
+          <th>Session Start Time</th><td>{{ session_start_time.split("T")[0] }} {{ session_start_time.split("T")[1] }}</td>
+        </tr>
+        <tr>
+          <th>Subject UUID</th><td>{{ subject_uuid }}</td>
+        </tr>
+      </table>
+    </div>
+    <hr>
+    <div class="probe-selection-area">
+        <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
+        <select name="probe_idx" (change)="probe_selected($event.target.value)">
+          <option *ngFor="let probeIns of probeList" [value]="probeIns" [selected]="probeIns == probeList[0]">{{ probeIns }}</option>
+        </select>
+    </div>
+    <!-- <p>Probe insertion changed: {{ probeChanged }} / probeIndex: {{ probeIndex }}</p>
+    <p>probe switch event: {{probeSwitch | json}}</p> -->
+    <div class="driftmap-section" *ngIf="driftmapInfo">
+      <app-driftmap [driftmapInfo]="driftmapInfo" (probeSwitch)="probeChange($event)"></app-driftmap>
+    </div>
+   
+  </div>
+  

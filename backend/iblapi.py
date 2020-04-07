@@ -129,9 +129,10 @@ reqmap = {
     # 'rasterlight': plotting_ephys.RasterLinkS3,
     'rasterlight': plotting_ephys.Raster,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate,
-    'fulldriftmap': test_plotting_ephys.DriftMap,
-    'fulldriftmaptemplate': test_plotting_ephys.DriftMapTemplate
-
+    'probeinsertion': ephys.ProbeInsertion,
+    # 'fulldriftmap': test_plotting_ephys.DepthRaster, # originally the DriftMap
+    'fulldriftmaptemplate': test_plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
+    'depthRasterTrials': test_plotting_ephys.DepthRasterExampleTrial,
 }
 dumps = DateTimeEncoder.dumps
 
@@ -239,6 +240,11 @@ def handle_q(subpath, args, proj, **kwargs):
         else:
             proj_restr = {}
 
+        ready4delay = subject.Subject().aggr(
+            (analyses_behavior.SessionTrainingStatus() & 'training_status = "ready4delay"'),
+            ready4delay='count(training_status)',
+            keep_all_rows=True)
+        
         lab_name = subject.Subject.aggr(subject.SubjectLab(), lab_name='IFNULL(lab_name, "missing")', keep_all_rows=True)
         user_name = subject.Subject.aggr(subject.SubjectUser(), responsible_user='IFNULL(responsible_user, "unassigned")')
 
@@ -248,7 +254,7 @@ def handle_q(subpath, args, proj, **kwargs):
             death_date='IFNULL(death_date, 0)',
             keep_all_rows=True)
         
-        q = subject.Subject() * dead_mice *lab_name * user_name * projects & args & proj_restr
+        q = subject.Subject() * dead_mice *lab_name * user_name * projects * ready4delay & args & proj_restr
     elif subpath == 'dailysummary':
         # find the latest summary geneartion for each lab
         latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
@@ -312,6 +318,19 @@ def handle_q(subpath, args, proj, **kwargs):
             #         Params={'Bucket': 'ibl-dj-external', 'Key': v}, 
             #         ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
             #         for i in ret]
+    elif subpath == 'fulldriftmap':
+        q = test_plotting_ephys.DepthRaster & args 
+        def post_process(ret):
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['plotting_data_link'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
     else:
         abort(404)
 

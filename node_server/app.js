@@ -555,11 +555,22 @@ app.get('/plot/rastertemplate', checkAuth, (req, res) => {
     })
 })
 
+// this probeinsertion is used for quality control page
+app.post('/plot/probeinsertion', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/probeinsertion', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [probe insertion]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
 
 app.post('/plot/driftmap', checkAuth, (req, res) => {
     const timeA = new Date()
     console.log('requesting drift map to backend at time: ', timeA, 'request: ', req.body);
-    request.post(flask_backend + '/v0/fulldriftmap', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/fulldriftmap', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
         if (error) {
             console.error('error [full drift map]: ', error);
             res.status(500).end();

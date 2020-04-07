@@ -1,5 +1,9 @@
 <div *ngIf="cells">
-  <div class="cell-header"><h3>Cells</h3><h6>(Total clusters for probe {{probeIndex}}: {{cellsByProbeIns.length}})</h6></div>
+  <div class="cell-header">
+    <h3>Cells</h3>
+    <h6>(Total clusters for probe {{probeIndex}}: {{cellsByProbeIns.length}})</h6>
+    <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}"></span></div> -->
+  </div>
   <span class="cluster-nav-filters">
     <div class="probe-selection-area">
       <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>

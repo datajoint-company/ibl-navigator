@@ -6,6 +6,7 @@ import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { AllMiceService } from './all-mice.service';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-mouse-list',
@@ -31,8 +32,9 @@ export class MouseListComponent implements OnInit, OnDestroy {
   mice_menu: any;
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date',
-    'projects', 'subject_line', 'responsible_user', 'sex', 'death_date', 'subject_uuid'];
+    'projects', 'subject_line', 'responsible_user', 'sex', 'ready4delay', 'death_date', 'subject_uuid'];
   hideDeadMice = false;
+  hideNotReady4Delay = false;
 
   // setup for the paginator
   dataSource;
@@ -105,6 +107,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.allMiceService.getAllMiceMenu({'__order': 'lab_name'});
     this.allMiceMenuSubscription = this.allMiceService.getAllMiceMenuLoadedListener()
       .subscribe((mice: any) => {
+        // console.log('retrieved mice for meu: ', mice);
         // this.loading = false;
         // this.mice = mice;
         this.allMice = mice;
@@ -401,22 +404,60 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.filterStoreService.storeMouseTableState(pageIndex, pageSize, sorter);
   }
 
-  toggleMiceVitalStatus() {
-    if (!this.hideDeadMice) {
-      const aliveMice = [];
-      for (const mouse of this.mice) {
-        if (mouse.death_date === '0') {
-          aliveMice.push(mouse);
-        }
-      }
-      this.dataSource = new MatTableDataSource(aliveMice);
-    } else {
-      this.dataSource = new MatTableDataSource(this.mice);
+  // toggleMiceVitalStatus() {
+  //   if (!this.hideDeadMice) {
+  //     const aliveMice = [];
+  //     for (const mouse of this.mice) {
+  //       if (mouse.death_date === '0') {
+  //         aliveMice.push(mouse);
+  //       }
+  //     }
+  //     this.dataSource = new MatTableDataSource(aliveMice);
+  //   } else {
+  //     this.dataSource = new MatTableDataSource(this.mice);
+  //   }
+  //   this.dataSource.sort = this.sort;
+  //   this.dataSource.sortingDataAccessor = (data, header) => data[header];
+  //   this.dataSource.paginator = this.paginator;
+
+  //   this.hideDeadMice = !this.hideDeadMice;
+  // }
+
+
+  updateSelection() {
+    let criteria = []
+    if (this.hideDeadMice) {
+        criteria.push(_.map(this.mice, x => x.death_date === '0'));
     }
+​
+    if (this.hideNotReady4Delay) {
+        criteria.push(_.map(this.mice, x => x.ready4delay > 0));
+    }
+
+​    
+    let selectedMice = this.mice;
+
+​    if (criteria.length > 0) {
+      let selection = _.map(_.zip(...criteria), (x) => _.every(x));
+      selectedMice = _.filter(this.mice, (x, i) => selection[i]);
+    }
+    
+    this.dataSource = new MatTableDataSource(selectedMice);
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (data, header) => data[header];
     this.dataSource.paginator = this.paginator;
-
-    this.hideDeadMice = !this.hideDeadMice;
   }
+  ​
+  toggleMiceVitalStatus() {
+    // hide or show mice that are no longer alive
+    this.hideDeadMice = !this.hideDeadMice;
+    this.updateSelection();
+  }
+  ​
+  toggleR4DviewStatus() {
+    // hide or show mice that are don't yet have session with trainng status of "ready4delay"
+    this.hideNotReady4Delay = !this.hideNotReady4Delay;
+    this.updateSelection();
+  }
+
 }
