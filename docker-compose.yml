@@ -30,7 +30,7 @@ services:
     #cpu_quota: 100000
     #cpu_period: 100ms
   ibl-navigator:
-    build: ./ibl-frontend
+    # build: ./ibl-frontend
     image: registry.vathes.com/ibl-navigator/frontend:v0.9 # for client deploy
     # image: registry.vathes.com/ibl-navigator/frontend:v0.2-dev7 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
