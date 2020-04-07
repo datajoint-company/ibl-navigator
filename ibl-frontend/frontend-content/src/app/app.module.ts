@@ -115,11 +115,7 @@ const appRoutes: Routes = [
     component: DailySummaryComponent
   },
   // {
-<<<<<<< HEAD
-  //   path: 'qc',
-=======
   //   path: 'qc/:subjectID/:sessionStartTime',
->>>>>>> dev
   //     canActivate: [AuthGuard],
   //     canActivateChild: [AuthGuard],
   //     component: QualityControlComponent
