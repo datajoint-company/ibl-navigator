@@ -75,6 +75,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   probeTrajInfo = {};
 
+
+  depthRasterTrial;
+  depthRasterTrialTemplates = {};
+
+  depthRasterTrial_data = [];
+  depthRasterTrial_layout = [];
+  depthRasterTrial_config = [];
+  depthRasterTrialLookup = {}; // for looking up plotting info like data/layout by probe index
+
+
   showController = false;
 
   raster_psth_config = {
@@ -130,6 +140,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private rasterListSubscription: Subscription;
   private psthListSubscription: Subscription;
   private probeTrajectorySubscription: Subscription;
+  private depthRasterTrialSubscription: Subscription;
 
   private rasterListSubscription0: Subscription;
   private rasterListSubscription1: Subscription;
@@ -145,15 +156,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private psthListSubscription1: Subscription;
   private psthListSubscription2: Subscription;
   private psthListSubscription3: Subscription;
+
   private rasterTemplateSubscription: Subscription;
   private psthTemplatesSubscription: Subscription;
+  private depthRasterTemplatesSubscription: Subscription
 
   private fullRasterSubscription: Subscription;
   private fullPSTHSubscription: Subscription;
   private fullRasterPSTHSubscription: Subscription;
   private fullRasterLoaded = new Subject();
   private fullPSTHLoaded = new Subject();
-  private fullRasterPSTHLoaded = new Subject();
+  private fullRasterPSTHLoaded = new Subject();=
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
 
@@ -419,9 +432,27 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 }
                 // console.log('probeTrajInfo: ', this.probeTrajInfo)
               } 
-              
-              
             });
+          
+          // begin grabbing trial depth rasters
+          this.cellListService.getDepthRasterTemplates;
+          this.depthRasterTemplatesSubscription = this.cellListService.getDepthRasterTemplatesLoadedListener()
+            .subscribe((drtTemplates) => {
+              for (let template of Object.values(drtTemplates)) {
+                // console.log('template:', template)
+                this.depthRasterTrialTemplates[template['depth_raster_template_idx']] = template['depth_raster_template']
+              }
+              // console.log('templates for depth rasters retrieved: ', templates);
+              
+              this.cellListService.retrieveDepthRasterTrialPlot({
+                'subject_uuid': this.sessionInfo['subject_uuid'],
+                'session_start_time': this.sessionInfo['session_start_time'],
+              });
+
+            });
+          
+          
+
 
           //////////// end of filling probe trajectory info ////////////////
         }
