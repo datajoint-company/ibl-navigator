@@ -195,9 +195,11 @@ export class CellListService {
   }
 
   retrieveDepthRasterTrialPlot(queryInfo) {
+    console.log('querying for depth raster trials with: ', queryInfo)
     this.http.post(BACKEND_API_URL + `/plot/trialdepthraster`, queryInfo)
       .subscribe(
         (retrievedDepthRasterTrialData) => {
+          console.log('retrieved depth raster trials!')
           this.depthRasterTrial = retrievedDepthRasterTrialData;
           this.depthRasterTrialLoaded.next(this.depthRasterTrial);
         },
@@ -209,9 +211,11 @@ export class CellListService {
   }
 
   getDepthRasterTemplates() {
+    console.log('about to get depth raster templates')
     this.http.get(BACKEND_API_URL + `/plot/driftmaptemplate`)
       .subscribe(
         (templateData) => {
+          console.log('fetched depth raster trial templates')
           this.depthRasterTemplates = templateData;
           this.depthRasterTemplatesLoaded.next(this.depthRasterTemplates);
         },

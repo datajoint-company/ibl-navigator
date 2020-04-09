@@ -166,7 +166,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private fullRasterPSTHSubscription: Subscription;
   private fullRasterLoaded = new Subject();
   private fullPSTHLoaded = new Subject();
-  private fullRasterPSTHLoaded = new Subject();=
+  private fullRasterPSTHLoaded = new Subject();
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
 
@@ -433,16 +433,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // console.log('probeTrajInfo: ', this.probeTrajInfo)
               } 
             });
-          
+          //////////// end of filling probe trajectory info ////////////////
+
+
+
           // begin grabbing trial depth rasters
-          this.cellListService.getDepthRasterTemplates;
+          console.log('about to render depth raster trials')
+          this.cellListService.getDepthRasterTemplates();
           this.depthRasterTemplatesSubscription = this.cellListService.getDepthRasterTemplatesLoadedListener()
             .subscribe((drtTemplates) => {
               for (let template of Object.values(drtTemplates)) {
                 // console.log('template:', template)
                 this.depthRasterTrialTemplates[template['depth_raster_template_idx']] = template['depth_raster_template']
               }
-              // console.log('templates for depth rasters retrieved: ', templates);
+              console.log('templates for depth rasters retrieved: ', drtTemplates);
               
               this.cellListService.retrieveDepthRasterTrialPlot({
                 'subject_uuid': this.sessionInfo['subject_uuid'],
@@ -451,10 +455,58 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
             });
           
+          this.depthRasterTrialSubscription = this.cellListService.getDepthRasterTrialLoadedListener()
+            .subscribe((plotInfo) => {
+              console.log('plotInfo fetched: ', plotInfo)
+              this.depthRasterTrial = deepCopy(plotInfo);
+              for (let plot of Object.values(plotInfo)) {
+                console.log('plot', plot)
+                if (!this.depthRasterTrialLookup[plot['probe_idx']]) {
+                  this.depthRasterTrialLookup[plot['probe_idx']] = {}
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']] = {}
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]= {}
+                } else if (!this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']]) {
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']] = {}
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]= {}
+                } else if (!this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]) {
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]= {}
+                }
+                // this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]= {}
+                this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'] = deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['data']);
+                this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout'] = deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['layout']);
+
+                if (plot['depth_raster_template_idx'] == 1) { // should be 1 all the time for trial depth rasters
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][0]['x'] = plot['plot_xlim'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][0]['y'] = plot['plot_ylim'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][1]['y'] = plot['plot_ylim'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][2]['y'] = plot['plot_ylim'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][3]['y'] = plot['plot_ylim'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['y'] = plot['plot_ylim'];
+                  
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['xaxis']['range'] = plot['plot_xlim'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['yaxis']['range'] = plot['plot_ylim'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['title']['text'] = plot['plot_title'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['source'] =  plot['plotting_data_link'];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['sizex'] = plot['plot_xlim'][1] - plot['plot_xlim'][0];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['sizey'] = plot['plot_ylim'][1] - plot['plot_ylim'][0];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['x'] = plot['plot_xlim'][0];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['y'] = plot['plot_ylim'][1];
+                
+                } else {
+                  console.error('trying to build depth raster trial plot with full driftmap template')
+                }
+              }
+              console.log('depthRasterTrialLookup: ', this.depthRasterTrialLookup);
+            });
+          
           
 
 
-          //////////// end of filling probe trajectory info ////////////////
+         
         }
       });
 
