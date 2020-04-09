@@ -64,14 +64,43 @@ export class DriftmapComponent implements OnInit, OnDestroy {
             this.driftmapLookup[plot['probe_idx']]['data'][1]['y'] = [plot['plot_ylim'][1]-20, plot['plot_ylim'][1]-80];
             this.driftmapLookup[plot['probe_idx']]['data'][2]['x'] = [plot['last_end'], plot['last_end']];
             this.driftmapLookup[plot['probe_idx']]['data'][2]['y'] = [plot['plot_ylim'][1]-20, plot['plot_ylim'][1]-80];
-            this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['source'] = plot['plotting_data_link'];
+            
+            this.driftmapLookup[plot['probe_idx']]['layout']['xaxis']['range'] = plot['plot_xlim'];
+            this.driftmapLookup[plot['probe_idx']]['layout']['yaxis']['range'] = plot['plot_ylim'];
+
+            // the base low-res layer setup
+            this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['source'] =  'http://localhost:9000/assets/images/IBLlogo.png';
             this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['sizex'] = plot['plot_xlim'][1] - plot['plot_xlim'][0];
             this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['sizey'] = plot['plot_ylim'][1] - plot['plot_ylim'][0];
             this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['x'] = plot['plot_xlim'][0];
             this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['y'] = plot['plot_ylim'][1];
-            this.driftmapLookup[plot['probe_idx']]['layout']['xaxis']['range'] = plot['plot_xlim'];
-            this.driftmapLookup[plot['probe_idx']]['layout']['yaxis']['range'] = plot['plot_ylim'];
 
+            // mid resolution should come here
+            this.driftmapLookup[plot['probe_idx']]['layout']['images'].push({
+              source: 'http://localhost:9000/assets/images/dj_loading_icon.gif' ,
+              sizex: plot['plot_xlim'][1] - plot['plot_xlim'][0],
+              sizey: plot['plot_ylim'][1] - plot['plot_ylim'][0],
+              x: plot['plot_xlim'][0],
+              y: plot['plot_ylim'][1],
+              layer: "below",
+              sizing: "stretch",
+              xref: "x",
+              yref: "y"
+            });
+
+            // highest resolution should come here
+            this.driftmapLookup[plot['probe_idx']]['layout']['images'].push({
+              source: plot['plotting_data_link'],
+              sizex: plot['plot_xlim'][1] - plot['plot_xlim'][0],
+              sizey: plot['plot_ylim'][1] - plot['plot_ylim'][0],
+              x: plot['plot_xlim'][0],
+              y: plot['plot_ylim'][1],
+              layer: "below",
+              sizing: "stretch",
+              xref: "x",
+              yref: "y"
+            });
+         
             // console.log('driftmapLookup: ', this.driftmapLookup);
             // console.log('image link to driftmap: ', plot['plotting_data_link']);
 

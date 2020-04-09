@@ -114,12 +114,12 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
     component: DailySummaryComponent
   },
-  {
-    path: 'qc/:subjectID/:sessionStartTime',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
-      component: QualityControlComponent
-  },
+  // {
+  //   path: 'qc/:subjectID/:sessionStartTime',
+  //     canActivate: [AuthGuard],
+  //     canActivateChild: [AuthGuard],
+  //     component: QualityControlComponent
+  // },
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
   // { path: '**', redirectTo: '/not-found' }
 ];
