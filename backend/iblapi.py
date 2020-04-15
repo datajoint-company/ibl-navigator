@@ -328,6 +328,16 @@ def handle_q(subpath, args, proj, **kwargs):
                         s3_client.generate_presigned_url('get_object',
                                                         Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
+                if parsed_item['plotting_data_link_low_res'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link_low_res'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link_low_res']},
+                                                        ExpiresIn=3*60*60)
+                if parsed_item['plotting_data_link_very_low_res'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link_very_low_res'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link_very_low_res']},
+                                                        ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'depthrastertrial':

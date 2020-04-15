@@ -189,6 +189,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
   ngOnInit() {
+    // console.log('sessionInfo: ', this.sessionInfo)
     this.timeA = new Date;
     this.plot_config = {
       showLink: false,
@@ -438,7 +439,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
 
           // begin grabbing trial depth rasters
-          console.log('about to render depth raster trials')
+          // console.log('about to render depth raster trials')
           this.cellListService.getDepthRasterTemplates();
           this.depthRasterTemplatesSubscription = this.cellListService.getDepthRasterTemplatesLoadedListener()
             .subscribe((drtTemplates) => {
@@ -446,7 +447,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // console.log('template:', template)
                 this.depthRasterTrialTemplates[template['depth_raster_template_idx']] = template['depth_raster_template']
               }
-              console.log('templates for depth rasters retrieved: ', drtTemplates);
+              // console.log('templates for depth rasters retrieved: ', drtTemplates);
               
               this.cellListService.retrieveDepthRasterTrialPlot({
                 'subject_uuid': this.sessionInfo['subject_uuid'],
@@ -460,7 +461,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               console.log('plotInfo fetched: ', plotInfo)
               this.depthRasterTrial = deepCopy(plotInfo);
               for (let plot of Object.values(plotInfo)) {
-                console.log('plot', plot)
+                // console.log('plot', plot)
                 if (!this.depthRasterTrialLookup[plot['probe_idx']]) {
                   this.depthRasterTrialLookup[plot['probe_idx']] = {}
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']] = {}
@@ -510,20 +511,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
       });
 
-      this.fullRasterSubscription = this.getFullRasterLoadedListener()
-        .subscribe((rasterToPlot) => {
-          // console.log('logging raster subscription content to initially plot: ', rasterToPlot);
-          // console.log('type of rasterToPlot: ', typeof rasterToPlot)
-          // this.updateRaster(rasterToPlot);
-          // this.updateRaster(fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-        });
+      // this.fullRasterSubscription = this.getFullRasterLoadedListener()
+      //   .subscribe((rasterToPlot) => {
+      //     // console.log('logging raster subscription content to initially plot: ', rasterToPlot);
+      //     // console.log('type of rasterToPlot: ', typeof rasterToPlot)
+      //     // this.updateRaster(rasterToPlot);
+      //     // this.updateRaster(fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+      //   });
 
-      this.fullPSTHSubscription = this.getFullPSTHLoadedListener()
-        .subscribe((PSTHtoPlot) => {
-          // console.log('logging PSTH content to initially plot: ', PSTHtoPlot);
-          // this.updatePSTH(PSTHtoPlot);
-          // this.updatePSTH(fullPSTHPurse[this.probeIndex][this.eventType]);
-        });
+      // this.fullPSTHSubscription = this.getFullPSTHLoadedListener()
+      //   .subscribe((PSTHtoPlot) => {
+      //     // console.log('logging PSTH content to initially plot: ', PSTHtoPlot);
+      //     // this.updatePSTH(PSTHtoPlot);
+      //     // this.updatePSTH(fullPSTHPurse[this.probeIndex][this.eventType]);
+      //   });
 
     // if (this.fullRasterPurse[0].length) {
     //   this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
