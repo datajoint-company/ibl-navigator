@@ -131,7 +131,7 @@ reqmap = {
     'rastertemplate': plotting_ephys.RasterLayoutTemplate,
     'probeinsertion': ephys.ProbeInsertion,
     # 'fulldriftmap': test_plotting_ephys.DepthRaster, # originally the DriftMap
-    'fulldriftmaptemplate': test_plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
+    'fulldriftmaptemplate': plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
 }
 dumps = DateTimeEncoder.dumps
 
@@ -318,7 +318,8 @@ def handle_q(subpath, args, proj, **kwargs):
             #         ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
             #         for i in ret]
     elif subpath == 'fulldriftmap':
-        q = test_plotting_ephys.DepthRaster & args 
+        # q = test_plotting_ephys.DepthRaster & args
+        q = plotting_ephys.DepthRaster & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:
@@ -327,6 +328,16 @@ def handle_q(subpath, args, proj, **kwargs):
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
                                                         Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        ExpiresIn=3*60*60)
+                if parsed_item['plotting_data_link_low_res'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link_low_res'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link_low_res']},
+                                                        ExpiresIn=3*60*60)
+                if parsed_item['plotting_data_link_very_low_res'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link_very_low_res'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link_very_low_res']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
