@@ -84,6 +84,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   depthRasterTrial_config = [];
   depthRasterTrialLookup = {}; // for looking up plotting info like data/layout by probe index
 
+  sliderDepthRasterTrialLookup = {};
+  sliderTrialMapByTrialType = {};
+  contrastMinLookup = {};
+  trialDepthRasterData
+  trialDepthRasterLayout
+  slidersSetting = {};
+  selectedTrialType = "Correct Left Contrast"; // initialize with correct left
+  selectedTrialContrast;
 
   showController = false;
 
@@ -487,6 +495,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][3]['y'] = plot['plot_ylim'];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['y'] = plot['plot_ylim'];
+                  // adding trial_id to plot info even though it won't get plotted;
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data']['customdata'] = plot['trial_id'];
                   
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['xaxis']['range'] = plot['plot_xlim'];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['yaxis']['range'] = plot['plot_ylim'];
@@ -496,12 +506,225 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['sizey'] = plot['plot_ylim'][1] - plot['plot_ylim'][0];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['x'] = plot['plot_xlim'][0];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['y'] = plot['plot_ylim'][1];
+
                 
                 } else {
                   console.error('trying to build depth raster trial plot with full driftmap template')
                 }
               }
+              
+              // [START] TO DELETE ONCE ONE BELOW IS WORKING
+              // this.sliderTrialMapByTrialType[0] = {};
+              // console.log('deepcopy of data: ', deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['data']));
+              // this.sliderTrialMapByTrialType[0]['Incorrect Right Contrast'] = {
+              //   data: deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['data']), 
+              //   layout: deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['layout']), 
+              //   config: {}
+              // };
+
+              // this.sliderTrialMapByTrialType[0]['Incorrect Right Contrast']['layout']['sliders'] = [{
+              //   pad: {t: 30},
+              //   currentvalue: {
+              //     xanchor: 'right',
+              //     prefix: 'Trial ID: ',
+              //     font: {
+              //       color: '#888',
+              //       size: 20
+              //     },
+              //     visible: false
+              //   },
+              //   steps: [{
+              //     label: '-1',
+              //     value: 77,
+              //     method: 'update',
+              //     args: [deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['data']), deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['layout'])]
+              //     // args: ['line.color', 'red']
+              //   }, {
+              //     label: '-0.25',
+              //     value: 393,
+              //     method: 'skip',
+              //     args: [this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.25]['data'], deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.25]['layout'])]
+              //     // args: ['line.color', 'yellow']
+              //   }, {
+              //     label: '-0.125',
+              //     value: 41,
+              //     method: 'update',
+              //     args: [deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.125]['data']), deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.125]['layout'])]
+              //     // args: ['line.color', 'orange']
+              //   }, {
+              //     label: '-0.0625',
+              //     value: 35,
+              //     method: 'update',
+              //     args: [deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.0625]['data']), deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.0625]['layout'])]
+              //     // args: ['line.color', 'green']
+              //   },{
+              //     label: '0',
+              //     value: 60,
+              //     method: 'update',
+              //     args: [deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][0]['data']), deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][0]['layout'])]
+              //     // args: ['line.color', 'blue']
+              //   }]
+              // }]
+
+              // [END] TO DELETE ONCE ONE BELOW IS WORKING
+
+              this.sliderDepthRasterTrialLookup = deepCopy(this.depthRasterTrialLookup);
+              let trialTypeKeys = ['Correct Left Contrast', 'Correct Right Contrast', 'Incorrect Left Contrast', 'Incorrect Right Contrast'];
+              for (let probe of this.probeIndices) {
+                for (let trialType of trialTypeKeys) {
+                  this.slidersSetting[trialType] = [];
+                  this.contrastMinLookup[trialType] = Math.min(...Object.keys(this.depthRasterTrialLookup[probe][trialType]).map(Number)); // getting the lowest number of contrasts for initial display
+                  
+                  let contrastKeys = (Object.keys(this.depthRasterTrialLookup[probe][trialType]).map(Number)).sort((a,b) => a-b);
+                  // console.log('printing contrast keys: ', contrastKeys);
+ 
+                  for (let trialContrast of contrastKeys) {
+                    console.log('contrast: ', trialContrast, ', trial type: ', trialType, ', probe: ', probe)
+                    // fillup the sliders setting first, then readd later
+                    console.log('sliderSetting at this point: ', this.slidersSetting);
+                    if (!this.slidersSetting[trialType][0]) {
+                      this.slidersSetting[trialType] = [{
+                        pad: {t: 30},
+                        currentvalue: {
+                          xanchor: 'right',
+                          prefix: 'Trial Contrast: ',
+                          font: {
+                            color: '#888fff',
+                            size: 14
+                          }
+                        }
+                      }]
+                    }
+                    if (this.slidersSetting[trialType][0]['steps'] && this.slidersSetting[trialType][0]['steps'].length > 0) {
+                      //sliders steps have already started to fill up
+                      this.slidersSetting[trialType][0]['steps'].push({
+                        label: trialContrast,
+                        value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                        method: 'update',
+                        // args: [deepCopy(this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                        args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                      })
+
+                    } else {
+                      // sliders steps have not been initiated yet
+                      this.slidersSetting[trialType][0]['steps'] = []
+                      this.slidersSetting[trialType][0]['steps'].push({
+                        label: trialContrast,
+                        value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                        method: 'update',
+                        args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                        // args: [deepCopy(this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+
+                      })
+                    }
+
+
+
+
+                    // old way [start]
+                    // this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'] = [{
+                    //   pad: {t: 30},
+                    //   currentvalue: {
+                    //     xanchor: 'right',
+                    //     prefix: 'Trial Contrast: ',
+                    //     font: {
+                    //       color: '#888fff',
+                    //       size: 14
+                    //     }
+                    //   }
+                    // }]
+                    // console.log('logging sliderDpethRasterTrialLookup here: ', this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'])
+                    // if (this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'] && this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'].length > 0) {
+                    //   console.log(' steps NOT empty array in sliders setup')
+                      
+                      
+                    //   // this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'] = [];
+                    //   this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'].push({
+                    //     label: trialContrast,
+                    //     value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                    //     method: 'update',
+                    //     args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+
+                    //     // args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                    //   })
+                    // } else {
+                    //   console.log('empty steps')
+                    //   console.log("this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]: ", this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0])
+                    //   console.log("this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps']: ", this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'])
+
+                    //   // console.log('steps length greater than 0: ', this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'].length)
+                    //   this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'] = []
+                    //   this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'][0]['steps'].push({
+                    //     label: trialContrast,
+                    //     value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                    //     method: 'update',
+                    //     args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+
+                    //     // args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                    //   })
+                    // }
+                    // [end] old way
+                  }
+
+                  // now fill in the sliders setup to each of the contrast key type plot 
+                  console.log('setup sliders setting - should be all filled up - ', this.slidersSetting);
+                  for (let trialContrast of contrastKeys) {
+                    this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'] = this.slidersSetting[trialType];
+                  }
+                }
+              }
+
+              // [START] TO DELETE ONCE ABOVE AUTOMATION IS WORKING
+              // this.trialDepthRasterData = deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['data'])
+              // this.trialDepthRasterLayout = deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['layout'])
+              // this.trialDepthRasterLayout['sliders'] = [{
+              //   pad: {t: 30},
+              //   currentvalue: {
+              //     xanchor: 'right',
+              //     prefix: 'Trial Contrast: ',
+              //     font: {
+              //       color: '#888fff',
+              //       size: 14
+              //     }
+              //   },
+              //   steps: [{
+              //     label: '-1',
+              //     value: 77,
+              //     method: 'update',
+              //     args: [deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['data']), deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-1]['layout'])]
+              //   }, {
+              //     label: '-0.25',
+              //     value: 393,
+              //     method: 'update',
+              //     args: [this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.25]['data'], deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.25]['layout'])]
+              //   }, {
+              //     label: '-0.125',
+              //     value: 41,
+              //     method: 'update',
+              //     args: [deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.125]['data']), deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.125]['layout'])]
+              //   }, {
+              //     label: '-0.0625',
+              //     value: 35,
+              //     method: 'update',
+              //     args: [deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.0625]['data']), deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][-0.0625]['layout'])]
+              //   },{
+              //     label: '0',
+              //     value: 60,
+              //     method: 'update',
+              //     args: [deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][0]['data']), deepCopy(this.depthRasterTrialLookup[0]['Incorrect Right Contrast'][0]['layout'])]
+              //   }]
+              // }]
+              // [END] TO DELETE ONCE AUTOMATION IS WORKING
               console.log('depthRasterTrialLookup: ', this.depthRasterTrialLookup);
+              console.log('sliderDepthRasterTrialLookup: ', this.sliderDepthRasterTrialLookup);
+              // set initial plot to render on page
+              this.selectedTrialContrast = this.contrastMinLookup[this.selectedTrialType];
+              // this.trialDepthRasterData = this.sliderDepthRasterTrialLookup[this.probeIndex]['Incorrect Right Contrast'][this.contrastMinLookup['Incorrect Right Contrast']]['data']
+              // this.trialDepthRasterLayout = this.sliderDepthRasterTrialLookup[this.probeIndex]['Incorrect Right Contrast'][this.contrastMinLookup['Incorrect Right Contrast']]['layout']
+
+              // console.log('sliderTrialMapByTrialType: ', this.sliderTrialMapByTrialType)
+              // console.log('new trialDepthRasterData: ', this.trialDepthRasterData);
+              // console.log('new trialDepthRasterLayout: ', this.trialDepthRasterLayout)
             });
           
           
@@ -1392,6 +1615,47 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   getFullPSTHLoadedListener() {
     // console.log('inside the full PSTH loaded listener');
     return this.fullPSTHLoaded.asObservable();
+  }
+
+  flipTrialContrastOld(event) {
+    console.log('old trial contrast slider! event - ', event);
+    // this.trialDepthRasterLayout['sliders'][0]['steps'][event.slider.active]['value'] =  event.step.value;
+    // console.log('trialDepthRasterLayout: ', this.trialDepthRasterLayout)
+    // this.selectedTrialContrast = Number(event.step.label);
+    console.log('trialDepthRasterData: ', this.trialDepthRasterData);
+    console.log('even.step.args[0]', event.step.args[0])
+    console.log('trialDepthRasterLayout: ', this.trialDepthRasterLayout);
+    console.log('even.step.args[1]', event.step.args[1])
+    this.trialDepthRasterData = event.step.args[0];
+    console.log('------------------------------------')
+    // this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data'] = event.step.args[0]
+    // console.log('sliderDepthLookup: ', this.sliderDepthRasterTrialLookup)
+  }
+
+  flipTrialContrast(event) {
+    console.log('new trial contrast slider! event - ', event);
+    // this.trialDepthRasterLayout['sliders'][0]['steps'][event.slider.active]['value'] =  event.step.value;
+    // console.log('trialDepthRasterLayout: ', this.trialDepthRasterLayout)
+    this.selectedTrialContrast = Number(event.step.label);
+    // this.trialDepthRasterData = event.step.args[0];
+    console.log('sliderDepthLookup: ', this.sliderDepthRasterTrialLookup)
+    console.log('slider trialDepthRasterData: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
+    console.log('even.step.args[0]', event.step.args[0])
+    console.log('slider trialDepthRasterLayout: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['layout']);
+    console.log('even.step.args[1]', event.step.args[1])
+    console.log('======================================')
+    
+    this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data'] = event.step.args[0]
+    this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata'] = Number(event.step.value)
+    console.log('updated trialDepthRasterData: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
+
+
+  }
+
+  trialTypeSelected(newTrialType) {
+    console.log('trial type selected - ', newTrialType);
+    this.selectedTrialType = newTrialType;
+    this.selectedTrialContrast = this.contrastMinLookup[newTrialType];
   }
 
 }
