@@ -131,7 +131,7 @@ reqmap = {
     'rastertemplate': plotting_ephys.RasterLayoutTemplate,
     'probeinsertion': ephys.ProbeInsertion,
     # 'fulldriftmap': test_plotting_ephys.DepthRaster, # originally the DriftMap
-    'fulldriftmaptemplate': test_plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
+    'fulldriftmaptemplate': plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
 }
 dumps = DateTimeEncoder.dumps
 
@@ -318,7 +318,8 @@ def handle_q(subpath, args, proj, **kwargs):
             #         ExpiresIn=3*60*60) if k == 'plotting_data_link' else v for k,v in i.items()}
             #         for i in ret]
     elif subpath == 'fulldriftmap':
-        q = test_plotting_ephys.DepthRaster & args 
+        # q = test_plotting_ephys.DepthRaster & args
+        q = plotting_ephys.DepthRaster & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:
