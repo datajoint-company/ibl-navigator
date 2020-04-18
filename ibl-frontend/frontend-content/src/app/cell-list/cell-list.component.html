@@ -139,17 +139,9 @@
   </div>
   <hr>
   <div>
-    <h5>Depth Raster - Trial</h5>
-    <div *ngIf="depthRasterTrialLookup[probeIndex]">
-      <div>
-        <h4>Hardcoded Prototype</h4>
+    <h5>Depth Raster - Trial (ID: {{featuredTrialId}})</h5>
 
-        <!-- <plotly-plot (sliderChange)="flipTrialContrastOld($event)" [data]="trialDepthRasterData" [layout]="trialDepthRasterLayout" [config]=''></plotly-plot> -->
-    </div>
-    </div>
-    <hr>
     <div *ngIf="depthRasterTrialLookup[probeIndex]">
-      <h4>Test: Automated Generation for Contrast Type</h4>
       <div class="row">
         <div class="radio-option" (change)="trialTypeSelected($event.target.value)">
           <input type="radio" value="Correct Left Contrast" [checked]="selectedTrialType == 'Correct Left Contrast'"><label>Correct Left &nbsp;&nbsp;</label>
@@ -158,11 +150,8 @@
           <input type="radio" value="Incorrect Right Contrast" [checked]="selectedTrialType == 'Incorrect Right Contrast'"><label>Incorrect Right</label>
         </div>
       </div>
-      selected trial type: {{selectedTrialType}}
-      selected trial contrast: {{selectedTrialContrast}}
-      <!-- <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex]['Incorrect Right'][contrastMinLookup['Incorrect Right']]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex]['Incorrect Right'][contrastMinLookup['Incorrect Right']]['layout']" [config]=''></plotly-plot> -->
 
-      <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]=''></plotly-plot>
+      <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot>
     </div>
     <hr>
     <hr>
