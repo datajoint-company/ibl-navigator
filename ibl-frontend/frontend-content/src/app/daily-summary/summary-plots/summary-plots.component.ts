@@ -81,8 +81,6 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
           const TCSDplotInfo = plotsInfo[0]['trial_counts_session_duration'];
           const PRTplotInfo = plotsInfo[0]['performance_reaction_time'];
           const CHplotInfo = plotsInfo[0]['contrast_heatmap'];
-          // WWIplotInfo['layout']['width'] = '';
-          // WWIplotInfo['layout']['height'] = '300';
           const plotConfigWWI = Object.assign({}, this.plotConfig,
             { toImageButtonOptions:
                 { filename: this.mouseInfo['subject_nickname'] + '_water_intake_weight_plot' }
@@ -100,9 +98,7 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
                 { filename: this.mouseInfo['subject_nickname'] + '_contrast_heatmap_plot' }
             });
           WWIplotInfo['layout']['legend']['bgcolor'] = 'rgba(0, 0, 0, 0)';
-          // WWIplotInfo['layout']['width'] = '420';
-          // WWIplotInfo['layout']['height'] = '300';
-          WWIplotInfo['layout']['height'] = '500';
+          // WWIplotInfo['layout']['height'] = '400';
           WWIplotInfo['layout']['width'] = '385';
           WWIplotInfo['layout']['margin'] =  {l: '35'};
           WWIplotInfo['layout']['legend'] = {
@@ -117,18 +113,36 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
             }
           }
 
-          // TCSDplotInfo['layout']['width'] = '485';
-          TCSDplotInfo['layout']['width'] = '360';
-          // TCSDplotInfo['layout']['height'] = '300';
-          TCSDplotInfo['layout']['height'] = '400';
-          TCSDplotInfo['layout']['legend'] = {
-            // orientation: 'h',
-            // x: '1',
-            y: '-0.8',
-            x: '0',
-            font: {size: '9.75'},
-            bgcolor: 'rgba(0, 0, 0, 0)',
-          };
+
+          let TCSDLegendCount = 0
+          let TCSDListOfLegends = [];
+          for (let eachData of TCSDplotInfo['data']) {
+            // console.log('eachData: ', eachData)
+            if (eachData['showlegend'] && (!TCSDListOfLegends.includes(eachData['name']))) {
+              TCSDLegendCount += 1;
+            }
+          }
+          if (TCSDLegendCount > 2) { // long legend - position needs to be positioned right of plot
+            TCSDplotInfo['layout']['legend'] = {
+              orientation: 'v',
+              bgcolor: 'rgba(0, 0, 0, 0)',
+              y: '-0.8',
+              x: '1.3',
+              font: { size: '9.75' }
+            };
+            
+          } else {
+            TCSDplotInfo['layout']['legend'] = {
+              orientation: 'v',
+              bgcolor: 'rgba(0, 0, 0, 0)',
+              y: '-0.8',
+              x: '0',
+              font: { size: '9.75' }
+            };
+            TCSDplotInfo['layout']['width'] = '380';
+          }
+
+
           for (const datum of TCSDplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
               datum['hoverinfo'] = 'skip';
@@ -140,17 +154,36 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
 
             }
           }
-          // PRTplotInfo['layout']['width'] = '485';
-          PRTplotInfo['layout']['width'] = '360';
-          // PRTplotInfo['layout']['height'] = '300';
-          PRTplotInfo['layout']['height'] = '400';
-          PRTplotInfo['layout']['legend'] = {
-            // orientation: 'h',
-            bgcolor: 'rgba(0, 0, 0, 0)',
-            y: '-0.8',
-            x: '0',
-            font: { size: '9.75' }
-          };
+      
+          let legendCount = 0
+          let listOfLegends = [];
+          for (let eachData of PRTplotInfo['data']) {
+            // console.log('eachData: ', eachData)
+            if (eachData['showlegend'] && (!listOfLegends.includes(eachData['name']))) {
+              legendCount += 1;
+            }
+          }
+          if (legendCount > 2) { // long legend - position needs to be positioned right of plot
+            PRTplotInfo['layout']['legend'] = {
+              orientation: 'v',
+              bgcolor: 'rgba(0, 0, 0, 0)',
+              y: '-0.8',
+              x: '1.3',
+              font: { size: '9.75' }
+            };
+            
+          } else {
+            PRTplotInfo['layout']['legend'] = {
+              orientation: 'v',
+              bgcolor: 'rgba(0, 0, 0, 0)',
+              y: '-0.8',
+              x: '0',
+              font: { size: '9.75' }
+            };
+            PRTplotInfo['layout']['width'] = '380';
+          }
+          
+     
           for (const datum of PRTplotInfo['data']) {
             if (datum['name'] === 'Mondays') {
               datum['hoverinfo'] = 'skip';
@@ -162,10 +195,8 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
 
             }
           }
-          // CHplotInfo['layout']['width'] = '485';
-          CHplotInfo['layout']['height'] = '400';
+          // CHplotInfo['layout']['height'] = '400';
           CHplotInfo['layout']['width'] = '370';
-          // CHplotInfo['layout']['height'] = '300';
           CHplotInfo['layout']['legend'] = {
             // orientation: 'h',
             bgcolor: 'rgba(0, 0, 0, 0)',

@@ -15,6 +15,10 @@ declare var Plotly: any;
 export class QualityControlComponent implements OnInit, OnDestroy {
   public subject_uuid: string;
   public session_start_time: string;
+  public subject_nickname: string;
+  public session_lab: string;
+  public session_project: string;
+  public protocol: string;
   probeChanged: boolean;
 
   probeIndex;
@@ -35,7 +39,14 @@ export class QualityControlComponent implements OnInit, OnDestroy {
 
     this.subject_uuid = this.route.snapshot.paramMap.get('subjectID');
     this.session_start_time = this.route.snapshot.paramMap.get('sessionStartTime');
-    // console.log('session start time: ', this.session_start_time)
+    this.subject_nickname = this.route.snapshot.queryParamMap.get('nickname');
+    this.session_lab = this.route.snapshot.queryParamMap.get('lab');
+    this.session_project = this.route.snapshot.queryParamMap.get('project');
+    this.protocol = this.route.snapshot.queryParamMap.get('protocol')
+    let queryParamTest = this.route.snapshot.queryParamMap
+    console.log('session start time: ', this.session_start_time)
+    console.log('nickname: ', this.subject_nickname)
+    console.log('all queryParams: ', queryParamTest)
 
     this.QCService.retrieveProbeInsertions({'subject_uuid': this.subject_uuid, 'session_start_time': this.session_start_time});
     this.probeInsertionSubscription = this.QCService.getProbeInsertionsLoadedListener()

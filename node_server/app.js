@@ -595,6 +595,23 @@ app.get('/plot/driftmaptemplate', checkAuth, (req, res) => {
     })
 })
 
+app.post('/plot/trialdepthraster', checkAuth, (req, res) => {
+    const timeA = new Date()
+    console.log('requesting depth raster trial to backend at time: ', timeA, 'request: ', req.body);
+    request.post(flask_backend + '/v0/_q/depthrastertrial', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [Depth raster trial]: ', error);
+            res.status(500).end();
+            return;
+        }
+        const timeB = new Date()
+        console.log('Depth Raster Trial took ', timeB - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
+
+
 
 
 app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {

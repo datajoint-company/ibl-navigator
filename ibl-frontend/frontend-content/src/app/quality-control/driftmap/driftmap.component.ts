@@ -20,6 +20,52 @@ export class DriftmapComponent implements OnInit, OnDestroy {
   driftmap_config = [];
   driftmapLookup = {}; // for looking up plotting info like data/layout by probe index
 
+  driftmap_base_config = {
+    responsive: false,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+      'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
+
+  missing_driftmap_config = {
+    responsive: false,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+      'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
+  };
+
+
   private driftmapPlotsSubscription: Subscription;
   private driftmapTemplatesSubscription: Subscription;
 
@@ -27,6 +73,7 @@ export class DriftmapComponent implements OnInit, OnDestroy {
   constructor(public QCService: QualityControlService) { }
 
   ngOnInit() {
+    console.log('driftmapInfo: ', this.driftmapInfo)
     this.driftmapLoading = true;
     this.QCService.getDriftmapTemplates();
 
@@ -69,7 +116,7 @@ export class DriftmapComponent implements OnInit, OnDestroy {
             this.driftmapLookup[plot['probe_idx']]['layout']['yaxis']['range'] = plot['plot_ylim'];
 
             // the base low-res layer setup
-            this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['source'] =  'http://localhost:9000/assets/images/IBLlogo.png';
+            this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['source'] =  plot['plotting_data_link_very_low_res'];
             this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['sizex'] = plot['plot_xlim'][1] - plot['plot_xlim'][0];
             this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['sizey'] = plot['plot_ylim'][1] - plot['plot_ylim'][0];
             this.driftmapLookup[plot['probe_idx']]['layout']['images'][0]['x'] = plot['plot_xlim'][0];
@@ -77,7 +124,7 @@ export class DriftmapComponent implements OnInit, OnDestroy {
 
             // mid resolution should come here
             this.driftmapLookup[plot['probe_idx']]['layout']['images'].push({
-              source: 'http://localhost:9000/assets/images/dj_loading_icon.gif' ,
+              source: plot['plotting_data_link_low_res'],
               sizex: plot['plot_xlim'][1] - plot['plot_xlim'][0],
               sizey: plot['plot_ylim'][1] - plot['plot_ylim'][0],
               x: plot['plot_xlim'][0],
@@ -101,10 +148,14 @@ export class DriftmapComponent implements OnInit, OnDestroy {
               yref: "y"
             });
          
+            // console.log('highest image link to driftmap: ', plot['plotting_data_link']);
+            // console.log('medium image link to driftmap: ', plot['plotting_data_link_low_res']);
+            // console.log('low image link to driftmap: ', plot['plotting_data_link_very_low_res']);
+
+            this.driftmapLookup[plot['probe_idx']]['config'] = this.driftmap_base_config;
+            this.driftmapLookup[plot['probe_idx']]['config']['toImageButtonOptions']['filename'] = `full depth raster [session time:${this.driftmapInfo['session_start_time']}]`
+
             // console.log('driftmapLookup: ', this.driftmapLookup);
-            // console.log('image link to driftmap: ', plot['plotting_data_link']);
-
-
             
           }
           
@@ -123,18 +174,12 @@ export class DriftmapComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
 
   }
-  donePlotting() {
-    console.log('DONE replotting the depth raster');
-    this.driftmapLoading = false;
-  }
+  
   plotInitialized() {
-    console.log('plot is now initialized.')
+    // all images have finished loading and plot is now initialized.
     this.driftmapLoading = false;
   }
-  probeChange(event) {
-    console.log('probe change event detected (plot component side) - ', event);
-    this.driftmapLoading = true;
-  }
+
 
 }
 

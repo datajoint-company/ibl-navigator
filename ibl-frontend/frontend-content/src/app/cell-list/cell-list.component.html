@@ -2,7 +2,10 @@
   <div class="cell-header">
     <h3>Cells</h3>
     <h6>(Total clusters for probe {{probeIndex}}: {{cellsByProbeIns.length}})</h6>
-    <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}"></span></div> -->
+    <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}" [queryParams]="{nickname: ${sessionInfo?.subject_nickname}, lab: ${sessionInfo?.session_lab}, project: ${sessionInfo?.session_project}, protocol: ${sessionInfo?.task_protocol}}"></span></div> -->
+    <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}" [queryParams]="{nickname: sessionInfo?.subject_nickname, lab: sessionInfo?.session_lab, project: sessionInfo?.session_project, protocol: sessionInfo?.task_protocol}"></span></div>
+
+    <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}?nickname=${sessionInfo?.subject_nickname}"></span></div> -->
   </div>
   <span class="cluster-nav-filters">
     <div class="probe-selection-area">
@@ -134,5 +137,22 @@
 
     <br>
   </div>
+  <!-- <hr>
+  <div>
+    <h5>Depth Raster - Trial (ID: {{featuredTrialId}})</h5>
+
+    <div *ngIf="depthRasterTrialLookup[probeIndex]">
+      <div class="row">
+        <div class="radio-option" (change)="trialTypeSelected($event.target.value)">
+          <input type="radio" value="Correct Left Contrast" [checked]="selectedTrialType == 'Correct Left Contrast'"><label>Correct Left &nbsp;&nbsp;</label>
+          <input type="radio" value="Correct Right Contrast" [checked]="selectedTrialType == 'Correct Right Contrast'"><label>Correct Right &nbsp;&nbsp;</label>
+          <input type="radio" value="Incorrect Left Contrast" [checked]="selectedTrialType == 'Incorrect Left Contrast'"><label>Incorrect Left &nbsp;&nbsp;</label>
+          <input type="radio" value="Incorrect Right Contrast" [checked]="selectedTrialType == 'Incorrect Right Contrast'"><label>Incorrect Right</label>
+        </div>
+      </div>
+
+      <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot>
+    </div>
+  </div> -->
 
 </div>

@@ -33,6 +33,8 @@ export class CellListService {
   private gcCriteria;
   private goodClusters;
   private probeTrajectory;
+  private depthRasterTrial;
+  private depthRasterTemplates;
 
   private cellListLoaded = new Subject();
   private rasterListLoaded = new Subject();
@@ -58,6 +60,8 @@ export class CellListService {
   private gcCriteriaLoaded = new Subject();
   private goodClustersLoaded = new Subject();
   private probeTrajectoryLoaded = new Subject();
+  private depthRasterTrialLoaded = new Subject();
+  private depthRasterTemplatesLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -185,6 +189,38 @@ export class CellListService {
         },
         (err: any) => {
           console.log('error in retrieving probe trajectory for: ', trajQueryInfo);
+          console.error(err);
+        }
+      );
+  }
+
+  retrieveDepthRasterTrialPlot(queryInfo) {
+    console.log('querying for depth raster trials with: ', queryInfo)
+    this.http.post(BACKEND_API_URL + `/plot/trialdepthraster`, queryInfo)
+      .subscribe(
+        (retrievedDepthRasterTrialData) => {
+          console.log('retrieved depth raster trials!')
+          this.depthRasterTrial = retrievedDepthRasterTrialData;
+          this.depthRasterTrialLoaded.next(this.depthRasterTrial);
+        },
+        (err: any) => {
+          console.log('err in fetching requested depth raster trial');
+          console.error(err);
+        }
+      );
+  }
+
+  getDepthRasterTemplates() {
+    console.log('about to get depth raster templates')
+    this.http.get(BACKEND_API_URL + `/plot/driftmaptemplate`)
+      .subscribe(
+        (templateData) => {
+          console.log('fetched depth raster trial templates')
+          this.depthRasterTemplates = templateData;
+          this.depthRasterTemplatesLoaded.next(this.depthRasterTemplates);
+        },
+        (err: any) => {
+          console.log('err in fetching requested depth raster templates');
           console.error(err);
         }
       );
@@ -412,6 +448,15 @@ export class CellListService {
   getProbeTrajectoryLoadedListener() {
     return this.probeTrajectoryLoaded.asObservable();
   }
+  getDepthRasterTrialLoadedListener() {
+    return this.depthRasterTrialLoaded.asObservable();
+  }
+
+  getDepthRasterTemplatesLoadedListener() {
+    return this.depthRasterTemplatesLoaded.asObservable();
+  }
+
+
 
 
   getRasterListLoadedListener0() {
