@@ -35,6 +35,8 @@ export class CellListService {
   private probeTrajectory;
   private depthRasterTrial;
   private depthRasterTemplates;
+  private depthPethTemplate;
+  private depthPeth;
 
   private cellListLoaded = new Subject();
   private rasterListLoaded = new Subject();
@@ -62,6 +64,8 @@ export class CellListService {
   private probeTrajectoryLoaded = new Subject();
   private depthRasterTrialLoaded = new Subject();
   private depthRasterTemplatesLoaded = new Subject();
+  private depthPethTemplateLoaded = new Subject();
+  private depthPethLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -221,6 +225,38 @@ export class CellListService {
         },
         (err: any) => {
           console.log('err in fetching requested depth raster templates');
+          console.error(err);
+        }
+      );
+  }
+
+  retrieveDepthPethPlot(queryInfo) {
+    console.log('querying for depth PETH plot with: ', queryInfo)
+    this.http.post(BACKEND_API_URL + `/plot/depthpeth`, queryInfo)
+      .subscribe(
+        (retrievedDepthPethData) => {
+          console.log('retrieved depth PETH plot data!')
+          this.depthPeth = retrievedDepthPethData;
+          this.depthPethLoaded.next(this.depthPeth);
+        },
+        (err: any) => {
+          console.log('err in fetching requested depth PETH plots');
+          console.error(err);
+        }
+      );
+  }
+
+  getDepthPethTemplate() {
+    console.log('about to get depth PETH templates')
+    this.http.get(BACKEND_API_URL + `/plot/depthpethtemplate`)
+      .subscribe(
+        (templateData) => {
+          console.log('fetched depth PETH template')
+          this.depthPethTemplate = templateData;
+          this.depthPethTemplateLoaded.next(this.depthPethTemplate);
+        },
+        (err: any) => {
+          console.log('err in fetching requested depth PETH templates');
           console.error(err);
         }
       );
@@ -454,6 +490,14 @@ export class CellListService {
 
   getDepthRasterTemplatesLoadedListener() {
     return this.depthRasterTemplatesLoaded.asObservable();
+  }
+
+  getDepthPethLoadedListener() {
+    return this.depthPethLoaded.asObservable();
+  }
+
+  getDepthPethTemplateLoadedListener() {
+    return this.depthPethTemplateLoaded.asObservable();
   }
 
 

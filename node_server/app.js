@@ -611,7 +611,31 @@ app.post('/plot/trialdepthraster', checkAuth, (req, res) => {
     })
 })
 
+app.get('/plot/depthpethtemplate', checkAuth, (req, res) => {
+    request.get(flask_backend + '/v0/depthpethtemplate', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [depth PETH plot template fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
 
+app.post('/plot/depthpeth', checkAuth, (req, res) => {
+    const timeA = new Date()
+    request.post(flask_backend + '/v0/_q/depthpeth', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [Depth peth]: ', error);
+            res.status(500).end();
+            return;
+        }
+        const timeB = new Date()
+        console.log('Depth PETH took ', timeB - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
 
 
 app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {

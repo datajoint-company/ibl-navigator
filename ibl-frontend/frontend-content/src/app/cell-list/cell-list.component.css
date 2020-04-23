@@ -79,6 +79,15 @@ td span.oi {
     flex-direction: row;
 }
 
+.order-button-content > label {
+    margin-right: 10px;
+    margin-top: 2px;
+}
+
+.depth-peth-plot-area .order-buttons {
+    margin-top: 15px;
+}
+
 .order-button-content .radio-option {
     padding-right: 15px;
 }
@@ -86,6 +95,10 @@ td span.oi {
 .radio-option label {
     margin-left: 2px;
     margin-top: 2px;
+}
+
+.js-plotly-plot {
+    margin-top: -12px;
 }
 
 /* M (768px and up) */
@@ -119,12 +132,18 @@ td span.oi {
 /* L (1420px and up) */
 @media only screen and (min-width: 1420px) {
     .plots-navigator {
-        position: relative;
+        /* position: relative;
         z-index: 999;
         display: inline-flex;
         flex-direction: row;
         right: 0;
-        bottom: 0px;
+        bottom: 0px; */
+        position: fixed;
+        z-index: 999;
+        display: inline-flex;
+        flex-direction: row;
+        right: 0;
+        bottom: 200px;
     }
 
 } 

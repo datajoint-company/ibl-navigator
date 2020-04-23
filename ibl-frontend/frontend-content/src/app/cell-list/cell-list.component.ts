@@ -59,7 +59,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   targetClusterAmp;
   targetProbeIndex;
 
-  eventType;
+  eventType; // for currently selected event type
+  eventList = ['feedback', 'stim on']; // all types of event used for flipping through (raster)/psth/depthPETH
   sortType;
   probeIndex;
   probeIndices = [];
@@ -74,7 +75,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   toPlot_y = 'cluster_depth';
 
   probeTrajInfo = {};
-
+  depthPETH;
+  depthPethTemplates = {};
+  depthPethLookup = {};
 
   depthRasterTrial;
   depthRasterTrialTemplates = {};
@@ -144,6 +147,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private psthListSubscription: Subscription;
   private probeTrajectorySubscription: Subscription;
   private depthRasterTrialSubscription: Subscription;
+  private depthPethSubscription: Subscription;
 
   private rasterListSubscription0: Subscription;
   private rasterListSubscription1: Subscription;
@@ -162,7 +166,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   private rasterTemplateSubscription: Subscription;
   private psthTemplatesSubscription: Subscription;
-  private depthRasterTemplatesSubscription: Subscription
+  private depthRasterTemplatesSubscription: Subscription;
+  private depthPethTemplateSubscription: Subscription;
 
   private fullRasterSubscription: Subscription;
   private fullPSTHSubscription: Subscription;
@@ -439,7 +444,56 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             });
           //////////// end of filling probe trajectory info ////////////////
 
+          /////++++++///// start of grabbing depth PETH plot info /////++++++/////
+          this.cellListService.getDepthPethTemplate();
+          this.depthPethTemplateSubscription = this.cellListService.getDepthPethTemplateLoadedListener()
+            .subscribe((dpTemplates) => {
+              console.log('depth PETH templates retrieved: ', dpTemplates[0]);
+              this.depthPethTemplates[dpTemplates[0]['depth_peth_template_idx']] = deepCopy(dpTemplates[0]['depth_peth_template'])
+              
+              this.cellListService.retrieveDepthPethPlot({
+                'subject_uuid': this.sessionInfo['subject_uuid'],
+                'session_start_time': this.sessionInfo['session_start_time'],
+                'probe_idx': this.probeIndex
+              });
+            });
+          for (let event of this.eventList) {
+            console.log('event: ', event)
+            this.depthPethLookup[event] = {config: this.raster_psth_config}
+          }
+          this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
+            .subscribe((plotInfo) => {
+              console.log('depth PETH lookup first: ', this.depthPethLookup)
+              this.depthPETH = deepCopy(plotInfo);
+              console.log('depth PETH retrieved for session: ', plotInfo);
+              for (let plot of Object.values(plotInfo)) {
+                console.log('plot: ', plot)
+                console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
+                this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
+                this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
 
+                this.depthPethLookup[plot['event']]['data'][0]['x'] = [plot['plot_xlim'][0]-0.2, plot['plot_xlim'][0]-0.1]
+                this.depthPethLookup[plot['event']]['data'][0]['y'] = [plot['plot_ylim'][0]-0.2]
+                this.depthPethLookup[plot['event']]['data'][0]['z'] = plot['z_range']
+                this.depthPethLookup[plot['event']]['data'][0]['colorscale'] = plot['color_scale']
+
+                this.depthPethLookup[plot['event']]['layout']['images'][0]['source'] = plot['plotting_data_link']
+                this.depthPethLookup[plot['event']]['layout']['images'][0]['sizex'] = plot['plot_xlim'][1] - plot['plot_xlim'][0]
+                this.depthPethLookup[plot['event']]['layout']['images'][0]['sizey'] = plot['plot_ylim'][1] - plot['plot_ylim'][0]
+                this.depthPethLookup[plot['event']]['layout']['images'][0]['x'] = plot['plot_xlim'][0]
+                this.depthPethLookup[plot['event']]['layout']['images'][0]['y'] = plot['plot_ylim'][1]
+                this.depthPethLookup[plot['event']]['layout']['xaxis']['range'] = plot['plot_xlim']
+                this.depthPethLookup[plot['event']]['layout']['yaxis']['range'] = plot['plot_ylim']
+                this.depthPethLookup[plot['event']]['layout']['title']['text'] = `Depth PETH, aligned to ${plot['event']} time`
+              
+                this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
+                this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
+              }
+              console.log('depth PETH lookup: ', this.depthPethLookup)
+            });
+
+
+          /////+++++++///// end of grabbing depth PETH plot info /////++++++/////
 
           // begin grabbing trial depth rasters
           // console.log('about to render depth raster trials')
@@ -818,6 +872,46 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     if (this.selectedGoodFilter) {
       this.gcfilter_selected(this.selectedGoodFilter);
     }
+
+    // reorganizing depth PETH plot view
+    this.cellListService.retrieveDepthPethPlot({
+      'subject_uuid': this.sessionInfo['subject_uuid'],
+      'session_start_time': this.sessionInfo['session_start_time'],
+      'probe_idx': this.probeIndex
+    });
+
+    for (let event of this.eventList) {
+      this.depthPethLookup[event] = {data: [], layout: {}, config: this.raster_psth_config}
+    }
+    this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
+      .subscribe((plotInfo) => {
+        this.depthPETH = deepCopy(plotInfo);
+        for (let plot of Object.values(plotInfo)) {
+          console.log('plot: ', plot)
+          console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
+          this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
+          this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
+    
+          this.depthPethLookup[plot['event']]['data'][0]['x'] = [plot['plot_xlim'][0]-0.2, plot['plot_xlim'][0]-0.1]
+          this.depthPethLookup[plot['event']]['data'][0]['y'] = [plot['plot_ylim'][0]-0.2]
+          this.depthPethLookup[plot['event']]['data'][0]['z'] = plot['z_range']
+          this.depthPethLookup[plot['event']]['data'][0]['colorscale'] = plot['color_scale']
+    
+          this.depthPethLookup[plot['event']]['layout']['images'][0]['source'] = plot['plotting_data_link']
+          this.depthPethLookup[plot['event']]['layout']['images'][0]['sizex'] = plot['plot_xlim'][1] - plot['plot_xlim'][0]
+          this.depthPethLookup[plot['event']]['layout']['images'][0]['sizey'] = plot['plot_ylim'][1] - plot['plot_ylim'][0]
+          this.depthPethLookup[plot['event']]['layout']['images'][0]['x'] = plot['plot_xlim'][0]
+          this.depthPethLookup[plot['event']]['layout']['images'][0]['y'] = plot['plot_ylim'][1]
+          this.depthPethLookup[plot['event']]['layout']['xaxis']['range'] = plot['plot_xlim']
+          this.depthPethLookup[plot['event']]['layout']['yaxis']['range'] = plot['plot_ylim']
+          this.depthPethLookup[plot['event']]['layout']['title']['text'] = `Depth PETH, aligned to ${plot['event']} time`
+        
+          this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
+          this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
+        }
+        
+      });
+    
   }
 
   gcfilter_selected(filterID) {
@@ -1398,7 +1492,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     
     
 
-    let psthsToLoad = ['feedback', 'stim on'];
+    let psthsToLoad = this.eventList; //['feedback', 'stim on']
     const psthQueryInfo = {};
     psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
