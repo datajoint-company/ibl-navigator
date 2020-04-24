@@ -132,7 +132,7 @@ reqmap = {
     'probeinsertion': ephys.ProbeInsertion,
     # 'fulldriftmap': test_plotting_ephys.DepthRaster, # originally the DriftMap
     'fulldriftmaptemplate': plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
-    'depthpethtemplate': test_plotting_ephys.DepthPethTemplate, # for depth peth plot
+    'depthpethtemplate': plotting_ephys.DepthPethTemplate, # for depth peth plot
 }
 dumps = DateTimeEncoder.dumps
 
@@ -356,7 +356,7 @@ def handle_q(subpath, args, proj, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'depthpeth':
-        q = test_plotting_ephys.DepthPeth & args 
+        q = plotting_ephys.DepthPeth & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:

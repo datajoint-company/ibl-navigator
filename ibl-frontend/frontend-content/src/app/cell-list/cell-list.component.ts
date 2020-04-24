@@ -60,7 +60,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   targetProbeIndex;
 
   eventType; // for currently selected event type
-  eventList = ['feedback', 'stim on']; // all types of event used for flipping through (raster)/psth/depthPETH
+  eventList = ['stim on', 'feedback']; // all types of event used for flipping through (raster)/psth/depthPETH
   sortType;
   probeIndex;
   probeIndices = [];
@@ -212,7 +212,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // const element = this.el_nav.nativeElement;
     this.session = this.sessionInfo;
     // initial setting for plots viewer
-    this.eventType = 'feedback';
+    this.eventType = 'stim on';
     this.sortType = 'trial_id';
     this.clickedClusterId = 0;
     this.clickedClusterIndex = 0;
