@@ -40,13 +40,14 @@
         <div class="order-button-content">
           <label for="event"><b>Event</b></label>
           <div class="radio-option">
-            <input type="radio" name="depthPETHevent" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
-            <label for="feedback">Feedback</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="depthPETHevent" id="stim on" value="stim on" [checked]="eventType === 'stim on'" (change)="order_by_event($event.target.value)">
             <label for="stim on">Stim On</label>
           </div>
+          <div class="radio-option">
+            <input type="radio" name="depthPETHevent" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
+            <label for="feedback">Feedback</label>
+          </div>
+          
         </div>  
       </div>
       <plotly-plot [data]="depthPethLookup[eventType]['data']" [layout]="depthPethLookup[eventType]['layout']" [config]="depthPethLookup[eventType]['config']"></plotly-plot> 
@@ -101,12 +102,12 @@
         </select> -->
         <div class="order-button-content">
           <div class="radio-option">
-            <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
-            <label for="feedback">Feedback</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="event" id="stim on" value="stim on" [checked]="eventType === 'stim on'" (change)="order_by_event($event.target.value)">
             <label for="stim on">Stim On</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
+            <label for="feedback">Feedback</label>
           </div>
         </div>  
       </div>
