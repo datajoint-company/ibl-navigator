@@ -3,7 +3,7 @@ version: '2.4'
 services:     
   iblapi:
     # build: ./backend
-    # image: registry.vathes.com/ibl-navigator/iblapi:v0.10 # for client deploy
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.11 # for client deploy
     image: registry.vathes.com/ibl-navigator/iblapi:v0.2-dev9 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
@@ -31,7 +31,7 @@ services:
     #cpu_period: 100ms
   ibl-navigator:
     # build: ./ibl-frontend
-    # image: registry.vathes.com/ibl-navigator/frontend:v0.10 # for client deploy
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.11 # for client deploy
     image: registry.vathes.com/ibl-navigator/frontend:v0.2-dev10 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:
@@ -51,7 +51,7 @@ services:
       - main
   ibl-node-server:
     # build: ./node_server
-    # image: registry.vathes.com/ibl-navigator/node-server:v0.7 # for client deploy
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.8 # for client deploy
     image: registry.vathes.com/ibl-navigator/node-server:v0.2-dev5 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:
