@@ -147,15 +147,25 @@
     <div class="row">
       <div *ngIf="rasterLookup[clickedClusterId]">
         <plotly-plot [data]="rasterLookup[clickedClusterId]['data']" [layout]="rasterLookup[clickedClusterId]['layout']" [config]="rasterLookup[clickedClusterId]['config']"></plotly-plot> 
-
-        <!-- <plotly-plot [data]="rasterLookup[clickedClusterId] ? rasterLookup[clickedClusterId]['data']: {}" [layout]="rasterLookup[clickedClusterId]?rasterLookup[clickedClusterId]['layout']: {}" [config]="rasterLookup[clickedClusterId]? rasterLookup[clickedClusterId]['config']: {}"></plotly-plot>  -->
-        <!-- <div>rasterLookup[{{clickedClusterId}}][layout]: {{rasterLookup[clickedClusterId]['layout'] | json}}</div> -->
       </div>
       
       <div *ngIf="psthLookup[clickedClusterId]">
         <plotly-plot [data]="psthLookup[clickedClusterId]['data']" [layout]="psthLookup[clickedClusterId]['layout']" [config]="psthLookup[clickedClusterId]['config']"></plotly-plot> 
       </div>
-    <!-- <plotly-plot [data]="psth_data[clickedClusterId]" [layout]="psth_layout[clickedClusterId]" [config]="psth_config[clickedClusterId]"></plotly-plot> -->
+    </div>
+
+    <div class="row">
+      <div *ngIf="autocorrelogramLookup[clickedClusterId]">
+        <plotly-plot [data]="autocorrelogramLookup[clickedClusterId]['data']" [layout]="autocorrelogramLookup[clickedClusterId]['layout']" [config]="autocorrelogramLookup[clickedClusterId]['config']"></plotly-plot> 
+      </div>
+      
+      <div *ngIf="spikeAmpTimeLookup[clickedClusterId]">
+        <plotly-plot [data]="spikeAmpTimeLookup[clickedClusterId]['data']" [layout]="spikeAmpTimeLookup[clickedClusterId]['layout']" [config]="spikeAmpTimeLookup[clickedClusterId]['config']"></plotly-plot> 
+      </div>
+
+      <div *ngIf="waveformLookup[clickedClusterId]">
+        <plotly-plot [data]="waveformLookup[clickedClusterId]['data']" [layout]="waveformLookup[clickedClusterId]['layout']" [config]="waveformLookup[clickedClusterId]['config']"></plotly-plot> 
+      </div>
     </div>
 
     <br>

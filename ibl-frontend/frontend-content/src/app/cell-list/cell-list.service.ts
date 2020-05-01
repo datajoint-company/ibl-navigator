@@ -265,7 +265,6 @@ export class CellListService {
 
   // === // == // Cluster Quality Control - Spike Amp Time // == // == // == // == // == //
   retrieveSpikeAmpTimePlot(queryInfo) {
-    console.log('querying for spike amp time plot with: ', queryInfo)
     this.http.post(BACKEND_API_URL + `/plot/spikeamptime`, queryInfo)
       .subscribe(
         (retrievedSATData) => {
@@ -281,7 +280,6 @@ export class CellListService {
   }
 
   getSpikeAmpTimeTemplate() {
-    console.log('about to get spike amp time templates')
     this.http.get(BACKEND_API_URL + `/plot/spikeamptimetemplate`)
       .subscribe(
         (templateData) => {
@@ -299,7 +297,6 @@ export class CellListService {
 
   // === // == // Cluster Control - Autocorrelogram // == // == // == // == // == //
   retrieveAutocorrelogramPlot(queryInfo) {
-    console.log('querying for autocorrelogram plot with: ', queryInfo)
     this.http.post(BACKEND_API_URL + `/plot/autocorrelogram`, queryInfo)
       .subscribe(
         (retrievedACGData) => {
@@ -315,7 +312,6 @@ export class CellListService {
   }
 
   getAutocorrelogramTemplate() {
-    console.log('about to get autocorrelogram templates')
     this.http.get(BACKEND_API_URL + `/plot/autocorrelogramtemplate`)
       .subscribe(
         (templateData) => {
@@ -333,7 +329,6 @@ export class CellListService {
 
   // === // == // Cluster Control - Waveform // == // == // == // == // == //
   retrieveWaveformPlot(queryInfo) {
-    console.log('querying for waveform plot with: ', queryInfo)
     this.http.post(BACKEND_API_URL + `/plot/waveform`, queryInfo)
       .subscribe(
         (retrievedWaveformData) => {
@@ -349,7 +344,6 @@ export class CellListService {
   }
 
   getWaveformTemplate() {
-    console.log('about to get waveform templates')
     this.http.get(BACKEND_API_URL + `/plot/waveformtemplate`)
       .subscribe(
         (templateData) => {

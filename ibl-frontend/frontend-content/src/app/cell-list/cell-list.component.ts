@@ -79,6 +79,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   depthPethTemplates = {};
   depthPethLookup = {};
 
+  spikeAmpTimeLookup = {};
+  spikeAmpTime;
+  satTemplate = [];
+  autocorrelogramLookup = {};
+  autocorrelogram;
+  acgTemplate = [];
+  waveformLookup = {};
+  waveform;
+  wfTemplate = [];
+
+
   depthRasterTrial;
   depthRasterTrialTemplates = {};
 
@@ -321,7 +332,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             }],
             hovermode: 'closest'
           };
-          /////////////////////////////////////////old way/////////////////////////////////////////////////////
+          /////////////////////////////////////////old way - but still in use /////////////////////////////////////////////////////
           const queryInfo = {};
           queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
           queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
@@ -417,7 +428,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.cellListService.getDepthPethTemplate();
           this.depthPethTemplateSubscription = this.cellListService.getDepthPethTemplateLoadedListener()
             .subscribe((dpTemplates) => {
-              console.log('depth PETH templates retrieved: ', dpTemplates[0]);
+              // console.log('depth PETH templates retrieved: ', dpTemplates[0]);
               this.depthPethTemplates[dpTemplates[0]['depth_peth_template_idx']] = deepCopy(dpTemplates[0]['depth_peth_template'])
               
               this.cellListService.retrieveDepthPethPlot({
@@ -427,17 +438,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               });
             });
           for (let event of this.eventList) {
-            console.log('event: ', event)
             this.depthPethLookup[event] = {config: this.raster_psth_config}
           }
           this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
             .subscribe((plotInfo) => {
-              console.log('depth PETH lookup first: ', this.depthPethLookup)
               this.depthPETH = deepCopy(plotInfo);
-              console.log('depth PETH retrieved for session: ', plotInfo);
+              // console.log('depth PETH retrieved for session: ', plotInfo);
               for (let plot of Object.values(plotInfo)) {
-                console.log('plot: ', plot)
-                console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
+                // console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
                 this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
                 this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
 
@@ -458,11 +466,60 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
                 this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
               }
-              console.log('depth PETH lookup: ', this.depthPethLookup)
+              // console.log('depth PETH lookup: ', this.depthPethLookup)
             });
 
 
           /////+++++++///// end of grabbing depth PETH plot info /////++++++/////
+
+          //==//==//==//==// Begin quality control plots (acg, sat, waveform) //==//==//==//==//
+          const qcPlotsQuery = {
+            'subject_uuid': this.sessionInfo['subject_uuid'],
+            'session_start_time': this.sessionInfo['session_start_time'],
+            'probe_idx': this.probeIndex
+          }
+          // -- / -- / -- / Spike Amp Time / -- / -- / -- //
+          this.cellListService.getSpikeAmpTimeTemplate();
+          this.satTemplateSubscription = this.cellListService.getSpikeAmpTimeTemplateLoadedListener()
+            .subscribe(satTemplate => {
+              this.satTemplate[satTemplate[0]['spike_amp_time_template_idx']] = satTemplate[0]['spike_amp_time_template']
+              console.log('spike amp time template: ', this.satTemplate);
+              this.cellListService.retrieveSpikeAmpTimePlot(qcPlotsQuery);
+            });
+
+          this.spikeAmpTimeSubscription = this.cellListService.getSpikeAmpTimeLoadedListener()
+            .subscribe(spikeAmpTime => {
+              this.updateSpikeAmpTimePlot(spikeAmpTime);
+            });
+          // -- / -- / -- / Autocorrelogram / -- / -- / -- //
+          this.cellListService.getAutocorrelogramTemplate();
+          this.acgTemplateSubscription = this.cellListService.getACGTemplateLoadedListener()
+            .subscribe(acgTemplate => {
+              this.acgTemplate[acgTemplate[0]['acg_template_idx']] = acgTemplate[0]['acg_template']
+              console.log('autocorrelogram template: ', this.acgTemplate);
+              this.cellListService.retrieveAutocorrelogramPlot(qcPlotsQuery);
+            });
+
+          this.acgSubscription = this.cellListService.getACGLoadedListener()
+            .subscribe(autocorrelogram => {
+              this.updateAutocorrelogramPlot(autocorrelogram);
+            });
+
+          // -- / -- / -- / Waveform / -- / -- / -- //
+          this.cellListService.getWaveformTemplate();
+          this.wfTemplateSubscription = this.cellListService.getWaveformTemplateLoadedListener()
+            .subscribe(waveformTemplate => {
+              this.wfTemplate[waveformTemplate[0]['waveform_template_idx']] = waveformTemplate[0]['waveform_template']
+              console.log('waveform template: ', this.wfTemplate);
+              this.cellListService.retrieveWaveformPlot(qcPlotsQuery);
+            });
+
+          this.waveformSubscription = this.cellListService.getWaveformLoadedListener()
+            .subscribe(waveform => {
+              this.updateWaveformPlot(waveform);
+            });
+
+          //==//==//==//==// end quality control plots (acg, sat, waveform) //==//==//==//==//
 
           // begin grabbing trial depth rasters
           // console.log('about to render depth raster trials')
@@ -660,11 +717,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   probe_selected(probeInsNum) {
-    // console.log('probe insertions selected: ', probeInsNum);
-
-    // const cluster_amp_data = [];
-    // const cluster_depth_data = [];
-    // const firing_rate_data = [];
     this.cluster_amp_data = [];
     this.cluster_depth_data = [];
     this.firing_rate_data = [];
@@ -675,7 +727,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellsByProbeIns = [];
     this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
-    // console.log('probeInsNum type: ', typeof probeInsNum)
 
     // requesting probe trajectory for selected probe 
     let probeTrajQueryInfo = {};
@@ -686,7 +737,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
       .subscribe((probeTraj) => {
           this.probeTrajInfo = {};
-        // console.log('probe trajectories retrieved - ', probeTraj)
         if (probeTraj && probeTraj[0]) {
           this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
           this.probeTrajInfo['LM'] = probeTraj[0].x;
@@ -717,15 +767,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.firing_rate_data.push(entry['firing_rate']);
         color_data.push(entry['cluster_id']);
         this.cellsByProbeIns.push(entry);
-        // this.sortedCellsByProbeIns.push(entry);
       }
     }
     // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
     this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
     this.plot_data = [{
-      // x: this.cluster_amp_data,
-      // y: this.cluster_depth_data,
       x: this[`${this.toPlot_x}_data`],
       y: this[`${this.toPlot_y}_data`],
       customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
@@ -785,6 +832,26 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
         
       });
+
+    // updating quality control plots - reuse the same query info from probe trajectory
+    this.cellListService.retrieveSpikeAmpTimePlot(probeTrajQueryInfo);
+    this.cellListService.retrieveAutocorrelogramPlot(probeTrajQueryInfo);
+    this.cellListService.retrieveWaveformPlot(probeTrajQueryInfo);
+    this.spikeAmpTimeSubscription = this.cellListService.getSpikeAmpTimeLoadedListener()
+      .subscribe(spikeAmpTime => {
+        this.updateSpikeAmpTimePlot(spikeAmpTime);
+      });
+
+    this.acgSubscription = this.cellListService.getACGLoadedListener()
+      .subscribe(autocorrelogram => {
+        this.updateAutocorrelogramPlot(autocorrelogram);
+      });
+
+    this.waveformSubscription = this.cellListService.getWaveformLoadedListener()
+      .subscribe(waveform => {
+        this.updateWaveformPlot(waveform);
+      });
+    
     
   }
 
@@ -1280,7 +1347,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       }
     }
   }
-
   
   getFullRasterLoadedListener() {
     // console.log('inside the full raster loaded listener');
@@ -1289,6 +1355,84 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   getFullPSTHLoadedListener() {
     // console.log('inside the full PSTH loaded listener');
     return this.fullPSTHLoaded.asObservable();
+  }
+
+  updateSpikeAmpTimePlot(SATdata) {
+    this.spikeAmpTime = SATdata;
+    // console.log('spike amp time data: ', SATdata);
+    for (const sat of this.spikeAmpTime) {
+      const activeTemplate = deepCopy(this.satTemplate[sat['spike_amp_time_template_idx']]);
+      this.spikeAmpTimeLookup[sat['cluster_id']] = {
+        data: activeTemplate['data'],
+        layout: activeTemplate['layout'],
+        config: this.raster_psth_config // probably should be changed
+      }
+
+      this.spikeAmpTimeLookup[sat['cluster_id']]['data'][0]['x'] = sat['plot_xlim']; // usually xlim here but building instruction says ylim - doublecheck.
+      this.spikeAmpTimeLookup[sat['cluster_id']]['data'][0]['y'] = sat['plot_ylim'];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['source'] = sat['plotting_data_link'];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['sizex'] = sat['plot_xlim'][1] - sat['plot_xlim'][0];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['sizey'] = sat['plot_ylim'][1] - sat['plot_ylim'][0];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['x'] = sat['plot_xlim'][0];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['y'] = sat['plot_ylim'][1];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['xaxis']['range'] = sat['plot_xlim'];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['yaxis']['range'] = sat['plot_ylim'];
+    }
+    // console.log('spike amp time lookup: ', this.spikeAmpTimeLookup);
+  }
+
+  updateAutocorrelogramPlot(ACGdata) {
+    this.autocorrelogram = ACGdata;
+
+    // console.log('this.acgTemplate: ', this.acgTemplate);
+    for (const acg of this.autocorrelogram) {
+      const currentTemplate = deepCopy(this.acgTemplate[acg['acg_template_idx']]);
+      this.autocorrelogramLookup[acg['cluster_id']] = {
+        data: currentTemplate['data'],
+        layout: currentTemplate['layout'],
+        config: this.raster_psth_config // change for customization later
+      }
+
+      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = [];
+      // np.linspace(acg['t_start'], acg['t_end'], acg['acg'].length)
+      // console.log('t_end: ', acg['t_end'], '& ', 't_start: ', acg['t_start'], '& ', 'acg - length: ', acg['acg'].length)
+      let xAcgArray = [];
+      let increment = (acg['t_end'] - acg['t_start']) / (acg['acg'].split(',').length - 1);
+      // console.log('acg.acg: ', acg.acg)
+      // console.log('acg.acg.split(","): ', acg.acg.split(','))
+      // console.log('acg list length: ', acg.acg.split(',').length)
+      for (let item in acg['acg'].split(',')) {
+        xAcgArray.push(acg['t_start'] + (increment * Number(item)))
+      }
+      // console.log('xAcgArray: ', xAcgArray);
+      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = xAcgArray;
+      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['y'] = acg['acg'].split(',');
+      this.autocorrelogramLookup[acg['cluster_id']]['layout']['yaxis']['range'] = acg['plot_ylim']
+
+    }
+
+  }
+
+  updateWaveformPlot(WFdata) {
+    this.waveform = WFdata;
+    for (const wf of this.waveform) {
+      const currentTemplate = deepCopy(this.wfTemplate[wf['waveform_template_idx']]);
+      this.waveformLookup[wf['cluster_id']] = {
+        data: currentTemplate['data'],
+        layout: currentTemplate['layout'],
+        config: this.raster_psth_config // change for better customization later
+      }
+
+      this.waveformLookup[wf['cluster_id']]['data'][0]['x'] = wf['plot_xlim'];
+      this.waveformLookup[wf['cluster_id']]['data'][0]['y'] = wf['plot_ylim'];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['source'] = wf['plotting_data_link'];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['sizex'] = wf['plot_xlim'][1] - wf['plot_xlim'][0];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['sizey'] = wf['plot_ylim'][1] - wf['plot_ylim'][0];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['x'] = wf['plot_xlim'][0];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['y'] = wf['plot_ylim'][1];
+      this.waveformLookup[wf['cluster_id']]['layout']['xaxis']['range'] = wf['plot_xlim'];
+      this.waveformLookup[wf['cluster_id']]['layout']['yaxis']['range'] = wf['plot_ylim'];
+    }
   }
 
 
