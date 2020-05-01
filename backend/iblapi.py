@@ -133,6 +133,11 @@ reqmap = {
     # 'fulldriftmap': test_plotting_ephys.DepthRaster, # originally the DriftMap
     'fulldriftmaptemplate': plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
     'depthpethtemplate': plotting_ephys.DepthPethTemplate, # for depth peth plot
+    'autocorrelogram': test_plotting_ephys.AutoCorrelogram,
+    'ACGtemplate': test_plotting_ephys.AutoCorrelogramTemplate,
+    'spikeamptimetemplate': test_plotting_ephys.SpikeAmpTimeTemplate,
+    'waveformtemplate': test_plotting_ephys.WaveformTemplate,
+
 }
 dumps = DateTimeEncoder.dumps
 
@@ -357,6 +362,32 @@ def handle_q(subpath, args, proj, **kwargs):
             return parsed_items
     elif subpath == 'depthpeth':
         q = plotting_ephys.DepthPeth & args 
+        def post_process(ret):
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['plotting_data_link'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
+    elif subpath == 'spikeamptime':
+        q = test_plotting_ephys.SpikeAmpTime & args 
+        def post_process(ret):
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['plotting_data_link'] != '':  # if empty link, skip
+                    parsed_item['plotting_data_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
+    elif subpath == 'waveform':
+        q = test_plotting_ephys.Waveform & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:
