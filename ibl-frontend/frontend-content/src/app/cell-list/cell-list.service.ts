@@ -90,7 +90,6 @@ export class CellListService {
     })
       .subscribe(
         (sessionCellData) => {
-          // console.log('retrieved cell Data!: ', Object.entries(sessionCellData).length)
           this.cellList = sessionCellData;
           this.cellListLoaded.next(this.cellList);
         },
@@ -104,10 +103,8 @@ export class CellListService {
   // === // == // Rasters/PSTHs // == // == // == // == // == //
   retrieveRasterList(queryInfo) {
     this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
-    // this.http.post(BACKEND_API_URL + `/plot/raster`, queryInfo)
       .subscribe(
         (sessionRasterData) => {
-          // console.log('retrieved session\'s raster data!: ', sessionRasterData);
           this.rasterList = sessionRasterData;
           this.rasterListLoaded.next(this.rasterList);
         },
@@ -119,11 +116,9 @@ export class CellListService {
   }
 
   retrievePSTHList(queryInfo) {
-    // console.log('printing psth queryInfo: ', queryInfo);
     this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
       .subscribe(
         (sessionPSTHData) => {
-          // console.log('psth data retrieved - ', sessionPSTHData);
           this.psthList = sessionPSTHData;
           this.psthListLoaded.next(this.psthList);
         },
@@ -138,9 +133,6 @@ export class CellListService {
     this.http.get(BACKEND_API_URL + `/plot/rastertemplate`)
       .subscribe(
         (rasterTemplates) => {
-          // console.log('just fetched raster templates from backend');
-          // console.log(rasterTemplates);
-          // console.log('retrieved session\'s raster data!: ', Object.entries(sessionRasterData).length);
           this.rasterTemplates = rasterTemplates;
           this.rasterTemplatesLoaded.next(this.rasterTemplates);
         },
@@ -155,8 +147,6 @@ export class CellListService {
     this.http.get(BACKEND_API_URL + `/plot/psthtemplate`)
       .subscribe(
         (psthTemplates) => {
-          // console.log('just fetched PSTH template from backend');
-          // console.log(psthTemplates);
           this.psthTemplates = psthTemplates;
           this.psthTemplatesLoaded.next(this.psthTemplates);
         },
@@ -246,11 +236,9 @@ export class CellListService {
 
   // === // == // Depth PETH // == // == // == // == // == //
   retrieveDepthPethPlot(queryInfo) {
-    console.log('querying for depth PETH plot with: ', queryInfo)
     this.http.post(BACKEND_API_URL + `/plot/depthpeth`, queryInfo)
       .subscribe(
         (retrievedDepthPethData) => {
-          console.log('retrieved depth PETH plot data!')
           this.depthPeth = retrievedDepthPethData;
           this.depthPethLoaded.next(this.depthPeth);
         },
@@ -262,11 +250,9 @@ export class CellListService {
   }
 
   getDepthPethTemplate() {
-    console.log('about to get depth PETH templates')
     this.http.get(BACKEND_API_URL + `/plot/depthpethtemplate`)
       .subscribe(
         (templateData) => {
-          console.log('fetched depth PETH template')
           this.depthPethTemplate = templateData;
           this.depthPethTemplateLoaded.next(this.depthPethTemplate);
         },
@@ -616,6 +602,30 @@ export class CellListService {
 
   getDepthPethTemplateLoadedListener() {
     return this.depthPethTemplateLoaded.asObservable();
+  }
+
+  getSpikeAmpTimeLoadedListener() {
+    return this.spikeAmpTimeLoaded.asObservable();
+  }
+
+  getSpikeAmpTimeTemplateLoadedListener() {
+    return this.spikeAmpTimeTemplateLoaded.asObservable();
+  }
+
+  getACGLoadedListener() {
+    return this.autocorrelogramLoaded.asObservable();
+  }
+
+  getACGTemplateLoadedListener() {
+    return this.acgTemplateLoaded.asObservable();
+  }
+
+  getWaveformLoadedListener() {
+    return this.waveformLoaded.asObservable();
+  }
+
+  getWaveformTemplateLoadedListener() {
+    return this.waveformTemplateLoaded.asObservable();
   }
 
 
