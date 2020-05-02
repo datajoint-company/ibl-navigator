@@ -79,6 +79,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   depthPethTemplates = {};
   depthPethLookup = {};
 
+  spikeAmpTimeLookup = {};
+  spikeAmpTime;
+  satTemplate = [];
+  autocorrelogramLookup = {};
+  autocorrelogram;
+  acgTemplate = [];
+  waveformLookup = {};
+  waveform;
+  wfTemplate = [];
+
+
   depthRasterTrial;
   depthRasterTrialTemplates = {};
 
@@ -148,6 +159,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private probeTrajectorySubscription: Subscription;
   private depthRasterTrialSubscription: Subscription;
   private depthPethSubscription: Subscription;
+  private spikeAmpTimeSubscription: Subscription;
+  private acgSubscription: Subscription;
+  private waveformSubscription: Subscription;
 
   private rasterListSubscription0: Subscription;
   private rasterListSubscription1: Subscription;
@@ -168,6 +182,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private psthTemplatesSubscription: Subscription;
   private depthRasterTemplatesSubscription: Subscription;
   private depthPethTemplateSubscription: Subscription;
+  private satTemplateSubscription: Subscription;
+  private acgTemplateSubscription: Subscription;
+  private wfTemplateSubscription: Subscription;
 
   private fullRasterSubscription: Subscription;
   private fullPSTHSubscription: Subscription;
@@ -197,7 +214,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
   ngOnInit() {
-    // console.log('sessionInfo: ', this.sessionInfo)
     this.timeA = new Date;
     this.plot_config = {
       showLink: false,
@@ -206,10 +222,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
         'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
     };
-
-    // console.log('window height: ', window.innerHeight);
-    // console.log('window screen height: ', window.screen.height);
-    // const element = this.el_nav.nativeElement;
     this.session = this.sessionInfo;
     // initial setting for plots viewer
     this.eventType = 'stim on';
@@ -235,9 +247,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         if (Object.entries(cellListData).length > 0) {
           this.cells = cellListData;
           this.cellOnFocus = this.cells[2];
-          // const cluster_amp_data = [];
-          // const cluster_depth_data = [];
-          // const firing_rate_data = [];
           this.cluster_amp_data = [];
           this.cluster_depth_data = [];
           this.firing_rate_data = [];
@@ -265,34 +274,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               this.firing_rate_data.push(entry['firing_rate']);
               color_data.push(entry['cluster_id']);
               this.cellsByProbeIns.push(entry);
-              // this.sortedCellsByProbeIns.push(entry);
             }
           }
           this.sortedCellsByProbeIns = this.cellsByProbeIns;
-          // console.log('cells by probe insertion: ', this.cellsByProbeIns);
-          
-
-          // .then((fullPlots) => {
-            // console.log('printing full plots returned from load all function: ', fullPlots);
-            // console.log('------------')
-            // console.log('full raster - : ', fullPlots[0])
-            // console.log('=============')
-            // console.log('this.probeIndex: ', this.probeIndex);
-            // console.log('first probe of rasters: ', fullPlots[0][this.probeIndex])
-            // console.log('this is the event/sort type: ', `${this.eventType}.${this.sortType}`);
-            // let fullRasters = fullPlots[0]
-            // let fullPSTHs = fullPlots[1]
-            // console.log('should be the same as first probe of rasters: ', fullPlots[0][0]);
-            // this.updateRaster(fullPlots[0.0][`${this.eventType}.${this.sortType}`]);
-            // this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-            // this.updatePSTH(fullPlots[1][this.probeIndex][this.eventType]);
-            // this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
-          // });
-
 
           this.plot_data = [{
-            // x: this.cluster_amp_data,
-            // y: this.cluster_depth_data,
             x: this[`${this.toPlot_x}_data`],
             y: this[`${this.toPlot_y}_data`],
             customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
@@ -309,12 +295,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           }];
 
           this.plot_layout = {
-            // yaxis: {
-            //   title: 'cluster depth (µm)',
-            // },
-            // xaxis: {
-            //   title: 'cluster amp (µV)'
-            // },
             updatemenus: [{
               y: 0.55,
               x: -0.1,
@@ -352,7 +332,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             }],
             hovermode: 'closest'
           };
-          /////////////////////////////////////////old way/////////////////////////////////////////////////////
+          /////////////////////////////////////////old way - but still in use /////////////////////////////////////////////////////
           const queryInfo = {};
           queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
           queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
@@ -448,7 +428,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.cellListService.getDepthPethTemplate();
           this.depthPethTemplateSubscription = this.cellListService.getDepthPethTemplateLoadedListener()
             .subscribe((dpTemplates) => {
-              console.log('depth PETH templates retrieved: ', dpTemplates[0]);
+              // console.log('depth PETH templates retrieved: ', dpTemplates[0]);
               this.depthPethTemplates[dpTemplates[0]['depth_peth_template_idx']] = deepCopy(dpTemplates[0]['depth_peth_template'])
               
               this.cellListService.retrieveDepthPethPlot({
@@ -458,17 +438,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               });
             });
           for (let event of this.eventList) {
-            console.log('event: ', event)
             this.depthPethLookup[event] = {config: this.raster_psth_config}
           }
           this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
             .subscribe((plotInfo) => {
-              console.log('depth PETH lookup first: ', this.depthPethLookup)
               this.depthPETH = deepCopy(plotInfo);
-              console.log('depth PETH retrieved for session: ', plotInfo);
+              // console.log('depth PETH retrieved for session: ', plotInfo);
               for (let plot of Object.values(plotInfo)) {
-                console.log('plot: ', plot)
-                console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
+                // console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
                 this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
                 this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
 
@@ -489,11 +466,60 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
                 this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
               }
-              console.log('depth PETH lookup: ', this.depthPethLookup)
+              // console.log('depth PETH lookup: ', this.depthPethLookup)
             });
 
 
           /////+++++++///// end of grabbing depth PETH plot info /////++++++/////
+
+          //==//==//==//==// Begin quality control plots (acg, sat, waveform) //==//==//==//==//
+          const qcPlotsQuery = {
+            'subject_uuid': this.sessionInfo['subject_uuid'],
+            'session_start_time': this.sessionInfo['session_start_time'],
+            'probe_idx': this.probeIndex
+          }
+          // -- / -- / -- / Spike Amp Time / -- / -- / -- //
+          this.cellListService.getSpikeAmpTimeTemplate();
+          this.satTemplateSubscription = this.cellListService.getSpikeAmpTimeTemplateLoadedListener()
+            .subscribe(satTemplate => {
+              this.satTemplate[satTemplate[0]['spike_amp_time_template_idx']] = satTemplate[0]['spike_amp_time_template']
+              console.log('spike amp time template: ', this.satTemplate);
+              this.cellListService.retrieveSpikeAmpTimePlot(qcPlotsQuery);
+            });
+
+          this.spikeAmpTimeSubscription = this.cellListService.getSpikeAmpTimeLoadedListener()
+            .subscribe(spikeAmpTime => {
+              this.updateSpikeAmpTimePlot(spikeAmpTime);
+            });
+          // -- / -- / -- / Autocorrelogram / -- / -- / -- //
+          this.cellListService.getAutocorrelogramTemplate();
+          this.acgTemplateSubscription = this.cellListService.getACGTemplateLoadedListener()
+            .subscribe(acgTemplate => {
+              this.acgTemplate[acgTemplate[0]['acg_template_idx']] = acgTemplate[0]['acg_template']
+              console.log('autocorrelogram template: ', this.acgTemplate);
+              this.cellListService.retrieveAutocorrelogramPlot(qcPlotsQuery);
+            });
+
+          this.acgSubscription = this.cellListService.getACGLoadedListener()
+            .subscribe(autocorrelogram => {
+              this.updateAutocorrelogramPlot(autocorrelogram);
+            });
+
+          // -- / -- / -- / Waveform / -- / -- / -- //
+          this.cellListService.getWaveformTemplate();
+          this.wfTemplateSubscription = this.cellListService.getWaveformTemplateLoadedListener()
+            .subscribe(waveformTemplate => {
+              this.wfTemplate[waveformTemplate[0]['waveform_template_idx']] = waveformTemplate[0]['waveform_template']
+              console.log('waveform template: ', this.wfTemplate);
+              this.cellListService.retrieveWaveformPlot(qcPlotsQuery);
+            });
+
+          this.waveformSubscription = this.cellListService.getWaveformLoadedListener()
+            .subscribe(waveform => {
+              this.updateWaveformPlot(waveform);
+            });
+
+          //==//==//==//==// end quality control plots (acg, sat, waveform) //==//==//==//==//
 
           // begin grabbing trial depth rasters
           // console.log('about to render depth raster trials')
@@ -622,103 +648,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               // set initial plot to render on page
               this.selectedTrialContrast = this.contrastMinLookup[this.selectedTrialType];
               this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
-    
-            });
-          
-          
-
-
-         
+            });  
         }
       });
-
-      // this.fullRasterSubscription = this.getFullRasterLoadedListener()
-      //   .subscribe((rasterToPlot) => {
-      //     // console.log('logging raster subscription content to initially plot: ', rasterToPlot);
-      //     // console.log('type of rasterToPlot: ', typeof rasterToPlot)
-      //     // this.updateRaster(rasterToPlot);
-      //     // this.updateRaster(fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-      //   });
-
-      // this.fullPSTHSubscription = this.getFullPSTHLoadedListener()
-      //   .subscribe((PSTHtoPlot) => {
-      //     // console.log('logging PSTH content to initially plot: ', PSTHtoPlot);
-      //     // this.updatePSTH(PSTHtoPlot);
-      //     // this.updatePSTH(fullPSTHPurse[this.probeIndex][this.eventType]);
-      //   });
-
-    // if (this.fullRasterPurse[0].length) {
-    //   this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-    // } else {
-    //   console.log('rasterlist not ready yet')
-    // }
-    // if (this.fullPSTHPurse[0].length) {
-    //   this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
-    // } else {
-    //   console.log("psth list not ready yet")
-    // }
-    
-
-    // const queryInfo = {};
-    // queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    // queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    // queryInfo['probe_idx'] = this.probeIndex;
-    // if (this.probeIndex || this.probeIndex === 0) {
-    //   queryInfo['probe_idx'] = this.probeIndex;
-    // } else {
-    //   console.log('this.probeIndex was NOT ready for raster fetch...that is not good - coercing index to 0');
-    //   queryInfo['probe_idx'] = 0;
-    // }
-    // queryInfo['event'] = this.eventType;
-    // queryInfo['sort_by'] = this.sortType;
-
-    // this.cellListService.retrieveRasterTemplates();
-    // this.rasterTemplateSubscription = this.cellListService.getRasterTemplatesLoadedListener()
-    //   .subscribe((templates) => {
-    //     // console.log('raster templates retrieved');
-    //     for (const [index, temp] of Object.entries(templates)) {
-    //       if (temp['template_idx'] === parseInt(index, 10)) {
-    //         this.rasterTemplates.push(temp['raster_data_template']);
-    //       }
-    //     }
-    //     console.log('initial raster query: ', queryInfo);
-    //     this.cellListService.retrieveRasterList(queryInfo);
-    //     this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
-    //          .subscribe((rasterPlotList) => {
-    //             console.log('initial fetch of rasters: ', rasterPlotList);
-    //             this.updateRaster(rasterPlotList);
-    //          });
-    // });
-
-    // const psthQueryInfo = {};
-    // psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    // psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    // if (this.probeIndex || this.probeIndex === 0) {
-    //   psthQueryInfo['probe_idx'] = this.probeIndex;
-    // } else {
-    //   console.log('this.probeIndex was NOT ready for psth fetch...that is not good - coercing index to 0');
-    //   psthQueryInfo['probe_idx'] = 0;
-    // }
-    // psthQueryInfo['event'] = this.eventType;
-
-    // this.cellListService.retrievePsthTemplates();
-    // this.psthTemplatesSubscription = this.cellListService.getPsthTemplatesLoadedListener()
-    //   .subscribe((template) => {
-    //     // console.log('psth template retrieved - ', template);
-    //     for (const [index, temp] of Object.entries(template)) {
-    //       if (temp['psth_template_idx'] === parseInt(index, 10)) {
-    //         this.psthTemplates.push(temp['psth_data_template']);
-    //       }
-    //     }
-    //     console.log('initial psth query: ', psthQueryInfo);
-    //     this.cellListService.retrievePSTHList(psthQueryInfo);
-    //     this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
-    //       .subscribe((psthPlotList) => {
-    //         console.log('initial fetch of psth: ', psthPlotList);
-    //         this.updatePSTH(psthPlotList);
-    //       });
-    //  });
-
   }
 
   ngDoCheck() {
@@ -785,11 +717,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   probe_selected(probeInsNum) {
-    // console.log('probe insertions selected: ', probeInsNum);
-
-    // const cluster_amp_data = [];
-    // const cluster_depth_data = [];
-    // const firing_rate_data = [];
     this.cluster_amp_data = [];
     this.cluster_depth_data = [];
     this.firing_rate_data = [];
@@ -800,7 +727,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellsByProbeIns = [];
     this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
-    // console.log('probeInsNum type: ', typeof probeInsNum)
 
     // requesting probe trajectory for selected probe 
     let probeTrajQueryInfo = {};
@@ -811,7 +737,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
       .subscribe((probeTraj) => {
           this.probeTrajInfo = {};
-        // console.log('probe trajectories retrieved - ', probeTraj)
         if (probeTraj && probeTraj[0]) {
           this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
           this.probeTrajInfo['LM'] = probeTraj[0].x;
@@ -842,15 +767,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.firing_rate_data.push(entry['firing_rate']);
         color_data.push(entry['cluster_id']);
         this.cellsByProbeIns.push(entry);
-        // this.sortedCellsByProbeIns.push(entry);
       }
     }
     // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
     this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
     this.plot_data = [{
-      // x: this.cluster_amp_data,
-      // y: this.cluster_depth_data,
       x: this[`${this.toPlot_x}_data`],
       y: this[`${this.toPlot_y}_data`],
       customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
@@ -866,7 +788,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       }
     }];
     this.clickedClusterId = 0;
-    // console.log('plot data for probe (' + probeInsNum + ') is - ', this.plot_data);
     this.order_by_event(this.eventType);
 
     if (this.selectedGoodFilter) {
@@ -911,31 +832,45 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
         
       });
+
+    // updating quality control plots - reuse the same query info from probe trajectory
+    this.cellListService.retrieveSpikeAmpTimePlot(probeTrajQueryInfo);
+    this.cellListService.retrieveAutocorrelogramPlot(probeTrajQueryInfo);
+    this.cellListService.retrieveWaveformPlot(probeTrajQueryInfo);
+    this.spikeAmpTimeSubscription = this.cellListService.getSpikeAmpTimeLoadedListener()
+      .subscribe(spikeAmpTime => {
+        this.updateSpikeAmpTimePlot(spikeAmpTime);
+      });
+
+    this.acgSubscription = this.cellListService.getACGLoadedListener()
+      .subscribe(autocorrelogram => {
+        this.updateAutocorrelogramPlot(autocorrelogram);
+      });
+
+    this.waveformSubscription = this.cellListService.getWaveformLoadedListener()
+      .subscribe(waveform => {
+        this.updateWaveformPlot(waveform);
+      });
+    
     
   }
 
   gcfilter_selected(filterID) {
-    // console.log('gcfilter: ', filterID);
-    // console.log('type of filter: ', typeof filterID);
-    // console.log('selected filter criterion id: ', filterID);
     this.selectedGoodFilter = parseInt(filterID, 10);
     let goodFilterQueryInfo = {};
     goodFilterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
     goodFilterQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     goodFilterQueryInfo['probe_idx'] = this.probeIndex;
     goodFilterQueryInfo['criterion_id'] = parseInt(filterID, 10);
-    // console.log('querying for good cluster with: ', goodFilterQueryInfo);
     if (goodFilterQueryInfo['criterion_id']) {
       this.cellListService.retrieveGoodClusters(goodFilterQueryInfo);
     this.goodClusterSubscription = this.cellListService.getGoodClustersLoadedListener()
       .subscribe((goodClusterList) => {
         if (Object.entries(goodClusterList).length > 0) {
-          // console.log('good clusters retrieved! length: ', goodClusterList.length);
           this.goodClusters = [];
           const id_data = [];
           const is_good_data = [];
           const color_data = [];
-          // this.cellsByProbeIns = [];
           this.plot_data[0]['customdata'] = {};
           this.plot_data[0]['marker']['line']['color'] = [];
           for (let entry of Object.values(goodClusterList)) {
@@ -949,10 +884,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               } else {
                 color_data.push('rgba(0, 0, 0, 0.2)')
               }
-              // this.cellsByProbeIns.push(entry);
             }
           }
-          // this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
           this.plot_data[0]['customdata.id'] = id_data;
           this.plot_data[0]['customdata.is_good_cluster'] = is_good_data;
@@ -970,13 +903,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       const color_data = [];
       this.plot_data[0]['customdata'] = {};
       this.plot_data[0]['marker']['line']['color'] = [];
-      // this.cellsByProbeIns = [];
       for (let entry of Object.values(this.cells)) {
         if (entry['probe_idx'] === this.probeIndex) {
           id_data.push(entry['cluster_id']);
           color_data.push(entry['cluster_id']);
           is_good_data.push(1);
-          // this.cellsByProbeIns.push(entry);
           color_data.push('rgba(132, 0, 0, 0.5)');
           
         }
@@ -995,9 +926,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   clusterSelectedPlot(data) {
     const element = this.el_nav.nativeElement.children[1];
     const rows = element.querySelectorAll('tr');
-    // console.log("data['points'][0] in clusterSelectedPlot: ", data['points'][0]);
-    // console.log("data['points'][0]['text'] in clusterSelectedPlot: ", data['points'][0]['text']);
-    // console.log("type of data['points'][0]['text']: ", typeof data['points'][0]['text']);
     if (data['points'] && data['points'][0]['text']) {
       this.clickedClusterId = data['points'][0]['text'];
 
@@ -1018,14 +946,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   clusterSelectedTable(cluster_id) {
-    // for (const [index, cluster] of Object.entries(this.cellsByProbeIns)) {
     for (const [index, cluster] of Object.entries(this.sortedCellsByProbeIns)) {
       if (cluster['cluster_id'] === cluster_id) {
         this.clickedClusterIndex = parseInt(index, 10);
         this.clickedClusterId = cluster_id;
       }
     }
-    // this.clickedClusterId = cluster_id;
 
   }
 
@@ -1041,7 +967,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.clickedClusterIndex += 1;
       }
     }
-    // this.clickedClusterId = this.cellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
     this.clickedClusterId = this.sortedCellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
   }
 
@@ -1062,60 +987,24 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('event order selected!: ', eventType);
     this.sortType = 'trial_id';
     this.eventType = eventType;
-    // const queryInfo = {};
-    // queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    // queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    // queryInfo['probe_idx'] = this.probeIndex;
-    // queryInfo['event'] = this.eventType;
-    // queryInfo['sort_by'] = this.sortType;
     this.rasterLookup = {};
-    // console.log('sort by event - updating rasters with: ', this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`])
     this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-    // this.cellListService.retrieveRasterList(queryInfo);
-    // this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
-    //   .subscribe((rasterPlotList) => {
-    //     this.updateRaster(rasterPlotList);
-    //   });
 
-
-    // const psthQueryInfo = {};
-    // psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    // psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    // psthQueryInfo['probe_idx'] = this.probeIndex;
-    // psthQueryInfo['event'] = this.eventType;
     this.psth_data = [];
     this.psth_layout = [];
     this.psth_config = [];
-    // console.log('sort by event - updating psth with: ', this.fullPSTHPurse[this.probeIndex][this.eventType])
     this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
-    // this.cellListService.retrievePSTHList(psthQueryInfo);
-    // this.psthListSubscription = this.cellListService.getPSTHListLoadedListener()
-    //   .subscribe((psthPlotList) => {
-    //     this.updatePSTH(psthPlotList);
-    //   });
+
   }
 
   order_by_sorting(sortType) {
     // console.log('logging sortType: ', sortType);
     this.sortType = sortType;
-    // const queryInfo = {};
-    // queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
-    // queryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
-    // queryInfo['probe_idx'] = this.probeIndex;
-    // queryInfo['event'] = this.eventType;
-    // queryInfo['sort_by'] = this.sortType;
     this.rasterLookup = {};
     this.raster_data = [];
     this.raster_layout = [];
     this.raster_config = [];
-    // console.log('rasterType: ', `${this.eventType}.${this.sortType}`)
-    // console.log('updating rasters with: ', this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`])
     this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-    // this.cellListService.retrieveRasterList(queryInfo);
-    // this.rasterListSubscription = this.cellListService.getRasterListLoadedListener()
-    //   .subscribe((rasterPlotList) => {
-    //     this.updateRaster(rasterPlotList);
-    //   });
   }
 
   updatePSTH(psthPlotList) {
@@ -1132,46 +1021,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         data: currentTemplate['data'],
         layout: currentTemplate['layout'],
         config: psthConfigCopy
-        // config: this.raster_psth_config,
       };
-      // this.psthLookup[psth['cluster_id']]['data'][0] = {
-      //   y: psth['psth_left'] ? psth['psth_left'].split(',') : [],
-      //   x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
-      //   name: 'left trials',
-      //   mode: 'lines',
-      //   marker: { size: 6, color: 'green' }
-      // };
-      // this.psthLookup[psth['cluster_id']]['data'][1] = {
-      //   y: psth['psth_right'] ? psth['psth_right'].split(',') : [],
-      //   x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
-      //   name: 'right trials',
-      //   mode: 'lines',
-      //   marker: { size: 6, color: 'blue' }
-      // };
-      // this.psthLookup[psth['cluster_id']]['data'][2] = {
-      //   y: psth['psth_incorrect'] ? psth['psth_incorrect'].split(',') : [],
-      //   x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
-      //   name: 'incorrect trials',
-      //   mode: 'lines',
-      //   marker: { size: 6, color: 'red' }
-      // };
-      // this.psthLookup[psth['cluster_id']]['data'][3] = {
-      //   y: psth['psth_all'] ? psth['psth_all'].split(',') : [],
-      //   x: psth['psth_time'] ? psth['psth_time'].split(',') : [],
-      //   name: 'all trials',
-      //   mode: 'lines',
-      //   marker: { size: 6, color: 'black' }
-      // };
+
       for (let templateType of Object.entries(this.psthLookup[psth['cluster_id']]['data'])) {
         // console.log('templateType: ', templateType);
         this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = psth['psth_time'].split(',');
         switch (templateType[0]) {
           case '0':
-            // templateType[1]['y'] = psth['psth_left'];
             this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left_upper'].split(',');
             break;
           case '1':
-            // templateType[1]['y'] = psth['psth_left_upper'];
             this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left'].split(',');
             break;
           case '2':
@@ -1236,7 +1095,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         pad: 0
       }
     };
-    // for (const cluster of this.cellsByProbeIns) {
     for (const cluster of this.sortedCellsByProbeIns) {
       if (!this.psthLookup[cluster['cluster_id']]) {
         this.psthLookup[cluster['cluster_id']] = {
@@ -1245,10 +1103,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                   deepCopy(this.psthLookup[Object.keys(this.psthLookup)[0]]['layout']) : dummyLayout,
           config: this.missing_raster_psth_config
         };
-        // this.psthLookup[cluster['cluster_id']]['layout']['height'] = 420;
-        // this.psthLookup[cluster['cluster_id']]['layout']['width'] = 658;
-        // this.psthLookup[cluster['cluster_id']]['layout']['height'] = 370;
-        // this.psthLookup[cluster['cluster_id']]['layout']['width'] = 800;
         this.psthLookup[cluster['cluster_id']]['layout']['xaxis'] = {
           range: ['-1', '1'],
           type: 'linear'
@@ -1271,18 +1125,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.psthLookup[cluster['cluster_id']]['layout']['title'] = {
           text : 'Missing PSTH Plot'
         };
-      } else {
-        // console.log('else for cluster_id: ', cluster['cluster_id']);
-        // console.log(`rasterLookup[${cluster['cluster_id']}]: `, this.rasterLookup[cluster['cluster_id']]);
-      }
+      } 
     }
     // console.log('psth lookup: ', this.psthLookup);
   }
 
   updateRaster(rasterPlotList) {
-    // console.log('logging rasterTemplates: ', this.rasterTemplates);
     this.rasterPlotList = rasterPlotList;
-    // console.log('raster plot list: ', rasterPlotList)
     for (const raster of rasterPlotList) {
       const currentTemplate = deepCopy(this.rasterTemplates[raster['template_idx']]);
       const rasterConfigCopy = { ...this.raster_psth_config };
@@ -1294,7 +1143,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         data: currentTemplate['data'],
         layout: currentTemplate['layout'],
         config: rasterConfigCopy,
-        // config: this.raster_psth_config
       };
       this.rasterLookup[raster['cluster_id']]['data'][0]['y'] = raster['plot_ylim'];
       if (raster['mark_label']) {
@@ -1327,34 +1175,22 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         x: currentTemplate.layout.title.x,
         y: currentTemplate.layout.title.y,
       };
-      // this.rasterLookup[raster['cluster_id']]['layout']['yaxis'] = {
-      //   range: [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
-      // };
       this.rasterLookup[raster['cluster_id']]['layout']['yaxis']['range'] = [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
       this.rasterLookup[raster['cluster_id']]['layout']['width'] = 658;
       this.rasterLookup[raster['cluster_id']]['layout']['height'] = 420;
 
       if (this.sortType === 'trial_id') {
-        // this.rasterLookup[raster['cluster_id']]['data'][1]['showlegend'] = false;
-        // this.rasterLookup[raster['cluster_id']]['data'][2]['showlegend'] = false;
-        // this.rasterLookup[raster['cluster_id']]['data'][3]['showlegend'] = false;
         this.rasterLookup[raster['cluster_id']]['layout']['width'] = 530;
       }
 
-      if (this.sortType === 'contrast') {
-        // console.log('raster.plot_contrast_tick_pos: ', raster['plot_contrast_tick_pos']);
-        // console.log('raster.plot_contrasts: ', raster['plot_contrasts']);
-        
+      if (this.sortType === 'contrast') {   
         this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']['tickvals'] = raster['plot_contrast_tick_pos'];
         this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']['ticktext'] = raster['plot_contrasts'];
-        // console.log("this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']: ", this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']);
       }
 
 
     }
 
-    // console.log('logginng cellsByProbeINs:', this.cellsByProbeIns);
-    // for (const cluster of this.cellsByProbeIns) {
     for (const cluster of this.sortedCellsByProbeIns) {
       if (!this.rasterLookup[cluster['cluster_id']]) {
         if (this.rasterLookup[Object.keys(this.rasterLookup)[0]]) {
@@ -1363,10 +1199,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             layout: deepCopy(this.rasterLookup[Object.keys(this.rasterLookup)[0]]['layout']),
             config: this.missing_raster_psth_config
           };
-          // this.rasterLookup[cluster['cluster_id']]['data'][0]['showlegend'] = false;
-          // this.rasterLookup[cluster['cluster_id']]['data'][1]['showlegend'] = false;
-          // this.rasterLookup[cluster['cluster_id']]['data'][2]['showlegend'] = false;
-          // this.rasterLookup[cluster['cluster_id']]['data'][3]['showlegend'] = false;
 
           this.rasterLookup[cluster['cluster_id']]['layout']['height'] = 420;
           this.rasterLookup[cluster['cluster_id']]['layout']['width'] = 658;
@@ -1393,17 +1225,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
         }
         
-      } else {
-        // console.log('else for cluster_id: ', cluster['cluster_id']);
-        // console.log(`rasterLookup[${cluster['cluster_id']}]: `, this.rasterLookup[cluster['cluster_id']]);
-      }
+      } 
     }
       // console.log('raster look up: ', this.rasterLookup);
   }
 
   sortData(sort: Sort) {
-      // console.log('sorting activated: ', sort);
-      // const data = this.cellsByProbeIns.slice();
       const data = this.sortedCellsByProbeIns.slice();
       if (!sort.active || sort.direction === '') {
         this.sortedCellsByProbeIns = data;
@@ -1426,10 +1253,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     let fullPlots;
     let fullRasterPlots = {};
     let fullPSTHPlots = {};
-    // let rasterListSubscription: Subscription;
-    // console.log('this.probeIndices: ', this.probeIndices);
-    // event types: 'feedback' and 'stim on'
-    // sort types: 'trial_id', 'feedback - stim on', 'feedback type', 'contrast'
+
     let rastersToLoad = ['feedback.trial_id', 'feedback.feedback type', 'stim on.trial_id', 'stim on.feedback - stim on', 'stim on.contrast']
     const rasterQueryInfo = {};
     rasterQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -1437,8 +1261,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     let count = 0
     
     for (let probe of this.probeIndices) {
-      
-
       this.fullRasterPurse[probe] = {};
       fullRasterPlots[probe] = {};
       rasterQueryInfo['probe_idx'] = probe;
@@ -1446,17 +1268,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       for (let rasterType of rastersToLoad) {
         rasterQueryInfo['event'] = rasterType.split('.')[0];
         rasterQueryInfo['sort_by'] = rasterType.split('.')[1];
-        // console.log('rasterQueryInfo: ', rasterQueryInfo);
         this.cellListService[`retrieveRasterList${count}`](rasterQueryInfo);
         
         this[`rasterListSubscription${count}`] = this.cellListService[`getRasterListLoadedListener${count}`]()
           .subscribe((rasterPlotList) => {
             this.fullRasterPurse[probe][rasterType] = rasterPlotList;
             fullRasterPlots[probe][rasterType] = rasterPlotList
-            // console.log('Object.values(this.fullRasterPurse[probe]).length: ',  Object.values(this.fullRasterPurse[probe]).length)
-            // console.log(rasterPlotList);
+
             if (Object.values(this.fullRasterPurse).length == this.probeIndices.length && Object.values(this.fullRasterPurse[probe]).length == rastersToLoad.length) {
-            // if (Object.values(fullRasterPlots).length == this.probeIndices.length && Object.values(fullRasterPlots[probe]).length == rastersToLoad.length) {
 
               // console.log('rasters are done loading - downloaded number of probes - ', Object.values(this.fullRasterPurse).length, ' - length of full raster purse: ', Object.values(this.fullRasterPurse[probe]).length);
               this.allRastersLoaded = true;
@@ -1469,16 +1288,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // console.log('updating Raster with: ', fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
                 // console.log('updating PSTH with: ', fullPSTHPlots[this.probeIndex][this.eventType]);
                 // console.log('probe index = ', this.probeIndex, ' - eventType = ', this.eventType, ' - sortType = ', this.sortType);
-                // this.updatePSTH(fullPSTHPlots[this.probeIndex][this.eventType]);
-                // this.updateRaster(fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
-                // this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+
                 // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
                 // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
-                // this.fullPSTHLoaded.next(fullPSTHPlots[this.probeIndex][this.eventType]);
-                // this.fullRasterLoaded.next(fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // this.fullPSTHLoaded.next(this.fullPSTHPurse[this.probeIndex][this.eventType]);
-                // this.fullRasterLoaded.next(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
+
               } else {
                 // console.log('all rasters are loaded, but not psth')
                 // console.log('Rasters: ', this.allRastersLoaded);
@@ -1521,17 +1334,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // console.log('updating PSTH with: ', fullPSTHPlots[this.probeIndex][this.eventType]);
                 // console.log('updating Raster with: ', fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
                 // console.log('probe index - ', this.probeIndex, 'eventType - ', this.eventType);
-                // this.updatePSTH(psthPlotList);
-                // this.updatePSTH(fullPSTHPlots[this.probeIndex][this.eventType]);
-                // this.updateRaster(fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // this.updatePSTH(this.fullPSTHPurse[this.probeIndex][this.eventType]);
-                // this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
                 // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
                 // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
-                // this.fullPSTHLoaded.next(fullPSTHPlots[this.probeIndex][this.eventType]);
-                // this.fullRasterLoaded.next(fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // this.fullPSTHLoaded.next(this.fullPSTHPurse[this.probeIndex][this.eventType]);
-                // this.fullRasterLoaded.next(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
               } else {
                 // console.log('all psths are loaded, but not raster')
                 // console.log('Rasters: ', this.allRastersLoaded);
@@ -1542,9 +1346,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         psthCount++
       }
     }
-    // return fullPlots;
   }
-
   
   getFullRasterLoadedListener() {
     // console.log('inside the full raster loaded listener');
@@ -1553,6 +1355,97 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   getFullPSTHLoadedListener() {
     // console.log('inside the full PSTH loaded listener');
     return this.fullPSTHLoaded.asObservable();
+  }
+
+  updateSpikeAmpTimePlot(SATdata) {
+    this.spikeAmpTime = SATdata;
+    // console.log('spike amp time data: ', SATdata);
+    for (const sat of this.spikeAmpTime) {
+      const activeTemplate = deepCopy(this.satTemplate[sat['spike_amp_time_template_idx']]);
+      this.spikeAmpTimeLookup[sat['cluster_id']] = {
+        data: activeTemplate['data'],
+        layout: activeTemplate['layout'],
+        config: this.raster_psth_config // probably should be changed
+      }
+
+      this.spikeAmpTimeLookup[sat['cluster_id']]['data'][0]['x'] = sat['plot_xlim']; // usually xlim here but building instruction says ylim - doublecheck.
+      this.spikeAmpTimeLookup[sat['cluster_id']]['data'][0]['y'] = sat['plot_ylim'];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['source'] = sat['plotting_data_link'];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['sizex'] = sat['plot_xlim'][1] - sat['plot_xlim'][0];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['sizey'] = sat['plot_ylim'][1] - sat['plot_ylim'][0];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['x'] = sat['plot_xlim'][0];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['y'] = sat['plot_ylim'][1];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['xaxis']['range'] = sat['plot_xlim'];
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['yaxis']['range'] = sat['plot_ylim'];
+
+      // original sizing :  480 height / 600 width
+      console.log("before: this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width']: ", this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width'] )
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width'] = '580';
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['height'] = '400';
+      console.log("after: this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width']: ", this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width'] )
+
+    }
+    // console.log('spike amp time lookup: ', this.spikeAmpTimeLookup);
+  }
+
+  updateAutocorrelogramPlot(ACGdata) {
+    this.autocorrelogram = ACGdata;
+
+    // console.log('this.acgTemplate: ', this.acgTemplate);
+    for (const acg of this.autocorrelogram) {
+      const currentTemplate = deepCopy(this.acgTemplate[acg['acg_template_idx']]);
+      this.autocorrelogramLookup[acg['cluster_id']] = {
+        data: currentTemplate['data'],
+        layout: currentTemplate['layout'],
+        config: this.raster_psth_config // change for customization later
+      }
+
+      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = [];
+      // np.linspace(acg['t_start'], acg['t_end'], acg['acg'].length)
+      // console.log('t_end: ', acg['t_end'], '& ', 't_start: ', acg['t_start'], '& ', 'acg - length: ', acg['acg'].length)
+      let xAcgArray = [];
+      let increment = (acg['t_end'] - acg['t_start']) / (acg['acg'].split(',').length - 1);
+      // console.log('acg.acg: ', acg.acg)
+      // console.log('acg.acg.split(","): ', acg.acg.split(','))
+      // console.log('acg list length: ', acg.acg.split(',').length)
+      for (let item in acg['acg'].split(',')) {
+        xAcgArray.push(acg['t_start'] + (increment * Number(item)))
+      }
+      // console.log('xAcgArray: ', xAcgArray);
+      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = xAcgArray;
+      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['y'] = acg['acg'].split(',');
+      this.autocorrelogramLookup[acg['cluster_id']]['layout']['yaxis']['range'] = acg['plot_ylim']
+
+      // original sizing : 400 height / 580 width
+      this.autocorrelogramLookup[acg['cluster_id']]['layout']['width'] = "520";
+    }
+
+  }
+
+  updateWaveformPlot(WFdata) {
+    this.waveform = WFdata;
+    for (const wf of this.waveform) {
+      const currentTemplate = deepCopy(this.wfTemplate[wf['waveform_template_idx']]);
+      this.waveformLookup[wf['cluster_id']] = {
+        data: currentTemplate['data'],
+        layout: currentTemplate['layout'],
+        config: this.raster_psth_config // change for better customization later
+      }
+
+      this.waveformLookup[wf['cluster_id']]['data'][0]['x'] = wf['plot_xlim'];
+      this.waveformLookup[wf['cluster_id']]['data'][0]['y'] = wf['plot_ylim'];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['source'] = wf['plotting_data_link'];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['sizex'] = wf['plot_xlim'][1] - wf['plot_xlim'][0];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['sizey'] = wf['plot_ylim'][1] - wf['plot_ylim'][0];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['x'] = wf['plot_xlim'][0];
+      this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['y'] = wf['plot_ylim'][1];
+      this.waveformLookup[wf['cluster_id']]['layout']['xaxis']['range'] = wf['plot_xlim'];
+      this.waveformLookup[wf['cluster_id']]['layout']['yaxis']['range'] = wf['plot_ylim'];
+
+      // original sizing : 400 height / 580 width
+      this.waveformLookup[wf['cluster_id']]['layout']['width'] = "540";
+      this.waveformLookup[wf['cluster_id']]['layout']['height'] = "370";
+    }
   }
 
 
