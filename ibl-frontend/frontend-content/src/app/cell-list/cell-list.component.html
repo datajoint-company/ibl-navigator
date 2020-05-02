@@ -154,7 +154,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row-long">
       <div *ngIf="autocorrelogramLookup[clickedClusterId]">
         <plotly-plot [data]="autocorrelogramLookup[clickedClusterId]['data']" [layout]="autocorrelogramLookup[clickedClusterId]['layout']" [config]="autocorrelogramLookup[clickedClusterId]['config']"></plotly-plot> 
       </div>

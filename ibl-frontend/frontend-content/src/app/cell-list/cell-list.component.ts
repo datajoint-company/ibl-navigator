@@ -1377,6 +1377,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['images']['0']['y'] = sat['plot_ylim'][1];
       this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['xaxis']['range'] = sat['plot_xlim'];
       this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['yaxis']['range'] = sat['plot_ylim'];
+
+      // original sizing :  480 height / 600 width
+      console.log("before: this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width']: ", this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width'] )
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width'] = '580';
+      this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['height'] = '400';
+      console.log("after: this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width']: ", this.spikeAmpTimeLookup[sat['cluster_id']]['layout']['width'] )
+
     }
     // console.log('spike amp time lookup: ', this.spikeAmpTimeLookup);
   }
@@ -1409,6 +1416,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['y'] = acg['acg'].split(',');
       this.autocorrelogramLookup[acg['cluster_id']]['layout']['yaxis']['range'] = acg['plot_ylim']
 
+      // original sizing : 400 height / 580 width
+      this.autocorrelogramLookup[acg['cluster_id']]['layout']['width'] = "520";
     }
 
   }
@@ -1432,6 +1441,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       this.waveformLookup[wf['cluster_id']]['layout']['images']['0']['y'] = wf['plot_ylim'][1];
       this.waveformLookup[wf['cluster_id']]['layout']['xaxis']['range'] = wf['plot_xlim'];
       this.waveformLookup[wf['cluster_id']]['layout']['yaxis']['range'] = wf['plot_ylim'];
+
+      // original sizing : 400 height / 580 width
+      this.waveformLookup[wf['cluster_id']]['layout']['width'] = "540";
+      this.waveformLookup[wf['cluster_id']]['layout']['height'] = "370";
     }
   }
 

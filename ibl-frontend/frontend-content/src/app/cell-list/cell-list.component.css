@@ -101,6 +101,14 @@ td span.oi {
     margin-top: -12px;
 }
 
+.row-long {
+    width: 100vw;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+
 /* M (768px and up) */
 @media only screen and (max-width: 900px) {
     .plots-navigator {
@@ -114,6 +122,7 @@ td span.oi {
     .clusterListTable * {
         font-size: 0.72rem;
     }
+    
 } 
 
 /* L (900px and up) */
@@ -124,7 +133,7 @@ td span.oi {
         display: inline-flex;
         flex-direction: row;
         right: 0;
-        bottom: 200px;
+        bottom: 450px;
     }
 
 } 
@@ -143,7 +152,7 @@ td span.oi {
         display: inline-flex;
         flex-direction: row;
         right: 0;
-        bottom: 200px;
+        bottom: 450px;
     }
 
 } 
