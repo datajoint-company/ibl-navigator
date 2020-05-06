@@ -387,7 +387,7 @@ def handle_q(subpath, args, proj, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'waveform':
-        q = test_plotting_ephys.Waveform & args 
+        q = plotting_ephys.Waveform & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:
