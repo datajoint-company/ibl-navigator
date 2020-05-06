@@ -218,7 +218,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('logging scroll event - ', event);
     if (window.pageYOffset > 640 || window.innerHeight > 1720) {
       this.showController = true;
-    } else if (window.innerWidth > 1420) {
+    } else if (window.innerWidth > 1420 && window.pageYOffset > 640) {
       this.showController = true;
     } else {
       this.showController = false;
