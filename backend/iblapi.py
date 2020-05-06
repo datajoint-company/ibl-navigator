@@ -133,10 +133,10 @@ reqmap = {
     # 'fulldriftmap': test_plotting_ephys.DepthRaster, # originally the DriftMap
     'fulldriftmaptemplate': plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
     'depthpethtemplate': plotting_ephys.DepthPethTemplate, # for depth peth plot
-    'autocorrelogram': test_plotting_ephys.AutoCorrelogram,
-    'ACGtemplate': test_plotting_ephys.AutoCorrelogramTemplate,
-    'spikeamptimetemplate': test_plotting_ephys.SpikeAmpTimeTemplate,
-    'waveformtemplate': test_plotting_ephys.WaveformTemplate,
+    'autocorrelogram': plotting_ephys.AutoCorrelogram,
+    'ACGtemplate': plotting_ephys.AutoCorrelogramTemplate,
+    'spikeamptimetemplate': plotting_ephys.SpikeAmpTimeTemplate,
+    'waveformtemplate': plotting_ephys.WaveformTemplate,
 
 }
 dumps = DateTimeEncoder.dumps
@@ -374,7 +374,7 @@ def handle_q(subpath, args, proj, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'spikeamptime':
-        q = test_plotting_ephys.SpikeAmpTime & args 
+        q = plotting_ephys.SpikeAmpTime & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:
@@ -387,7 +387,7 @@ def handle_q(subpath, args, proj, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'waveform':
-        q = test_plotting_ephys.Waveform & args 
+        q = plotting_ephys.Waveform & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:

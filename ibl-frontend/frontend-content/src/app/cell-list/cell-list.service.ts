@@ -207,7 +207,6 @@ export class CellListService {
     this.http.post(BACKEND_API_URL + `/plot/trialdepthraster`, queryInfo)
       .subscribe(
         (retrievedDepthRasterTrialData) => {
-          console.log('retrieved depth raster trials!')
           this.depthRasterTrial = retrievedDepthRasterTrialData;
           this.depthRasterTrialLoaded.next(this.depthRasterTrial);
         },
@@ -223,7 +222,6 @@ export class CellListService {
     this.http.get(BACKEND_API_URL + `/plot/driftmaptemplate`)
       .subscribe(
         (templateData) => {
-          console.log('fetched depth raster trial templates')
           this.depthRasterTemplates = templateData;
           this.depthRasterTemplatesLoaded.next(this.depthRasterTemplates);
         },
@@ -268,7 +266,6 @@ export class CellListService {
     this.http.post(BACKEND_API_URL + `/plot/spikeamptime`, queryInfo)
       .subscribe(
         (retrievedSATData) => {
-          console.log('retrieved spike amp time plot data!')
           this.spikeAmpTime = retrievedSATData;
           this.spikeAmpTimeLoaded.next(this.spikeAmpTime);
         },
@@ -283,7 +280,6 @@ export class CellListService {
     this.http.get(BACKEND_API_URL + `/plot/spikeamptimetemplate`)
       .subscribe(
         (templateData) => {
-          console.log('fetched spike amp time template')
           this.spikeAmpTimeTemplate = templateData;
           this.spikeAmpTimeTemplateLoaded.next(this.spikeAmpTimeTemplate);
         },
@@ -300,7 +296,6 @@ export class CellListService {
     this.http.post(BACKEND_API_URL + `/plot/autocorrelogram`, queryInfo)
       .subscribe(
         (retrievedACGData) => {
-          console.log('retrieved autocorrelogram plot data!')
           this.autocorrelogram = retrievedACGData;
           this.autocorrelogramLoaded.next(this.autocorrelogram);
         },
@@ -315,7 +310,6 @@ export class CellListService {
     this.http.get(BACKEND_API_URL + `/plot/autocorrelogramtemplate`)
       .subscribe(
         (templateData) => {
-          console.log('fetched autocorrelogram template')
           this.acgTemplate = templateData;
           this.acgTemplateLoaded.next(this.acgTemplate);
         },
@@ -332,7 +326,6 @@ export class CellListService {
     this.http.post(BACKEND_API_URL + `/plot/waveform`, queryInfo)
       .subscribe(
         (retrievedWaveformData) => {
-          console.log('retrieved waveform plot data!')
           this.waveform= retrievedWaveformData;
           this.waveformLoaded.next(this.waveform);
         },
@@ -347,7 +340,6 @@ export class CellListService {
     this.http.get(BACKEND_API_URL + `/plot/waveformtemplate`)
       .subscribe(
         (templateData) => {
-          console.log('fetched waveform template')
           this.waveformTemplate = templateData;
           this.waveformTemplateLoaded.next(this.waveformTemplate);
         },

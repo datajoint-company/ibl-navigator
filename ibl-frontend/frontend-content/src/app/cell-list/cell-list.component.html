@@ -172,9 +172,8 @@
   </div>
   <!-- <hr>
   <div>
-    <h5>Depth Raster - Trial (ID: {{featuredTrialId}})</h5>
-
     <div *ngIf="depthRasterTrialLookup[probeIndex]">
+      <h5>Depth Raster - Trial (ID: {{featuredTrialId}})</h5>
       <div class="row">
         <div class="radio-option" (change)="trialTypeSelected($event.target.value)">
           <input type="radio" value="Correct Left Contrast" [checked]="selectedTrialType == 'Correct Left Contrast'"><label>Correct Left &nbsp;&nbsp;</label>
@@ -184,7 +183,23 @@
         </div>
       </div>
 
-      <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot>
+      <div class="row">
+        <div class="radio-option" (change)="trialContrastSelected($event.target.value)" >
+          <div *ngIf="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType]">
+            <div *ngFor="let contrast of availableTrialContrasts">
+              <input type="radio" value="{{contrast}}" [checked]="selectedTrialContrast == contrast"><label>{{contrast}} &nbsp;&nbsp;</label>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- sliding through trial IDs, trialContrast NOT differentiated (for smaller batch of generated trial depth rasters) --> 
+      <!-- <plotly-plot (sliderChange)="flipTrialID_A($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot> -->
+      <!-- sliding through trial IDs, trialContrast differentiated (for larger batch of generated trial depth rasters in the future) --> 
+      <!-- <plotly-plot (sliderChange)="flipTrialID_B($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot> -->
+      <!-- sliding through trial contrasts - OLD -->
+      <!-- <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot> -->
+<!-- 
     </div>
   </div> -->
 
