@@ -34,7 +34,7 @@
       <br>
       <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     </div>
-    <div class="depth-peth-plot-area col-4 col-xl-4">
+    <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
       <div class="order-buttons col-10">
         
         <div class="order-button-content">
@@ -50,10 +50,10 @@
           
         </div>  
       </div>
-      <div *ngIf="depthPethLookup[eventType]['layout']">
+      <div>
         <plotly-plot [data]="depthPethLookup[eventType]['data']" [layout]="depthPethLookup[eventType]['layout']" [config]="depthPethLookup[eventType]['config']"></plotly-plot> 
       </div>
-      </div>
+    </div>
     <div class="plots-navigator" *ngIf="showController">
       <div *ngIf="cells" class="clusterListContainer">
         <table matSort (matSortChange)="sortData($event)" class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable>

@@ -441,7 +441,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             .subscribe((dpTemplates) => {
               // console.log('depth PETH templates retrieved: ', dpTemplates[0]);
               this.depthPethTemplates[dpTemplates[0]['depth_peth_template_idx']] = deepCopy(dpTemplates[0]['depth_peth_template'])
-              console.log('got the depthPETHtemplate - starting timer for depth PETH data')
+              // console.log('got the depthPETHtemplate - starting timer for depth PETH data')
               this.depthPETHtimeA = new Date()
               this.cellListService.retrieveDepthPethPlot({
                 'subject_uuid': this.sessionInfo['subject_uuid'],
@@ -455,7 +455,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
             .subscribe((plotInfo) => {
               this.depthPETHtimeB = new Date()
-              console.log('retrieved depth PETH data - took ', this.depthPETHtimeB-this.depthPETHtimeA, 'ms')
+              // console.log('retrieved depth PETH data - took ', this.depthPETHtimeB-this.depthPETHtimeA, 'ms')
               this.depthPETH = deepCopy(plotInfo);
               // console.log('depth PETH retrieved for session: ', plotInfo);
               for (let plot of Object.values(plotInfo)) {
@@ -479,10 +479,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               
                 this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
                 this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
+
+                this.depthPethLookup[plot['event']]['config']['modeBarButtonsToRemove'].push('autoScale2d')
               }
               // console.log('depth PETH lookup: ', this.depthPethLookup)
               this.depthPETHtimeC = new Date()
-              console.log('depth PETH done plotting - took: ', this.depthPETHtimeC-this.depthPETHtimeB, 'ms')
+              // console.log('depth PETH done plotting - took: ', this.depthPETHtimeC-this.depthPETHtimeB, 'ms')
             });
 
 
@@ -499,7 +501,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.satTemplateSubscription = this.cellListService.getSpikeAmpTimeTemplateLoadedListener()
             .subscribe(satTemplate => {
               this.satTemplate[satTemplate[0]['spike_amp_time_template_idx']] = satTemplate[0]['spike_amp_time_template']
-              console.log('spike amp time template: ', this.satTemplate);
+              // console.log('spike amp time template: ', this.satTemplate);
               this.cellListService.retrieveSpikeAmpTimePlot(qcPlotsQuery);
             });
 
@@ -512,7 +514,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.acgTemplateSubscription = this.cellListService.getACGTemplateLoadedListener()
             .subscribe(acgTemplate => {
               this.acgTemplate[acgTemplate[0]['acg_template_idx']] = acgTemplate[0]['acg_template']
-              console.log('autocorrelogram template: ', this.acgTemplate);
+              // console.log('autocorrelogram template: ', this.acgTemplate);
               this.cellListService.retrieveAutocorrelogramPlot(qcPlotsQuery);
             });
 
@@ -526,7 +528,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.wfTemplateSubscription = this.cellListService.getWaveformTemplateLoadedListener()
             .subscribe(waveformTemplate => {
               this.wfTemplate[waveformTemplate[0]['waveform_template_idx']] = waveformTemplate[0]['waveform_template']
-              console.log('waveform template: ', this.wfTemplate);
+              // console.log('waveform template: ', this.wfTemplate);
               this.cellListService.retrieveWaveformPlot(qcPlotsQuery);
             });
 
@@ -775,8 +777,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               this.selectedTrialContrast = this.contrastMinLookup[this.selectedTrialType];
               this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
               this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType])
-              console.log('sliderDepthTrialLookup: ', this.sliderDepthRasterTrialLookup)
-              console.log('sliderDepthTrialLookup object keys: ', Object.keys(this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType]))
+              // console.log('sliderDepthTrialLookup: ', this.sliderDepthRasterTrialLookup)
+              // console.log('sliderDepthTrialLookup object keys: ', Object.keys(this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType]))
             });  
         }
       });
@@ -956,6 +958,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         
           this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
           this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
+
+          this.depthPethLookup[plot['event']]['config']['modeBarButtonsToRemove'].push('autoScale2d')
+
+
         }
         
       });
@@ -1534,7 +1540,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       // console.log('acg.acg.split(","): ', acg.acg.split(','))
       // console.log('acg list length: ', acg.acg.split(',').length)
       for (let item in acg['acg'].split(',')) {
-        xAcgArray.push(acg['t_start'] + (increment * Number(item)))
+        xAcgArray.push((acg['t_start'] + (increment * Number(item))) * 1000);
       }
       // console.log('xAcgArray: ', xAcgArray);
       this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = xAcgArray;
