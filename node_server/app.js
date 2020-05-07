@@ -611,7 +611,104 @@ app.post('/plot/trialdepthraster', checkAuth, (req, res) => {
     })
 })
 
+app.get('/plot/depthpethtemplate', checkAuth, (req, res) => {
+    request.get(flask_backend + '/v0/depthpethtemplate', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [depth PETH plot template fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
 
+app.post('/plot/depthpeth', checkAuth, (req, res) => {
+    const timeA = new Date()
+    request.post(flask_backend + '/v0/_q/depthpeth', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [Depth peth]: ', error);
+            res.status(500).end();
+            return;
+        }
+        const timeB = new Date()
+        console.log('Depth PETH took ', timeB - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
+
+app.get('/plot/autocorrelogramtemplate', checkAuth, (req, res) => {
+    request.get(flask_backend + '/v0/ACGtemplate', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [autocorrelogram plot template fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
+app.get('/plot/spikeamptimetemplate', checkAuth, (req, res) => {
+    request.get(flask_backend + '/v0/spikeamptimetemplate', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [spike amp time plot template fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
+app.get('/plot/waveformtemplate', checkAuth, (req, res) => {
+    request.get(flask_backend + '/v0/waveformtemplate', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [waveform plot template fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
+app.post('/plot/autocorrelogram', checkAuth, (req, res) => {
+    const timeA = new Date()
+    request.post(flask_backend + '/v0/autocorrelogram', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [autocorrelogram]: ', error);
+            res.status(500).end();
+            return;
+        }
+        const timeB = new Date()
+        console.log('Autocorrelogram ', timeB - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
+app.post('/plot/spikeamptime', checkAuth, (req, res) => {
+    const timeA = new Date()
+    request.post(flask_backend + '/v0/_q/spikeamptime', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [spike amp time]: ', error);
+            res.status(500).end();
+            return;
+        }
+        const timeB = new Date()
+        console.log('Spike Amp Time took ', timeB - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
+app.post('/plot/waveform', checkAuth, (req, res) => {
+    const timeA = new Date()
+    request.post(flask_backend + '/v0/_q/waveform', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [waveform]: ', error);
+            res.status(500).end();
+            return;
+        }
+        const timeB = new Date()
+        console.log('Waveform took ', timeB - timeA, ' ms to receive from backend')
+        console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ')
+        res.send(body);
+    })
+})
 
 
 app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {

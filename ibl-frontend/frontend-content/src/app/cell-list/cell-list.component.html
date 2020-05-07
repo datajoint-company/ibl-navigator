@@ -30,7 +30,30 @@
   </div>
   <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
   <div class="row">
-    <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+    <div class="cluster-nav-plot-area col-7 col-xl-5">
+      <br>
+      <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+    </div>
+    <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
+      <div class="order-buttons col-10">
+        
+        <div class="order-button-content">
+          <label for="event"><b>Event</b></label>
+          <div class="radio-option">
+            <input type="radio" name="depthPETHevent" id="stim on" value="stim on" [checked]="eventType === 'stim on'" (change)="order_by_event($event.target.value)">
+            <label for="stim on">Stim On</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="depthPETHevent" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
+            <label for="feedback">Feedback</label>
+          </div>
+          
+        </div>  
+      </div>
+      <div>
+        <plotly-plot [data]="depthPethLookup[eventType]['data']" [layout]="depthPethLookup[eventType]['layout']" [config]="depthPethLookup[eventType]['config']"></plotly-plot> 
+      </div>
+    </div>
     <div class="plots-navigator" *ngIf="showController">
       <div *ngIf="cells" class="clusterListContainer">
         <table matSort (matSortChange)="sortData($event)" class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable>
@@ -81,12 +104,12 @@
         </select> -->
         <div class="order-button-content">
           <div class="radio-option">
-            <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
-            <label for="feedback">Feedback</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="event" id="stim on" value="stim on" [checked]="eventType === 'stim on'" (change)="order_by_event($event.target.value)">
             <label for="stim on">Stim On</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
+            <label for="feedback">Feedback</label>
           </div>
         </div>  
       </div>
@@ -124,24 +147,33 @@
     <div class="row">
       <div *ngIf="rasterLookup[clickedClusterId]">
         <plotly-plot [data]="rasterLookup[clickedClusterId]['data']" [layout]="rasterLookup[clickedClusterId]['layout']" [config]="rasterLookup[clickedClusterId]['config']"></plotly-plot> 
-
-        <!-- <plotly-plot [data]="rasterLookup[clickedClusterId] ? rasterLookup[clickedClusterId]['data']: {}" [layout]="rasterLookup[clickedClusterId]?rasterLookup[clickedClusterId]['layout']: {}" [config]="rasterLookup[clickedClusterId]? rasterLookup[clickedClusterId]['config']: {}"></plotly-plot>  -->
-        <!-- <div>rasterLookup[{{clickedClusterId}}][layout]: {{rasterLookup[clickedClusterId]['layout'] | json}}</div> -->
       </div>
       
       <div *ngIf="psthLookup[clickedClusterId]">
         <plotly-plot [data]="psthLookup[clickedClusterId]['data']" [layout]="psthLookup[clickedClusterId]['layout']" [config]="psthLookup[clickedClusterId]['config']"></plotly-plot> 
       </div>
-    <!-- <plotly-plot [data]="psth_data[clickedClusterId]" [layout]="psth_layout[clickedClusterId]" [config]="psth_config[clickedClusterId]"></plotly-plot> -->
+    </div>
+
+    <div class="row-long">
+      <div *ngIf="autocorrelogramLookup[clickedClusterId]">
+        <plotly-plot [data]="autocorrelogramLookup[clickedClusterId]['data']" [layout]="autocorrelogramLookup[clickedClusterId]['layout']" [config]="autocorrelogramLookup[clickedClusterId]['config']"></plotly-plot> 
+      </div>
+      
+      <div *ngIf="spikeAmpTimeLookup[clickedClusterId]">
+        <plotly-plot [data]="spikeAmpTimeLookup[clickedClusterId]['data']" [layout]="spikeAmpTimeLookup[clickedClusterId]['layout']" [config]="spikeAmpTimeLookup[clickedClusterId]['config']"></plotly-plot> 
+      </div>
+
+      <div *ngIf="waveformLookup[clickedClusterId]">
+        <plotly-plot [data]="waveformLookup[clickedClusterId]['data']" [layout]="waveformLookup[clickedClusterId]['layout']" [config]="waveformLookup[clickedClusterId]['config']"></plotly-plot> 
+      </div>
     </div>
 
     <br>
   </div>
   <!-- <hr>
   <div>
-    <h5>Depth Raster - Trial (ID: {{featuredTrialId}})</h5>
-
     <div *ngIf="depthRasterTrialLookup[probeIndex]">
+      <h5>Depth Raster - Trial (ID: {{featuredTrialId}})</h5>
       <div class="row">
         <div class="radio-option" (change)="trialTypeSelected($event.target.value)">
           <input type="radio" value="Correct Left Contrast" [checked]="selectedTrialType == 'Correct Left Contrast'"><label>Correct Left &nbsp;&nbsp;</label>
@@ -151,7 +183,23 @@
         </div>
       </div>
 
-      <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot>
+      <div class="row">
+        <div class="radio-option" (change)="trialContrastSelected($event.target.value)" >
+          <div *ngIf="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType]">
+            <div *ngFor="let contrast of availableTrialContrasts">
+              <input type="radio" value="{{contrast}}" [checked]="selectedTrialContrast == contrast"><label>{{contrast}} &nbsp;&nbsp;</label>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- sliding through trial IDs, trialContrast NOT differentiated (for smaller batch of generated trial depth rasters) --> 
+      <!-- <plotly-plot (sliderChange)="flipTrialID_A($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot> -->
+      <!-- sliding through trial IDs, trialContrast differentiated (for larger batch of generated trial depth rasters in the future) --> 
+      <!-- <plotly-plot (sliderChange)="flipTrialID_B($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot> -->
+      <!-- sliding through trial contrasts - OLD -->
+      <!-- <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot> -->
+<!-- 
     </div>
   </div> -->
 
