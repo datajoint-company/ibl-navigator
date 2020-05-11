@@ -101,6 +101,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   sliderDepthRasterTrialLookupA = {};
   sliderDepthRasterTrialLookupB = {};
   contrastMinLookup = {};
+  contrastMinLookupA = {};
+  contrastMinLookupB = {};
   slidersSetting = {};
   slidersSettingA = {};
   slidersSettingB = {};
@@ -585,9 +587,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                   this.depthRasterTrialLookupA[plot['probe_idx']][plot['trial_type']] = []
                 } 
                 this.depthRasterTrialLookupA[plot['probe_idx']][plot['trial_type']].push({});
-
-                this.depthRasterTrialLookupA[plot['probe_idx']][plot['trial_type']][-1][plot['trial_contrast']] = {'data': deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['data']),
-                                                                                                                 'layout':  deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['layout'])};
+                
+                this.depthRasterTrialLookupA[plot['probe_idx']][plot['trial_type']][this.depthRasterTrialLookupA[plot['probe_idx']][plot['trial_type']].length - 1][plot['trial_contrast']] = {'data': deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['data']),
+                                                                                                                                                                                         'layout':  deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['layout']),
+                                                                                                                                                                                         'trial_id': plot['trial_id']};
+                // console.log("this.depthRasterTrialLookupA: ", this.depthRasterTrialLookupA)
                 // == // == [end] setting up lookup for pattern A == // == // == // == //
 
                 // == // == [start] setting up lookup for pattern B == // == // == // == //
@@ -601,9 +605,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 } else if (!this.depthRasterTrialLookupB[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]) {
                   this.depthRasterTrialLookupB[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]= []
                 }
-                this.depthRasterTrialLookupB[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']].push({'data': deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['data']), 
-                                                                                                                'layout': deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['layout'])});
 
+                this.depthRasterTrialLookupB[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']].push({});
+                this.depthRasterTrialLookupB[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']][this.depthRasterTrialLookupB[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']].length - 1][plot['trial_id']] = {'data': deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['data']), 
+                                                                                                                                                                                                                                        'layout': deepCopy(this.depthRasterTrialTemplates[plot['depth_raster_template_idx']]['layout'])};
+
+                // console.log("this.depthRasterTrialLookupB: ", this.depthRasterTrialLookupB)
                 // == // == [end] setting up lookup for pattern B == // == // == // == //
 
 
@@ -631,152 +638,284 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['x'] = plot['plot_xlim'][0];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['layout']['images'][0]['y'] = plot['plot_ylim'][1];
                   // == // == // [end] filling in for original lookup // == // == // == // == //
+
+                  // == // == // [start] filling in for lookup pattern [A] // == // == // == // == //
+                  for (let toPlot of this.depthRasterTrialLookupA[plot['probe_idx']][plot['trial_type']]) {
+                    // console.log('toPlot A: ', toPlot);
+                    // console.log('plot[trial_contrast]: ', plot['trial_contrast'])
+                    if (toPlot[plot['trial_contrast']] && toPlot[plot['trial_contrast']]['trial_id'] == plot['trial_id']) {
+                      // console.log('toPlot - trial_id: ', toPlot[plot['trial_contrast']]['trial_id']);
+                      toPlot[plot['trial_contrast']]['data'][0]['x'] = plot['plot_xlim'];
+                      toPlot[plot['trial_contrast']]['data'][0]['y'] = plot['plot_ylim'];
+                      toPlot[plot['trial_contrast']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlot[plot['trial_contrast']]['data'][1]['y'] = plot['plot_ylim'];
+                      toPlot[plot['trial_contrast']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlot[plot['trial_contrast']]['data'][2]['y'] = plot['plot_ylim'];
+                      toPlot[plot['trial_contrast']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
+                      toPlot[plot['trial_contrast']]['data'][3]['y'] = plot['plot_ylim'];
+                      toPlot[plot['trial_contrast']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlot[plot['trial_contrast']]['data'][4]['y'] = plot['plot_ylim'];
+                      
+                      toPlot[plot['trial_contrast']]['layout']['xaxis']['range'] = plot['plot_xlim'];
+                      toPlot[plot['trial_contrast']]['layout']['yaxis']['range'] = plot['plot_ylim'];
+                      toPlot[plot['trial_contrast']]['layout']['title']['text'] = plot['plot_title'];
+                      toPlot[plot['trial_contrast']]['layout']['images'][0]['source'] =  plot['plotting_data_link'];
+                      toPlot[plot['trial_contrast']]['layout']['images'][0]['sizex'] = plot['plot_xlim'][1] - plot['plot_xlim'][0];
+                      toPlot[plot['trial_contrast']]['layout']['images'][0]['sizey'] = plot['plot_ylim'][1] - plot['plot_ylim'][0];
+                      toPlot[plot['trial_contrast']]['layout']['images'][0]['x'] = plot['plot_xlim'][0];
+                      toPlot[plot['trial_contrast']]['layout']['images'][0]['y'] = plot['plot_ylim'][1];
+                    }
+                  }
+                  // console.log('depthRasterTrialLookup A filled: ', this.depthRasterTrialLookupA)
+                  // == // == // [end] filling in for lookup pattern [A] // == // == // == // == //
+
+                  // == // == // [start] filling in for lookup pattern [B] // == // == // == // == //
+                  for (let toPlotB of this.depthRasterTrialLookupB[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]) {
+                    // console.log('to plot B: ', toPlotB)
+                    // console.log('to plot B - key (trial_id): ', Object.keys(toPlotB)[0]) // expecting just one trial_id for key here
+                    if (toPlotB[plot['trial_contrast']] && Object.keys(toPlotB)[0] == plot['trial_id']) {
+                      toPlotB[plot['trial_contrast']]['data'][0]['x'] = plot['plot_xlim'];
+                      toPlotB[plot['trial_contrast']]['data'][0]['y'] = plot['plot_ylim'];
+                      toPlotB[plot['trial_contrast']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_contrast']]['data'][1]['y'] = plot['plot_ylim'];
+                      toPlotB[plot['trial_contrast']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_contrast']]['data'][2]['y'] = plot['plot_ylim'];
+                      toPlotB[plot['trial_contrast']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
+                      toPlotB[plot['trial_contrast']]['data'][3]['y'] = plot['plot_ylim'];
+                      toPlotB[plot['trial_contrast']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_contrast']]['data'][4]['y'] = plot['plot_ylim'];
+                      
+                      toPlotB[plot['trial_contrast']]['layout']['xaxis']['range'] = plot['plot_xlim'];
+                      toPlotB[plot['trial_contrast']]['layout']['yaxis']['range'] = plot['plot_ylim'];
+                      toPlotB[plot['trial_contrast']]['layout']['title']['text'] = plot['plot_title'];
+                      toPlotB[plot['trial_contrast']]['layout']['images'][0]['source'] =  plot['plotting_data_link'];
+                      toPlotB[plot['trial_contrast']]['layout']['images'][0]['sizex'] = plot['plot_xlim'][1] - plot['plot_xlim'][0];
+                      toPlotB[plot['trial_contrast']]['layout']['images'][0]['sizey'] = plot['plot_ylim'][1] - plot['plot_ylim'][0];
+                      toPlotB[plot['trial_contrast']]['layout']['images'][0]['x'] = plot['plot_xlim'][0];
+                      toPlotB[plot['trial_contrast']]['layout']['images'][0]['y'] = plot['plot_ylim'][1];
+
+                    }
+                  }
+                  // console.log('depthRasterTrialLookup B filled: ', this.depthRasterTrialLookupB)
+                  // == // == // [end] filling in for lookup pattern [B] // == // == // == // == //
                 
                 } else {
                   console.error('trying to build depth raster trial plot with full driftmap template')
                 }
               }
-              
 
               this.sliderDepthRasterTrialLookup = deepCopy(this.depthRasterTrialLookup);
-              this.sliderDepthRasterTrialLookupA = deepCopy(this.depthRasterTrialLookup);
+              this.sliderDepthRasterTrialLookupA = deepCopy(this.depthRasterTrialLookupA);
               this.sliderDepthRasterTrialLookupB = deepCopy(this.depthRasterTrialLookup);
-              let trialTypeKeys = ['Correct Left Contrast', 'Correct Right Contrast', 'Incorrect Left Contrast', 'Incorrect Right Contrast'];
+              // let trialTypeKeys = ['Correct Left Contrast', 'Correct Right Contrast', 'Incorrect Left Contrast', 'Incorrect Right Contrast']; // probably should fetch from the PlottingEphys.TrialType table
+              let trialTypeKeys = ['Correct Left Contrast', 'Correct Right Contrast', 'Incorrect Left Contrast', 'Incorrect Right Contrast', 'Correct All'];
               for (let probe of this.probeIndices) {
                 for (let trialType of trialTypeKeys) {
-                  this.slidersSettingA[trialType] = [];
-                  this.slidersSettingB[trialType] = [];
-                  this.slidersSetting[trialType] = [];
-                  this.contrastMinLookup[trialType] = Math.min(...Object.keys(this.depthRasterTrialLookup[probe][trialType]).map(Number)); // getting the lowest number of contrasts for initial display
-                  
-                  let contrastKeys = (Object.keys(this.depthRasterTrialLookup[probe][trialType]).map(Number)).sort((a,b) => a-b);
- 
-                  for (let trialContrast of contrastKeys) {
-                    //+*+*+*+*+*+*+*+*+*+// Sliding by trial IDs - (A) way in for now with single trial to show per contrast -- [START] //+*+*+*+*+*+*+*+*+*+*+//
-                    // fillup the sliders setting first, then re-add later
-                    if (!this.slidersSettingA[trialType][0]) {
-                      this.slidersSettingA[trialType] = [{
-                        pad: {t: 30},
-                        currentvalue: {
-                          xanchor: 'right',
-                          prefix: 'Trial ID (A): ',
-                          font: {
-                            color: '#ffffff',
-                            size: 0
+                  if (this.depthRasterTrialLookup[probe][trialType]) {
+                    this.slidersSettingA[trialType] = [];
+                    this.slidersSettingB[trialType] = [];
+                    this.slidersSetting[trialType] = [];
+
+                    // from the old way //
+                    this.contrastMinLookup[trialType] = Math.min(...Object.keys(this.depthRasterTrialLookup[probe][trialType]).map(Number)); // getting the lowest number of contrasts for initial display
+                    let contrastKeys = (Object.keys(this.depthRasterTrialLookup[probe][trialType]).map(Number)).sort((a,b) => a-b);
+
+                    // pattern A - assuming one sample trial raster for a trial contrast, all trial raster plots shoved into trial type - ordered by trial contrast
+                    let contrastKeysA = []
+                    for (let plotByTrialType of this.depthRasterTrialLookupA[probe][trialType]) {
+                      contrastKeysA.push(Object.keys(plotByTrialType)[0])
+                    }
+                    this.contrastMinLookupA[trialType] = Math.min(...contrastKeysA.map(Number)); // getting the lowest number of contrasts for initial display
+                    contrastKeysA = (contrastKeysA).map(Number).sort((a,b) => a-b);
+            
+                    // pattern B - assuming there are multiple trial rasters for a trial contrast, each contrast will have many trial rasters - ordered by trial id
+                    this.contrastMinLookupB[trialType] = Math.min(...Object.keys(this.depthRasterTrialLookupB[probe][trialType]).map(Number)); // getting the lowest number of contrasts for initial display
+                    let contrastKeysB = (Object.keys(this.depthRasterTrialLookupB[probe][trialType]).map(Number)).sort((a,b) => a-b);
+
+                    for (let trialContrast of contrastKeys) {
+                      //+*+*+*+*+*+*+*+*+*+// Sliding by trial IDs - (A) way in for now with single trial to show per contrast -- [START] //+*+*+*+*+*+*+*+*+*+*+//
+                      // fillup the sliders setting first, then re-add later
+                      if (!this.slidersSettingA[trialType][0]) {
+                        this.slidersSettingA[trialType] = [{
+                          pad: {t: 30},
+                          currentvalue: {
+                            xanchor: 'left',
+                            prefix: 'Trial ID: ',
+                            font: {
+                              color: '#000000',
+                              size: 16
+                            }
                           }
-                        }
-                      }]
-                    }
-                    if (this.slidersSettingA[trialType][0]['steps'] && this.slidersSettingA[trialType][0]['steps'].length > 0) {
-                      //sliders steps have already started to fill up
-                      this.slidersSettingA[trialType][0]['steps'].push({
-                        label: trialContrast,
-                        value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
-                        method: 'update',
-                        args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
-                      })
+                        }]
+                      }
+                      if (this.slidersSettingA[trialType][0]['steps'] && this.slidersSettingA[trialType][0]['steps'].length > 0) {
+                        //sliders steps have already started to fill up
+                        this.slidersSettingA[trialType][0]['steps'].push({
+                          // label: trialContrast,
+                          label: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                          value: trialContrast,
+                          method: 'update',
+                          args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                        })
 
-                    } else {
-                      // sliders steps have not been initiated yet
-                      this.slidersSettingA[trialType][0]['steps'] = []
-                      this.slidersSettingA[trialType][0]['steps'].push({
-                        label: trialContrast,
-                        value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
-                        method: 'update',
-                        args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                      } else {
+                        // sliders steps have not been initiated yet
+                        this.slidersSettingA[trialType][0]['steps'] = []
+                        this.slidersSettingA[trialType][0]['steps'].push({
+                          // label: trialContrast,
+                          label: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                          value: trialContrast,
+                          method: 'update',
+                          args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
 
-                      })
-                    }
-                    //+*+*+*+*+*+*++ Sliding by trial IDs - (A) way in for now with single trial to show per contrast -- [END] +*+*+*+*+*+*+*+*+//
+                        })
+                      }
+                      
+                      //+*+*+*+*+*+*++ Sliding by trial IDs - (A) way in for now with single trial to show per contrast -- [END] +*+*+*+*+*+*+*+*+//
 
-                    ///////////// Sliding by trial IDs - (B) way in the future with multiple trials to show per contrast -- [START] //////////////
-                    // fillup the sliders setting first, then readd later
-                    if (!this.slidersSettingB[trialType][0]) {
-                      this.slidersSettingB[trialType] = [{
-                        pad: {t: 30},
-                        currentvalue: {
-                          xanchor: 'right',
-                          prefix: 'Trial ID (B): ',
-                          font: {
-                            color: '#ffffff',
-                            size: 0
+                      ///////////// Sliding by trial IDs - (B) way in the future with multiple trials to show per contrast -- [START] //////////////
+                      // fillup the sliders setting first, then readd later
+                      if (!this.slidersSettingB[trialType]) {
+                        this.slidersSettingB[trialType] = {trialContrast: []}
+                      }
+                      if (!this.slidersSettingB[trialType][trialContrast] || !this.slidersSettingB[trialType][trialContrast][0]) {
+                        this.slidersSettingB[trialType][trialContrast] = [{
+                          pad: {t: 30},
+                          currentvalue: {
+                            xanchor: 'left',
+                            prefix: 'Trial ID (Multi): ',
+                            font: {
+                              color: '#000000',
+                              size: 16
+                            }
                           }
-                        }
-                      }]
-                    }
-                    if (this.slidersSettingB[trialType][0]['steps'] && this.slidersSettingB[trialType][0]['steps'].length > 0) {
-                      //sliders steps have already started to fill up
-                      this.slidersSettingB[trialType][0]['steps'].push({
-                        label: trialContrast,
-                        value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
-                        method: 'update',
-                        args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
-                      })
+                        }]
+                      }
 
-                    } else {
-                      // sliders steps have not been initiated yet
-                      this.slidersSettingB[trialType][0]['steps'] = []
-                      this.slidersSettingB[trialType][0]['steps'].push({
-                        label: trialContrast,
-                        value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
-                        method: 'update',
-                        args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                      console.log('this.slidersSettingB: ', this.slidersSettingB)
+                      for (let byTrialID of this.depthRasterTrialLookupB[probe][trialType][trialContrast]) {
+                        // console.log('byTrialID in LookupB: ', this.depthRasterTrialLookupB[probe][trialType][trialContrast]) // array that has {51(trial_id): {data:{(filled)}, layout: {(filled)}}}
+                        // console.log('byTrialID in LookupB length: ', this.depthRasterTrialLookupB[probe][trialType][trialContrast].length) // 1 for every setup at the moment - expected to increase
+                        this.depthRasterTrialLookupB[probe][trialType][trialContrast].map(plot => {
+                          // console.log('plot: ', plot)
+                          // console.log('Object.keys(plot)[0]: ', Object.keys(plot)[0]) // trial ID
+                          // console.log('Object.values(plot)[0]: ', Object.values(plot)[0]) // plot obj with data&layout
+                          if (this.slidersSettingB[trialType][trialContrast][0]['steps'] && this.slidersSettingB[trialType][trialContrast][0]['steps'].length > 0) {
+                            //sliders steps have already started to fill up
+                            this.slidersSettingB[trialType][trialContrast][0]['steps'].push({
+                              label: Object.keys(plot)[0],
+                              value: trialContrast,
+                              method: 'update',
+                              args: [deepCopy(Object.values(plot)[0]['data']), deepCopy(Object.values(plot)[0]['layout'])]
+                            })
+                            this.slidersSettingB[trialType][trialContrast][0]['steps'].push({
+                              label: Object.keys(plot)[0],
+                              value: trialContrast,
+                              method: 'update',
+                              args: [deepCopy(Object.values(plot)[0]['data']), deepCopy(Object.values(plot)[0]['layout'])]
+                            })
 
-                      })
-                    }
-                    /////////////// Sliding by trial IDs - (B) way in the future with multiple trials to show per contrast -- [END] ///////////////////
-
-                    //==//==//==//== Sliding by trial contrasts - OLD way -- [START] //==//==//==//==//==//==//==//==//
-                    // fillup the sliders setting first, then re-add later
-                    if (!this.slidersSetting[trialType][0]) {
-                      this.slidersSetting[trialType] = [{
-                        pad: {t: 30},
-                        currentvalue: {
-                          xanchor: 'right',
-                          prefix: 'Trial Contrast: ',
-                          font: {
-                            color: '#ffffff',
-                            size: 0
+                          } else {
+                            // sliders steps have not been initiated yet
+                            this.slidersSettingB[trialType][trialContrast][0]['steps'] = []
+                            this.slidersSettingB[trialType][trialContrast][0]['steps'].push({
+                              label: Object.keys(plot)[0],
+                              value: trialContrast,
+                              method: 'update',
+                              args: [deepCopy(Object.values(plot)[0]['data']), deepCopy(Object.values(plot)[0]['layout'])]
+                            })
+                            this.slidersSettingB[trialType][trialContrast][0]['steps'].push({
+                              label: Object.keys(plot)[0],
+                              value: trialContrast,
+                              method: 'update',
+                              args: [deepCopy(Object.values(plot)[0]['data']), deepCopy(Object.values(plot)[0]['layout'])]
+                            })
                           }
-                        }
-                      }]
+                        })
+                      }
+                      // if (this.slidersSettingB[trialType][trialContrast][0]['steps'] && this.slidersSettingB[trialType][trialContrast][0]['steps'].length > 0) {
+                      //   //sliders steps have already started to fill up
+                      //   this.slidersSettingB[trialType][trialContrast][0]['steps'].push({
+                      //     label: trialContrast,
+                      //     value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                      //     method: 'update',
+                      //     args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                      //   })
+
+                      // } else {
+                      //   // sliders steps have not been initiated yet
+                      //   this.slidersSettingB[trialType][trialContrast][0]['steps'] = []
+                      //   this.slidersSettingB[trialType][trialContrast][0]['steps'].push({
+                      //     label: trialContrast,
+                      //     value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                      //     method: 'update',
+                      //     args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+
+                      //   })
+                      // }
+                      /////////////// Sliding by trial IDs - (B) way in the future with multiple trials to show per contrast -- [END] ///////////////////
+
+                      //==//==//==//== Sliding by trial contrasts - OLD way -- [START] //==//==//==//==//==//==//==//==//
+                    
+                      // fillup the sliders setting first, then re-add later
+                      if (!this.slidersSetting[trialType][0]) {
+                        this.slidersSetting[trialType] = [{
+                          pad: {t: 30},
+                          currentvalue: {
+                            xanchor: 'right',
+                            prefix: 'Trial Contrast: ',
+                            font: {
+                              color: '#ffffff',
+                              size: 0
+                            }
+                          }
+                        }]
+                      }
+                      if (this.slidersSetting[trialType][0]['steps'] && this.slidersSetting[trialType][0]['steps'].length > 0) {
+                        //sliders steps have already started to fill up
+                        this.slidersSetting[trialType][0]['steps'].push({
+                          label: trialContrast,
+                          value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                          method: 'update',
+                          args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+                        })
+
+                      } else {
+                        // sliders steps have not been initiated yet
+                        this.slidersSetting[trialType][0]['steps'] = []
+                        this.slidersSetting[trialType][0]['steps'].push({
+                          label: trialContrast,
+                          value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
+                          method: 'update',
+                          args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
+
+                        })
+                      }
+                        
+
+                      
+                      //==//==//==//==/==// Sliding by trial contrasts - OLD way -- [END] //==//==//==//==//==//==//==//
+
                     }
-                    if (this.slidersSetting[trialType][0]['steps'] && this.slidersSetting[trialType][0]['steps'].length > 0) {
-                      //sliders steps have already started to fill up
-                      this.slidersSetting[trialType][0]['steps'].push({
-                        label: trialContrast,
-                        value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
-                        method: 'update',
-                        args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
-                      })
-
-                    } else {
-                      // sliders steps have not been initiated yet
-                      this.slidersSetting[trialType][0]['steps'] = []
-                      this.slidersSetting[trialType][0]['steps'].push({
-                        label: trialContrast,
-                        value: this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']['customdata'],
-                        method: 'update',
-                        args: [deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['data']), deepCopy(this.depthRasterTrialLookup[probe][trialType][trialContrast]['layout'])]
-
-                      })
+                    // now fill in the sliders setup to each of the contrast key type plot 
+                    // console.log('setup sliders setting - should be all filled up - ', this.slidersSetting);
+                    for (let trialContrast of contrastKeys) {
+                      // this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'] = this.slidersSetting[trialType];
+                      this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'] = this.slidersSettingA[trialType];
+                      this.sliderDepthRasterTrialLookupB[probe][trialType][trialContrast]['layout']['sliders'] = this.slidersSettingB[trialType][trialContrast];
                     }
-                    //==//==//==//==/==// Sliding by trial contrasts - OLD way -- [END] //==//==//==//==//==//==//==//
-
-                  }
-
-                  // now fill in the sliders setup to each of the contrast key type plot 
-                  // console.log('setup sliders setting - should be all filled up - ', this.slidersSetting);
-                  for (let trialContrast of contrastKeys) {
-                    this.sliderDepthRasterTrialLookup[probe][trialType][trialContrast]['layout']['sliders'] = this.slidersSetting[trialType];
                   }
                 }
               }
+              // console.log('slidersSettingA: ', this.slidersSettingA);
+              // console.log('slidersSettingB: ', this.slidersSettingB);
+              // console.log('sliderDepthTrialLookupB: ', this.sliderDepthRasterTrialLookupB)
+
 
               // set initial plot to render on page
               this.selectedTrialContrast = this.contrastMinLookup[this.selectedTrialType];
               this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
-              this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType])
+              this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType]).map(Number).sort((a,b) => a-b);
               // console.log('sliderDepthTrialLookup: ', this.sliderDepthRasterTrialLookup)
               // console.log('sliderDepthTrialLookup object keys: ', Object.keys(this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType]))
             });  
@@ -1581,52 +1720,42 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
 
   flipTrialContrast(event) {
-    console.log('new trial contrast slider! event - ', event);
-    this.selectedTrialContrast = Number(event.step.label);
-    console.log('sliderDepthLookup: ', this.sliderDepthRasterTrialLookup)
-    console.log('slider trialDepthRasterLookupData: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
-    console.log('even.step.args[0]', event.step.args[0])
-    console.log('slider trialDepthRasterLookupLayout: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['layout']);
-    console.log('even.step.args[1]', event.step.args[1])
-    console.log('======================================')
+    // console.log('new trial contrast slider! event - ', event);
+    // this.selectedTrialContrast = Number(event.step.label);
+    this.selectedTrialContrast = Number(event.step.value);
+    // console.log('sliderDepthLookup: ', this.sliderDepthRasterTrialLookup)
+    // console.log('slider trialDepthRasterLookupData: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
+    // console.log('even.step.args[0]', event.step.args[0])
+    // console.log('slider trialDepthRasterLookupLayout: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['layout']);
+    // console.log('even.step.args[1]', event.step.args[1])
+    // console.log('======================================')
     
     this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data'] = event.step.args[0]
-    this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata'] = Number(event.step.value)
+    // this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata'] = Number(event.step.value)
+    this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata'] = Number(event.step.label)
     this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
+    // console.log('featuredTrialID: ', this.featuredTrialId);
     // console.log('updated slider trialDepthRasterLookup data: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
   }
 
-  flipTrialID_A(event) {
-    console.log('+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+')
-    console.log('new trial ID slider selection event A - ', event);
-    this.selectedTrialContrast = Number(event.step.label);
-    console.log('sliderDepthLookup: ', this.sliderDepthRasterTrialLookup)
-    console.log('slider trialDepthRasterLookupData: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
-    console.log('even.step.args[0]', event.step.args[0])
-    console.log('slider trialDepthRasterLookupLayout: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['layout']);
-    console.log('even.step.args[1]', event.step.args[1])
-    console.log('======================================')
-    
-    // this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data'] = event.step.args[0]
-    // this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata'] = Number(event.step.value)
-    // this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
-    // console.log('updated slider trialDepthRasterLookup data: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
-  }
 
   flipTrialID_B(event) {
-    console.log('+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+')
-    console.log('new trial ID slider selection eventB - ', event);
-    this.selectedTrialContrast = Number(event.step.label);
-    console.log('sliderDepthLookup: ', this.sliderDepthRasterTrialLookup)
-    console.log('slider trialDepthRasterLookupData: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
-    console.log('even.step.args[0]', event.step.args[0])
-    console.log('slider trialDepthRasterLookupLayout: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['layout']);
-    console.log('even.step.args[1]', event.step.args[1])
-    console.log('======================================')
-    
-    // this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data'] = event.step.args[0]
-    // this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata'] = Number(event.step.value)
+    // console.log('+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+')
+    // console.log('new trial ID slider selection eventB - ', event);
+    this.selectedTrialContrast = Number(event.step.value);
+    // console.log('selected contrast: ', this.selectedTrialContrast);
+    // console.log('sliderDepthLookup: ', this.sliderDepthRasterTrialLookup)
+    // console.log('sliderDepthLookupB: ', this.sliderDepthRasterTrialLookupB)
+    // console.log('slider trialDepthRasterLookupB Data: ', this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
+    // console.log('even.step.args[0]', event.step.args[0])
+    // console.log('slider trialDepthRasterLookupB Layout: ', this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['layout']);
+    // console.log('even.step.args[1]', event.step.args[1])
+    // console.log('======================================')
+    this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data'] = event.step.args[0]
+    this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata'] = Number(event.step.label)
     // this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
+    this.featuredTrialId = Number(event.step.label)
+    // console.log('featured ID now: ', this.featuredTrialId)
     // console.log('updated slider trialDepthRasterLookup data: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
   }
 
@@ -1641,7 +1770,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   trialContrastSelected(newTrialContrast) {
     console.log('trial contrast selected - ', newTrialContrast);
     this.selectedTrialContrast = newTrialContrast;
-    this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
+    this.featuredTrialId = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0])[0]
+    console.log('featured ID now: ', this.featuredTrialId)
   }
 
 }
