@@ -187,6 +187,7 @@
       <plotly-plot (sliderChange)="flipTrialContrast($event)" [data]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['data']" [layout]="sliderDepthRasterTrialLookup[probeIndex][selectedTrialType][selectedTrialContrast]['layout']" [config]='raster_psth_config'></plotly-plot>
 
       <hr>
+      <!-- <p>featured trial ID B: {{featuredTrialIdB}}</p> -->
       <p style="color:red;">DEV SAMPLE: Once there are multiple trial raster plots per contrast, the slider will show/go through the trial IDs</p>
       <div class="row">
         <label><b>Trial Contrast:&nbsp;</b>&nbsp;&nbsp;</label>
@@ -200,7 +201,7 @@
       </div>
 
       <!-- sliding through trial IDs, trialContrast differentiated (for larger batch of generated trial depth rasters in the future) --> 
-      <plotly-plot (sliderChange)="flipTrialID_B($event)" [data]="sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialId]['data']" [layout]="sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialId]['layout']" [config]='raster_psth_config'></plotly-plot>
+      <plotly-plot (sliderChange)="flipTrialID_B($event)" [data]="sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialIdB]['data']" [layout]="sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialIdB]['layout']" [config]='raster_psth_config'></plotly-plot>
       
     </div>
   </div>
