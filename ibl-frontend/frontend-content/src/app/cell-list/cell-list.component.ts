@@ -109,6 +109,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   selectedTrialType = "Correct Left Contrast"; // initialize with correct left
   selectedTrialContrast;
   featuredTrialId;
+  featuredTrialIdB;
   availableTrialContrasts = [];
 
   showController = false;
@@ -900,9 +901,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               // set initial plot to render on page
               this.selectedTrialContrast = this.contrastMinLookup[this.selectedTrialType];
               this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
+              this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0])[0]
               this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType]).map(Number).sort((a,b) => a-b);
               // console.log('availableTrialContrasts: ', this.availableTrialContrasts);
               // console.log('sliderDepthTrialLookup: ', this.sliderDepthRasterTrialLookup)
+              console.log('featuredTiralIdB: ', this.featuredTrialIdB)
               // console.log('sliderDepthTrialLookup object keys: ', Object.keys(this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType]))
               // console.log("###sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialId]: ", this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][this.featuredTrialId])
 
@@ -1742,8 +1745,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data'] = event.step.args[0]
     this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata'] = Number(event.step.label)
     // this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
-    this.featuredTrialId = Number(event.step.label)
-    // console.log('featured ID now: ', this.featuredTrialId)
+    this.featuredTrialIdB = Number(event.step.label)
+
+    // console.log('featured ID B now: ', this.featuredTrialIdB)
     // console.log('updated slider trialDepthRasterLookup data: ', this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']);
   }
 
@@ -1752,6 +1756,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.selectedTrialType = newTrialType;
     this.selectedTrialContrast = this.contrastMinLookup[newTrialType];
     this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
+    this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0])[0]
     this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType]).map(Number).sort((a,b) => a-b);
 
   }
@@ -1759,7 +1764,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   trialContrastSelected(newTrialContrast) {
     // console.log('trial contrast selected - ', newTrialContrast);
     this.selectedTrialContrast = newTrialContrast;
-    this.featuredTrialId = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0])[0]
+    // this.featuredTrialId = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0])[0]
+    this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0])[0]
     // console.log('featured ID now: ', this.featuredTrialId)
   }
 
