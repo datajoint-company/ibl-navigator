@@ -108,7 +108,12 @@ td span.oi {
 
 }
 
-.row .trial-contrast-options {
+.radio-row {
+    margin-left: auto;
+    display: flex;
+}
+
+.radio-row .trial-contrast-options {
     display: inline-flex;
     flex-direction: row;
 }

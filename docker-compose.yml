@@ -4,7 +4,7 @@ services:
   iblapi:
     # build: ./backend
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.11 # for client deploy
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.2-dev12 # add -dev ending to testdev tag
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.2-dev13 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
     - DJ_USER=maho
