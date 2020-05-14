@@ -108,6 +108,16 @@ td span.oi {
 
 }
 
+.radio-row {
+    margin-left: auto;
+    display: flex;
+}
+
+.radio-row .trial-contrast-options {
+    display: inline-flex;
+    flex-direction: row;
+}
+
 
 /* M (768px and up) */
 @media only screen and (max-width: 900px) {

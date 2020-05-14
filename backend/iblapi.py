@@ -348,7 +348,7 @@ def handle_q(subpath, args, proj, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'depthrastertrial':
-        q = test_plotting_ephys.DepthRasterExampleTrial & args 
+        q = plotting_ephys.DepthRasterExampleTrial & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:
