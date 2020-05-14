@@ -901,11 +901,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               // set initial plot to render on page
               this.selectedTrialContrast = this.contrastMinLookup[this.selectedTrialType];
               this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
-              this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0])[0]
+              this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0]).map(Number).sort((a,b) => a-b)[0]
               this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType]).map(Number).sort((a,b) => a-b);
               // console.log('availableTrialContrasts: ', this.availableTrialContrasts);
               // console.log('sliderDepthTrialLookup: ', this.sliderDepthRasterTrialLookup)
-              console.log('featuredTiralIdB: ', this.featuredTrialIdB)
+              // console.log('featuredTiralIdB: ', this.featuredTrialIdB)
               // console.log('sliderDepthTrialLookup object keys: ', Object.keys(this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType]))
               // console.log("###sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialId]: ", this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][this.featuredTrialId])
 
