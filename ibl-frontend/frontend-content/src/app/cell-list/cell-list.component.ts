@@ -292,21 +292,72 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           }
           this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
-          this.plot_data = [{
-            x: this[`${this.toPlot_x}_data`],
-            y: this[`${this.toPlot_y}_data`],
-            customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
-            text: id_data,
-            mode: 'markers',
-            marker: {
-              size: 15,
-              color: 'rgba(255, 255, 255, 0.05)',
-              line: {
-                color: 'rgba(220, 140, 140, 0.6)',
-                width: 1.7
-              }
+          this.plot_data = [
+            {
+              x: this[`${this.toPlot_x}_data`],
+              y: this[`${this.toPlot_y}_data`],
+              customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
+              text: id_data,
+              mode: 'markers',
+              marker: {
+                size: 15,
+                color: 'rgba(255, 255, 255, 0.05)',
+                line: {
+                  color: 'rgba(220, 140, 140, 0.6)',
+                  width: 1.7
+                }
+              },
+              showlegend: false,
+              
+            },
+            {
+              name: 'Good Cluster',
+              x: [null],
+              y: [null],
+              mode: 'markers',
+              marker: {
+                size: 15,
+                color: 'rgba(255, 255, 255, 0.05)',
+                line: {
+                  color: 'rgba(220, 140, 140, 0.6)',
+                  width: 1.7
+                }
+              },
+              showlegend: true,
+            },
+            {
+              name: 'Selected Cluster',
+              x: [null],
+              y: [null],
+              mode: 'markers',
+              marker: {
+                size: 15,
+                color: 'rgba(255, 255, 255, 0.05)',
+                line: {
+                  color: 'rgba(0, 0, 0, 1)',
+                  width: 1.7
+                }
+              },
+              showlegend: true,
+
+            },
+            {
+              name: 'Bad Cluster',
+              x: [null],
+              y: [null],
+              mode: 'markers',
+              marker: {
+                size: 15,
+                color: 'rgba(255, 255, 255, 0.05)',
+                line: {
+                  color: 'rgba(0, 0, 0, 0.2)',
+                  width: 1.7
+                }
+              },
+              showlegend: false,
+
             }
-          }];
+          ];
 
           this.plot_layout = {
             updatemenus: [{
@@ -328,7 +379,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               }]
             },{
               x: 0.3,
-              y: -0.15,
+              y: -0.25,
               direction: 'right',
               buttons: [{
                 method: 'restyle',
@@ -344,7 +395,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 label: 'firing rate'
               }]
             }],
-            hovermode: 'closest'
+            hovermode: 'closest',
+            showlegend: true,
+            legend: {orientation: "h"},
+            width: '700'
+
           };
           /////////////////////////////////////////old way - but still in use /////////////////////////////////////////////////////
           const queryInfo = {};
@@ -949,6 +1004,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
       }
       this.plot_data[0]['marker']['line']['color'] = markerColors;
+      
     }
 
   }
@@ -1120,6 +1176,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   gcfilter_selected(filterID) {
     this.selectedGoodFilter = parseInt(filterID, 10);
+    console.log('good filter ID: ', this.selectedGoodFilter);
+    if (this.selectedGoodFilter) {
+      this.plot_data[3]['showlegend'] = true;
+    } else {
+      this.plot_data[3]['showlegend'] = false;
+    }
     let goodFilterQueryInfo = {};
     goodFilterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
     goodFilterQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];

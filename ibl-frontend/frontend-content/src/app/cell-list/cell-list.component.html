@@ -30,7 +30,7 @@
   </div>
   <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
   <div class="row">
-    <div class="cluster-nav-plot-area col-7 col-xl-5">
+    <div class="cluster-nav-plot-area col-7 col-xl-6">
       <br>
       <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     </div>
