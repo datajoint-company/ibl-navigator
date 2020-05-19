@@ -2,12 +2,12 @@
 <h4>
   List of Mice
 </h4>
-<button mat-raised-button class="btn" *ngIf="!filterExpanded" (click)="filterExpanded=!filterExpanded">Expand Filter
+<button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Expand Filter
   &nbsp;<span class="oi oi-expand-down"></span></button>
-<button mat-raised-button class="btn" *ngIf="filterExpanded" (click)="filterExpanded=!filterExpanded">Collapse Filter
+<button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Collapse Filter
   &nbsp;<span class="oi oi-collapse-up"></span></button>
 
-<form [formGroup]="mouse_filter_form">
+<form [formGroup]="mouse_filter_form" *ngIf="!loading">
 <div [class]="filterExpanded ? 'filterExpand':'filterCollapse'">
   <div class="filters col-12">
     <mat-form-field>
