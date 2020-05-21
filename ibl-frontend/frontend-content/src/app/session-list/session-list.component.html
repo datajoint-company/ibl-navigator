@@ -3,11 +3,11 @@
 <h4>
   List of Sessions
 </h4>
-<button mat-raised-button class="btn" *ngIf="!filterExpanded" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
-<button mat-raised-button class="btn" *ngIf="filterExpanded" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
+<button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
+<button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
 
 
-<form [formGroup]="session_filter_form">
+<form [formGroup]="session_filter_form" *ngIf="!loading">
   <div [class]="filterExpanded ? 'filters col-12 filterExpand':'filters col-12 filterCollapse'">
     <div class="session-field-filters form-section">
       <mat-form-field class="long">
