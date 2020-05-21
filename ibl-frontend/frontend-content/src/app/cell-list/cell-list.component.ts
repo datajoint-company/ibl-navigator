@@ -219,9 +219,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
   @HostListener('window:scroll', ['$event']) onWindowScroll(event) {
     // console.log('logging scroll event - ', event);
-    if (window.pageYOffset > 640 || window.innerHeight > 1720) {
+    // console.log('window: ', window)
+    // console.log('document: ', document.documentElement.scrollHeight)
+    // console.log('Height-pageYOffset: ', document.documentElement.scrollHeight  - window.pageYOffset)
+    // console.log('window.innerHeight: ', window.innerHeight)
+    // console.log('window.pageYOffset: ', window.pageYOffset)
+    if ((window.pageYOffset > 640 || window.innerHeight > 1720) && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
       this.showController = true;
-    } else if (window.innerWidth > 1420 && window.pageYOffset > 640) {
+    } else if (window.innerWidth > 1420 && window.pageYOffset > 640 && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
       this.showController = true;
     } else {
       this.showController = false;
@@ -1137,6 +1142,30 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
     if (this.rasterListSubscription0) {
       this.rasterListSubscription0.unsubscribe();
+    }
+    if (this.depthRasterTemplatesSubscription) {
+      this.depthRasterTemplatesSubscription.unsubscribe();
+    }
+    if (this.depthPethTemplateSubscription) {
+      this.depthPethTemplateSubscription.unsubscribe();
+    }
+    if (this.satTemplateSubscription) {
+      this.satTemplateSubscription.unsubscribe();
+    }
+    if (this.acgTemplateSubscription) {
+      this.acgTemplateSubscription.unsubscribe();
+    }
+    if (this.wfTemplateSubscription) {
+      this.wfTemplateSubscription.unsubscribe();
+    }
+    if (this.fullRasterSubscription) {
+      this.fullRasterSubscription.unsubscribe();
+    }
+    if (this.fullPSTHSubscription) {
+      this.fullPSTHSubscription.unsubscribe();
+    }
+    if (this.fullRasterPSTHSubscription) {
+      this.fullRasterPSTHSubscription.unsubscribe();
     }
 
   }
