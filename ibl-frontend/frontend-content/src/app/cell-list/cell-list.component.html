@@ -176,11 +176,12 @@
       <h5>Trial Depth Raster</h5>
       <div class="radio-row">
         <label><b>Trial Type:&nbsp;</b>&nbsp;&nbsp;</label>
-        <div class="radio-option" (change)="trialTypeSelected($event.target.value)">
+        <div class="radio-option trial-type-options" (change)="trialTypeSelected($event.target.value)">
           <input type="radio" value="Correct Left Contrast" [checked]="selectedTrialType == 'Correct Left Contrast'"><label>Correct Left &nbsp;&nbsp;</label>
           <input type="radio" value="Correct Right Contrast" [checked]="selectedTrialType == 'Correct Right Contrast'"><label>Correct Right &nbsp;&nbsp;</label>
           <input type="radio" value="Incorrect Left Contrast" [checked]="selectedTrialType == 'Incorrect Left Contrast'"><label>Incorrect Left &nbsp;&nbsp;</label>
-          <input type="radio" value="Incorrect Right Contrast" [checked]="selectedTrialType == 'Incorrect Right Contrast'"><label>Incorrect Right</label>
+          <input type="radio" value="Incorrect Right Contrast" [checked]="selectedTrialType == 'Incorrect Right Contrast'"><label>Incorrect Right &nbsp;&nbsp;</label>
+          <input type="radio" value="All Trial Types" [checked]="selectedTrialType == 'All Trial Types'"><label>All Trial Types</label>
         </div>
       </div>
       <!-- sliding through trial IDs, trialContrast NOT differentiated (for smaller batch of generated trial depth rasters) --> 
@@ -190,7 +191,7 @@
       
       <div class="radio-row">
         <label><b>Trial Contrast:&nbsp;</b>&nbsp;&nbsp;</label>
-        <div *ngIf="sliderDepthRasterTrialLookup && sliderDepthRasterTrialLookup[probeIndex][selectedTrialType]">
+        <div *ngIf="sliderDepthRasterTrialLookupB && sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType]">
           <div class="radio-option trial-contrast-options" (change)="trialContrastSelected($event.target.value)" >
             <div *ngFor="let contrast of availableTrialContrasts">
               <input type="radio" value="{{contrast}}" [checked]="selectedTrialContrast == contrast"><label>{{contrast}} &nbsp;&nbsp;</label>
@@ -199,7 +200,7 @@
         </div>
       </div>
 
-      <label><b>Trial ID:&nbsp;</b>{{featuredTrialIdB}}</label>
+      <!-- <label><b>Trial ID:&nbsp;</b>{{featuredTrialIdB}}</label> -->
       <!-- sliding through trial IDs, trialContrast differentiated (for larger batch of generated trial depth rasters in the future) --> 
       <plotly-plot (sliderChange)="flipTrialID_B($event)" [data]="sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialIdB]['data']" [layout]="sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialIdB]['layout']" [config]='raster_psth_config'></plotly-plot>
       

@@ -92,6 +92,8 @@ td span.oi {
     padding-right: 15px;
 }
 
+
+
 .radio-option label {
     margin-left: 2px;
     margin-top: 2px;
@@ -116,6 +118,7 @@ td span.oi {
 .radio-row .trial-contrast-options {
     display: inline-flex;
     flex-direction: row;
+    padding-right: 15px;
 }
 
 
