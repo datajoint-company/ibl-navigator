@@ -200,7 +200,7 @@
         </div>
       </div>
 
-      <!-- <label><b>Trial ID:&nbsp;</b>{{featuredTrialIdB}}</label> -->
+      <label *ngIf="selectedTrialContrast != 'All Trial Contrasts'"><b>Trial ID:&nbsp;</b>{{featuredTrialIdB}}</label>
       <!-- sliding through trial IDs, trialContrast differentiated (for larger batch of generated trial depth rasters in the future) --> 
       <plotly-plot (sliderChange)="flipTrialID_B($event)" [data]="sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialIdB]['data']" [layout]="sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialIdB]['layout']" [config]='raster_psth_config'></plotly-plot>
       
