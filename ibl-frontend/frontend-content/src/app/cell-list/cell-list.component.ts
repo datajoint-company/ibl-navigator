@@ -609,10 +609,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.depthRasterTemplatesSubscription = this.cellListService.getDepthRasterTemplatesLoadedListener()
             .subscribe((drtTemplates) => {
               for (let template of Object.values(drtTemplates)) {
-                // console.log('template:', template)
+                // console.log('template for depth raster trials', template)
                 this.depthRasterTrialTemplates[template['depth_raster_template_idx']] = template['depth_raster_template']
               }
-              // console.log('templates for depth rasters retrieved: ', drtTemplates);
+              // console.log('templates for depth rasters trial retrieved: ', drtTemplates);
               
               this.cellListService.retrieveDepthRasterTrialPlot({
                 'subject_uuid': this.sessionInfo['subject_uuid'],
@@ -701,13 +701,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                   // == // == // [start] filling in for original lookup // == // == // == // == //
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][0]['x'] = plot['plot_xlim'];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][0]['y'] = plot['plot_ylim'];
-                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][1]['y'] = plot['plot_ylim'];
-                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][2]['y'] = plot['plot_ylim'];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][3]['y'] = plot['plot_ylim'];
-                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['y'] = plot['plot_ylim'];
                   // adding trial_id to plot info even though it won't get plotted;
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data']['customdata'] = plot['trial_id'];
@@ -730,13 +730,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                       // console.log('toPlot - trial_id: ', toPlot[plot['trial_contrast']]['trial_id']);
                       toPlot[plot['trial_contrast']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlot[plot['trial_contrast']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlot[plot['trial_contrast']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlot[plot['trial_contrast']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlot[plot['trial_contrast']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlot[plot['trial_contrast']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlot[plot['trial_contrast']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlot[plot['trial_contrast']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlot[plot['trial_contrast']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlot[plot['trial_contrast']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlot[plot['trial_contrast']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlot[plot['trial_contrast']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlot[plot['trial_contrast']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlot[plot['trial_contrast']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -757,13 +757,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                     if (Number(Object.keys(toPlotB)[0]) == plot['trial_id']) {
                       toPlotB[plot['trial_id']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlotB[plot['trial_id']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlotB[plot['trial_id']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlotB[plot['trial_id']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlotB[plot['trial_id']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlotB[plot['trial_id']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlotB[plot['trial_id']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlotB[plot['trial_id']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -780,13 +780,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                     if (Number(Object.keys(toPlotB)[0]) == plot['trial_id']) {
                       toPlotB[plot['trial_id']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlotB[plot['trial_id']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlotB[plot['trial_id']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlotB[plot['trial_id']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlotB[plot['trial_id']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlotB[plot['trial_id']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlotB[plot['trial_id']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlotB[plot['trial_id']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -803,13 +803,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                     if (Number(Object.keys(toPlotB)[0]) == plot['trial_id']) {
                       toPlotB[plot['trial_id']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlotB[plot['trial_id']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlotB[plot['trial_id']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlotB[plot['trial_id']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlotB[plot['trial_id']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlotB[plot['trial_id']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlotB[plot['trial_id']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlotB[plot['trial_id']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -826,13 +826,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                     if (Number(Object.keys(toPlotB)[0]) == plot['trial_id']) {
                       toPlotB[plot['trial_id']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlotB[plot['trial_id']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlotB[plot['trial_id']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlotB[plot['trial_id']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlotB[plot['trial_id']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlotB[plot['trial_id']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlotB[plot['trial_id']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlotB[plot['trial_id']]['layout']['xaxis']['range'] = plot['plot_xlim'];
