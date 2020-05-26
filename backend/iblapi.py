@@ -127,7 +127,7 @@ reqmap = {
     'psthdata': plotting_ephys.Psth, 
     'psthtemplate': plotting_ephys.PsthTemplate,
     # 'rasterlight': plotting_ephys.RasterLinkS3,
-    'rasterlight': plotting_ephys.Raster,
+    # 'rasterlight': plotting_ephys.Raster,
     'rastertemplate': plotting_ephys.RasterLayoutTemplate,
     'probeinsertion': ephys.ProbeInsertion,
     # 'fulldriftmap': test_plotting_ephys.DepthRaster, # originally the DriftMap
@@ -306,12 +306,12 @@ def handle_q(subpath, args, proj, **kwargs):
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
     elif subpath == 'rasterlight':
         # q = plotting_ephys.RasterLinkS3 & args
-        q = plotting_ephys.Raster & args # temp test table
+        q = test_plotting_ephys.Raster & args # temp test table
         def post_process(ret):
             parsed_items = []
             for item in ret:
                 parsed_item = dict(item)
-                if parsed_item['plotting_data_link'] != '':  # if empty link, skip
+                if parsed_item['plotting_data_link'] != '' and parsed_item['plotting_data_link'] != None:  # if empty link or NULL, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
                                                         Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},

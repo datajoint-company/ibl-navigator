@@ -60,7 +60,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   targetProbeIndex;
 
   eventType; // for currently selected event type
-  eventList = ['stim on', 'feedback']; // all types of event used for flipping through (raster)/psth/depthPETH
+  eventList = ['stim on', 'feedback', 'movement']; // all types of event used for flipping through (raster)/psth/depthPETH
+  eventList_new = ['stim on', 'feedback', 'movement'];
   sortType;
   probeIndex;
   probeIndices = [];
@@ -1487,43 +1488,70 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
       for (let templateType of Object.entries(this.psthLookup[psth['cluster_id']]['data'])) {
         // console.log('templateType: ', templateType);
-        this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = psth['psth_time'].split(',');
+        if (psth['psth_time']) {
+          this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = psth['psth_time'].split(',');
+        }
+        
         switch (templateType[0]) {
           case '0':
-            this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left_upper'].split(',');
+            if (psth['psth_left_upper']) {
+              this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left_upper'].split(',');
+            }
             break;
           case '1':
-            this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left'].split(',');
+            if (psth['psth_left']) {
+              this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left'].split(',');
+            }
             break;
           case '2':
-            this.psthLookup[psth['cluster_id']]['data'][2]['y'] = psth['psth_left_lower'].split(',');
+            if (psth['psth_left_lower']) {
+              this.psthLookup[psth['cluster_id']]['data'][2]['y'] = psth['psth_left_lower'].split(',');
+            }
             break;
           case '3':
-            this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right_upper'].split(',');
+            if (psth['psth_right_upper']) {
+              this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right_upper'].split(',');
+            }
             break;
           case '4':
-            this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right'].split(',');
+            if (psth['psth_right']) {
+              this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right'].split(',');
+            }
             break;
           case '5':
-            this.psthLookup[psth['cluster_id']]['data'][5]['y'] = psth['psth_right_lower'].split(',');
+            if (psth['psth_right_lower']) {
+              this.psthLookup[psth['cluster_id']]['data'][5]['y'] = psth['psth_right_lower'].split(',');
+            }
             break;
           case '6':
-            this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect_upper'].split(',');
+            if (psth['psth_incorrect_upper']) {
+              this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect_upper'].split(',');
+            }
             break;
           case '7':
-            this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect'].split(',');
+            if (psth['psth_incorrect']) {
+              this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect'].split(',');
+            }
             break;
           case '8':
-            this.psthLookup[psth['cluster_id']]['data'][8]['y'] = psth['psth_incorrect_lower'].split(',');
+            if (psth['psth_incorrect_lower']) {
+              this.psthLookup[psth['cluster_id']]['data'][8]['y'] = psth['psth_incorrect_lower'].split(',');
+            }
             break;
           case '9':
-            this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all_upper'].split(',');
+            if (psth['psth_all_upper']) {
+              this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all_upper'].split(',');
+            }
             break;
           case '10':
-            this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all'].split(',');
+            if (psth['psth_all']) {
+              this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all'].split(',');
+            }
             break;
           case '11':
-            this.psthLookup[psth['cluster_id']]['data'][11]['y'] = psth['psth_all_lower'].split(',');
+            if (psth['psth_all_lower']) {
+              this.psthLookup[psth['cluster_id']]['data'][11]['y'] = psth['psth_all_lower'].split(',');
+            }
             break;
         }
       }
@@ -1616,7 +1644,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.rasterLookup[raster['cluster_id']]['data'][6]['name'].replace('event', raster['mark_label']);
       }
       let image_link = raster['plotting_data_link'];
-      if (image_link === '') {
+      if (image_link === '' || image_link == null) {
         image_link = '/assets/images/plot_unavailable.png';
       }
 
@@ -1716,7 +1744,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     let fullRasterPlots = {};
     let fullPSTHPlots = {};
 
-    let rastersToLoad = ['feedback.trial_id', 'feedback.feedback type', 'stim on.trial_id', 'stim on.feedback - stim on', 'stim on.contrast']
+    // let rastersToLoad = ['feedback.trial_id', 'feedback.feedback type', 'stim on.trial_id', 'stim on.feedback - stim on', 'stim on.contrast']
+    let rastersToLoad = ['feedback.trial_id', 'feedback.feedback type', 'stim on.trial_id', 'stim on.feedback - stim on', 'stim on.contrast', 'stim on.movement - stim on', 'movement.trial_id', 'movement.movement - stim on', 'movement.feedback - movement']    
     const rasterQueryInfo = {};
     rasterQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     rasterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
@@ -1767,7 +1796,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     
     
 
-    let psthsToLoad = this.eventList; //['feedback', 'stim on']
+    let psthsToLoad = this.eventList_new; //['feedback', 'stim on', 'movement']
     const psthQueryInfo = {};
     psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
