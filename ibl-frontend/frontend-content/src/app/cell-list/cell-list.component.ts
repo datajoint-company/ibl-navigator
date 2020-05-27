@@ -273,13 +273,24 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('Height-pageYOffset: ', document.documentElement.scrollHeight  - window.pageYOffset)
     // console.log('window.innerHeight: ', window.innerHeight)
     // console.log('window.pageYOffset: ', window.pageYOffset)
-    if ((window.pageYOffset > 640 || window.innerHeight > 1720) && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
-      this.showController = true;
-    } else if (window.innerWidth > 1420 && window.pageYOffset > 640 && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
-      this.showController = true;
+    if (this.depthRasterTrialLookup[this.probeIndex]) {
+      if ((window.pageYOffset > 640 || window.innerHeight > 1720) && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
+        this.showController = true;
+      } else if (window.innerWidth > 1420 && window.pageYOffset > 640 && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
+        this.showController = true;
+      } else {
+        this.showController = false;
+      }
     } else {
-      this.showController = false;
+      if (window.pageYOffset > 640 || window.innerHeight > 1720) {
+        this.showController = true;
+      } else if (window.innerWidth > 1420 && window.pageYOffset > 640) {
+        this.showController = true;
+      } else {
+        this.showController = false;
+      }
     }
+    
   }
   ngOnInit() {
     this.timeA = new Date;
