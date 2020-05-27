@@ -164,6 +164,42 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
   };
 
+  depthPETH_config = {
+    responsive: false,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+      'hoverCompareCartesian', 'toImage', 'toggleSpikelines', 'autoScale2d'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
+
 
 
   private cellListSubscription: Subscription;
@@ -188,10 +224,22 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private rasterListSubscription7: Subscription;
   private rasterListSubscription8: Subscription;
   private rasterListSubscription9: Subscription;
+  private rasterListSubscription10: Subscription;
+  private rasterListSubscription11: Subscription;
+  private rasterListSubscription12: Subscription;
+  private rasterListSubscription13: Subscription;
+  private rasterListSubscription14: Subscription;
+  private rasterListSubscription15: Subscription;
+  private rasterListSubscription16: Subscription;
+  private rasterListSubscription17: Subscription;
   private psthListSubscription0: Subscription;
   private psthListSubscription1: Subscription;
   private psthListSubscription2: Subscription;
   private psthListSubscription3: Subscription;
+  private psthListSubscription4: Subscription;
+  private psthListSubscription5: Subscription;
+  private psthListSubscription6: Subscription;
+  private psthListSubscription7: Subscription;
 
   private rasterTemplateSubscription: Subscription;
   private psthTemplatesSubscription: Subscription;
@@ -514,7 +562,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               });
             });
           for (let event of this.eventList) {
-            this.depthPethLookup[event] = {config: this.raster_psth_config}
+            this.depthPethLookup[event] = {}
           }
           this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
             .subscribe((plotInfo) => {
@@ -526,6 +574,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
                 this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
                 this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
+                let depth_peth_config_copy = {...this.depthPETH_config};
+                depth_peth_config_copy['toImageButtonOptions'] = {
+                  filename: `depthPETH_${this.sessionInfo['subject_nickname']}_${plot['event']}`,
+                  scale: 1
+                }
 
                 this.depthPethLookup[plot['event']]['data'][0]['x'] = [plot['plot_xlim'][0]-0.2, plot['plot_xlim'][0]-0.1]
                 this.depthPethLookup[plot['event']]['data'][0]['y'] = [plot['plot_ylim'][0]-0.2]
@@ -544,7 +597,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
                 this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
 
-                this.depthPethLookup[plot['event']]['config']['modeBarButtonsToRemove'].push('autoScale2d')
+                this.depthPethLookup[plot['event']]['config'] = depth_peth_config_copy
               }
               // console.log('depth PETH lookup: ', this.depthPethLookup)
               this.depthPETHtimeC = new Date()
@@ -1717,7 +1770,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         
       } 
     }
-      // console.log('raster look up: ', this.rasterLookup);
+      console.log('raster look up: ', this.rasterLookup);
   }
 
   sortData(sort: Sort) {
@@ -1853,10 +1906,15 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('spike amp time data: ', SATdata);
     for (const sat of this.spikeAmpTime) {
       const activeTemplate = deepCopy(this.satTemplate[sat['spike_amp_time_template_idx']]);
+      let config_copy = { ...this.raster_psth_config };
+      config_copy['toImageButtonOptions'] = {
+        filename: `spikeAmptTime_${this.session['session_start_time']}_${this.session['subject_nickname']}_(cluster_${sat['cluster_id']})`,
+        scale: 1
+      };
       this.spikeAmpTimeLookup[sat['cluster_id']] = {
         data: activeTemplate['data'],
         layout: activeTemplate['layout'],
-        config: this.raster_psth_config // probably should be changed
+        config: config_copy
       }
 
       this.spikeAmpTimeLookup[sat['cluster_id']]['data'][0]['x'] = sat['plot_xlim']; // usually xlim here but building instruction says ylim - doublecheck.
@@ -1883,10 +1941,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('this.acgTemplate: ', this.acgTemplate);
     for (const acg of this.autocorrelogram) {
       const currentTemplate = deepCopy(this.acgTemplate[acg['acg_template_idx']]);
+      let config_copy = { ...this.raster_psth_config };
+      config_copy['toImageButtonOptions'] = {
+        filename: `autocorrelogram_${this.session['session_start_time']}_${this.session['subject_nickname']}_(cluster_${acg['cluster_id']})`,
+        scale: 1
+      };
+      
       this.autocorrelogramLookup[acg['cluster_id']] = {
         data: currentTemplate['data'],
         layout: currentTemplate['layout'],
-        config: this.raster_psth_config // change for customization later
+        config: config_copy
       }
 
       this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = [];
@@ -1915,10 +1979,15 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.waveform = WFdata;
     for (const wf of this.waveform) {
       const currentTemplate = deepCopy(this.wfTemplate[wf['waveform_template_idx']]);
+      let config_copy = { ...this.raster_psth_config };
+      config_copy['toImageButtonOptions'] = {
+        filename: `waveform_${this.session['session_start_time']}_${this.session['subject_nickname']}_(cluster_${wf['cluster_id']})`,
+        scale: 1
+      };
       this.waveformLookup[wf['cluster_id']] = {
         data: currentTemplate['data'],
         layout: currentTemplate['layout'],
-        config: this.raster_psth_config // change for better customization later
+        config: config_copy
       }
 
       this.waveformLookup[wf['cluster_id']]['data'][0]['x'] = wf['plot_xlim'];
