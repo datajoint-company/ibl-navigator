@@ -476,6 +476,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
+    this.hideMissingPlots = false;
+    this.hideMissingEphys = false;
+    this.hideNG4BrainMap = false;
+    this.hideNotReady4Delay = false;
     // console.log('applying filter');
     this.loading = true;
     this.sessions = [];
@@ -504,6 +508,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(storedTableInfo[3]);
     this.dataSource.sort = storedTableInfo[2];
     this.dataSource.paginator = this.paginator
+
+    this.hideMissingPlots = false;
+    this.hideMissingEphys = false;
+    this.hideNG4BrainMap = false;
+    this.hideNotReady4Delay = false;
     if (storedTableInfo[1]) {
       // console.log('printing datasource: ', this.dataSource)
       // console.log('printing this.paginator: ', this.paginator)

@@ -1781,7 +1781,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         
       } 
     }
-      console.log('raster look up: ', this.rasterLookup);
+      // console.log('raster look up: ', this.rasterLookup);
   }
 
   sortData(sort: Sort) {
