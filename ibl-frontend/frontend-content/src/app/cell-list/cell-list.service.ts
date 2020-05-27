@@ -13,6 +13,9 @@ export class CellListService {
   private rasterList;
   private psthList;
 
+  // I want this automated - there are 5 conditions for 2 probes currently for rasters; 2 conditions for 2 probes for PSTHs.
+  // the 5 raster conditions -  ['feedback.trial_id', 'feedback.feedback type', 'stim on.trial_id', 'stim on.feedback - stim on', 'stim on.contrast']
+  // the 2 PSTH conditions - ['feedback', 'stim on']
   private rasterList0;
   private rasterList1;
   private rasterList2;
@@ -23,10 +26,22 @@ export class CellListService {
   private rasterList7;
   private rasterList8;
   private rasterList9;
+  private rasterList10;
+  private rasterList11;
+  private rasterList12;
+  private rasterList13;
+  private rasterList14;
+  private rasterList15;
+  private rasterList16;
+  private rasterList17;
   private psthList0;
   private psthList1;
   private psthList2;
   private psthList3;
+  private psthList4;
+  private psthList5;
+  private psthList6;
+  private psthList7;
 
   private rasterTemplates;
   private psthTemplates;
@@ -58,10 +73,22 @@ export class CellListService {
   private rasterListLoaded7 = new Subject();
   private rasterListLoaded8 = new Subject();
   private rasterListLoaded9 = new Subject();
+  private rasterListLoaded10 = new Subject();
+  private rasterListLoaded11 = new Subject();
+  private rasterListLoaded12 = new Subject();
+  private rasterListLoaded13 = new Subject();
+  private rasterListLoaded14 = new Subject();
+  private rasterListLoaded15 = new Subject();
+  private rasterListLoaded16 = new Subject();
+  private rasterListLoaded17 = new Subject();
   private psthListLoaded0 = new Subject();
   private psthListLoaded1 = new Subject();
   private psthListLoaded2 = new Subject();
   private psthListLoaded3 = new Subject();
+  private psthListLoaded4 = new Subject();
+  private psthListLoaded5 = new Subject();
+  private psthListLoaded6 = new Subject();
+  private psthListLoaded7 = new Subject();
 
   private rasterTemplatesLoaded = new Subject();
   private psthTemplatesLoaded = new Subject();
@@ -359,7 +386,8 @@ export class CellListService {
           this.rasterListLoaded0.next(this.rasterList0);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 0 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -373,7 +401,8 @@ export class CellListService {
           this.rasterListLoaded1.next(this.rasterList1);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 1 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -387,7 +416,8 @@ export class CellListService {
           this.rasterListLoaded2.next(this.rasterList2);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 2 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -401,7 +431,8 @@ export class CellListService {
           this.rasterListLoaded3.next(this.rasterList3);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 3 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -415,7 +446,8 @@ export class CellListService {
           this.rasterListLoaded4.next(this.rasterList4);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 4 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -429,7 +461,8 @@ export class CellListService {
           this.rasterListLoaded5.next(this.rasterList5);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 5 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -443,7 +476,8 @@ export class CellListService {
           this.rasterListLoaded6.next(this.rasterList6);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 6 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -457,7 +491,8 @@ export class CellListService {
           this.rasterListLoaded7.next(this.rasterList7);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 7 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -471,7 +506,8 @@ export class CellListService {
           this.rasterListLoaded8.next(this.rasterList8);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 8 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -485,7 +521,121 @@ export class CellListService {
           this.rasterListLoaded9.next(this.rasterList9);
         },
         (err: any) => {
-          console.log('error in retrieving raster list for session');
+          console.log('error in retrieving raster list 9 for session');
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+
+  retrieveRasterList10(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this.rasterList10 = sessionRasterData;
+          this.rasterListLoaded10.next(this.rasterList10);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list 10 for session');
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+  retrieveRasterList11(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this.rasterList11 = sessionRasterData;
+          this.rasterListLoaded11.next(this.rasterList11);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list 11 or session');
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+  retrieveRasterList12(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this.rasterList10 = sessionRasterData;
+          this.rasterListLoaded12.next(this.rasterList12);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list 12 for session');
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+  retrieveRasterList13(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this.rasterList13 = sessionRasterData;
+          this.rasterListLoaded10.next(this.rasterList13);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list 13 for session');
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+  retrieveRasterList14(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this.rasterList14 = sessionRasterData;
+          this.rasterListLoaded14.next(this.rasterList14);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list 14 for session');
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+  retrieveRasterList15(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this.rasterList15 = sessionRasterData;
+          this.rasterListLoaded15.next(this.rasterList15);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list 15 for session');
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+  retrieveRasterList16(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this.rasterList16 = sessionRasterData;
+          this.rasterListLoaded16.next(this.rasterList16);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list 16 for session');
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+  retrieveRasterList17(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this.rasterList17 = sessionRasterData;
+          this.rasterListLoaded17.next(this.rasterList17);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list 17 for session');
+          console.log('query: ', queryInfo)
           console.error(err);
         }
       );
@@ -539,6 +689,62 @@ export class CellListService {
         (sessionPSTHData) => {
           this.psthList3 = sessionPSTHData;
           this.psthListLoaded3.next(this.psthList3);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list for session');
+          console.error(err);
+        }
+      );
+  }
+
+  retrievePSTHList4(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
+      .subscribe(
+        (sessionPSTHData) => {
+          this.psthList4 = sessionPSTHData;
+          this.psthListLoaded4.next(this.psthList4);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list for session');
+          console.error(err);
+        }
+      );
+  }
+
+  retrievePSTHList5(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
+      .subscribe(
+        (sessionPSTHData) => {
+          this.psthList5 = sessionPSTHData;
+          this.psthListLoaded5.next(this.psthList5);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list for session');
+          console.error(err);
+        }
+      );
+  }
+
+  retrievePSTHList6(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
+      .subscribe(
+        (sessionPSTHData) => {
+          this.psthList6 = sessionPSTHData;
+          this.psthListLoaded6.next(this.psthList6);
+        },
+        (err: any) => {
+          console.log('error in retrieving raster list for session');
+          console.error(err);
+        }
+      );
+  }
+
+  retrievePSTHList7(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
+      .subscribe(
+        (sessionPSTHData) => {
+          this.psthList7 = sessionPSTHData;
+          this.psthListLoaded7.next(this.psthList7);
         },
         (err: any) => {
           console.log('error in retrieving raster list for session');
@@ -645,6 +851,30 @@ export class CellListService {
   getRasterListLoadedListener9() {
     return this.rasterListLoaded9.asObservable();
   }
+  getRasterListLoadedListener10() {
+    return this.rasterListLoaded10.asObservable();
+  }
+  getRasterListLoadedListener11() {
+    return this.rasterListLoaded11.asObservable();
+  }
+  getRasterListLoadedListener12() {
+    return this.rasterListLoaded12.asObservable();
+  }
+  getRasterListLoadedListener13() {
+    return this.rasterListLoaded13.asObservable();
+  }
+  getRasterListLoadedListener14() {
+    return this.rasterListLoaded14.asObservable();
+  }
+  getRasterListLoadedListener15() {
+    return this.rasterListLoaded15.asObservable();
+  }
+  getRasterListLoadedListener16() {
+    return this.rasterListLoaded16.asObservable();
+  }
+  getRasterListLoadedListener17() {
+    return this.rasterListLoaded17.asObservable();
+  }
 
   getPSTHListLoadedListener0() {
     return this.psthListLoaded0.asObservable();
@@ -657,5 +887,17 @@ export class CellListService {
   }
   getPSTHListLoadedListener3() {
     return this.psthListLoaded3.asObservable();
+  }
+  getPSTHListLoadedListener4() {
+    return this.psthListLoaded4.asObservable();
+  }
+  getPSTHListLoadedListener5() {
+    return this.psthListLoaded5.asObservable();
+  }
+  getPSTHListLoadedListener6() {
+    return this.psthListLoaded6.asObservable();
+  }
+  getPSTHListLoadedListener7() {
+    return this.psthListLoaded7.asObservable();
   }
 }
