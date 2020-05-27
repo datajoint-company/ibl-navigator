@@ -131,7 +131,7 @@ reqmap = {
     'rastertemplate': plotting_ephys.RasterLayoutTemplate,
     'probeinsertion': ephys.ProbeInsertion,
     # 'fulldriftmap': test_plotting_ephys.DepthRaster, # originally the DriftMap
-    'fulldriftmaptemplate': test_plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
+    'fulldriftmaptemplate': plotting_ephys.DepthRasterTemplate, # originally the DriftMapTemplate
     'depthpethtemplate': plotting_ephys.DepthPethTemplate, # for depth peth plot
     'autocorrelogram': plotting_ephys.AutoCorrelogram,
     'ACGtemplate': plotting_ephys.AutoCorrelogramTemplate,
@@ -306,7 +306,7 @@ def handle_q(subpath, args, proj, **kwargs):
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
     elif subpath == 'rasterlight':
         # q = plotting_ephys.RasterLinkS3 & args
-        q = test_plotting_ephys.Raster & args # temp test table
+        q = plotting_ephys.Raster & args # temp test table
         def post_process(ret):
             parsed_items = []
             for item in ret:
@@ -348,7 +348,7 @@ def handle_q(subpath, args, proj, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'depthrastertrial':
-        q = test_plotting_ephys.DepthRasterExampleTrial & args 
+        q = plotting_ephys.DepthRasterExampleTrial & args 
         def post_process(ret):
             parsed_items = []
             for item in ret:
