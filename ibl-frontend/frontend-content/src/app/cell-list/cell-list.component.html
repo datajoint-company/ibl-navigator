@@ -35,6 +35,9 @@
       <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     </div>
     <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
+      <!-- <p>rasterEventLacksMovement: {{rasterEventLacksMovement}}</p> <br>
+      <p>psthEventLacksMovement: {{psthEventLacksMovement}}</p> <br>
+      <p>depthPethEventLacksMovement: {{depthPethEventLacksMovement}}</p> -->
       <div class="order-buttons col-10">
         
         <div class="order-button-content">
@@ -47,7 +50,10 @@
             <input type="radio" name="depthPETHevent" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
             <label for="feedback">Feedback</label>
           </div>
-          
+          <div class="radio-option">
+            <input type="radio" name="depthPETHevent" id="movement" value="movement" [checked]="eventType === 'movement'" [disabled]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement" (change)="order_by_event($event.target.value)">
+            <label for="movement" [style.color]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement ? 'lightgrey' : ''">Movement</label>
+          </div>
         </div>  
       </div>
       <div>
@@ -111,9 +117,14 @@
             <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
             <label for="feedback">Feedback</label>
           </div>
+          <div class="radio-option">
+            <input type="radio" name="event" id="movement" value="movement" [disabled]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement" [checked]="eventType === 'movement'" (change)="order_by_event($event.target.value)">
+            <label for="movement" [style.color]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement ? 'lightgrey' : ''">Movement</label>
+          </div>
         </div>  
       </div>
-      <div class="order-buttons col-8">
+      
+      <div class="order-buttons col-10">
         <label for="sort_by"><b>Sort By</b></label>
         <!-- <select name="sort_by" (change)="order_by_sorting($event.target.value)">
           <option value="trial_id" [selected]="sortType === 'trial_id'">Trial ID</option>
@@ -127,16 +138,24 @@
             <label for="trial_id">Trial ID</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="sort_by" id="feedback - stim on" value="feedback - stim on" [disabled]="eventType==='feedback'" [checked]="sortType === 'feedback - stim on'" (change)="order_by_sorting($event.target.value)">
-            <label for="feedback - stim on" [style.color]="eventType==='feedback' ? 'lightgrey' : ''">Feedback - Stim On</label>
+            <input type="radio" name="sort_by" id="feedback - stim on" value="feedback - stim on" [disabled]="eventType==='feedback' || eventType==='movement'" [checked]="sortType === 'feedback - stim on'" (change)="order_by_sorting($event.target.value)">
+            <label for="feedback - stim on" [style.color]="eventType==='feedback' || eventType==='movement' ? 'lightgrey' : ''">Feedback - Stim On</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="sort_by" id="contrast" value="contrast" [disabled]="eventType==='feedback'" [checked]="sortType === 'contrast'" (change)="order_by_sorting($event.target.value)">
-            <label for="contrast" [style.color]="eventType==='feedback' ? 'lightgrey' : ''">Contrast</label>
+            <input type="radio" name="sort_by" id="contrast" value="contrast" [disabled]="eventType==='feedback' || eventType==='movement'" [checked]="sortType === 'contrast'" (change)="order_by_sorting($event.target.value)">
+            <label for="contrast" [style.color]="eventType==='feedback' || eventType==='movement' ? 'lightgrey' : ''">Contrast</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="sort_by" id="feedback type" value="feedback type" [disabled]="eventType==='stim on'" [checked]="sortType === 'feedback type'" (change)="order_by_sorting($event.target.value)">
-            <label for="feedback type" [style.color]="eventType==='stim on' ? 'lightgrey' : ''">Feedback Type</label>
+            <input type="radio" name="sort_by" id="feedback type" value="feedback type" [disabled]="eventType==='stim on' || eventType==='movement'" [checked]="sortType === 'feedback type'" (change)="order_by_sorting($event.target.value)">
+            <label for="feedback type" [style.color]="eventType==='stim on' || eventType==='movement' ? 'lightgrey' : ''">Feedback Type</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="sort_by" id="movement - stim on" value="movement - stim on" [disabled]="eventType==='feedback'" [checked]="sortType === 'movement - stim on'" (change)="order_by_sorting($event.target.value)">
+            <label for="movement - stim on" [style.color]="eventType==='feedback' ? 'lightgrey' : ''">Movement - Stim On</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="sort_by" id="feedback - movement" value="feedback - movement" [disabled]="eventType==='stim on' || eventType==='feedback'" [checked]="sortType === 'feedback - movement'" (change)="order_by_sorting($event.target.value)">
+            <label for="feedback - movement" [style.color]="eventType==='stim on' || eventType==='feedback' ? 'lightgrey' : ''">Feedback - Movement</label>
           </div>
         </div>
       </div>
@@ -172,7 +191,7 @@
   </div>
   <hr>
   <div>
-    <div *ngIf="depthRasterTrialLookup[probeIndex]">
+    <div *ngIf="depthRasterTrialLookup[probeIndex] && sliderDepthRasterTrialLookupB">
       <h5>Trial Depth Raster</h5>
       <div class="radio-row">
         <label><b>Trial Type:&nbsp;</b>&nbsp;&nbsp;</label>

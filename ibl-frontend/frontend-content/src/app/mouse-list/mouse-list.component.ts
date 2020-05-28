@@ -258,6 +258,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
 
   applyFilter() {
     this.loading = true;
+    this.hideDeadMice = false;
+    this.hideNotReady4Delay = false;
 
     const request = this.filterRequests();
     if (Object.entries(request).length > 0) {

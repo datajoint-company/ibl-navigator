@@ -60,7 +60,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   targetProbeIndex;
 
   eventType; // for currently selected event type
-  eventList = ['stim on', 'feedback']; // all types of event used for flipping through (raster)/psth/depthPETH
+  eventList = ['stim on', 'feedback', 'movement']; // all types of event used for flipping through (raster)/psth/depthPETH
+  eventList_new = ['stim on', 'feedback', 'movement'];
   sortType;
   probeIndex;
   probeIndices = [];
@@ -163,7 +164,46 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       'hoverCompareCartesian', 'toImage', 'toggleSpikelines'],
   };
 
+  depthPETH_config = {
+    responsive: false,
+    showLink: false,
+    showSendToCloud: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['select2d', 'lasso2d', 'hoverClosestCartesian',
+      'hoverCompareCartesian', 'toImage', 'toggleSpikelines', 'autoScale2d'],
+    modeBarButtonsToAdd: [
+      {
+        name: 'toPngImage',
+        title: 'download plot as png',
+        icon: Plotly.Icons.download_png,
+        click: function (gd) {
+          const toPngImageButtonOptions = gd._context.toImageButtonOptions;
+          toPngImageButtonOptions.format = 'png';
+          Plotly.downloadImage(gd, toPngImageButtonOptions);
+        }
+      },
+      {
+        name: 'toSVGImage',
+        title: 'download plot as svg',
+        icon: Plotly.Icons.download_svg,
+        format: 'svg',
+        click: function (gd) {
+          const toSvgImageButtonOptions = gd._context.toImageButtonOptions;
+          toSvgImageButtonOptions.format = 'svg';
+          Plotly.downloadImage(gd, toSvgImageButtonOptions);
+        }
+      }
+    ],
+    toImageButtonOptions: {
+      filename: '',
+      scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+    }
+  };
 
+
+  rasterEventLacksMovement:boolean;
+  psthEventLacksMovement:boolean;
+  depthPethEventLacksMovement:boolean;
 
   private cellListSubscription: Subscription;
   private gcCriteriaSubscription: Subscription;
@@ -187,10 +227,22 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private rasterListSubscription7: Subscription;
   private rasterListSubscription8: Subscription;
   private rasterListSubscription9: Subscription;
+  private rasterListSubscription10: Subscription;
+  private rasterListSubscription11: Subscription;
+  private rasterListSubscription12: Subscription;
+  private rasterListSubscription13: Subscription;
+  private rasterListSubscription14: Subscription;
+  private rasterListSubscription15: Subscription;
+  private rasterListSubscription16: Subscription;
+  private rasterListSubscription17: Subscription;
   private psthListSubscription0: Subscription;
   private psthListSubscription1: Subscription;
   private psthListSubscription2: Subscription;
   private psthListSubscription3: Subscription;
+  private psthListSubscription4: Subscription;
+  private psthListSubscription5: Subscription;
+  private psthListSubscription6: Subscription;
+  private psthListSubscription7: Subscription;
 
   private rasterTemplateSubscription: Subscription;
   private psthTemplatesSubscription: Subscription;
@@ -224,13 +276,24 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('Height-pageYOffset: ', document.documentElement.scrollHeight  - window.pageYOffset)
     // console.log('window.innerHeight: ', window.innerHeight)
     // console.log('window.pageYOffset: ', window.pageYOffset)
-    if ((window.pageYOffset > 640 || window.innerHeight > 1720) && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
-      this.showController = true;
-    } else if (window.innerWidth > 1420 && window.pageYOffset > 640 && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
-      this.showController = true;
+    if (this.depthRasterTrialLookup[this.probeIndex]) {
+      if ((window.pageYOffset > 640 || window.innerHeight > 1720) && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
+        this.showController = true;
+      } else if (window.innerWidth > 1420 && window.pageYOffset > 640 && document.documentElement.scrollHeight - window.pageYOffset > 1300) {
+        this.showController = true;
+      } else {
+        this.showController = false;
+      }
     } else {
-      this.showController = false;
+      if (window.pageYOffset > 640 || window.innerHeight > 1720) {
+        this.showController = true;
+      } else if (window.innerWidth > 1420 && window.pageYOffset > 640) {
+        this.showController = true;
+      } else {
+        this.showController = false;
+      }
     }
+    
   }
   ngOnInit() {
     this.timeA = new Date;
@@ -513,7 +576,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               });
             });
           for (let event of this.eventList) {
-            this.depthPethLookup[event] = {config: this.raster_psth_config}
+            this.depthPethLookup[event] = {}
           }
           this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
             .subscribe((plotInfo) => {
@@ -525,6 +588,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
                 this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
                 this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
+                let depth_peth_config_copy = {...this.depthPETH_config};
+                depth_peth_config_copy['toImageButtonOptions'] = {
+                  filename: `depthPETH_${this.sessionInfo['subject_nickname']}_${plot['event']}`,
+                  scale: 1
+                }
 
                 this.depthPethLookup[plot['event']]['data'][0]['x'] = [plot['plot_xlim'][0]-0.2, plot['plot_xlim'][0]-0.1]
                 this.depthPethLookup[plot['event']]['data'][0]['y'] = [plot['plot_ylim'][0]-0.2]
@@ -543,9 +611,15 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
                 this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
 
-                this.depthPethLookup[plot['event']]['config']['modeBarButtonsToRemove'].push('autoScale2d')
+                this.depthPethLookup[plot['event']]['config'] = depth_peth_config_copy
               }
-              // console.log('depth PETH lookup: ', this.depthPethLookup)
+              // console.log('this.DepthPethLookup: ', this.depthPethLookup)
+              if (this.depthPethLookup['movement'] && Object.keys(this.depthPethLookup['movement']).length == 0) {
+                this.depthPethEventLacksMovement = true;
+              } else {
+                this.depthPethEventLacksMovement = false;
+              }
+              // console.log('depthPethEventLacksMovement: ', this.depthPethEventLacksMovement);
               this.depthPETHtimeC = new Date()
               // console.log('depth PETH done plotting - took: ', this.depthPETHtimeC-this.depthPETHtimeB, 'ms')
             });
@@ -608,10 +682,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.depthRasterTemplatesSubscription = this.cellListService.getDepthRasterTemplatesLoadedListener()
             .subscribe((drtTemplates) => {
               for (let template of Object.values(drtTemplates)) {
-                // console.log('template:', template)
+                // console.log('template for depth raster trials', template)
                 this.depthRasterTrialTemplates[template['depth_raster_template_idx']] = template['depth_raster_template']
               }
-              // console.log('templates for depth rasters retrieved: ', drtTemplates);
+              // console.log('templates for depth rasters trial retrieved: ', drtTemplates);
               
               this.cellListService.retrieveDepthRasterTrialPlot({
                 'subject_uuid': this.sessionInfo['subject_uuid'],
@@ -700,13 +774,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                   // == // == // [start] filling in for original lookup // == // == // == // == //
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][0]['x'] = plot['plot_xlim'];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][0]['y'] = plot['plot_ylim'];
-                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][1]['y'] = plot['plot_ylim'];
-                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][2]['y'] = plot['plot_ylim'];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][3]['y'] = plot['plot_ylim'];
-                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                  this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data'][4]['y'] = plot['plot_ylim'];
                   // adding trial_id to plot info even though it won't get plotted;
                   this.depthRasterTrialLookup[plot['probe_idx']][plot['trial_type']][plot['trial_contrast']]['data']['customdata'] = plot['trial_id'];
@@ -729,13 +803,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                       // console.log('toPlot - trial_id: ', toPlot[plot['trial_contrast']]['trial_id']);
                       toPlot[plot['trial_contrast']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlot[plot['trial_contrast']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlot[plot['trial_contrast']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlot[plot['trial_contrast']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlot[plot['trial_contrast']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlot[plot['trial_contrast']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlot[plot['trial_contrast']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlot[plot['trial_contrast']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlot[plot['trial_contrast']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlot[plot['trial_contrast']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlot[plot['trial_contrast']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlot[plot['trial_contrast']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlot[plot['trial_contrast']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlot[plot['trial_contrast']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -756,13 +830,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                     if (Number(Object.keys(toPlotB)[0]) == plot['trial_id']) {
                       toPlotB[plot['trial_id']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlotB[plot['trial_id']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlotB[plot['trial_id']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlotB[plot['trial_id']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlotB[plot['trial_id']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlotB[plot['trial_id']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlotB[plot['trial_id']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlotB[plot['trial_id']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -779,13 +853,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                     if (Number(Object.keys(toPlotB)[0]) == plot['trial_id']) {
                       toPlotB[plot['trial_id']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlotB[plot['trial_id']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlotB[plot['trial_id']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlotB[plot['trial_id']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlotB[plot['trial_id']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlotB[plot['trial_id']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlotB[plot['trial_id']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlotB[plot['trial_id']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -802,13 +876,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                     if (Number(Object.keys(toPlotB)[0]) == plot['trial_id']) {
                       toPlotB[plot['trial_id']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlotB[plot['trial_id']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlotB[plot['trial_id']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlotB[plot['trial_id']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlotB[plot['trial_id']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlotB[plot['trial_id']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlotB[plot['trial_id']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlotB[plot['trial_id']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -825,13 +899,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                     if (Number(Object.keys(toPlotB)[0]) == plot['trial_id']) {
                       toPlotB[plot['trial_id']]['data'][0]['x'] = plot['plot_xlim'];
                       toPlotB[plot['trial_id']]['data'][0]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_start'], plot['trial_start']];
+                      toPlotB[plot['trial_id']]['data'][1]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
                       toPlotB[plot['trial_id']]['data'][1]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_stim_on'], plot['trial_stim_on']];
+                      toPlotB[plot['trial_id']]['data'][2]['x'] = [plot['trial_movement'], plot['trial_movement']];
                       toPlotB[plot['trial_id']]['data'][2]['y'] = plot['plot_ylim'];
                       toPlotB[plot['trial_id']]['data'][3]['x'] = [plot['trial_feedback'], plot['trial_feedback']];
                       toPlotB[plot['trial_id']]['data'][3]['y'] = plot['plot_ylim'];
-                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_end'], plot['trial_end']];
+                      toPlotB[plot['trial_id']]['data'][4]['x'] = [plot['trial_stim_off'], plot['trial_stim_off']];
                       toPlotB[plot['trial_id']]['data'][4]['y'] = plot['plot_ylim'];
                       
                       toPlotB[plot['trial_id']]['layout']['xaxis']['range'] = plot['plot_xlim'];
@@ -861,7 +935,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               for (let probe of this.probeIndices) {
                 for (let trialType of trialTypeKeys) {
                   // console.log('!!!!!!!!!!!!!', trialType.toUpperCase(), '!!!!!!!!!!!')
-                  if (this.depthRasterTrialLookupB[probe][trialType]) {
+                  if (this.depthRasterTrialLookupB[probe] && this.depthRasterTrialLookupB[probe][trialType]) {
                     // console.log('this.depthRasterTrialLookupB[probe][trialType]: ', this.depthRasterTrialLookupB[probe][trialType])
                     this.slidersSettingA[trialType] = [];
                     this.slidersSettingB[trialType] = [];
@@ -1067,9 +1141,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
               // set initial plot to render on page
               this.selectedTrialContrast = this.contrastMinLookup[this.selectedTrialType];
-              this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
-              this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0]).map(Number).sort((a,b) => a-b)[0]
-              this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType]).map(Number).sort((a,b) => a-b);
+              if (this.depthRasterTrialLookup[this.probeIndex]) {
+                this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
+                this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType]).map(Number).sort((a,b) => a-b);
+
+              }
+              if (this.depthRasterTrialLookupB[this.probeIndex]) {
+                this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0]).map(Number).sort((a,b) => a-b)[0]
+              }
               this.availableTrialContrasts.push('All Trial Contrasts')
               // console.log('availableTrialContrasts: ', this.availableTrialContrasts);
               // console.log('sliderDepthTrialLookup: ', this.sliderDepthRasterTrialLookup)
@@ -1256,7 +1335,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     });
 
     for (let event of this.eventList) {
-      this.depthPethLookup[event] = {data: [], layout: {}, config: this.raster_psth_config}
+      this.depthPethLookup[event] = {data: [], layout: {}, config: {}}
     }
     this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
       .subscribe((plotInfo) => {
@@ -1264,6 +1343,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         for (let plot of Object.values(plotInfo)) {
           this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
           this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
+          let depth_peth_config_copy = {...this.depthPETH_config};
+          depth_peth_config_copy['toImageButtonOptions'] = {
+            filename: `depthPETH_${this.sessionInfo['subject_nickname']}_${plot['event']}`,
+            scale: 1
+          }
     
           this.depthPethLookup[plot['event']]['data'][0]['x'] = [plot['plot_xlim'][0]-0.2, plot['plot_xlim'][0]-0.1]
           this.depthPethLookup[plot['event']]['data'][0]['y'] = [plot['plot_ylim'][0]-0.2]
@@ -1282,12 +1366,18 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
           this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
 
-          this.depthPethLookup[plot['event']]['config']['modeBarButtonsToRemove'].push('autoScale2d')
-
-
+          this.depthPethLookup[plot['event']]['config'] = depth_peth_config_copy
         }
-        
+        // console.log('this.DepthPethLookup: ', this.depthPethLookup)
+        if (this.depthPethLookup['movement']['data'].length == 0) {
+          this.depthPethEventLacksMovement = true;
+        } else {
+          this.depthPethEventLacksMovement = false;
+        }
+        // console.log('depthPethEventLacksMovement: ', this.depthPethEventLacksMovement);
       });
+    
+
 
     // updating quality control plots - reuse the same query info from probe trajectory
     this.cellListService.retrieveSpikeAmpTimePlot(probeTrajQueryInfo);
@@ -1487,43 +1577,70 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
       for (let templateType of Object.entries(this.psthLookup[psth['cluster_id']]['data'])) {
         // console.log('templateType: ', templateType);
-        this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = psth['psth_time'].split(',');
+        if (psth['psth_time']) {
+          this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = psth['psth_time'].split(',');
+        }
+        
         switch (templateType[0]) {
           case '0':
-            this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left_upper'].split(',');
+            if (psth['psth_left_upper']) {
+              this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left_upper'].split(',');
+            }
             break;
           case '1':
-            this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left'].split(',');
+            if (psth['psth_left']) {
+              this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left'].split(',');
+            }
             break;
           case '2':
-            this.psthLookup[psth['cluster_id']]['data'][2]['y'] = psth['psth_left_lower'].split(',');
+            if (psth['psth_left_lower']) {
+              this.psthLookup[psth['cluster_id']]['data'][2]['y'] = psth['psth_left_lower'].split(',');
+            }
             break;
           case '3':
-            this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right_upper'].split(',');
+            if (psth['psth_right_upper']) {
+              this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right_upper'].split(',');
+            }
             break;
           case '4':
-            this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right'].split(',');
+            if (psth['psth_right']) {
+              this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right'].split(',');
+            }
             break;
           case '5':
-            this.psthLookup[psth['cluster_id']]['data'][5]['y'] = psth['psth_right_lower'].split(',');
+            if (psth['psth_right_lower']) {
+              this.psthLookup[psth['cluster_id']]['data'][5]['y'] = psth['psth_right_lower'].split(',');
+            }
             break;
           case '6':
-            this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect_upper'].split(',');
+            if (psth['psth_incorrect_upper']) {
+              this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect_upper'].split(',');
+            }
             break;
           case '7':
-            this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect'].split(',');
+            if (psth['psth_incorrect']) {
+              this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect'].split(',');
+            }
             break;
           case '8':
-            this.psthLookup[psth['cluster_id']]['data'][8]['y'] = psth['psth_incorrect_lower'].split(',');
+            if (psth['psth_incorrect_lower']) {
+              this.psthLookup[psth['cluster_id']]['data'][8]['y'] = psth['psth_incorrect_lower'].split(',');
+            }
             break;
           case '9':
-            this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all_upper'].split(',');
+            if (psth['psth_all_upper']) {
+              this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all_upper'].split(',');
+            }
             break;
           case '10':
-            this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all'].split(',');
+            if (psth['psth_all']) {
+              this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all'].split(',');
+            }
             break;
           case '11':
-            this.psthLookup[psth['cluster_id']]['data'][11]['y'] = psth['psth_all_lower'].split(',');
+            if (psth['psth_all_lower']) {
+              this.psthLookup[psth['cluster_id']]['data'][11]['y'] = psth['psth_all_lower'].split(',');
+            }
             break;
         }
       }
@@ -1589,7 +1706,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         };
       } 
     }
-    // console.log('psth lookup: ', this.psthLookup);
+    // console.log('psth purse: ', this.fullPSTHPurse);
+    const isNotMovement = (plotType) => plotType != 'movement';
+    this.psthEventLacksMovement = Object.keys(this.fullPSTHPurse[this.probeIndex]).every(isNotMovement)
+    // console.log('psthEventLacksMovement: ', this.psthEventLacksMovement);
+
   }
 
   updateRaster(rasterPlotList) {
@@ -1616,7 +1737,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.rasterLookup[raster['cluster_id']]['data'][6]['name'].replace('event', raster['mark_label']);
       }
       let image_link = raster['plotting_data_link'];
-      if (image_link === '') {
+      if (image_link === '' || image_link == null) {
         image_link = '/assets/images/plot_unavailable.png';
       }
 
@@ -1689,7 +1810,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         
       } 
     }
-      // console.log('raster look up: ', this.rasterLookup);
+    // console.log('raster purse - ', this.fullRasterPurse);
+
+    const isNotMovement = (plotType) => plotType.split('.')[0] != 'movement';
+    this.rasterEventLacksMovement = Object.keys(this.fullRasterPurse[this.probeIndex]).every(isNotMovement)
+    // console.log('rasterEventLacksMovement: ', this.rasterEventLacksMovement);
+   
   }
 
   sortData(sort: Sort) {
@@ -1716,7 +1842,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     let fullRasterPlots = {};
     let fullPSTHPlots = {};
 
-    let rastersToLoad = ['feedback.trial_id', 'feedback.feedback type', 'stim on.trial_id', 'stim on.feedback - stim on', 'stim on.contrast']
+    // let rastersToLoad = ['feedback.trial_id', 'feedback.feedback type', 'stim on.trial_id', 'stim on.feedback - stim on', 'stim on.contrast']
+    let rastersToLoad = ['feedback.trial_id', 'feedback.feedback type', 'stim on.trial_id', 'stim on.feedback - stim on', 'stim on.contrast', 'stim on.movement - stim on', 'movement.trial_id', 'movement.movement - stim on', 'movement.feedback - movement']    
     const rasterQueryInfo = {};
     rasterQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     rasterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
@@ -1734,32 +1861,29 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         
         this[`rasterListSubscription${count}`] = this.cellListService[`getRasterListLoadedListener${count}`]()
           .subscribe((rasterPlotList) => {
-            this.fullRasterPurse[probe][rasterType] = rasterPlotList;
-            fullRasterPlots[probe][rasterType] = rasterPlotList
+            if (rasterPlotList && rasterPlotList.length > 0) {
+              this.fullRasterPurse[probe][rasterType] = rasterPlotList;
+              fullRasterPlots[probe][rasterType] = rasterPlotList
 
-            if (Object.values(this.fullRasterPurse).length == this.probeIndices.length && Object.values(this.fullRasterPurse[probe]).length == rastersToLoad.length) {
+              if (Object.values(this.fullRasterPurse).length == this.probeIndices.length && Object.values(this.fullRasterPurse[probe]).length == rastersToLoad.length) {
 
-              // console.log('rasters are done loading - downloaded number of probes - ', Object.values(this.fullRasterPurse).length, ' - length of full raster purse: ', Object.values(this.fullRasterPurse[probe]).length);
-              this.allRastersLoaded = true;
-              if (this.allPSTHsLoaded && this.allRastersLoaded) {
-                // console.log('all done (raster side)')
-                // console.log(this.timeB - this.timeA)
-                this.timeDiff = this.timeB - this.timeA;
-                fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
-                // console.log('updating Raster with: ', this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // console.log('updating Raster with: ', fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // console.log('updating PSTH with: ', fullPSTHPlots[this.probeIndex][this.eventType]);
-                // console.log('probe index = ', this.probeIndex, ' - eventType = ', this.eventType, ' - sortType = ', this.sortType);
+                // console.log('rasters are done loading - downloaded number of probes - ', Object.values(this.fullRasterPurse).length, ' - length of full raster purse: ', Object.values(this.fullRasterPurse[probe]).length);
+                this.allRastersLoaded = true;
+                if (this.allPSTHsLoaded && this.allRastersLoaded) {
+      
+                  fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
 
-                // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
-                // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
-
-              } else {
-                // console.log('all rasters are loaded, but not psth')
-                // console.log('Rasters: ', this.allRastersLoaded);
-                // console.log('PSTHs: ', this.allPSTHsLoaded);
+                } else {
+                  // console.log('all rasters are loaded, but not psth')
+                  // console.log('Rasters: ', this.allRastersLoaded);
+                  // console.log('PSTHs: ', this.allPSTHsLoaded);
+                }
               }
+
+            } else {
+              // console.log('no data retrieved for raster query condition: ', rasterQueryInfo)
             }
+            
           });
         count++
       }
@@ -1767,7 +1891,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     
     
 
-    let psthsToLoad = this.eventList; //['feedback', 'stim on']
+    let psthsToLoad = this.eventList_new; //['feedback', 'stim on', 'movement']
     const psthQueryInfo = {};
     psthQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
     psthQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
@@ -1781,29 +1905,26 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.cellListService[`retrievePSTHList${psthCount}`](psthQueryInfo);
         this[`psthListSubscription${psthCount}`] = this.cellListService[`getPSTHListLoadedListener${psthCount}`]()
           .subscribe((psthPlotList) => {
-            this.fullPSTHPurse[probe][psthsToLoad[ind]] = psthPlotList;
-            fullPSTHPlots[probe][psthsToLoad[ind]] = psthPlotList;
-            if (Object.values(this.fullPSTHPurse).length == this.probeIndices.length && Object.values(this.fullPSTHPurse[probe]).length == psthsToLoad.length) {
-              // console.log('psths are done loading - downloaded number of probes: ', Object.values(this.fullPSTHPurse).length, '- full psth purse length - ', Object.values(this.fullPSTHPurse[probe]).length);
-              this.allPSTHsLoaded = true;
-              if (this.allPSTHsLoaded && this.allRastersLoaded) {
-                this.timeB = new Date;
-                // console.log('all done (psth side)')
-                // console.log(this.timeB - this.timeA)
-                this.timeDiff = this.timeB - this.timeA;
-                fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
-                // console.log('updating PSTH with: ', this.fullPSTHPurse[this.probeIndex][this.eventType]);
-                // console.log('updating PSTH with: ', fullPSTHPlots[this.probeIndex][this.eventType]);
-                // console.log('updating Raster with: ', fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // console.log('probe index - ', this.probeIndex, 'eventType - ', this.eventType);
-                // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
-                // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
-              } else {
-                // console.log('all psths are loaded, but not raster')
-                // console.log('Rasters: ', this.allRastersLoaded);
-                // console.log('PSTHs: ', this.allPSTHsLoaded);
+            if (psthPlotList && psthPlotList.length > 0) {
+              this.fullPSTHPurse[probe][psthsToLoad[ind]] = psthPlotList;
+              fullPSTHPlots[probe][psthsToLoad[ind]] = psthPlotList;
+              if (Object.values(this.fullPSTHPurse).length == this.probeIndices.length && Object.values(this.fullPSTHPurse[probe]).length == psthsToLoad.length) {
+                // console.log('psths are done loading - downloaded number of probes: ', Object.values(this.fullPSTHPurse).length, '- full psth purse length - ', Object.values(this.fullPSTHPurse[probe]).length);
+                this.allPSTHsLoaded = true;
+                if (this.allPSTHsLoaded && this.allRastersLoaded) {
+
+                  fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
+        
+                } else {
+                  // console.log('all psths are loaded, but not raster')
+                  // console.log('Rasters: ', this.allRastersLoaded);
+                  // console.log('PSTHs: ', this.allPSTHsLoaded);
+                }
               }
+            } else {
+              // console.log('no data returned for following psth query: ', psthQueryInfo)
             }
+            
           });
         psthCount++
       }
@@ -1824,10 +1945,15 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('spike amp time data: ', SATdata);
     for (const sat of this.spikeAmpTime) {
       const activeTemplate = deepCopy(this.satTemplate[sat['spike_amp_time_template_idx']]);
+      let config_copy = { ...this.raster_psth_config };
+      config_copy['toImageButtonOptions'] = {
+        filename: `spikeAmptTime_${this.session['session_start_time']}_${this.session['subject_nickname']}_(cluster_${sat['cluster_id']})`,
+        scale: 1
+      };
       this.spikeAmpTimeLookup[sat['cluster_id']] = {
         data: activeTemplate['data'],
         layout: activeTemplate['layout'],
-        config: this.raster_psth_config // probably should be changed
+        config: config_copy
       }
 
       this.spikeAmpTimeLookup[sat['cluster_id']]['data'][0]['x'] = sat['plot_xlim']; // usually xlim here but building instruction says ylim - doublecheck.
@@ -1854,10 +1980,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('this.acgTemplate: ', this.acgTemplate);
     for (const acg of this.autocorrelogram) {
       const currentTemplate = deepCopy(this.acgTemplate[acg['acg_template_idx']]);
+      let config_copy = { ...this.raster_psth_config };
+      config_copy['toImageButtonOptions'] = {
+        filename: `autocorrelogram_${this.session['session_start_time']}_${this.session['subject_nickname']}_(cluster_${acg['cluster_id']})`,
+        scale: 1
+      };
+      
       this.autocorrelogramLookup[acg['cluster_id']] = {
         data: currentTemplate['data'],
         layout: currentTemplate['layout'],
-        config: this.raster_psth_config // change for customization later
+        config: config_copy
       }
 
       this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = [];
@@ -1886,10 +2018,15 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.waveform = WFdata;
     for (const wf of this.waveform) {
       const currentTemplate = deepCopy(this.wfTemplate[wf['waveform_template_idx']]);
+      let config_copy = { ...this.raster_psth_config };
+      config_copy['toImageButtonOptions'] = {
+        filename: `waveform_${this.session['session_start_time']}_${this.session['subject_nickname']}_(cluster_${wf['cluster_id']})`,
+        scale: 1
+      };
       this.waveformLookup[wf['cluster_id']] = {
         data: currentTemplate['data'],
         layout: currentTemplate['layout'],
-        config: this.raster_psth_config // change for better customization later
+        config: config_copy
       }
 
       this.waveformLookup[wf['cluster_id']]['data'][0]['x'] = wf['plot_xlim'];
