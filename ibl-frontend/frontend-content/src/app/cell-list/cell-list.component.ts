@@ -201,6 +201,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   };
 
 
+  rasterEventLacksMovement:boolean;
+  psthEventLacksMovement:boolean;
+  depthPethEventLacksMovement:boolean;
 
   private cellListSubscription: Subscription;
   private gcCriteriaSubscription: Subscription;
@@ -610,7 +613,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
                 this.depthPethLookup[plot['event']]['config'] = depth_peth_config_copy
               }
-              // console.log('depth PETH lookup: ', this.depthPethLookup)
+              // console.log('this.DepthPethLookup: ', this.depthPethLookup)
+              if (this.depthPethLookup['movement'] && Object.keys(this.depthPethLookup['movement']).length == 0) {
+                this.depthPethEventLacksMovement = true;
+              } else {
+                this.depthPethEventLacksMovement = false;
+              }
+              // console.log('depthPethEventLacksMovement: ', this.depthPethEventLacksMovement);
               this.depthPETHtimeC = new Date()
               // console.log('depth PETH done plotting - took: ', this.depthPETHtimeC-this.depthPETHtimeB, 'ms')
             });
@@ -926,7 +935,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               for (let probe of this.probeIndices) {
                 for (let trialType of trialTypeKeys) {
                   // console.log('!!!!!!!!!!!!!', trialType.toUpperCase(), '!!!!!!!!!!!')
-                  if (this.depthRasterTrialLookupB[probe][trialType]) {
+                  if (this.depthRasterTrialLookupB[probe] && this.depthRasterTrialLookupB[probe][trialType]) {
                     // console.log('this.depthRasterTrialLookupB[probe][trialType]: ', this.depthRasterTrialLookupB[probe][trialType])
                     this.slidersSettingA[trialType] = [];
                     this.slidersSettingB[trialType] = [];
@@ -1132,9 +1141,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
               // set initial plot to render on page
               this.selectedTrialContrast = this.contrastMinLookup[this.selectedTrialType];
-              this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
-              this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0]).map(Number).sort((a,b) => a-b)[0]
-              this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType]).map(Number).sort((a,b) => a-b);
+              if (this.depthRasterTrialLookup[this.probeIndex]) {
+                this.featuredTrialId = this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast]['data']['customdata']
+                this.availableTrialContrasts = Object.keys(this.depthRasterTrialLookup[this.probeIndex][this.selectedTrialType]).map(Number).sort((a,b) => a-b);
+
+              }
+              if (this.depthRasterTrialLookupB[this.probeIndex]) {
+                this.featuredTrialIdB = Object.keys(this.depthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][0]).map(Number).sort((a,b) => a-b)[0]
+              }
               this.availableTrialContrasts.push('All Trial Contrasts')
               // console.log('availableTrialContrasts: ', this.availableTrialContrasts);
               // console.log('sliderDepthTrialLookup: ', this.sliderDepthRasterTrialLookup)
@@ -1321,7 +1335,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     });
 
     for (let event of this.eventList) {
-      this.depthPethLookup[event] = {data: [], layout: {}, config: this.raster_psth_config}
+      this.depthPethLookup[event] = {data: [], layout: {}, config: {}}
     }
     this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
       .subscribe((plotInfo) => {
@@ -1329,6 +1343,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         for (let plot of Object.values(plotInfo)) {
           this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
           this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
+          let depth_peth_config_copy = {...this.depthPETH_config};
+          depth_peth_config_copy['toImageButtonOptions'] = {
+            filename: `depthPETH_${this.sessionInfo['subject_nickname']}_${plot['event']}`,
+            scale: 1
+          }
     
           this.depthPethLookup[plot['event']]['data'][0]['x'] = [plot['plot_xlim'][0]-0.2, plot['plot_xlim'][0]-0.1]
           this.depthPethLookup[plot['event']]['data'][0]['y'] = [plot['plot_ylim'][0]-0.2]
@@ -1347,12 +1366,18 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.depthPethLookup[plot['event']]['layout']['width'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['width'] * 0.85;
           this.depthPethLookup[plot['event']]['layout']['height'] = this.depthPethTemplates[plot['depth_peth_template_idx']]['layout']['height'] * 0.85;
 
-          this.depthPethLookup[plot['event']]['config']['modeBarButtonsToRemove'].push('autoScale2d')
-
-
+          this.depthPethLookup[plot['event']]['config'] = depth_peth_config_copy
         }
-        
+        // console.log('this.DepthPethLookup: ', this.depthPethLookup)
+        if (this.depthPethLookup['movement']['data'].length == 0) {
+          this.depthPethEventLacksMovement = true;
+        } else {
+          this.depthPethEventLacksMovement = false;
+        }
+        // console.log('depthPethEventLacksMovement: ', this.depthPethEventLacksMovement);
       });
+    
+
 
     // updating quality control plots - reuse the same query info from probe trajectory
     this.cellListService.retrieveSpikeAmpTimePlot(probeTrajQueryInfo);
@@ -1681,7 +1706,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         };
       } 
     }
-    // console.log('psth lookup: ', this.psthLookup);
+    // console.log('psth purse: ', this.fullPSTHPurse);
+    const isNotMovement = (plotType) => plotType != 'movement';
+    this.psthEventLacksMovement = Object.keys(this.fullPSTHPurse[this.probeIndex]).every(isNotMovement)
+    // console.log('psthEventLacksMovement: ', this.psthEventLacksMovement);
+
   }
 
   updateRaster(rasterPlotList) {
@@ -1781,7 +1810,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         
       } 
     }
-      // console.log('raster look up: ', this.rasterLookup);
+    // console.log('raster purse - ', this.fullRasterPurse);
+
+    const isNotMovement = (plotType) => plotType.split('.')[0] != 'movement';
+    this.rasterEventLacksMovement = Object.keys(this.fullRasterPurse[this.probeIndex]).every(isNotMovement)
+    // console.log('rasterEventLacksMovement: ', this.rasterEventLacksMovement);
+   
   }
 
   sortData(sort: Sort) {
@@ -1827,32 +1861,29 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         
         this[`rasterListSubscription${count}`] = this.cellListService[`getRasterListLoadedListener${count}`]()
           .subscribe((rasterPlotList) => {
-            this.fullRasterPurse[probe][rasterType] = rasterPlotList;
-            fullRasterPlots[probe][rasterType] = rasterPlotList
+            if (rasterPlotList && rasterPlotList.length > 0) {
+              this.fullRasterPurse[probe][rasterType] = rasterPlotList;
+              fullRasterPlots[probe][rasterType] = rasterPlotList
 
-            if (Object.values(this.fullRasterPurse).length == this.probeIndices.length && Object.values(this.fullRasterPurse[probe]).length == rastersToLoad.length) {
+              if (Object.values(this.fullRasterPurse).length == this.probeIndices.length && Object.values(this.fullRasterPurse[probe]).length == rastersToLoad.length) {
 
-              // console.log('rasters are done loading - downloaded number of probes - ', Object.values(this.fullRasterPurse).length, ' - length of full raster purse: ', Object.values(this.fullRasterPurse[probe]).length);
-              this.allRastersLoaded = true;
-              if (this.allPSTHsLoaded && this.allRastersLoaded) {
-                // console.log('all done (raster side)')
-                // console.log(this.timeB - this.timeA)
-                this.timeDiff = this.timeB - this.timeA;
-                fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
-                // console.log('updating Raster with: ', this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // console.log('updating Raster with: ', fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // console.log('updating PSTH with: ', fullPSTHPlots[this.probeIndex][this.eventType]);
-                // console.log('probe index = ', this.probeIndex, ' - eventType = ', this.eventType, ' - sortType = ', this.sortType);
+                // console.log('rasters are done loading - downloaded number of probes - ', Object.values(this.fullRasterPurse).length, ' - length of full raster purse: ', Object.values(this.fullRasterPurse[probe]).length);
+                this.allRastersLoaded = true;
+                if (this.allPSTHsLoaded && this.allRastersLoaded) {
+      
+                  fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
 
-                // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
-                // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
-
-              } else {
-                // console.log('all rasters are loaded, but not psth')
-                // console.log('Rasters: ', this.allRastersLoaded);
-                // console.log('PSTHs: ', this.allPSTHsLoaded);
+                } else {
+                  // console.log('all rasters are loaded, but not psth')
+                  // console.log('Rasters: ', this.allRastersLoaded);
+                  // console.log('PSTHs: ', this.allPSTHsLoaded);
+                }
               }
+
+            } else {
+              // console.log('no data retrieved for raster query condition: ', rasterQueryInfo)
             }
+            
           });
         count++
       }
@@ -1874,29 +1905,26 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.cellListService[`retrievePSTHList${psthCount}`](psthQueryInfo);
         this[`psthListSubscription${psthCount}`] = this.cellListService[`getPSTHListLoadedListener${psthCount}`]()
           .subscribe((psthPlotList) => {
-            this.fullPSTHPurse[probe][psthsToLoad[ind]] = psthPlotList;
-            fullPSTHPlots[probe][psthsToLoad[ind]] = psthPlotList;
-            if (Object.values(this.fullPSTHPurse).length == this.probeIndices.length && Object.values(this.fullPSTHPurse[probe]).length == psthsToLoad.length) {
-              // console.log('psths are done loading - downloaded number of probes: ', Object.values(this.fullPSTHPurse).length, '- full psth purse length - ', Object.values(this.fullPSTHPurse[probe]).length);
-              this.allPSTHsLoaded = true;
-              if (this.allPSTHsLoaded && this.allRastersLoaded) {
-                this.timeB = new Date;
-                // console.log('all done (psth side)')
-                // console.log(this.timeB - this.timeA)
-                this.timeDiff = this.timeB - this.timeA;
-                fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
-                // console.log('updating PSTH with: ', this.fullPSTHPurse[this.probeIndex][this.eventType]);
-                // console.log('updating PSTH with: ', fullPSTHPlots[this.probeIndex][this.eventType]);
-                // console.log('updating Raster with: ', fullRasterPlots[this.probeIndex][`${this.eventType}.${this.sortType}`]);
-                // console.log('probe index - ', this.probeIndex, 'eventType - ', this.eventType);
-                // console.log('printing fullPSTHPurse: ', this.fullPSTHPurse);
-                // console.log('printing fullRasterPurse: ', this.fullRasterPurse);
-              } else {
-                // console.log('all psths are loaded, but not raster')
-                // console.log('Rasters: ', this.allRastersLoaded);
-                // console.log('PSTHs: ', this.allPSTHsLoaded);
+            if (psthPlotList && psthPlotList.length > 0) {
+              this.fullPSTHPurse[probe][psthsToLoad[ind]] = psthPlotList;
+              fullPSTHPlots[probe][psthsToLoad[ind]] = psthPlotList;
+              if (Object.values(this.fullPSTHPurse).length == this.probeIndices.length && Object.values(this.fullPSTHPurse[probe]).length == psthsToLoad.length) {
+                // console.log('psths are done loading - downloaded number of probes: ', Object.values(this.fullPSTHPurse).length, '- full psth purse length - ', Object.values(this.fullPSTHPurse[probe]).length);
+                this.allPSTHsLoaded = true;
+                if (this.allPSTHsLoaded && this.allRastersLoaded) {
+
+                  fullPlots = [this.fullRasterPurse, this.fullPSTHPurse];
+        
+                } else {
+                  // console.log('all psths are loaded, but not raster')
+                  // console.log('Rasters: ', this.allRastersLoaded);
+                  // console.log('PSTHs: ', this.allPSTHsLoaded);
+                }
               }
+            } else {
+              // console.log('no data returned for following psth query: ', psthQueryInfo)
             }
+            
           });
         psthCount++
       }
