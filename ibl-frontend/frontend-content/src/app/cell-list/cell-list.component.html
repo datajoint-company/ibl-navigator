@@ -35,6 +35,9 @@
       <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
     </div>
     <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
+      <!-- <p>rasterEventLacksMovement: {{rasterEventLacksMovement}}</p> <br>
+      <p>psthEventLacksMovement: {{psthEventLacksMovement}}</p> <br>
+      <p>depthPethEventLacksMovement: {{depthPethEventLacksMovement}}</p> -->
       <div class="order-buttons col-10">
         
         <div class="order-button-content">
@@ -48,8 +51,8 @@
             <label for="feedback">Feedback</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="depthPETHevent" id="movement" value="movement" [checked]="eventType === 'movement'" (change)="order_by_event($event.target.value)">
-            <label for="movement">Movement</label>
+            <input type="radio" name="depthPETHevent" id="movement" value="movement" [checked]="eventType === 'movement'" [disabled]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement" (change)="order_by_event($event.target.value)">
+            <label for="movement" [style.color]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement ? 'lightgrey' : ''">Movement</label>
           </div>
         </div>  
       </div>
@@ -115,11 +118,12 @@
             <label for="feedback">Feedback</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="event" id="movement" value="movement" [checked]="eventType === 'movement'" (change)="order_by_event($event.target.value)">
-            <label for="movement">Movement</label>
+            <input type="radio" name="event" id="movement" value="movement" [disabled]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement" [checked]="eventType === 'movement'" (change)="order_by_event($event.target.value)">
+            <label for="movement" [style.color]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement ? 'lightgrey' : ''">Movement</label>
           </div>
         </div>  
       </div>
+      
       <div class="order-buttons col-10">
         <label for="sort_by"><b>Sort By</b></label>
         <!-- <select name="sort_by" (change)="order_by_sorting($event.target.value)">
