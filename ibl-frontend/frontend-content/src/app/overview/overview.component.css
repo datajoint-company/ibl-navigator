@@ -43,6 +43,10 @@ ol a:hover {
     text-decoration: none;
 }
 
+.code-style {
+    font-family: 'Source Code Pro';
+}
+
 .home-middle-container,
 .home-bottom-container {
     height: auto;
@@ -60,12 +64,14 @@ ol a:hover {
 .detail-container {
     padding: 80px 220px 10px 80px;
 }
-.detail-container p.detail-text {
+.detail-container .detail-text {
     padding: 18px 0 0;
     font-size: 1.25rem;
 }
-.detail-container ol {
+.detail-container ol,
+.detail-container ul {
     font-size: 1.15rem;
+    list-style-position: inside;
 }
 .figures {
     display: inline-flex;
@@ -143,7 +149,8 @@ ol {
         font-size: 1.5rem;
     }
     .top-text-details,
-    .detail-container p.detail-text {
+    .detail-container .detail-text,
+    .detail-text * {
         font-size: 1rem;
     }
     .figures {
@@ -188,7 +195,8 @@ ol {
         padding: 60px 80px 10px 30px;
     }
     .top-text-details,
-    .detail-container p.detail-text {
+    .detail-container .detail-text,
+    .detail-text * {
         font-size: 1rem;
     }
     .figures {
@@ -225,7 +233,8 @@ ol {
         padding: 80px 120px 10px 80px;
     }
     .top-text-details,
-    .detail-container p.detail-text {
+    .detail-container .detail-text,
+    .detail-text * {
         font-size: 1.15rem;
     }
     .each-figure {
@@ -255,7 +264,8 @@ ol {
         padding: 80px 150px 10px 80px;
     }
     .top-text-details,
-    .detail-container p.detail-text {
+    .detail-container .detail-text,
+    .detail-text * {
         font-size: 1.2rem;
     }
 
@@ -283,7 +293,8 @@ ol {
         font-size: 2.75rem;
     }
     .top-text-details,
-    .detail-container p.detail-text {
+    .detail-container .detail-text,
+    .detail-text * {
         font-size: 1.4rem;
     }
 }
@@ -307,7 +318,8 @@ ol {
         font-size: 3rem;
     }
     .top-text-details,
-    .detail-container p.detail-text {
+    .detail-container .detail-text,
+    .detail-text * {
         font-size: 1.6rem;
     }
 

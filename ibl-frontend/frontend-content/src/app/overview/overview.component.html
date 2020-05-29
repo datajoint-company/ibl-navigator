@@ -9,14 +9,14 @@
     <div class="top-text-container">
       <h2 class="top-title">International Brain Laboratory Behavioral Data Portal</h2>
       <div class="top-text-details">
-        <p>The <a href="https://www.internationalbrainlab.com" target="_blank">International Brain Laboratory</a> is a team of 22 experimentalists and theorists, working collaboratively to understand
+        <p>The <a href="https://www.internationalbrainlab.com" target="_blank">International Brain Laboratory</a> is a team of systems and computational neuroscientists, working collaboratively to understand
         the computations that support decision-making in the brain.</p>
-        <p>This portal contains behavioral data from a standardized training pipeline, implemented in 9 labs of 7 institutions
-        worldwide. Mice learn to make decisions that combine incoming visual evidence with internal beliefs about the dynamic
+        <p>This portal contains behavioral data from a standardized training pipeline, implemented across 9 labs of 7 institutions.
+        Mice learn to make decisions that combine incoming visual evidence with internal beliefs about the dynamic
         structure of the environment. Through this portal, users can view behavioral data from mice throughout their training,
         and see the transition from novice to expert behavior unfold.</p>
-        <p>The content of this portal reflects a sub-selected 103 mice out of over 600 mice studied in the project as of 11/30/2019.
-          101 of the mice were used in the publication <em>"A standardized and reproducible method to measure decision-making in mice"</em>.
+        <p>The content of this portal reflects the data associated with around 100 mice up until 2019-11-30, 
+          described in <a target="_blank" href="https://doi.org/10.1101/2020.01.17.909838">The International Brain Laboratory et al. 2020</a>.
         </p>
       </div>
     </div>
@@ -24,14 +24,14 @@
   <div class="home-middle-container">
     <div class="detail-container">
       <h3>Behavioral Paradigm</h3>
-      <p class="detail-text">The IBL behavioral data is generated during a dynamic foraging task for mice<sup><a href="https://doi.org/10.1016/j.neuron.2017.12.013" target="_blank"><span matTooltip="Abbott, L. F. et al. An International Laboratory for Systems and Computational Neuroscience. Neuron 96, 1213–1218 (2017)." matTooltipPosition="above">1</span></a></sup>. Mice are trained to judge the spatial
-      location of a visual stimulus (vertical grating) and report their decision by moving a wheel to the left or right<sup><a href="https://doi.org/10.1016/j.celrep.2017.08.047" target="_blank"><span matTooltip="Burgess, C. P. et al. High-Yield Methods for Accurate Two-Alternative Visual Psychophysics in Head-Fixed Mice. Cell Rep. 20, 2513–2524 (2017)." matTooltipPosition="above">2</span></a></sup>. The
-      contrast of the visual stimulus can be varied so that decisions to range from easy to ambiguous. This allows
-      quantification of the animals' threshold, bias, and lapse rate (below). Data are collected daily in 9 labs of 7 research institutions across three countries,
-      during both a training and an expert phase. For trained mice, the reward probability for each choice option can be
-      experimentally manipulated, encouraging mice to “forage” among different choice alternatives. Behavior during
-      decision-making is characterized both using traditional metrics, such as choice and reaction time, along with video
-      recordings from 3 high-speed cameras.</p>
+      <p class="detail-text">The IBL behavioral data is generated during a visual decision-making 
+        task for mice. Mice are trained to judge the spatial location of a visual stimulus 
+        (vertical grating) and report their decision by turning a wheel to move the stimulus 
+        into the center of the screen. The contrast of the visual stimulus can be varied, so 
+        that decisions range from easy to ambiguous. This allows quantification of the animals' 
+        threshold, bias, and lapse rates (below). Behavior during decision-making is characterized 
+        both using traditional metrics, such as choice and reaction time, along with video recordings 
+        from high-speed cameras.</p>
       <div class="figures col-10 offset-1">
         <div class="small-figures">
           <div class="each-figure">
@@ -64,25 +64,66 @@
           <p class="figure-caption"><i>Animals' bias, threshold, and lapse rate</i></p>
         </div>
       </div>
-      <ol>
+      <!-- <ol>
         <li><a href="https://doi.org/10.1016/j.neuron.2017.12.013" target="_blank">Abbott, L. F. <i>et al.</i> An International Laboratory for Systems and Computational Neuroscience. <i>Neuron </i> <b>96</b>, 1213–1218
         (2017).</a></li>
         <li><a href="https://doi.org/10.1016/j.celrep.2017.08.047" target="_blank">Burgess, C. P. <i>et al</i>. High-Yield Methods for Accurate Two-Alternative Visual Psychophysics in Head-Fixed Mice. <i>Cell Rep. </i>
         <b>20</b>, 2513–2524 (2017).</a></li>
-      </ol>
+      </ol> -->
     </div>
   </div>
 
   <div class="home-bottom-container">
     <div class="detail-container">
       <h3>Training Criteria</h3>
-      <p class="detail-text">The animal was habituated for 3 days and trained after that. The animal is identified as trained based on the following criteria:</p>
-        <ol>
-          <li>0% and 6% contrasts had been introduced to the contrast set.</li>
-          <li>&gt;200 trials were completed with >80% performance on easy (100% and 50% contrasts) trials in each of the last three sessions.</li>
-          <li>A four-parameter psychometric curve (bias, lapse left, lapse right, threshold) fitted to performance on all trials from the last three sessions had parameter values of bias &lt; 16, threshold &lt; 19, and lapses &lt; 0.2.</li>
-        </ol>
-      <p class="detail-text">If the animal has been trained for over 40 days but still did not achieve the training status, the status will be marked as “over40days”.</p>
+      <p class="detail-text">
+        We present here a summary of training stages and a list of criteria. For exact definitions and calculus details, 
+        please see <a target="_blank" href="https://doi.org/10.1101/2020.01.17.909838">The International Brain Laboratory et al. 2020</a>.
+        <br>
+        The animal goes through 3 different phases:
+      </p>
+      <ol class="detail-text">
+        <li>Habituation</li>
+        <li>Training under unbiased stimulus conditions</li>
+        <li>Training under biased stimulus conditions</li>
+      </ol>
+      
+      <p class="detail-text">The training status indicated on the website are: </p>
+      <ul class="detail-text">
+        <li><b>‘Trained’</b> when phase 2 is completed</li>
+        <li><b>‘Over40days’</b> if the mouse has not reached ‘trained’ within 40 days of being into phase 2</li>
+      </ul>
+      
+    </div>
+  </div>
+  <div class="home-middle-container">
+    <div class="detail-container">
+      <h3>How can you view and access the data?</h3>
+      <ol class="detail-text">
+        <li>On this online portal, you can view and browse the data by clicking on ‘mice’ and ‘sessions’ above.</li>
+        <li>To access the data via <a target="_blank" href="https://datajoint.io">DataJoint</a>, you have two options:
+          <ol style="list-style-type: lower-alpha">
+            <li><b>Access the database via <a target="_blank" href="https://jupyterhub.internationalbrainlab.org">JupyterHub</a>:</b> this site hosts several notebooks that allow you to directly interact with the database with DataJoint. You do not need to download or install anything locally.
+              <ol style="list-style-type: lower-roman">
+                <li>Log in with your GitHub account.</li>
+                <li>Read the README</li>
+                <li>Click on <span class="code-style">public_notebooks/Explore IBL pipeline</span> to run several notebooks (one of which replicates figure 2 of the paper).</li>
+              </ol>
+            </li>
+            <br>
+            <li><b>Access the database locally with DataJoint.</b>
+              <ol style="list-style-type: lower-roman">
+                <li>Login to the <a target="_blank" href="https://jupyterhub.internationalbrainlab.org">JupyterHub</a> with your GitHub account as above.</li>
+                <li>Go to <span class="code-style">public_notebooks/Explore IBL pipeline/04-Access the database locally</span> and follow the instructions to obtain DataJoint credentials.</li>
+                <li>Follow the <a target="_blank" href="https://github.com/int-brain-lab/paper-behavior/blob/master/README.md">instructions on GitHub</a> to set up your local environment to run all the scripts that produce the figures.</li>
+              </ol>
+            </li>
+            <br>
+          </ol>
+        </li>
+        <li>Lastly, an archive of the data can be downloaded from <a target="_blank" href="https://doi.org/10.6084/m9.figshare.11636748">FigShare</a>; instructions on how this data can be read using Open Neurophysiology Environment (<b>ONE</b>) are provided there.</li>
+      </ol>
+      <p class="detail-text">Issues with data access? Create an issue at https://github.com/int-brain-lab/paper-behavior. General questions about the paper or data? Email data+behavior@internationalbrainlab.org. </p>
     </div>
   </div>
 </div>
