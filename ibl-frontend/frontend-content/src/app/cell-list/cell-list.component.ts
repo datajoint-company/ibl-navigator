@@ -1250,6 +1250,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   probe_selected(probeInsNum) {
+    // console.log('probe change requested - ', probeInsNum)
     this.cluster_amp_data = [];
     this.cluster_depth_data = [];
     this.firing_rate_data = [];
@@ -1305,26 +1306,80 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log(`data by probe index(${this.probeIndex}): `, this.cellsByProbeIns);
     this.sortedCellsByProbeIns = this.cellsByProbeIns;
 
-    this.plot_data = [{
-      x: this[`${this.toPlot_x}_data`],
-      y: this[`${this.toPlot_y}_data`],
-      customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
-      text: id_data,
-      mode: 'markers',
-      marker: {
-        size: 15,
-        color: 'rgba(255, 255, 255, 0.2)',
-        line: {
-          color: 'rgba(132, 0, 0, 0.5)',
-          width: 2
-        }
+    this.plot_data = [
+      {
+        x: this[`${this.toPlot_x}_data`],
+        y: this[`${this.toPlot_y}_data`],
+        customdata: {"id": id_data, "is_good_cluster": new Array(id_data.length).fill(true)},
+        text: id_data,
+        mode: 'markers',
+        marker: {
+          size: 15,
+          color: 'rgba(255, 255, 255, 0.2)',
+          line: {
+            color: 'rgba(132, 0, 0, 0.5)',
+            width: 2
+          }
+        },
+        showlegend: false,
+      },
+      {
+        name: 'Good Cluster',
+        x: [null],
+        y: [null],
+        mode: 'markers',
+        marker: {
+          size: 15,
+          color: 'rgba(255, 255, 255, 0.05)',
+          line: {
+            color: 'rgba(220, 140, 140, 0.6)',
+            width: 1.7
+          }
+        },
+        showlegend: true,
+      },
+      {
+        name: 'Selected Cluster',
+        x: [null],
+        y: [null],
+        mode: 'markers',
+        marker: {
+          size: 15,
+          color: 'rgba(255, 255, 255, 0.05)',
+          line: {
+            color: 'rgba(0, 0, 0, 1)',
+            width: 1.7
+          }
+        },
+        showlegend: true,
+
+      },
+      {
+        name: 'Bad Cluster',
+        x: [null],
+        y: [null],
+        mode: 'markers',
+        marker: {
+          size: 15,
+          color: 'rgba(255, 255, 255, 0.05)',
+          line: {
+            color: 'rgba(0, 0, 0, 0.2)',
+            width: 1.7
+          }
+        },
+        showlegend: false,
+
       }
-    }];
+    ];
+
     this.clickedClusterId = 0;
     this.order_by_event(this.eventType);
 
     if (this.selectedGoodFilter) {
       this.gcfilter_selected(this.selectedGoodFilter);
+      this.plot_data[3]['showlegend'] = true;
+    } else {
+      this.plot_data[3]['showlegend'] = false;
     }
 
     // reorganizing depth PETH plot view
@@ -1337,8 +1392,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     for (let event of this.eventList) {
       this.depthPethLookup[event] = {data: [], layout: {}, config: {}}
     }
+    // console.log('fetching depthPETH with this probe_idx', this.probeIndex)
+    // console.log('depthPETHlookup (should be empty): ', this.depthPethLookup);
     this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
       .subscribe((plotInfo) => {
+        // console.log('depthPETH retrieved: ', plotInfo)
         this.depthPETH = deepCopy(plotInfo);
         for (let plot of Object.values(plotInfo)) {
           this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
@@ -1403,7 +1461,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   gcfilter_selected(filterID) {
     this.selectedGoodFilter = parseInt(filterID, 10);
-    console.log('good filter ID: ', this.selectedGoodFilter);
+    // console.log('good filter ID: ', this.selectedGoodFilter);
+    // console.log('this.plot_data: ', this.plot_data)
     if (this.selectedGoodFilter) {
       this.plot_data[3]['showlegend'] = true;
     } else {
