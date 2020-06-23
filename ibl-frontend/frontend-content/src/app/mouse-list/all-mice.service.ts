@@ -22,8 +22,12 @@ export class AllMiceService {
   constructor(private http: HttpClient) { }
 
   getAllMice() {
+    console.log('Retrieving mice list');
+    let start = new Date();
     this.http.get(BACKEND_API_URL + `/mice`)
       .subscribe((allMiceData) => {
+        let end = new Date();
+        console.log(`It took ${Number(end) - Number(start)}ms to retrieve the mouse list`)
         this.allMice = allMiceData;
         this.miceLoaded.next(this.allMice);
       });
@@ -58,10 +62,13 @@ export class AllMiceService {
       );
   }
   retrieveMice(miceFilter) {
-    // console.log('POSTing for:', miceFilter);
+    console.log('POSTing for:', miceFilter);
+    let start = new Date();
     this.http.post(BACKEND_API_URL + `/mice/`, miceFilter)
       .subscribe(
         (filteredMiceData) => {
+          let end = new Date();
+          console.log(`It took ${Number(end) - Number(start)}ms to retrieve the mouse list information`)
           this.retrievedMice = filteredMiceData;
           this.requestedMiceLoaded.next(this.retrievedMice);
         },

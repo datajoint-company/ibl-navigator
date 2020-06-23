@@ -90,6 +90,9 @@ export class CellListService {
   private psthListLoaded6 = new Subject();
   private psthListLoaded7 = new Subject();
 
+  private rasterListLoaded_edit = new Subject();
+  private psthListLoaded_edit = new Subject();
+
   private rasterTemplatesLoaded = new Subject();
   private psthTemplatesLoaded = new Subject();
   private gcCriteriaLoaded = new Subject();
@@ -641,6 +644,7 @@ export class CellListService {
       );
   }
 
+
   retrievePSTHList0(queryInfo) {
     this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
       .subscribe(
@@ -752,6 +756,36 @@ export class CellListService {
         }
       );
   }
+
+  // Cleaning code above 
+  retrieveRasterList_edit(queryInfo, count) {
+    this.http.post(BACKEND_API_URL + `/plot/rasterbatch`, queryInfo)
+      .subscribe(
+        (sessionRasterData) => {
+          this[`rasterListLoaded${count}`].next(sessionRasterData);
+        },
+        (err: any) => {
+          console.log(`error in retrieving raster ${count} (edited) list for session`);
+          console.log('query: ', queryInfo)
+          console.error(err);
+        }
+      );
+  }
+
+
+  retrievePSTHList_edit(queryInfo, count) {
+    this.http.post(BACKEND_API_URL + `/plot/psthbatch`, queryInfo)
+      .subscribe(
+        (sessionPSTHData) => {
+          this[`psthListLoaded${count}`].next(sessionPSTHData);
+        },
+        (err: any) => {
+          console.log(`error in retrieving PSTH ${count} (edited) list for session`);
+          console.error(err);
+        }
+      );
+  }
+  // end code clean
 
 
   getCellListLoadedListener() {
@@ -899,5 +933,14 @@ export class CellListService {
   }
   getPSTHListLoadedListener7() {
     return this.psthListLoaded7.asObservable();
+  }
+
+
+  getRasterListLoadedListener_edit(count) {
+    return this[`rasterListLoaded${count}`].asObservable();
+  }
+
+  getPSTHListLoadedListener_edit(count) {
+    return this[`psthListLoaded${count}`].asObservable();
   }
 }
