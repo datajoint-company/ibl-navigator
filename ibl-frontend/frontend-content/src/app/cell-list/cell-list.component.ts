@@ -28,6 +28,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   plot_config;
   cellOnFocus;
 
+
+  BRtestData;
+  BRtestLayout; 
+
   rasterLookup = {};
   psthLookup = {};
 
@@ -53,6 +57,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   
   testPlotData;
   testPlotLayout;
+  fullNavPlotData;
 
   targetClusterRowInfo = [];
   targetClusterDepth;
@@ -211,6 +216,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private rasterListSubscription: Subscription;
   private psthListSubscription: Subscription;
   private probeTrajectorySubscription: Subscription;
+  private depthBrainRegionsSubscription: Subscription;
   private depthRasterTrialSubscription: Subscription;
   private depthPethSubscription: Subscription;
   private spikeAmpTimeSubscription: Subscription;
@@ -533,11 +539,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.loadAllRaster_PSTH()
 
           /// filling probe trajectory info with initial probeIndex value////
+          // and using the same query info to get the brain regions //
           let probeTrajQueryInfo = {};
           probeTrajQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
           probeTrajQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
           probeTrajQueryInfo['probe_idx'] = this.probeIndex;
           this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
+          this.cellListService.retrieveDepthBrainRegions(probeTrajQueryInfo);
           this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
             .subscribe((probeTraj) => {
               if (probeTraj && probeTraj[0]) {
@@ -559,7 +567,72 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // console.log('probeTrajInfo: ', this.probeTrajInfo)
               } 
             });
-          //////////// end of filling probe trajectory info ////////////////
+
+          this.depthBrainRegionsSubscription = this.cellListService.getDepthBrainRegionsLoadedListener()
+            .subscribe((depthBrainRegions) => {
+              console.log('retrieved depth brain regions:', depthBrainRegions)
+              // if (depthBrainRegions && depthBrainRegions[0]) {
+                // depthBrainRegions = depthBrainRegions[0];
+                this.BRtestData = []
+                this.BRtestLayout = {
+                  barmode: 'stack', width: '400', height: '600',
+                  grid: {
+                    rows: 1,
+                    columns: 2,
+                    subplots: [['x1y', 'x2y']]
+                  }
+                }
+                depthBrainRegions['region_boundaries'].forEach((value, index) => {
+                  
+                  if (value[0] && !this.BRtestData.length) {
+                    let trace0 = {
+                      x: ['region'],
+                      y:  [value[0]],
+                      name: '',
+                      marker: {color: `rgb(255, 255, 255)`},
+                      type: 'bar',
+                      xaxis: 'x1'
+                    }
+                    let trace1 = {
+                      x: ['region'],
+                      y:  [value[1] - value[0]],
+                      name: depthBrainRegions['region_label'][index][1],
+                      marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
+                      type: 'bar',
+                      xaxis: 'x1'
+                    }
+                    this.BRtestData.push(trace0, trace1)
+                  } else {
+                    let trace = {
+                      x: ['region'],
+                      y:  [value[1] - value[0]],
+                      name: depthBrainRegions['region_label'][index][1],
+                      marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
+                      type: 'bar',
+                      xaxis: 'x1'
+                    }
+                    this.BRtestData.push(trace)
+                  }
+                  
+                  
+                })
+                console.log('testData: ', this.BRtestData);
+                console.log('testLayout: ', this.BRtestLayout);
+                console.log('plot_data: ', this.plot_data);
+                console.log('BRdata: ', this.BRtestData);
+                let copyPlotData = [...this.plot_data];
+                copyPlotData.forEach((val, ind) => {
+                  val['xaxis'] = 'x2'
+                })
+                
+                this.fullNavPlotData = this.BRtestData.concat(copyPlotData);
+                console.log('this.fullNavPlotData: ', this.fullNavPlotData);
+
+                
+              // }
+            });
+
+          //////////// end of filling probe trajectory and brain region info ////////////////
 
           /////++++++///// start of grabbing depth PETH plot info /////++++++/////
           this.cellListService.getDepthPethTemplate();

@@ -31,7 +31,7 @@ services:
     #cpu_period: 100ms
   ibl-navigator:
     # build: ./ibl-frontend
-    # image: registry.vathes.com/ibl-navigator/frontend:v0.15 # for client deploy
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.16 # for client deploy
     image: registry.vathes.com/ibl-navigator/frontend:v0.2-dev18 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     environment:

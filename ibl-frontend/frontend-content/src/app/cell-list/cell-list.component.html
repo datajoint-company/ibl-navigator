@@ -1,6 +1,8 @@
 <div *ngIf="cells">
   <div class="cell-header">
     <h3>Cells</h3>
+    <plotly-plot [data]="BRtestData" [layout]="BRtestLayout"></plotly-plot>
+    <plotly-plot [data]="fullNavPlotData" [layout]="BRtestLayout"></plotly-plot>
     <h6>(Total clusters for probe {{probeIndex}}: {{cellsByProbeIns.length}})</h6>
     <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}" [queryParams]="{nickname: ${sessionInfo?.subject_nickname}, lab: ${sessionInfo?.session_lab}, project: ${sessionInfo?.session_project}, protocol: ${sessionInfo?.task_protocol}}"></span></div> -->
     <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}" [queryParams]="{nickname: sessionInfo?.subject_nickname, lab: sessionInfo?.session_lab, project: sessionInfo?.session_project, protocol: sessionInfo?.task_protocol}"></span></div>

@@ -10,6 +10,7 @@ const BACKEND_API_URL = environment.backend_url;
 })
 export class CellListService {
   private cellList;
+  private depthBrainRegions;
   private rasterList;
   private psthList;
 
@@ -60,6 +61,7 @@ export class CellListService {
   private waveform;
 
   private cellListLoaded = new Subject();
+  private depthBrainRegionsLoaded = new Subject();
   private rasterListLoaded = new Subject();
   private psthListLoaded = new Subject();
 
@@ -125,6 +127,21 @@ export class CellListService {
         },
         (err: any) => {
           console.log('error in retrieving cell list for session');
+          console.error(err);
+        }
+      );
+  }
+
+  retrieveDepthBrainRegions(queryInfo) {
+    // this.http.post(BACKEND_API_URL + `/plot/depthBrainRegions`, queryInfo)
+    this.http.post(BACKEND_API_URL + `/plot/DBR_dummy`, queryInfo)
+      .subscribe(
+        (sessionDBRData) => {
+          this.depthBrainRegions = sessionDBRData;
+          this.depthBrainRegionsLoaded.next(this.depthBrainRegions);
+        },
+        (err: any) => {
+          console.log('error in retrieving brain regions for session');
           console.error(err);
         }
       );
@@ -790,6 +807,9 @@ export class CellListService {
 
   getCellListLoadedListener() {
     return this.cellListLoaded.asObservable();
+  }
+  getDepthBrainRegionsLoadedListener() {
+    return this.depthBrainRegionsLoaded.asObservable();
   }
   getRasterListLoadedListener() {
     return this.rasterListLoaded.asObservable();

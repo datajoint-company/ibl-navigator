@@ -43,6 +43,8 @@ analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
 test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
+histology = mkvmod('histology')
+test_histology = test_mkvmod('histology')
 
 dj.config['stores'] = {
     'ephys': dict(
@@ -137,6 +139,7 @@ reqmap = {
     'ACGtemplate': plotting_ephys.AutoCorrelogramTemplate,
     'spikeamptimetemplate': plotting_ephys.SpikeAmpTimeTemplate,
     'waveformtemplate': plotting_ephys.WaveformTemplate,
+    'depthbrainregions': test_histology.DepthBrainRegion,
 
 }
 dumps = DateTimeEncoder.dumps
