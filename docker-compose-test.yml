@@ -37,7 +37,7 @@ services:
     environment:
     # - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy
     # - PROD_NODE_BACKEND=https://fakeservices.datajoint.io/api # for client deploy
-    - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org/api # for client deploy
+    - PROD_NODE_BACKEND=https://djcompute-test.internationalbrainlab.org/api # for client deploy
     # - PROD_NODE_BACKEND=https://data.internationalbrainlab.org/api # for public demo deploy
     # - PROD_NODE_BACKEND=http://localhost:3333
     # - DEV_NODE_API=http://localhost:9000/api
@@ -81,7 +81,7 @@ services:
       # - URL=datajoint.io # for testdev deploy
       - URL=internationalbrainlab.org # for client or public demo deploy
       # - SUBDOMAINS=testdev # for testdev deploy
-      - SUBDOMAINS=djcompute # for client deploy
+      - SUBDOMAINS=djcompute-test # for client deploy
       # - SUBDOMAINS=data # for public demo deploy
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
@@ -117,7 +117,7 @@ services:
       - ADD_nodebackend_ENDPOINT=ibl-node-server:3333
       - ADD_nodebackend_PREFIX=/api
       - HTTPS_PASSTHRU=TRUE
-      - SUBDOMAINS=djcompute
+      - SUBDOMAINS=djcompute-test
       - URL=internationalbrainlab.org
       - CERTBOT_HOST=letsencrypt:80
     ports:
