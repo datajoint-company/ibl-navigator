@@ -1,0 +1,50 @@
+# docker-compose up -d --build
+version: '2.4'
+x-net: &net
+  networks:
+      - main
+services:
+  iblapi:
+    extends:
+      file: ./docker-compose-base.yml
+      service: iblapi
+    <<: *net
+  ibl-navigator:
+    extends:
+      file: ./docker-compose-base.yml
+      service: ibl-navigator
+    environment:
+    - PROD_NODE_BACKEND=https://djcompute-test.internationalbrainlab.org/api
+    <<: *net
+  ibl-node-server:
+    extends:
+      file: ./docker-compose-base.yml
+      service: ibl-node-server
+    <<: *net
+  letsencrypt:
+    extends:
+      file: ./docker-compose-base.yml
+      service: letsencrypt
+    environment:
+    - SUBDOMAINS=djcompute-test
+    - URL=internationalbrainlab.org
+    volumes:
+      - ./letsencrypt-keys:/config/etc/letsencrypt
+      - ./letsencrypt/healthcheck.sh:/healthcheck.sh
+    <<: *net
+  nginx:
+    extends:
+      file: ./docker-compose-base.yml
+      service: nginx
+    environment:
+    - SUBDOMAINS=djcompute-test
+    - URL=internationalbrainlab.org
+    volumes:
+      - ./letsencrypt-keys:/etc/letsencrypt:ro
+    <<: *net
+networks:
+    main:
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.28.0.0/16

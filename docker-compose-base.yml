@@ -1,7 +1,11 @@
 # docker-compose up -d --build
 version: '2.4'
-services:     
+x-net: &net
+  networks:
+      - main
+services:
   iblapi:
+    <<: *net
     # build: ./backend
     image: registry.vathes.com/ibl-navigator/iblapi:v0.13 # for client deploy
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.2-dev14 # add -dev ending to testdev tag
@@ -24,33 +28,31 @@ services:
     #   - "5000:5000"
     entrypoint: ["/src/iblapi/run-ibl-api.prod.sh"]
     # entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
-    networks:
-      - main
     # cpus: 0.65
     #cpu_quota: 100000
     #cpu_period: 100ms
   ibl-navigator:
+    <<: *net
     # build: ./ibl-frontend
     image: registry.vathes.com/ibl-navigator/frontend:v0.16 # for client deploy
     # image: registry.vathes.com/ibl-navigator/frontend:v0.2-dev18 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
-    environment:
+    # environment:
     # - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy
     # - PROD_NODE_BACKEND=https://fakeservices.datajoint.io/api # for client deploy
-    - PROD_NODE_BACKEND=https://djcompute-test.internationalbrainlab.org/api # for client deploy
+    # - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org/api # for client deploy
     # - PROD_NODE_BACKEND=https://data.internationalbrainlab.org/api # for public demo deploy
     # - PROD_NODE_BACKEND=http://localhost:3333
     # - DEV_NODE_API=http://localhost:9000/api
     # - DEV_NODE_BACKEND=http://localhost:9000
     healthcheck:
-      test: curl --fail http://localhost:8080 || exit 1
+      test: curl --fail http://localhost:9000 || exit 1
       timeout: 3s
       retries: 20
     # ports:
-    #   - "8080:8080"
-    networks:
-      - main
+    #   - "9000:9000"
   ibl-node-server:
+    <<: *net
     # build: ./node_server
     image: registry.vathes.com/ibl-navigator/node-server:v0.8 # for client deploy
     # image: registry.vathes.com/ibl-navigator/node-server:v0.2-dev6 # add -dev ending to testdev tag
@@ -69,9 +71,8 @@ services:
     #   - ./node_server:/src
     # ports:
     #   - "3333:3333"
-    networks:
-      - main
   letsencrypt:
+    <<: *net
     image: linuxserver/letsencrypt:amd64-0.38.0-ls62
     # image: linuxserver/letsencrypt:amd64-0.38.0-ls62 # from publicdemo
     environment:
@@ -79,9 +80,9 @@ services:
       - PGID=1000
       - EMAIL=service-health@vathes.com
       # - URL=datajoint.io # for testdev deploy
-      - URL=internationalbrainlab.org # for client or public demo deploy
-      # - SUBDOMAINS=testdev # for testdev deploy
-      - SUBDOMAINS=djcompute-test # for client deploy
+      # - URL=internationalbrainlab.org # for client or public demo deploy
+      # # - SUBDOMAINS=testdev # for testdev deploy
+      # - SUBDOMAINS=djcompute # for client deploy
       # - SUBDOMAINS=data # for public demo deploy
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
@@ -99,34 +100,31 @@ services:
     #   - "443:443"
     # cap_add:
     #   - NET_ADMIN
-    volumes:
-      - ./letsencrypt-keys:/config/etc/letsencrypt
-      - ./letsencrypt/healthcheck.sh:/healthcheck.sh
-    networks:
-      - main
+    # volumes:
+    #   - ./letsencrypt-keys:/config/etc/letsencrypt
+    #   - ./letsencrypt/healthcheck.sh:/healthcheck.sh
     # depends_on:
     #   nginx:
     #     condition: service_healthy
   nginx:
+    <<: *net
     image: raphaelguzman/nginx:v0.0.7
     environment:
       - ADD_frontend_TYPE=REST
-      - ADD_frontend_ENDPOINT=ibl-navigator:8080
+      - ADD_frontend_ENDPOINT=ibl-navigator:9000
       - ADD_frontend_PREFIX=/
       - ADD_nodebackend_TYPE=REST
       - ADD_nodebackend_ENDPOINT=ibl-node-server:3333
       - ADD_nodebackend_PREFIX=/api
       - HTTPS_PASSTHRU=TRUE
-      - SUBDOMAINS=djcompute-test
-      - URL=internationalbrainlab.org
+      # - SUBDOMAINS=djcompute
+      # - URL=internationalbrainlab.org
       - CERTBOT_HOST=letsencrypt:80
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./letsencrypt-keys:/etc/letsencrypt:ro
-    networks:
-      - main
+    # volumes:
+    #   - ./letsencrypt-keys:/etc/letsencrypt:ro
     # depends_on:
     #   iblapi:
     #     condition: service_healthy

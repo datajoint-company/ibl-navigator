@@ -97,7 +97,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 COPY ./app.conf /etc/nginx/conf.d/default.conf
 
-# CMD ["http-server","-p", "8080" ,"-a","0.0.0.0"]
+# CMD ["http-server","-p", "9000" ,"-a","0.0.0.0"]
 CMD ["nginx", "-g", "daemon off;"]
-# CMD ["ng","serve","--host","0.0.0.0","--port","8080"]
+# CMD ["ng","serve","--host","0.0.0.0","--port","9000"]
 # CMD tail -f /dev/null

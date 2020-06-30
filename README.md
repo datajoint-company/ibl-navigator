@@ -1,4 +1,14 @@
-## How to build and develop using the new dockerrized app.
+## How to build and develop using the new dockerized app.
+
+### Prerequisites
+
+If not already satisfied, add the following entry into your `/etc/hosts` file at the very top:
+```
+127.0.0.1       fakeservices.datajoint.io
+```
+This will create an alias to your `localhost` based on requests to `fakeservices.datajoint.io`.
+
+### Build
 
 To be 100% sure of the new build to be reflected - use below
 `docker-compose -f docker-compose-dev.yml build --no-cache`
@@ -18,7 +28,7 @@ For detached mode and to add log after the fact
 `docker-compose -f docker-compose-dev.yml logs -f`
 
 To see the production build using `ng build --prod`,
-do the regular docker-compose up then go to localhost:8080
+do the regular docker-compose up then go to localhost:9000
 `docker-compose up --build`
 
 to check inside docker 

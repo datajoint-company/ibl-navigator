@@ -42,11 +42,11 @@ services:
     # - DEV_NODE_API=http://localhost:9000/api
     # - DEV_NODE_BACKEND=http://localhost:9000
     healthcheck:
-      test: curl --fail http://localhost:8080 || exit 1
+      test: curl --fail http://localhost:9000 || exit 1
       timeout: 3s
       retries: 20
     # ports:
-    #   - "8080:8080"
+    #   - "9000:9000"
     networks:
       - main
   ibl-node-server:
@@ -122,7 +122,7 @@ services:
       - SUBDOMAINS=djcompute # for client deploy
       # - SUBDOMAINS=data # for public demo deploy
       - NODE_SERVER=http://ibl-node-server:3333
-      - FRONTEND_SERVER=http://ibl-navigator:8080
+      - FRONTEND_SERVER=http://ibl-navigator:9000
       - LETSENCRYPT_SERVER=http://letsencrypt:80
     healthcheck:
       test: wget --no-check-certificate --quiet --tries=1 --spider https://localhost:443 || exit 1
