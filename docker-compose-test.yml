@@ -131,6 +131,13 @@ services:
       - ./letsencrypt-keys:/etc/letsencrypt:ro
     networks:
       - main
+    depends_on:
+      iblapi:
+        condition: service_healthy
+      ibl-node-server:
+        condition: service_healthy
+      ibl-navigator:
+        condition: service_healthy
 networks:
     main:
         ipam:
