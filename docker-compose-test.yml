@@ -104,12 +104,8 @@ services:
       - ./letsencrypt/healthcheck.sh:/healthcheck.sh
     networks:
       - main
-    depends_on:
-      nginx:
-        condition: service_healthy
-    #   iblapi:
-    #     condition: service_healthy
-    #   ibl-navigator:
+    # depends_on:
+    #   nginx:
     #     condition: service_healthy
   nginx:
     image: raphaelguzman/nginx:v0.0.7
@@ -131,13 +127,13 @@ services:
       - ./letsencrypt-keys:/etc/letsencrypt:ro
     networks:
       - main
-    depends_on:
-      iblapi:
-        condition: service_healthy
-      ibl-node-server:
-        condition: service_healthy
-      ibl-navigator:
-        condition: service_healthy
+    # depends_on:
+    #   iblapi:
+    #     condition: service_healthy
+    #   ibl-node-server:
+    #     condition: service_healthy
+    #   ibl-navigator:
+    #     condition: service_healthy
 networks:
     main:
         ipam:
