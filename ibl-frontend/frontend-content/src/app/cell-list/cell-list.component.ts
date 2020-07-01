@@ -575,12 +575,20 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // depthBrainRegions = depthBrainRegions[0];
                 this.BRtestData = []
                 this.BRtestLayout = {
-                  barmode: 'stack', width: '400', height: '600',
+                  barmode: 'stack', height: '600', width: '900',
                   grid: {
                     rows: 1,
                     columns: 2,
                     subplots: [['x1y', 'x2y']]
-                  }
+                  },
+                  xaxis: {
+                    domain: [0, 0.12],
+                    anchor: 'x1'
+                  },
+                  xaxis2: {
+                    domain: [0.23, 1],
+                    anchor: 'x2'
+                  },
                 }
                 depthBrainRegions['region_boundaries'].forEach((value, index) => {
                   
@@ -591,7 +599,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                       name: '',
                       marker: {color: `rgb(255, 255, 255)`},
                       type: 'bar',
-                      xaxis: 'x1'
+                      xaxis: 'x1',
+                      showlegend: false,
+                      hovertemplate: ''
                     }
                     let trace1 = {
                       x: ['region'],
@@ -599,7 +609,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                       name: depthBrainRegions['region_label'][index][1],
                       marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
                       type: 'bar',
-                      xaxis: 'x1'
+                      xaxis: 'x1',
+                      showlegend: false,
+                      hovertemplate: `${depthBrainRegions['region_label'][index][1]}`
                     }
                     this.BRtestData.push(trace0, trace1)
                   } else {
@@ -609,7 +621,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                       name: depthBrainRegions['region_label'][index][1],
                       marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
                       type: 'bar',
-                      xaxis: 'x1'
+                      xaxis: 'x1',
+                      showlegend: false,
+                      hovertemplate: `${depthBrainRegions['region_label'][index][1]}`
                     }
                     this.BRtestData.push(trace)
                   }
