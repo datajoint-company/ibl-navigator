@@ -13,8 +13,8 @@
 import http from 'k6/http';
 import { check, group, sleep } from 'k6';
 
-var url = 'https://ec2-35-174-113-72.compute-1.amazonaws.com/api/sessions';
-var bearer = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImlibHVzZXIiLCJpYXQiOjE1OTM1MjgyNzIsImV4cCI6MTU5MzYxNDY3Mn0.DSzIhL1pc9Y_JY19z71UgxcRu_DsSVD7PmiZfCbsyaM';
+var url = `https://${__ENV.SUBDOMAIN}.${__ENV.DOMAIN}/api/sessions`;
+var bearer = __ENV.TOKEN;
 
 // // export let options = {
 // //     insecureSkipTLSVerify: true,
@@ -52,9 +52,9 @@ var bearer = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImlibHVzZXIiL
 
 
 export let options = {
-    vus: 12,
+    vus: 1,
     // duration: '90s',
-    iterations: 12,
+    iterations: 1,
     insecureSkipTLSVerify: true,
 };
 export default function() {

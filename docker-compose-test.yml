@@ -1,0 +1,84 @@
+# docker-compose up -d --build
+version: '2.4'
+x-net: &net
+  networks:
+      - main
+services:
+  # datajoint.internationalbrainlab.org:
+  #   image: datajoint/mysql:5.7
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=simple
+  #   <<: *net
+  iblapi:
+    extends:
+      file: ./docker-compose-build.yml
+      service: iblapi
+    # environment:
+    # - DJ_USER=root
+    # - DJ_PASS=simple
+    entrypoint: ["/bin/sh"]
+    command: >
+      -c
+       "
+        ## init test db
+        # pip install git+https://github.com/int-brain-lab/IBL-pipeline.git
+        # MODE=update python /src/iblapi/tests/schema.py;
+        ## serve prod
+        /src/iblapi/run-ibl-api.prod.sh &
+        ## perform tests
+        ## pass healthcheck
+        touch /tmp/pass_check;
+        tail -f /dev/null;
+       "
+    # depends_on:
+    #   datajoint.internationalbrainlab.org:
+    #     condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:5000/v0/lab > /dev/null 2>&1 && [ -f "/tmp/pass_check" ] || exit 1
+      timeout: 3s
+      retries: 20
+    <<: *net
+  ibl-navigator:
+    extends:
+      file: ./docker-compose-build.yml
+      service: ibl-navigator
+    <<: *net
+  ibl-node-server:
+    extends:
+      file: ./docker-compose-build.yml
+      service: ibl-node-server
+    <<: *net
+  fakeservices.datajoint.io:
+    extends:
+      file: ./docker-compose-build.yml
+      service: nginx
+    <<: *net
+  load:
+    image: loadimpact/k6:0.26.2
+    environment:
+    - SUBDOMAIN=fakeservices
+    - DOMAIN=datajoint.io
+    - DEMO_USERNAME=ibluser
+    - DEMO_PASSWORD=teamdjneuro
+    user: root
+    working_dir: /tmp
+    entrypoint: sh
+    command: -c "./k6_run.sh"
+    volumes:
+      - ./load:/tmp
+    depends_on:
+      iblapi:
+        condition: service_healthy
+      ibl-navigator:
+        condition: service_healthy
+      ibl-node-server:
+        condition: service_healthy
+      fakeservices.datajoint.io:
+        condition: service_healthy
+    <<: *net
+networks:
+    main:
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.28.0.0/16
