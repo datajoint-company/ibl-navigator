@@ -299,7 +299,7 @@ def handle_q(subpath, args, proj, **kwargs):
         q = (ephys.DefaultCluster & args).proj(..., *exclude_attrs) * ephys.DefaultCluster.Metrics.proj('firing_rate') 
         print(q)
     elif subpath == 'probetrajectory':
-        traj = ephys.ProbeTrajectory * ephys.InsertionDataSource
+        traj = histology.ProbeTrajectory * histology.InsertionDataSource
 
         traj_latest = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
