@@ -19,11 +19,11 @@ services:
       service: ibl-navigator
     build: 
       context: ./ibl-frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: dev.dockerfile
     image: ibl-navigator:v1.0
     volumes:
-      - ./ibl-frontend/frontend-content/src:/frontend/src
-      - ./ibl-frontend/frontend-content/angular.json:/frontend/angular.json
+      - ./ibl-frontend/frontend-content/src:/app/src
+      - ./ibl-frontend/frontend-content/angular.json:/app/angular.json
     <<: *net
   ibl-node-server:
     extends:
@@ -43,8 +43,8 @@ services:
     - "9000:9000" # frontend
     <<: *net
 networks:
-    main:
-        ipam:
-            driver: default
-            config:
-                - subnet: 10.28.0.0/16
+  main:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.28.0.0/16

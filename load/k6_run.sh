@@ -4,7 +4,10 @@ apk add curl jq
 
 export TOKEN=$(curl -X POST https://${SUBDOMAIN}.${DOMAIN}/api/login -H 'Content-Type: application/json' -d '{"username":"'${DEMO_USERNAME}'","password":"'${DEMO_PASSWORD}'"}' | jq -r .token)
 
-k6 run k6_script.js
+k6 run k6_script.js && k6 run k6_script.js && k6 run k6_script.js
+
+# k6 run k6_script.js
+
 
 # echo $TOKEN
 

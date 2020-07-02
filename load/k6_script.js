@@ -12,6 +12,7 @@
 
 import http from 'k6/http';
 import { check, group, sleep } from 'k6';
+import { Rate } from 'k6/metrics';
 
 var url = `https://${__ENV.SUBDOMAIN}.${__ENV.DOMAIN}/api/sessions`;
 var bearer = __ENV.TOKEN;
@@ -50,12 +51,15 @@ var bearer = __ENV.TOKEN;
 // // // }
 
 
-
+export let errorRate = new Rate('errors');
 export let options = {
-    vus: 1,
+    vus: __ENV.VUS,
     // duration: '90s',
-    iterations: 1,
-    insecureSkipTLSVerify: true,
+    iterations: __ENV.VUS,
+    // insecureSkipTLSVerify: true,
+    thresholds: {
+        errors: ['rate<0.15'], // <15% errors
+    },
 };
 export default function() {
     group('sessions', () => {
@@ -65,10 +69,11 @@ export default function() {
                 'Authorization': 'Bearer ' + bearer,
             },
         };
-        let r = http.get(url, params);
-        check(r, {
-            'status is 200': r.status === 200
+        const res = http.get(url, params);
+        const result = check(res, {
+            'status is 200': (r) => r.status == 200,
         });
+        errorRate.add(!result);
     });
     sleep(1);
 }
