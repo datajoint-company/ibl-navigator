@@ -1,4 +1,4 @@
-# docker-compose up -d --build
+# Do not docker-compose up this file
 version: '2.4'
 x-net: &net
   networks:

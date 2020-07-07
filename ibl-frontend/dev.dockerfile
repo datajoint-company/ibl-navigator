@@ -1,16 +1,5 @@
 # don't build
-FROM node:10.16-slim
-
-RUN \
-    mkdir -p /app/node_modules && \
-    apt-get update && \
-    npm install -g @angular/cli > /dev/null 
-    # && \
-    # npm install -g @angular-devkit/build-angular > /dev/null && \
-    # npm install -g http-server
-# VOLUME /app/node_modules
-CMD ["ng","serve","--host","0.0.0.0","--port","9000","--disable-host-check"]
-# ----------------------
+FROM vathes/angulardev:angcli7.1.4-angbuild0.11.4
 
 HEALTHCHECK       \
     --timeout=3s \ 
@@ -18,12 +7,15 @@ HEALTHCHECK       \
     CMD           \
         curl --fail http://localhost:9000 || exit 1
 
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["ng","serve","--host","0.0.0.0","--port","9000","--disable-host-check"]
 
 WORKDIR /app
 
-
-
 ADD ./frontend-content/package.json /app/
+ADD ./frontend-content/package-lock.json /app/
 RUN \
     npm install && \
     npm install --only=dev

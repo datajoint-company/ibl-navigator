@@ -1,4 +1,5 @@
-# docker-compose up -d --build
+# Use: Local development.
+# docker-compose -f docker-compose-dev.yml up --build
 version: '2.4'
 x-net: &net
   networks:
@@ -21,6 +22,9 @@ services:
       context: ./ibl-frontend
       dockerfile: dev.dockerfile
     image: ibl-navigator:v1.0
+    environment:
+      # - DEV_NODE_BACKEND=http://localhost:3333/api
+      - DEV_NODE_BACKEND=https://fakeservices.datajoint.io/api
     volumes:
       - ./ibl-frontend/frontend-content/src:/app/src
       - ./ibl-frontend/frontend-content/angular.json:/app/angular.json

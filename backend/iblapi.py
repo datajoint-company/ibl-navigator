@@ -226,10 +226,15 @@ def handle_q(subpath, args, proj, **kwargs):
             ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
             nprobe='count(dummy2)',
             keep_all_rows=True)
-        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() * subject.SubjectLab() * subject.SubjectUser() * analyses_behavior.SessionTrainingStatus()
-             & ((reference.Lab() * reference.LabMember())
+        training_status = acquisition.Session.aggr(
+            analyses_behavior.SessionTrainingStatus.proj(dummy3='"x"') * dj.U('dummy3'),
+            nstatus='count(dummy3)',
+            keep_all_rows=True)
+
+        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * training_status * subject.Subject() * subject.SubjectLab() 
+             & (reference.Lab() * reference.LabMember() 
                 & reference.LabMembership().proj('lab_name', 'user_name'))
-            & args)
+             & args)
     elif subpath == 'subjpage':
         print('Args are:', args)
         proj_restr = None

@@ -1,21 +1,18 @@
-# docker-compose up -d --build
+# Use: Continuous integration testing i.e. TravisCI.
+# docker-compose -f docker-compose-test.yml up --build --exit-code-from load
 version: '2.4'
 x-net: &net
   networks:
       - main
 services:
-  # datajoint.internationalbrainlab.org:
-  #   image: datajoint/mysql:5.7
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=simple
-  #   <<: *net
   iblapi:
     extends:
       file: ./docker-compose-dev.yml
       service: iblapi
-    # environment:
-    # - DJ_USER=root
-    # - DJ_PASS=simple
+    environment:
+    - DJ_HOST=${TEST_DJ_HOST}
+    - DJ_USER=${TEST_DJ_USER}
+    - DJ_PASS=${TEST_DJ_PASS}
     entrypoint: ["/bin/sh"]
     command: >
       -c
@@ -30,9 +27,6 @@ services:
         touch /tmp/pass_check;
         tail -f /dev/null;
        "
-    # depends_on:
-    #   datajoint.internationalbrainlab.org:
-    #     condition: service_healthy
     healthcheck:
       test: wget --quiet --tries=1 --spider http://localhost:5000/v0/lab > /dev/null 2>&1 && [ -f "/tmp/pass_check" ] || exit 1
       timeout: 3s
@@ -59,7 +53,7 @@ services:
     - SUBDOMAIN=fakeservices
     - DOMAIN=datajoint.io
     - DEMO_USERNAME=ibluser
-    - DEMO_PASSWORD=teamdjneuro
+    - DEMO_PASSWORD=${DEMO_PASSWORD}
     - VUS=1
     user: root
     working_dir: /tmp

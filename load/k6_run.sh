@@ -11,7 +11,7 @@ k6 run k6_script.js && k6 run k6_script.js && k6 run k6_script.js
 
 # echo $TOKEN
 
-tail -f /dev/null
+# tail -f /dev/null
 
 
 # notes:
