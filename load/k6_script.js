@@ -69,7 +69,10 @@ export default function() {
                 'Authorization': 'Bearer ' + bearer,
             },
         };
-        const res = http.get(url, params);
+        var data = {
+            "__order": "session_start_time DESC"
+        };
+        const res = http.post(url, JSON.stringify(data), params);
         const result = check(res, {
             'status is 200': (r) => r.status == 200,
         });
