@@ -18,7 +18,7 @@ module.exports = {
     },
     cacheMiddleware: (duration) => {
         return (req, res, next) => {
-            let key =  '__express__' + req.originalUrl || req.url
+            let key =  '__express__' + req.originalUrl + Buffer.from(JSON.stringify(req.body)).toString('base64') || req.url + Buffer.from(JSON.stringify(req.body)).toString('base64')
             let cacheContent = memCache.get(key);
             if(cacheContent){
                 res.send( cacheContent );
