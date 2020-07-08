@@ -11,6 +11,7 @@
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
     "mathjax": "^2.7.5",
+    "memory-cache": "~0.2.0",
     "request": "^2.88.0",
     "zone.js": "~0.8.26"
   },

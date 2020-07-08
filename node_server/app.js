@@ -8,6 +8,7 @@ const http = require('http');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('./middleware/utilities').checkAuth;
+const cacheMiddleware = require('./middleware/utilities').cacheMiddleware;
 // const serveStatic = require('serve-static')
 
 request.debug = false;
@@ -186,7 +187,7 @@ app.get('/sessions', checkAuth, (req, res) => {
     });
 })
 
-app.post('/sessions', checkAuth, (req, res) => {
+app.post('/sessions', checkAuth, cacheMiddleware(300), (req, res) => {
     // console.log('posting to filter session page');
     
     request.post(flask_backend + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
