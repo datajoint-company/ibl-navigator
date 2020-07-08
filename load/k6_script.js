@@ -58,7 +58,7 @@ export let options = {
     iterations: __ENV.VUS,
     // insecureSkipTLSVerify: true,
     thresholds: {
-        errors: ['rate<0.15'], // <15% errors
+        errors: [`rate<=${__ENV.FAILURE_RATE}`], // <=20% errors
     },
 };
 export default function() {
