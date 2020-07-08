@@ -65,8 +65,9 @@ export default function() {
     group('sessions', () => {
         var params = {
             headers: {
-                'User-Agent': 'DataJoint',
                 'Authorization': 'Bearer ' + bearer,
+                'Content-Type': 'application/json',
+                'User-Agent': 'DataJoint',
             },
         };
         var data = {

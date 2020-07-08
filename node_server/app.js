@@ -187,7 +187,7 @@ app.get('/sessions', checkAuth, (req, res) => {
     });
 })
 
-app.post('/sessions', checkAuth, cacheMiddleware(300), (req, res) => {
+app.post('/sessions', checkAuth, cacheMiddleware(15*60), (req, res) => {
     // console.log('posting to filter session page');
     
     request.post(flask_backend + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
