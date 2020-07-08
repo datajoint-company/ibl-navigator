@@ -54,7 +54,7 @@ services:
     - DOMAIN=datajoint.io
     - DEMO_USERNAME=ibluser
     - DEMO_PASSWORD=${DEMO_PASSWORD}
-    - VUS=1
+    - VUS=20
     user: root
     working_dir: /tmp
     entrypoint: sh
