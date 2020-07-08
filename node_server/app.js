@@ -7,7 +7,7 @@ const request = require('request');
 const http = require('http');
 const path = require('path');
 const jwt = require('jsonwebtoken');
-const checkAuth = require('./middleware/check-auth');
+const checkAuth = require('./middleware/utilities').checkAuth;
 // const serveStatic = require('serve-static')
 
 request.debug = false;

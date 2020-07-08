@@ -54,8 +54,8 @@ services:
     - DOMAIN=datajoint.io
     - DEMO_USERNAME=ibluser
     - DEMO_PASSWORD=${DEMO_PASSWORD}
-    - VUS=21
-    - FAILURE_RATE="0.2"
+    - VUS=19
+    - FAILURE_RATE="0.45"
     user: root
     working_dir: /tmp
     entrypoint: sh
