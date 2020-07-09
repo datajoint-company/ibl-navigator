@@ -1873,23 +1873,25 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         if (depthBrainRegions && depthBrainRegions[0]) {
           depthBrainRegions = depthBrainRegions[0];
           this.BRtestData = []
-          this.BRtestLayout = {
-            barmode: 'stack', height: '600', width: '900',
-            grid: {
-              rows: 1,
-              columns: 2,
-              subplots: [['x1y', 'x2y']]
-            },
-            xaxis: {
-              domain: [0, 0.12],
-              anchor: 'x1'
-            },
-            xaxis2: {
-              domain: [0.23, 1],
-              anchor: 'x2'
-            },
-          }
+          let annotationField = []
+          
           depthBrainRegions['region_boundaries'].forEach((value, index) => {
+            annotationField.push({
+              x: -0.25,
+              y: `${depthBrainRegions['region_label'][index][0]}`,
+              text: `${depthBrainRegions['region_label'][index][1]}`,
+              xref: 'x1',
+              yref: 'y',
+              font: {
+                size: 9,
+                color: '#949494'
+              },
+              showarrow: true,
+              arrowhead: 0,
+              arrowwidth: 0.5,
+              ax: -35,
+              ay: 0
+            })
             
             if (value[0] && !this.BRtestData.length) {
               let trace0 = {
@@ -1926,9 +1928,28 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               }
               this.BRtestData.push(trace)
             }
-            
+
+            // this.BRtestLayout = {
+            //   barmode: 'stack', height: '600', width: '900',
+            //   grid: {
+            //     rows: 1,
+            //     columns: 2,
+            //     subplots: [['x1y', 'x2y']]
+            //   },
+            //   xaxis: {
+            //     domain: [0, 0.12],
+            //     anchor: 'x1'
+            //   },
+            //   xaxis2: {
+            //     domain: [0.23, 1],
+            //     anchor: 'x2'
+            //   },
+            //   annotation: annotationField
+            // }
             
           })
+
+
           // console.log('testData: ', this.BRtestData);
           // console.log('testLayout: ', this.BRtestLayout);
           // console.log('plot_data: ', this.plot_data);
@@ -1943,6 +1964,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
           this.plot_data_4real = deepCopy(this.fullNavPlotData);
           // console.log('this.plot_data_4real is now: ', this.plot_data_4real)
+
+          this.plot_layout_4real['annotations'] = annotationField
         }
       });
   }
