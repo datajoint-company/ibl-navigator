@@ -437,42 +437,42 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           ];
 
           this.plot_layout = {
-            // updatemenus: [{
-            //   y: 0.55,
-            //   x: -0.1,
-            //   yanchor: 'top',
-            //   buttons: [{
-            //     method: 'restyle',
-            //     args: ['selected_y', 'cluster_depth'],
-            //     label: 'cluster depth (µm)'
-            //   }, 
-            //   {
-            //     method: 'restyle',
-            //     args: ['selected_y', 'cluster_amp'],
-            //     label: 'cluster amp (µV)'
-            //   }, {
-            //     method: 'restyle',
-            //     args: ['selected_y', 'firing_rate'],
-            //     label: 'firing rate'
-            //   }]
-            // },{
-            //   x: 0.3,
-            //   y: -0.25,
-            //   direction: 'right',
-            //   buttons: [{
-            //     method: 'restyle',
-            //     args: ['selected_x', 'cluster_amp'],
-            //     label: 'cluster amp (µV)'
-            //   }, {
-            //     method: 'restyle',
-            //     args: ['selected_x', 'cluster_depth'],
-            //     label: 'cluster depth (µm)'
-            //   }, {
-            //     method: 'restyle',
-            //     args: ['selected_x', 'firing_rate'],
-            //     label: 'firing rate'
-            //   }]
-            // }],
+            updatemenus: [{
+              y: 0.55,
+              x: -0.1,
+              yanchor: 'top',
+              buttons: [{
+                method: 'restyle',
+                args: ['selected_y', 'cluster_depth'],
+                label: 'cluster depth (µm)'
+              }, 
+              {
+                method: 'restyle',
+                args: ['selected_y', 'cluster_amp'],
+                label: 'cluster amp (µV)'
+              }, {
+                method: 'restyle',
+                args: ['selected_y', 'firing_rate'],
+                label: 'firing rate'
+              }]
+            },{
+              x: 0.3,
+              y: -0.25,
+              direction: 'right',
+              buttons: [{
+                method: 'restyle',
+                args: ['selected_x', 'cluster_amp'],
+                label: 'cluster amp (µV)'
+              }, {
+                method: 'restyle',
+                args: ['selected_x', 'cluster_depth'],
+                label: 'cluster depth (µm)'
+              }, {
+                method: 'restyle',
+                args: ['selected_x', 'firing_rate'],
+                label: 'firing rate'
+              }]
+            }],
             hovermode: 'closest',
             showlegend: true,
             legend: {orientation: "h"},
@@ -541,6 +541,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           };
 
           // initially set the navigation plot to show the depth brain region
+          
           this.plot_layout_4real = deepCopy(this.plot_layout_DBR);
           console.log('looking at plot_layout_4real: ', this.plot_layout_4real)
           /////////////////////////////////////////old way - but still in use /////////////////////////////////////////////////////
@@ -1320,68 +1321,71 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('do check ran');
     // console.log('this.clicked cluster id: ', this.clickedClusterId);
     const markerColors = [];
-    // if (this.plot_data && this.plot_data[0]) {
-    //   if (this.plot_data[0]['x'] && this.clickedClusterIndex > -1) {
-    //     for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-    //       if (this.clickedClusterId === i) {
-    //         markerColors.push('rgba(0, 0, 0, 1)'); // black
-    //       } else {
-            
-    //         if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
-    //           markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
-    //         } else if (this.plot_data[0]['customdata.is_good_cluster']) {
-    //           markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
-    //         } else {
-    //           markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-    //       if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
-    //         markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
-    //       } else if (this.plot_data[0]['customdata.is_good_cluster']) {
-    //         markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
-    //       } else {
-    //         markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
-    //       }
-    //     }
-    //   }
-    //   this.plot_data[0]['marker']['line']['color'] = markerColors;
-    // }
-
-    /// new with the added brain depth region color plot
-    if (this.plot_data_4real && this.plot_data_4real[this.plot_data_4real.length - 4]) {
-      if (this.plot_data_4real[this.plot_data_4real.length - 4]['x'] && this.clickedClusterIndex > -1) {
-        for (let i = 0; i < this.plot_data_4real[this.plot_data_4real.length - 4]['x'].length; i++) {
-          // console.log('clicked cluster id is: ', this.clickedClusterId, '--- on round i: ', i)
-          if (this.clickedClusterId === i) {
-            markerColors.push('rgba(0, 0, 0, 1)'); // black
-          } else {
-            
+    if (this.plot_data_4real && this.plot_data_4real[0]) {
+     /// new with the added brain depth region color plot
+      if (this.plot_data_4real && this.plot_data_4real[this.plot_data_4real.length - 4]) {
+        if (this.plot_data_4real[this.plot_data_4real.length - 4]['x'] && this.clickedClusterIndex > -1) {
+          for (let i = 0; i < this.plot_data_4real[this.plot_data_4real.length - 4]['x'].length; i++) {
+            // console.log('clicked cluster id is: ', this.clickedClusterId, '--- on round i: ', i)
+            if (this.clickedClusterId === i) {
+              markerColors.push('rgba(0, 0, 0, 1)'); // black
+            } else {
+              
+              if (this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] && this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'][i]) {
+                markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+              } else if (this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster']) {
+                markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
+              } else {
+                markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+              }
+            }
+          }
+        } else {
+          for (let i = 0; i < this.plot_data_4real[this.plot_data_4real.length - 4]['x'].length; i++) {
             if (this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] && this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'][i]) {
               markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
-            } else if (this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster']) {
+            } else if (this.plot_data[0]['customdata.is_good_cluster']) {
               markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
             } else {
               markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
             }
           }
         }
-      } else {
-        for (let i = 0; i < this.plot_data_4real[this.plot_data_4real.length - 4]['x'].length; i++) {
-          if (this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] && this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'][i]) {
-            markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
-          } else if (this.plot_data[0]['customdata.is_good_cluster']) {
-            markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
-          } else {
-            markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+        this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = markerColors;
+        // console.log('marker colors; ', markerColors)
+      }
+    } else {
+      if (this.plot_data && this.plot_data[0]) {
+        if (this.plot_data[0]['x'] && this.clickedClusterIndex > -1) {
+          for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
+            if (this.clickedClusterId === i) {
+              markerColors.push('rgba(0, 0, 0, 1)'); // black
+            } else {
+              
+              if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
+                markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+              } else if (this.plot_data[0]['customdata.is_good_cluster']) {
+                markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
+              } else {
+                markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+              }
+            }
+          }
+        } else {
+          for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
+            if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
+              markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+            } else if (this.plot_data[0]['customdata.is_good_cluster']) {
+              markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
+            } else {
+              markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+            }
           }
         }
+        this.plot_data[0]['marker']['line']['color'] = markerColors;
       }
-      this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = markerColors;
-      // console.log('marker colors; ', markerColors)
     }
+    
 
   }
   ngOnDestroy() {
@@ -1646,17 +1650,26 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   gcfilter_selected(filterID) {
+    
     // NOTE for self::  previously this.plot_data[0] now becomes this.plot_data_4real[this.plot_data_4real.length - 4] for DBR plot addition
     // so this.plot_data[3] becomes this.plot_data_4real[this.plot_data_4real.length]
     this.selectedGoodFilter = parseInt(filterID, 10);
     // console.log('good filter ID: ', this.selectedGoodFilter);
     // console.log('this.plot_data: ', this.plot_data)
     if (this.selectedGoodFilter) {
-      // this.plot_data[3]['showlegend'] = true;
-      this.plot_data_4real[this.plot_data_4real.length - 1]['showlegend'] = true;
+      
+      if (this.plot_data_4real && this.plot_data_4real[0]) {
+        this.plot_data_4real[this.plot_data_4real.length - 1]['showlegend'] = true;
+      } else {
+        this.plot_data[3]['showlegend'] = true;
+      }
+      
     } else {
-      // this.plot_data[3]['showlegend'] = false;
-      this.plot_data_4real[this.plot_data_4real.length - 1]['showlegend'] = false;
+      if (this.plot_data_4real && this.plot_data_4real[0]) {
+        this.plot_data_4real[this.plot_data_4real.length - 1]['showlegend'] = false;
+      } else {
+        this.plot_data[3]['showlegend'] = false;
+      }
     }
     let goodFilterQueryInfo = {};
     goodFilterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
@@ -1673,8 +1686,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           const is_good_data = [];
           const color_data = [];
           
-          this.plot_data_4real[this.plot_data_4real.length - 4]['customdata'] = {};
-          this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = [];
+          if (this.plot_data_4real && this.plot_data_4real[0]) {
+            this.plot_data_4real[this.plot_data_4real.length - 4]['customdata'] = {};
+            this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = [];
+          } else {
+            this.plot_data[0]['customdata'] = {};
+            this.plot_data[0]['marker']['line']['color'] = [];
+          }
+          
           for (let entry of Object.values(goodClusterList)) {
             if (entry['probe_idx'] === this.probeIndex) {
               id_data.push(entry['cluster_id']);
@@ -1688,10 +1707,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               }
             }
           }
-
-          this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.id'] = id_data;
-          this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] = is_good_data;
-          this.plot_data_4real[this.plot_data_4real.length - 4]['marker.line.color'] = color_data;
+          if (this.plot_data_4real && this.plot_data_4real[0]) {
+            this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.id'] = id_data;
+            this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] = is_good_data;
+            this.plot_data_4real[this.plot_data_4real.length - 4]['marker.line.color'] = color_data;
+          } else {
+            this.plot_data[0]['customdata.id'] = id_data;
+            this.plot_data[0]['customdata.is_good_cluster'] = is_good_data;
+            this.plot_data[0]['marker.line.color'] = color_data;
+          }
+          
           
           this.clickedClusterId = 0;
           this.order_by_event(this.eventType);
@@ -1703,8 +1728,14 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       const id_data = [];
       const is_good_data = [];
       const color_data = [];
-      this.plot_data_4real[this.plot_data_4real.length - 4]['customdata'] = {};
-      this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = [];
+      if (this.plot_data_4real && this.plot_data_4real[0]) {
+        this.plot_data_4real[this.plot_data_4real.length - 4]['customdata'] = {};
+        this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = [];
+      } else {
+        this.plot_data[0]['customdata'] = {};
+        this.plot_data[0]['marker']['line']['color'] = [];
+      }
+      
       for (let entry of Object.values(this.cells)) {
         if (entry['probe_idx'] === this.probeIndex) {
           id_data.push(entry['cluster_id']);
@@ -1714,10 +1745,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           
         }
       }
-
-      this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.id'] = id_data;
-      this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] = is_good_data;
-      this.plot_data_4real[this.plot_data_4real.length - 4]['marker.line.color'] = color_data;
+      if (this.plot_data_4real && this.plot_data_4real[0]) {
+        this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.id'] = id_data;
+        this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] = is_good_data;
+        this.plot_data_4real[this.plot_data_4real.length - 4]['marker.line.color'] = color_data;
+      } else {
+        this.plot_data[0]['customdata.id'] = id_data;
+        this.plot_data[0]['customdata.is_good_cluster'] = is_good_data;
+        this.plot_data[0]['marker.line.color'] = color_data;
+      }
+      
 
       this.clickedClusterId = 0;
       this.order_by_event(this.eventType);
@@ -1786,14 +1823,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       this.plot_data[0].x = this[`${selected_plot}_data`];
       this.toPlot_x = selected_plot;
     }
-
-    if (this.toPlot_y === 'cluster_depth') {
-      this.plot_layout_4real = deepCopy(this.plot_layout_DBR)
-      this.plot_data_4real = deepCopy(this.fullNavPlotData)
-    } else {
-      this.plot_layout_4real = deepCopy(this.plot_layout)
-      this.plot_data_4real = deepCopy(this.plot_data)
+    if (this.fullNavPlotData && this.fullNavPlotData[0]) {
+      if (this.toPlot_y === 'cluster_depth') {
+        this.plot_layout_4real = deepCopy(this.plot_layout_DBR)
+        this.plot_data_4real = deepCopy(this.fullNavPlotData)
+      } else {
+        this.plot_layout['updatemenus'] = [];
+        this.plot_layout_4real = deepCopy(this.plot_layout)
+        this.plot_data_4real = deepCopy(this.plot_data)
+      }
     }
+    
     console.log('looking at plot_layout_4real: ', this.plot_layout_4real)
     console.log('looking at plot_data_4real: ', this.plot_data_4real)
   }
@@ -1899,10 +1939,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           })
           
           this.fullNavPlotData = this.BRtestData.concat(copyPlotData);
-          console.log('this.fullNavPlotData: ', this.fullNavPlotData);
+          // console.log('this.fullNavPlotData: ', this.fullNavPlotData);
 
           this.plot_data_4real = deepCopy(this.fullNavPlotData);
-          console.log('this.plot_data_4real is now: ', this.plot_data_4real)
+          // console.log('this.plot_data_4real is now: ', this.plot_data_4real)
         }
       });
   }
