@@ -23,4 +23,4 @@ RUN \
     chmod +x /src/iblapi/run-ibl-api.prod.sh && \
     chmod +x /src/iblapi/run-ibl-api.dev.sh
 
-COPY --chown=dja:anaconda ["tests", "/src/iblapi/tests"]
+# COPY --chown=dja:anaconda ["tests", "/src/iblapi/tests"]
