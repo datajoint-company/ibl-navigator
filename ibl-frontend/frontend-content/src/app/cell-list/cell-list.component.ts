@@ -29,6 +29,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   cellOnFocus;
 
 
+  plot_layout_DBR;
+  plot_layout_4real;
+  plot_data_4real
   BRtestData;
   BRtestLayout; 
 
@@ -434,47 +437,112 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           ];
 
           this.plot_layout = {
-            updatemenus: [{
-              y: 0.55,
-              x: -0.1,
-              yanchor: 'top',
-              buttons: [{
-                method: 'restyle',
-                args: ['selected_y', 'cluster_depth'],
-                label: 'cluster depth (µm)'
-              }, {
-                method: 'restyle',
-                args: ['selected_y', 'cluster_amp'],
-                label: 'cluster amp (µV)'
-              }, {
-                method: 'restyle',
-                args: ['selected_y', 'firing_rate'],
-                label: 'firing rate'
-              }]
-            },{
-              x: 0.3,
-              y: -0.25,
-              direction: 'right',
-              buttons: [{
-                method: 'restyle',
-                args: ['selected_x', 'cluster_amp'],
-                label: 'cluster amp (µV)'
-              }, {
-                method: 'restyle',
-                args: ['selected_x', 'cluster_depth'],
-                label: 'cluster depth (µm)'
-              }, {
-                method: 'restyle',
-                args: ['selected_x', 'firing_rate'],
-                label: 'firing rate'
-              }]
-            }],
+            // updatemenus: [{
+            //   y: 0.55,
+            //   x: -0.1,
+            //   yanchor: 'top',
+            //   buttons: [{
+            //     method: 'restyle',
+            //     args: ['selected_y', 'cluster_depth'],
+            //     label: 'cluster depth (µm)'
+            //   }, 
+            //   {
+            //     method: 'restyle',
+            //     args: ['selected_y', 'cluster_amp'],
+            //     label: 'cluster amp (µV)'
+            //   }, {
+            //     method: 'restyle',
+            //     args: ['selected_y', 'firing_rate'],
+            //     label: 'firing rate'
+            //   }]
+            // },{
+            //   x: 0.3,
+            //   y: -0.25,
+            //   direction: 'right',
+            //   buttons: [{
+            //     method: 'restyle',
+            //     args: ['selected_x', 'cluster_amp'],
+            //     label: 'cluster amp (µV)'
+            //   }, {
+            //     method: 'restyle',
+            //     args: ['selected_x', 'cluster_depth'],
+            //     label: 'cluster depth (µm)'
+            //   }, {
+            //     method: 'restyle',
+            //     args: ['selected_x', 'firing_rate'],
+            //     label: 'firing rate'
+            //   }]
+            // }],
             hovermode: 'closest',
             showlegend: true,
             legend: {orientation: "h"},
             width: '700'
 
           };
+
+
+          this.plot_layout_DBR = {
+            // updatemenus: [{
+            //   y: 0.55,
+            //   x: -0.1,
+            //   yanchor: 'top',
+            //   buttons: [{
+            //     method: 'restyle',
+            //     args: ['selected_y', 'cluster_depth'],
+            //     label: 'cluster depth (µm)'
+            //   },  
+            //   {
+            //     method: 'restyle',
+            //     args: ['selected_y', 'cluster_amp'],
+            //     label: 'cluster amp (µV)'
+            //   }, {
+            //     method: 'restyle',
+            //     args: ['selected_y', 'firing_rate'],
+            //     label: 'firing rate'
+            //   }]
+            // },{
+            //   x: 0.3,
+            //   y: -0.25,
+            //   direction: 'right',
+            //   buttons: [{
+            //     method: 'restyle',
+            //     args: ['selected_x', 'cluster_amp'],
+            //     label: 'cluster amp (µV)'
+            //   }, {
+            //     method: 'restyle',
+            //     args: ['selected_x', 'cluster_depth'],
+            //     label: 'cluster depth (µm)'
+            //   }, {
+            //     method: 'restyle',
+            //     args: ['selected_x', 'firing_rate'],
+            //     label: 'firing rate'
+            //   }]
+            // }],
+            hovermode: 'closest',
+            showlegend: true,
+            legend: {orientation: "h"},
+            barmode: 'stack', 
+            height: '600', 
+            width: '900',
+            grid: {
+              rows: 1,
+              columns: 2,
+              subplots: [['x1y', 'x2y']]
+            },
+            xaxis: {
+              domain: [0, 0.12],
+              anchor: 'x1'
+            },
+            xaxis2: {
+              domain: [0.23, 1],
+              anchor: 'x2'
+            },
+
+          };
+
+          // initially set the navigation plot to show the depth brain region
+          this.plot_layout_4real = deepCopy(this.plot_layout_DBR);
+          console.log('looking at plot_layout_4real: ', this.plot_layout_4real)
           /////////////////////////////////////////old way - but still in use /////////////////////////////////////////////////////
           const queryInfo = {};
           queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -545,7 +613,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           probeTrajQueryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
           probeTrajQueryInfo['probe_idx'] = this.probeIndex;
           this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
-          this.cellListService.retrieveDepthBrainRegions(probeTrajQueryInfo);
+          // this.cellListService.retrieveDepthBrainRegions(probeTrajQueryInfo);
           this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
             .subscribe((probeTraj) => {
               if (probeTraj && probeTraj[0]) {
@@ -567,84 +635,84 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 // console.log('probeTrajInfo: ', this.probeTrajInfo)
               } 
             });
-
-          this.depthBrainRegionsSubscription = this.cellListService.getDepthBrainRegionsLoadedListener()
-            .subscribe((depthBrainRegions) => {
-              console.log('retrieved depth brain regions:', depthBrainRegions)
-              // if (depthBrainRegions && depthBrainRegions[0]) {
-                // depthBrainRegions = depthBrainRegions[0];
-                this.BRtestData = []
-                this.BRtestLayout = {
-                  barmode: 'stack', height: '600', width: '900',
-                  grid: {
-                    rows: 1,
-                    columns: 2,
-                    subplots: [['x1y', 'x2y']]
-                  },
-                  xaxis: {
-                    domain: [0, 0.12],
-                    anchor: 'x1'
-                  },
-                  xaxis2: {
-                    domain: [0.23, 1],
-                    anchor: 'x2'
-                  },
-                }
-                depthBrainRegions['region_boundaries'].forEach((value, index) => {
+          this.updateDepthBrainRegionInfo(probeTrajQueryInfo)
+          // this.depthBrainRegionsSubscription = this.cellListService.getDepthBrainRegionsLoadedListener()
+          //   .subscribe((depthBrainRegions) => {
+          //     console.log('retrieved depth brain regions:', depthBrainRegions)
+          //     if (depthBrainRegions && depthBrainRegions[0]) {
+          //       depthBrainRegions = depthBrainRegions[0];
+          //       this.BRtestData = []
+          //       this.BRtestLayout = {
+          //         barmode: 'stack', height: '600', width: '900',
+          //         grid: {
+          //           rows: 1,
+          //           columns: 2,
+          //           subplots: [['x1y', 'x2y']]
+          //         },
+          //         xaxis: {
+          //           domain: [0, 0.12],
+          //           anchor: 'x1'
+          //         },
+          //         xaxis2: {
+          //           domain: [0.23, 1],
+          //           anchor: 'x2'
+          //         },
+          //       }
+          //       depthBrainRegions['region_boundaries'].forEach((value, index) => {
                   
-                  if (value[0] && !this.BRtestData.length) {
-                    let trace0 = {
-                      x: ['region'],
-                      y:  [value[0]],
-                      name: '',
-                      marker: {color: `rgb(255, 255, 255)`},
-                      type: 'bar',
-                      xaxis: 'x1',
-                      showlegend: false,
-                      hovertemplate: ''
-                    }
-                    let trace1 = {
-                      x: ['region'],
-                      y:  [value[1] - value[0]],
-                      name: depthBrainRegions['region_label'][index][1],
-                      marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
-                      type: 'bar',
-                      xaxis: 'x1',
-                      showlegend: false,
-                      hovertemplate: `${depthBrainRegions['region_label'][index][1]}`
-                    }
-                    this.BRtestData.push(trace0, trace1)
-                  } else {
-                    let trace = {
-                      x: ['region'],
-                      y:  [value[1] - value[0]],
-                      name: depthBrainRegions['region_label'][index][1],
-                      marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
-                      type: 'bar',
-                      xaxis: 'x1',
-                      showlegend: false,
-                      hovertemplate: `${depthBrainRegions['region_label'][index][1]}`
-                    }
-                    this.BRtestData.push(trace)
-                  }
+          //         if (value[0] && !this.BRtestData.length) {
+          //           let trace0 = {
+          //             x: ['region'],
+          //             y:  [value[0]],
+          //             name: '',
+          //             marker: {color: `rgb(255, 255, 255)`},
+          //             type: 'bar',
+          //             xaxis: 'x1',
+          //             showlegend: false,
+          //             hovertemplate: ''
+          //           }
+          //           let trace1 = {
+          //             x: ['region'],
+          //             y:  [value[1] - value[0]],
+          //             name: depthBrainRegions['region_label'][index][1],
+          //             marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
+          //             type: 'bar',
+          //             xaxis: 'x1',
+          //             showlegend: false,
+          //             hovertemplate: `${depthBrainRegions['region_label'][index][1]}`
+          //           }
+          //           this.BRtestData.push(trace0, trace1)
+          //         } else {
+          //           let trace = {
+          //             x: ['region'],
+          //             y:  [value[1] - value[0]],
+          //             name: depthBrainRegions['region_label'][index][1],
+          //             marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
+          //             type: 'bar',
+          //             xaxis: 'x1',
+          //             showlegend: false,
+          //             hovertemplate: `${depthBrainRegions['region_label'][index][1]}`
+          //           }
+          //           this.BRtestData.push(trace)
+          //         }
                   
                   
-                })
-                console.log('testData: ', this.BRtestData);
-                console.log('testLayout: ', this.BRtestLayout);
-                console.log('plot_data: ', this.plot_data);
-                console.log('BRdata: ', this.BRtestData);
-                let copyPlotData = [...this.plot_data];
-                copyPlotData.forEach((val, ind) => {
-                  val['xaxis'] = 'x2'
-                })
+          //       })
+          //       console.log('testData: ', this.BRtestData);
+          //       console.log('testLayout: ', this.BRtestLayout);
+          //       console.log('plot_data: ', this.plot_data);
+          //       console.log('BRdata: ', this.BRtestData);
+          //       let copyPlotData = [...this.plot_data];
+          //       copyPlotData.forEach((val, ind) => {
+          //         val['xaxis'] = 'x2'
+          //       })
                 
-                this.fullNavPlotData = this.BRtestData.concat(copyPlotData);
-                console.log('this.fullNavPlotData: ', this.fullNavPlotData);
+          //       this.fullNavPlotData = this.BRtestData.concat(copyPlotData);
+          //       console.log('this.fullNavPlotData: ', this.fullNavPlotData);
 
-                
-              // }
-            });
+          //       this.plot_data_4real = deepCopy(this.fullNavPlotData);
+          //     }
+          //   });
 
           //////////// end of filling probe trajectory and brain region info ////////////////
 
@@ -1252,19 +1320,48 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     // console.log('do check ran');
     // console.log('this.clicked cluster id: ', this.clickedClusterId);
     const markerColors = [];
-    if (this.plot_data && this.plot_data[0]) {
-      if (this.plot_data[0]['x'] && this.clickedClusterIndex > -1) {
-        // console.log('clicked index: ', this.clickedClusterIndex)
-        // console.log('clicked id: ', this.clickedClusterId)
-        for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-          // if (this.clickedClusterIndex === i) {
+    // if (this.plot_data && this.plot_data[0]) {
+    //   if (this.plot_data[0]['x'] && this.clickedClusterIndex > -1) {
+    //     for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
+    //       if (this.clickedClusterId === i) {
+    //         markerColors.push('rgba(0, 0, 0, 1)'); // black
+    //       } else {
+            
+    //         if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
+    //           markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+    //         } else if (this.plot_data[0]['customdata.is_good_cluster']) {
+    //           markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
+    //         } else {
+    //           markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
+    //       if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
+    //         markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+    //       } else if (this.plot_data[0]['customdata.is_good_cluster']) {
+    //         markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
+    //       } else {
+    //         markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
+    //       }
+    //     }
+    //   }
+    //   this.plot_data[0]['marker']['line']['color'] = markerColors;
+    // }
+
+    /// new with the added brain depth region color plot
+    if (this.plot_data_4real && this.plot_data_4real[this.plot_data_4real.length - 4]) {
+      if (this.plot_data_4real[this.plot_data_4real.length - 4]['x'] && this.clickedClusterIndex > -1) {
+        for (let i = 0; i < this.plot_data_4real[this.plot_data_4real.length - 4]['x'].length; i++) {
+          // console.log('clicked cluster id is: ', this.clickedClusterId, '--- on round i: ', i)
           if (this.clickedClusterId === i) {
             markerColors.push('rgba(0, 0, 0, 1)'); // black
           } else {
             
-            if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
+            if (this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] && this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'][i]) {
               markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
-            } else if (this.plot_data[0]['customdata.is_good_cluster']) {
+            } else if (this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster']) {
               markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
             } else {
               markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
@@ -1272,8 +1369,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           }
         }
       } else {
-        for (let i = 0; i < this.plot_data[0]['x'].length; i++) {
-          if (this.plot_data[0]['customdata.is_good_cluster'] && this.plot_data[0]['customdata.is_good_cluster'][i]) {
+        for (let i = 0; i < this.plot_data_4real[this.plot_data_4real.length - 4]['x'].length; i++) {
+          if (this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] && this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'][i]) {
             markerColors.push('rgba(220, 140, 140, 0.4)'); // regular red
           } else if (this.plot_data[0]['customdata.is_good_cluster']) {
             markerColors.push('rgba(0, 0, 0, 0.2)'); // gray
@@ -1282,8 +1379,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           }
         }
       }
-      this.plot_data[0]['marker']['line']['color'] = markerColors;
-      
+      this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = markerColors;
+      // console.log('marker colors; ', markerColors)
     }
 
   }
@@ -1469,6 +1566,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       this.plot_data[3]['showlegend'] = false;
     }
 
+    this.updateDepthBrainRegionInfo(probeTrajQueryInfo)
+
     // reorganizing depth PETH plot view
     this.cellListService.retrieveDepthPethPlot({
       'subject_uuid': this.sessionInfo['subject_uuid'],
@@ -1547,13 +1646,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   gcfilter_selected(filterID) {
+    // NOTE for self::  previously this.plot_data[0] now becomes this.plot_data_4real[this.plot_data_4real.length - 4] for DBR plot addition
+    // so this.plot_data[3] becomes this.plot_data_4real[this.plot_data_4real.length]
     this.selectedGoodFilter = parseInt(filterID, 10);
     // console.log('good filter ID: ', this.selectedGoodFilter);
     // console.log('this.plot_data: ', this.plot_data)
     if (this.selectedGoodFilter) {
-      this.plot_data[3]['showlegend'] = true;
+      // this.plot_data[3]['showlegend'] = true;
+      this.plot_data_4real[this.plot_data_4real.length - 1]['showlegend'] = true;
     } else {
-      this.plot_data[3]['showlegend'] = false;
+      // this.plot_data[3]['showlegend'] = false;
+      this.plot_data_4real[this.plot_data_4real.length - 1]['showlegend'] = false;
     }
     let goodFilterQueryInfo = {};
     goodFilterQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
@@ -1569,8 +1672,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           const id_data = [];
           const is_good_data = [];
           const color_data = [];
-          this.plot_data[0]['customdata'] = {};
-          this.plot_data[0]['marker']['line']['color'] = [];
+          
+          this.plot_data_4real[this.plot_data_4real.length - 4]['customdata'] = {};
+          this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = [];
           for (let entry of Object.values(goodClusterList)) {
             if (entry['probe_idx'] === this.probeIndex) {
               id_data.push(entry['cluster_id']);
@@ -1585,9 +1689,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             }
           }
 
-          this.plot_data[0]['customdata.id'] = id_data;
-          this.plot_data[0]['customdata.is_good_cluster'] = is_good_data;
-          this.plot_data[0]['marker.line.color'] = color_data;
+          this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.id'] = id_data;
+          this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] = is_good_data;
+          this.plot_data_4real[this.plot_data_4real.length - 4]['marker.line.color'] = color_data;
           
           this.clickedClusterId = 0;
           this.order_by_event(this.eventType);
@@ -1599,8 +1703,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       const id_data = [];
       const is_good_data = [];
       const color_data = [];
-      this.plot_data[0]['customdata'] = {};
-      this.plot_data[0]['marker']['line']['color'] = [];
+      this.plot_data_4real[this.plot_data_4real.length - 4]['customdata'] = {};
+      this.plot_data_4real[this.plot_data_4real.length - 4]['marker']['line']['color'] = [];
       for (let entry of Object.values(this.cells)) {
         if (entry['probe_idx'] === this.probeIndex) {
           id_data.push(entry['cluster_id']);
@@ -1611,9 +1715,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
       }
 
-      this.plot_data[0]['customdata.id'] = id_data;
-      this.plot_data[0]['customdata.is_good_cluster'] = is_good_data;
-      this.plot_data[0]['marker.line.color'] = color_data;
+      this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.id'] = id_data;
+      this.plot_data_4real[this.plot_data_4real.length - 4]['customdata.is_good_cluster'] = is_good_data;
+      this.plot_data_4real[this.plot_data_4real.length - 4]['marker.line.color'] = color_data;
 
       this.clickedClusterId = 0;
       this.order_by_event(this.eventType);
@@ -1669,17 +1773,31 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   restylePlot(data) {
-    // console.log('restyling the plot: ', data);
+    console.log('restyling the plot: ', data);
     if (data[0]['selected_y']) {
+      
       let selected_plot = data[0]['selected_y'];
+      console.log('y axis to change to: ', selected_plot)
       this.plot_data[0].y = this[`${selected_plot}_data`];
       this.toPlot_y = selected_plot;
     } else if (data[0]['selected_x']) {
       let selected_plot = data[0]['selected_x'];
+      console.log('x axis to change to: ', selected_plot)
       this.plot_data[0].x = this[`${selected_plot}_data`];
       this.toPlot_x = selected_plot;
     }
+
+    if (this.toPlot_y === 'cluster_depth') {
+      this.plot_layout_4real = deepCopy(this.plot_layout_DBR)
+      this.plot_data_4real = deepCopy(this.fullNavPlotData)
+    } else {
+      this.plot_layout_4real = deepCopy(this.plot_layout)
+      this.plot_data_4real = deepCopy(this.plot_data)
+    }
+    console.log('looking at plot_layout_4real: ', this.plot_layout_4real)
+    console.log('looking at plot_data_4real: ', this.plot_data_4real)
   }
+
 
   order_by_event(eventType) {
     // console.log('event order selected!: ', eventType);
@@ -1704,7 +1822,91 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.raster_config = [];
     this.updateRaster(this.fullRasterPurse[this.probeIndex][`${this.eventType}.${this.sortType}`]);
   }
+  /////////////// for depth brain region plot ////////////
+  updateDepthBrainRegionInfo(queryInfo) {
 
+    this.cellListService.retrieveDepthBrainRegions(queryInfo);
+    console.log('updating depth brain region - ')
+    this.depthBrainRegionsSubscription = this.cellListService.getDepthBrainRegionsLoadedListener()
+      .subscribe((depthBrainRegions) => {
+        console.log('retrieved depth brain regions:', depthBrainRegions)
+        if (depthBrainRegions && depthBrainRegions[0]) {
+          depthBrainRegions = depthBrainRegions[0];
+          this.BRtestData = []
+          this.BRtestLayout = {
+            barmode: 'stack', height: '600', width: '900',
+            grid: {
+              rows: 1,
+              columns: 2,
+              subplots: [['x1y', 'x2y']]
+            },
+            xaxis: {
+              domain: [0, 0.12],
+              anchor: 'x1'
+            },
+            xaxis2: {
+              domain: [0.23, 1],
+              anchor: 'x2'
+            },
+          }
+          depthBrainRegions['region_boundaries'].forEach((value, index) => {
+            
+            if (value[0] && !this.BRtestData.length) {
+              let trace0 = {
+                x: ['region'],
+                y:  [value[0]],
+                name: '',
+                marker: {color: `rgb(255, 255, 255)`},
+                type: 'bar',
+                xaxis: 'x1',
+                showlegend: false,
+                hovertemplate: ''
+              }
+              let trace1 = {
+                x: ['region'],
+                y:  [value[1] - value[0]],
+                name: depthBrainRegions['region_label'][index][1],
+                marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
+                type: 'bar',
+                xaxis: 'x1',
+                showlegend: false,
+                hovertemplate: `${depthBrainRegions['region_label'][index][1]}`
+              }
+              this.BRtestData.push(trace0, trace1)
+            } else {
+              let trace = {
+                x: ['region'],
+                y:  [value[1] - value[0]],
+                name: depthBrainRegions['region_label'][index][1],
+                marker: {color: `rgb(${depthBrainRegions['region_color'][index][0]}, ${depthBrainRegions['region_color'][index][1]}, ${depthBrainRegions['region_color'][index][2]})`},
+                type: 'bar',
+                xaxis: 'x1',
+                showlegend: false,
+                hovertemplate: `${depthBrainRegions['region_label'][index][1]}`
+              }
+              this.BRtestData.push(trace)
+            }
+            
+            
+          })
+          // console.log('testData: ', this.BRtestData);
+          // console.log('testLayout: ', this.BRtestLayout);
+          // console.log('plot_data: ', this.plot_data);
+          // console.log('BRdata: ', this.BRtestData);
+          let copyPlotData = [...this.plot_data];
+          copyPlotData.forEach((val, ind) => {
+            val['xaxis'] = 'x2'
+          })
+          
+          this.fullNavPlotData = this.BRtestData.concat(copyPlotData);
+          console.log('this.fullNavPlotData: ', this.fullNavPlotData);
+
+          this.plot_data_4real = deepCopy(this.fullNavPlotData);
+          console.log('this.plot_data_4real is now: ', this.plot_data_4real)
+        }
+      });
+  }
+  /////////////end depth brain region plot //////////////
   updatePSTH(psthPlotList) {
     // console.log('psth plot list - ', psthPlotList);
     this.psthPlotList = psthPlotList;

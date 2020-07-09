@@ -424,7 +424,7 @@ app.post('/plot/cluster', checkAuth, (req, res) => {
 })
 
 app.post('/plot/depthBrainRegions', checkAuth, (req, res) => {
-    request.post(flask_backend + '/v0/depthbrainregions', { form: req.body, timeout: 12000}, function (error, httpResponse, body) {
+    request.post(flask_backend + '/v0/_q/depthbrainregions', { form: req.body, timeout: 12000}, function (error, httpResponse, body) {
         if (error) {
             console.error('error [depth brain regions fetch]: ', error);
             console.log('error code: ', error.code);

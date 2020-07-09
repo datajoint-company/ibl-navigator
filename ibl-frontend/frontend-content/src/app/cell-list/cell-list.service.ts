@@ -133,8 +133,8 @@ export class CellListService {
   }
 
   retrieveDepthBrainRegions(queryInfo) {
-    // this.http.post(BACKEND_API_URL + `/plot/depthBrainRegions`, queryInfo)
-    this.http.post(BACKEND_API_URL + `/plot/DBR_dummy`, queryInfo)
+    this.http.post(BACKEND_API_URL + `/plot/depthBrainRegions`, queryInfo)
+    // this.http.post(BACKEND_API_URL + `/plot/DBR_dummy`, queryInfo)
       .subscribe(
         (sessionDBRData) => {
           this.depthBrainRegions = sessionDBRData;
