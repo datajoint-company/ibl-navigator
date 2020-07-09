@@ -60,7 +60,7 @@ services:
     # - VUS=14  # t3
     # - VUS=9  # t3a
     ##  w/ WORKER_COUNT=1
-    # - VUS=?  # t2
+    # - VUS=13  # t2
     # - VUS=?  # t3
     # - VUS=?  # t3a
     - FAILURE_RATE="0.45"

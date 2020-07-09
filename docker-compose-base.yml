@@ -1,4 +1,5 @@
-# Do not docker-compose up this file
+# Do NOT `docker-compose up` this file.
+# It is simply a base that others extend based on primary function.
 version: '2.4'
 x-net: &net
   networks:
@@ -7,7 +8,7 @@ services:
   iblapi:
     <<: *net
     # build: ./backend
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.13 # for client deploy
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.14 # for client deploy
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.2-dev14 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3 # for public demo
     environment:
@@ -34,7 +35,7 @@ services:
   ibl-navigator:
     <<: *net
     # build: ./ibl-frontend
-    image: registry.vathes.com/ibl-navigator/frontend:v0.16 # for client deploy
+    image: registry.vathes.com/ibl-navigator/frontend:v0.17 # for client deploy
     # image: registry.vathes.com/ibl-navigator/frontend:v0.2-dev18 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8 # for public demo
     # environment:
@@ -54,7 +55,7 @@ services:
   ibl-node-server:
     <<: *net
     # build: ./node_server
-    image: registry.vathes.com/ibl-navigator/node-server:v0.8 # for client deploy
+    image: registry.vathes.com/ibl-navigator/node-server:v0.9 # for client deploy
     # image: registry.vathes.com/ibl-navigator/node-server:v0.2-dev6 # add -dev ending to testdev tag
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3 # for public demo
     environment:
@@ -86,7 +87,7 @@ services:
       # - SUBDOMAINS=data # for public demo deploy
       - TZ=Europe/London
       - ONLY_SUBDOMAINS=true
-      - STAGING=true # UNcomment for testdev
+      # - STAGING=true # UNcomment for testdev
       - VALIDATION=http
     healthcheck:
       # test: ["CMD-SHELL","if","[", "$$(expr", "$$(date", "+%s)","-","$$(stat","-c","%Y","$$(ls","-la","/config/etc/letsencrypt/live/*.*/fullchain.pem","|","awk","'{print","sprintf(\"%s/%s\",\"/config/etc/letsencrypt/live/*.*\",$$11)}')))","-lt","\"7776000\"","];","then","exit","0;else","exit","1;fi"]
