@@ -13,6 +13,7 @@ services:
     - DJ_HOST=${TEST_DJ_HOST}
     - DJ_USER=${TEST_DJ_USER}
     - DJ_PASS=${TEST_DJ_PASS}
+    - WORKER_COUNT=1
     entrypoint: ["/bin/sh"]
     command: >
       -c
@@ -54,6 +55,7 @@ services:
     - DOMAIN=datajoint.io
     - DEMO_USERNAME=ibluser
     - DEMO_PASSWORD=${DEMO_PASSWORD}
+    ##  w/ WORKER_COUNT=4
     - VUS=19  # t2
     # - VUS=14  # t3
     # - VUS=9  # t3a
