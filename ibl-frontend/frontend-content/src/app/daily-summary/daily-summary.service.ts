@@ -28,10 +28,13 @@ export class DailySummaryService {
 
   getSummary(summaryFilter) {
     // console.log('fetching for full summary');
-    // console.log('POSTing for:', summaryFilter);
+    console.log('POSTing for:', summaryFilter);
+    let start = new Date();
     this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData: Array<Object>) => {
+          let end = new Date();
+          console.log(`It took ${Number(end) - Number(start)}ms to retrieve the daily summary information`)
           // console.log('length of SummaryData: ', Object.entries(filteredSummaryData).length);
           this.dailySummary = filteredSummaryData;
           // console.log('dailySummary data are: ');
@@ -50,9 +53,13 @@ export class DailySummaryService {
   }
 
   getSummary2(summaryFilter) {
+    console.log('POSTing for:', summaryFilter);
+    let start = new Date();
     this.http.post(BACKEND_API_URL + `/summary/`, summaryFilter, { responseType: 'json' })
       .subscribe(
         (filteredSummaryData: Array<Object>) => {
+          let end = new Date();
+          console.log(`It took ${Number(end) - Number(start)}ms to retrieve the filtered daily summary information`)
           this.dailySummary2 = filteredSummaryData;
           this.dailySummary2Loaded.next(this.dailySummary2);
         },
