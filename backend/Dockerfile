@@ -1,6 +1,9 @@
 FROM raphaelguzman/djlab:py3.6-debian
 
-#RUN pip uninstall -y datajoint && pip install git+https://github.com/dimitri-yatsenko/datajoint-python.git@dev#egg=datajoint-python
+# RUN \
+#     pip uninstall -y datajoint && \
+#     pip install \
+#         git+https://github.com/dimitri-yatsenko/datajoint-python.git@dev#egg=datajoint-python
 
 RUN pip install --upgrade --pre datajoint
 

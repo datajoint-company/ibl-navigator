@@ -212,7 +212,8 @@ def handle_q(subpath, args, proj, **kwargs):
     post_process = None
     if subpath == 'sessionpage':
         sess_proj = acquisition.Session().aggr(
-            acquisition.SessionProject().proj('session_project', dummy2='"x"') * dj.U('dummy2'),
+            acquisition.SessionProject().proj('session_project', dummy2='"x"')
+            * dj.U('dummy2'),
             session_project='IFNULL(session_project, "unassigned")',
             keep_all_rows=True
         )
@@ -231,8 +232,9 @@ def handle_q(subpath, args, proj, **kwargs):
             nstatus='count(dummy3)',
             keep_all_rows=True)
 
-        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * training_status * subject.Subject() * subject.SubjectLab() 
-             & (reference.Lab() * reference.LabMember() 
+        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * training_status
+             * subject.Subject() * subject.SubjectLab()
+             & (reference.Lab() * reference.LabMember()
                 & reference.LabMembership().proj('lab_name', 'user_name'))
              & args)
     elif subpath == 'subjpage':

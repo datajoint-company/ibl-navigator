@@ -56,14 +56,14 @@ services:
     - DEMO_USERNAME=ibluser
     - DEMO_PASSWORD=${DEMO_PASSWORD}
     ##  w/ WORKER_COUNT=4
-    - VUS=19  # t2
-    # - VUS=14  # t3
-    # - VUS=9  # t3a
+    - VUS=19    # t2  100.0%
+    # - VUS=14  # t3   73.7%
+    # - VUS=9   # t3a  47.4%
     ##  w/ WORKER_COUNT=1
-    # - VUS=13  # t2
-    # - VUS=?  # t3
-    # - VUS=?  # t3a
-    - FAILURE_RATE="0.45"
+    # - VUS=13  # t2  100.0%
+    # - VUS=13  # t3  100.0%
+    # - VUS=7   # t3a  53.8%
+    - FAILURE_RATE="0.15"
     user: root
     working_dir: /tmp
     entrypoint: sh
