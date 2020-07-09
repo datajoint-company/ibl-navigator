@@ -31,7 +31,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   plot_layout_DBR;
   plot_layout_4real;
-  plot_data_4real
+  plot_data_4real;
+  annotationField;
   BRtestData;
   BRtestLayout; 
 
@@ -1825,7 +1826,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     }
     if (this.fullNavPlotData && this.fullNavPlotData[0]) {
       if (this.toPlot_y === 'cluster_depth') {
+
         this.plot_layout_4real = deepCopy(this.plot_layout_DBR)
+        this.plot_layout_4real['annotations'] = this.annotationField
         this.plot_data_4real = deepCopy(this.fullNavPlotData)
       } else {
         this.plot_layout['updatemenus'] = [];
@@ -1873,10 +1876,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         if (depthBrainRegions && depthBrainRegions[0]) {
           depthBrainRegions = depthBrainRegions[0];
           this.BRtestData = []
-          let annotationField = []
+          this.annotationField = []
           
           depthBrainRegions['region_boundaries'].forEach((value, index) => {
-            annotationField.push({
+            this.annotationField.push({
               x: -0.25,
               y: `${depthBrainRegions['region_label'][index][0]}`,
               text: `${depthBrainRegions['region_label'][index][1]}`,
@@ -1965,7 +1968,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.plot_data_4real = deepCopy(this.fullNavPlotData);
           // console.log('this.plot_data_4real is now: ', this.plot_data_4real)
 
-          this.plot_layout_4real['annotations'] = annotationField
+          this.plot_layout_4real['annotations'] = this.annotationField
         }
       });
   }
