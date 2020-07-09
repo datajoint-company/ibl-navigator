@@ -43,40 +43,41 @@
   <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
   <div class="row">
     <br />
-    <div *ngIf="plot_data_4real && plot_data_4real[0]" class="cluster-nav-plot-area col-7 col-xl-6">
-      <div class="yaxis-selector-plot-area">
-      <div class="alternative_plot_buttons y_axis">
-        <label for="y_label"><b>y axis</b></label>
-        <div class="radio-option">
-          <input type="radio" name="navplot_y_label" id="cluster_depth_y" value="cluster_depth" [checked]="toPlot_y === 'cluster_depth'" (change)="restylePlot([{selected_y: $event.target.value}])">
-          <label for="cluster_depth_y">cluster depth</label>
-        </div>
-        <div class="radio-option">
-          <input type="radio" name="navplot_y_label" id="cluster_amp_y" value="cluster_amp" [checked]="toPlot_y === 'cluster_amp'" (change)="restylePlot([{selected_y: $event.target.value}])">
-          <label for="cluster_amp_y">cluster amp</label>
-        </div>
-        <div class="radio-option">
-          <input type="radio" name="navplot_y_label" id="firing _rate_y" value="firing_rate" [checked]="toPlot_y === 'firing_rate'" (change)="restylePlot([{selected_y: $event.target.value}])">
-          <label for="firing _rate_y">firing rate</label>
-        </div>
-      </div> 
+    <div class="cluster-nav-plot-area col-7 col-xl-6">
+      <div *ngIf="plot_data_4real && plot_data_4real[0]" class="yaxis-selector-plot-area">
+        <div class="alternative_plot_buttons y_axis">
+          <label for="y_label"><b>y axis</b></label>
+          <div class="radio-option">
+            <input type="radio" name="navplot_y_label" id="cluster_depth_y" value="cluster_depth" [checked]="toPlot_y === 'cluster_depth'" (change)="restylePlot([{selected_y: $event.target.value}])">
+            <label for="cluster_depth_y" [style.color]="toPlot_x === 'cluster_depth' ? 'lightgrey' : ''">cluster depth</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="navplot_y_label" id="cluster_amp_y" value="cluster_amp" [checked]="toPlot_y === 'cluster_amp'" (change)="restylePlot([{selected_y: $event.target.value}])">
+            <label for="cluster_amp_y" [style.color]="toPlot_x === 'cluster_amp' ? 'lightgrey' : ''">cluster amp</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="navplot_y_label" id="firing _rate_y" value="firing_rate" [checked]="toPlot_y === 'firing_rate'" (change)="restylePlot([{selected_y: $event.target.value}])">
+            <label for="firing _rate_y" [style.color]="toPlot_x === 'firing_rate' ? 'lightgrey' : ''">firing rate</label>
+          </div>
+        </div> 
       
-      <!-- <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot> -->
-      <plotly-plot [data]="plot_data_4real" [layout]="plot_layout_4real" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+        <plotly-plot [data]="plot_data_4real" [layout]="plot_layout_4real" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
       </div>
-      <div class="alternative_plot_buttons x_axis">
+      <plotly-plot *ngIf="!plot_data_4real || !plot_data_4real[0]" [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+
+      <div *ngIf="plot_data_4real && plot_data_4real[0]" class="alternative_plot_buttons x_axis">
         <label for="x_label"><b>x axis</b></label>
         <div class="radio-option">
           <input type="radio" name="navplot_x_label" id="cluster_amp_x" value="cluster_amp" [checked]="toPlot_x === 'cluster_amp'" (change)="restylePlot([{selected_x: $event.target.value}])">
-          <label for="cluster_amp_x">cluster amp</label>
+          <label for="cluster_amp_x" [style.color]="toPlot_y === 'cluster_amp' ? 'lightgrey' : ''">cluster amp</label>
         </div>
         <div class="radio-option">
           <input type="radio" name="navplot_x_label" id="cluster_depth_x" value="cluster_depth" [checked]="toPlot_x === 'cluster_depth'" (change)="restylePlot([{selected_x: $event.target.value}])">
-          <label for="cluster_depth_x">cluster depth</label>
+          <label for="cluster_depth_x" [style.color]="toPlot_y === 'cluster_depth' ? 'lightgrey' : ''">cluster depth</label>
         </div>
         <div class="radio-option">
           <input type="radio" name="navplot_x_label" id="firing _rate_x" value="firing_rate" [checked]="toPlot_x === 'firing_rate'" (change)="restylePlot([{selected_x: $event.target.value}])">
-          <label for="firing _rate_x">firing rate</label>
+          <label for="firing _rate_x" [style.color]="toPlot_y === 'firing_rate' ? 'lightgrey' : ''">firing rate</label>
         </div>
       </div> 
     </div>
