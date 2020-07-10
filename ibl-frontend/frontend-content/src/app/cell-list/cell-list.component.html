@@ -1,6 +1,18 @@
 <div *ngIf="cells">
+  <!-- <plotly-plot [data]="fullNavPlotData" [layout]="BRtestLayout"></plotly-plot> -->
+  <br />
+  <!-- <plotly-plot [data]="fullNavPlotData" [layout]="plot_layout_DBR" [config]="plot_config" (relayout)="relayoutPlot($event)" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot> -->
+  <br />
+  <br />
+  <!-- <plotly-plot [data]="fullNavPlotData" [layout]="plot_layout_4real" [config]="plot_config" (relayout)="relayoutPlot($event)" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot> -->
+  <br />
+  <!-- <plotly-plot [data]="plot_data_4real" [layout]="plot_layout_4real" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot> -->
+  
+  <br />
   <div class="cell-header">
     <h3>Cells</h3>
+    
+
     <h6>(Total clusters for probe {{probeIndex}}: {{cellsByProbeIns.length}})</h6>
     <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}" [queryParams]="{nickname: ${sessionInfo?.subject_nickname}, lab: ${sessionInfo?.session_lab}, project: ${sessionInfo?.session_project}, protocol: ${sessionInfo?.task_protocol}}"></span></div> -->
     <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}" [queryParams]="{nickname: sessionInfo?.subject_nickname, lab: sessionInfo?.session_lab, project: sessionInfo?.session_project, protocol: sessionInfo?.task_protocol}"></span></div>
@@ -30,9 +42,44 @@
   </div>
   <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
   <div class="row">
+    <br />
     <div class="cluster-nav-plot-area col-7 col-xl-6">
-      <br>
-      <plotly-plot [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+      <div *ngIf="plot_data_4real && plot_data_4real[0]" class="yaxis-selector-plot-area">
+        <div class="alternative_plot_buttons y_axis">
+          <label for="y_label"><b>y axis</b></label>
+          <div class="radio-option">
+            <input type="radio" name="navplot_y_label" id="cluster_depth_y" value="cluster_depth" [checked]="toPlot_y === 'cluster_depth'" (change)="restylePlot([{selected_y: $event.target.value}])">
+            <label for="cluster_depth_y" [style.color]="toPlot_x === 'cluster_depth' ? 'lightgrey' : ''">cluster depth</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="navplot_y_label" id="cluster_amp_y" value="cluster_amp" [checked]="toPlot_y === 'cluster_amp'" (change)="restylePlot([{selected_y: $event.target.value}])">
+            <label for="cluster_amp_y" [style.color]="toPlot_x === 'cluster_amp' ? 'lightgrey' : ''">cluster amp</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="navplot_y_label" id="firing _rate_y" value="firing_rate" [checked]="toPlot_y === 'firing_rate'" (change)="restylePlot([{selected_y: $event.target.value}])">
+            <label for="firing _rate_y" [style.color]="toPlot_x === 'firing_rate' ? 'lightgrey' : ''">firing rate</label>
+          </div>
+        </div> 
+      
+        <plotly-plot [data]="plot_data_4real" [layout]="plot_layout_4real" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+      </div>
+      <plotly-plot *ngIf="!plot_data_4real || !plot_data_4real[0]" [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+
+      <div *ngIf="plot_data_4real && plot_data_4real[0]" class="alternative_plot_buttons x_axis">
+        <label for="x_label"><b>x axis</b></label>
+        <div class="radio-option">
+          <input type="radio" name="navplot_x_label" id="cluster_amp_x" value="cluster_amp" [checked]="toPlot_x === 'cluster_amp'" (change)="restylePlot([{selected_x: $event.target.value}])">
+          <label for="cluster_amp_x" [style.color]="toPlot_y === 'cluster_amp' ? 'lightgrey' : ''">cluster amp</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="navplot_x_label" id="cluster_depth_x" value="cluster_depth" [checked]="toPlot_x === 'cluster_depth'" (change)="restylePlot([{selected_x: $event.target.value}])">
+          <label for="cluster_depth_x" [style.color]="toPlot_y === 'cluster_depth' ? 'lightgrey' : ''">cluster depth</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="navplot_x_label" id="firing _rate_x" value="firing_rate" [checked]="toPlot_x === 'firing_rate'" (change)="restylePlot([{selected_x: $event.target.value}])">
+          <label for="firing _rate_x" [style.color]="toPlot_y === 'firing_rate' ? 'lightgrey' : ''">firing rate</label>
+        </div>
+      </div> 
     </div>
     <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
       <!-- <p>rasterEventLacksMovement: {{rasterEventLacksMovement}}</p> <br>

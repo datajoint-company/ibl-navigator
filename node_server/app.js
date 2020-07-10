@@ -424,6 +424,23 @@ app.post('/plot/cluster', checkAuth, cacheMiddleware(15*60), (req, res) => {
     })
 })
 
+app.post('/plot/depthBrainRegions', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/_q/depthbrainregions', { form: req.body, timeout: 12000}, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [depth brain regions fetch]: ', error);
+            console.log('error code: ', error.code);
+            console.log('error was connection timeout: ', error.connect);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
+
+app.post('/plot/DBR_dummy', checkAuth, (req, res) => {
+    res.send({"region_boundaries": [[20.0, 280.0], [280.0, 380.0], [380.0, 420.0], [420.0, 460.0], [460.0, 980.0], [980.0, 1060.0], [1060.0, 1520.0], [1520.0, 1540.0], [1540.0, 1620.0], [1620.0, 2120.0], [2120.0, 2760.0], [2760.0, 2800.0], [2800.0, 2880.0], [2880.0, 2940.0], [2940.0, 2980.0], [2980.0, 3240.0], [3240.0, 3480.0], [3480.0, 3620.0], [3620.0, 3840.0]], "region_label": [[150.0, "P"], [330.0, "NLL"], [400.0, "ll"], [440.0, "NLL"], [720.0, "ll"], [1020.0, "MB"], [1290.0, "root"], [1530.0, "void"], [1580.0, "root"], [1870.0, "PRE"], [2440.0, "POST"], [2780.0, "HPF"], [2840.0, "ec"], [2910.0, "scwm"], [2960.0, "VISp6b"], [3110.0, "VISp6a"], [3360.0, "VISp5"], [3550.0, "VISp4"], [3730.0, "VISp2/3"]], "region_color": [[255, 155, 136], [255, 174, 111], [204, 204, 204], [255, 174, 111], [204, 204, 204], [255, 100, 255], [255, 255, 255], [255, 255, 255], [255, 255, 255], [89, 185, 71], [72, 200, 60], [126, 208, 75], [204, 204, 204], [204, 204, 204], [8, 133, 140], [8, 133, 140], [8, 133, 140], [8, 133, 140], [8, 133, 140]]})
+})
+
 app.post('/plot/trajectory', checkAuth, (req, res) => {
     request.post(flask_backend + '/v0/_q/probetrajectory', { form: req.body, timeout: 12000}, function (error, httpResponse, body) {
         if (error) {
