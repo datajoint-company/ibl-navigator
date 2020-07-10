@@ -28,7 +28,7 @@ services:
       file: ./docker-compose-base.yml
       service: letsencrypt
     environment:
-    - SUBDOMAINS=djcompute-test
+    - SUBDOMAINS=djcompute
     - URL=internationalbrainlab.org
     - STAGING=true # Uncomment for Production use
     volumes:
