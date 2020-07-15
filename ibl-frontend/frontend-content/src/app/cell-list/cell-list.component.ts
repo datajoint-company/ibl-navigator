@@ -523,8 +523,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             showlegend: true,
             legend: {orientation: "h"},
             barmode: 'stack', 
-            height: '600', 
-            width: '900',
+            height: '500', 
+            width: '730',
             grid: {
               rows: 1,
               columns: 2,
