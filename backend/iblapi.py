@@ -43,6 +43,8 @@ analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
 test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
+histology = mkvmod('histology')
+test_histology = test_mkvmod('histology')
 
 dj.config['stores'] = {
     'ephys': dict(
@@ -137,6 +139,7 @@ reqmap = {
     'ACGtemplate': plotting_ephys.AutoCorrelogramTemplate,
     'spikeamptimetemplate': plotting_ephys.SpikeAmpTimeTemplate,
     'waveformtemplate': plotting_ephys.WaveformTemplate,
+    # 'depthbrainregions': test_histology.DepthBrainRegion,
 
 }
 dumps = DateTimeEncoder.dumps
@@ -226,10 +229,12 @@ def handle_q(subpath, args, proj, **kwargs):
             ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
             nprobe='count(dummy2)',
             keep_all_rows=True)
+        # training_status = acquisition.Session.aggr(analyses_behavior.SessionTrainingStatus.proj(dummy3='"x"') * dj.U('dummy3'), nstatus='count(dummy3)', keep_all_rows=True) 
         q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() * subject.SubjectLab() * subject.SubjectUser() * analyses_behavior.SessionTrainingStatus()
              & ((reference.Lab() * reference.LabMember())
                 & reference.LabMembership().proj('lab_name', 'user_name'))
             & args)
+        # q = acquisition.Session() * sess_proj * psych_curve * ephys_data * training_status * subject.Subject() * subject.SubjectLab() & ((reference.Lab() * reference.LabMember() & reference.LabMembership().proj('lab_name', 'user_name')))
     elif subpath == 'subjpage':
         print('Args are:', args)
         proj_restr = None
@@ -296,7 +301,7 @@ def handle_q(subpath, args, proj, **kwargs):
         q = (ephys.DefaultCluster & args).proj(..., *exclude_attrs) * ephys.DefaultCluster.Metrics.proj('firing_rate') 
         print(q)
     elif subpath == 'probetrajectory':
-        traj = ephys.ProbeTrajectory * ephys.InsertionDataSource
+        traj = histology.ProbeTrajectory * histology.InsertionDataSource
 
         traj_latest = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
@@ -399,6 +404,11 @@ def handle_q(subpath, args, proj, **kwargs):
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
+    elif subpath == 'depthbrainregions':
+        depth_region = histology.DepthBrainRegion * histology.InsertionDataSource
+
+        q = depth_region * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & 
+                      (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
     else:
         abort(404)
 
