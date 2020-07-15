@@ -112,7 +112,7 @@ td span.oi {
 }
 
 .alternative_plot_buttons.x_axis {
-    margin: 65px 0 50px 360px;
+    margin: 0px 0 50px 300px;
     display: flex;
     flex-direction: row;
 }
