@@ -82,7 +82,7 @@ services:
     #     condition: service_healthy
   nginx:
     <<: *net
-    image: raphaelguzman/nginx:v0.0.7
+    image: raphaelguzman/nginx:v0.0.8
     environment:
       - ADD_frontend_TYPE=REST
       - ADD_frontend_ENDPOINT=ibl-navigator:9000

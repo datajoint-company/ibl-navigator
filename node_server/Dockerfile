@@ -1,6 +1,8 @@
 FROM node:10.16-slim
 
 RUN \
+    apt-get update && \
+    apt-get install git -y && \
     mkdir /src && \
     mkdir /src/middleware
 

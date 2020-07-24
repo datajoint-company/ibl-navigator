@@ -9,6 +9,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('./middleware/utilities').checkAuth;
 const cacheMiddleware = require('./middleware/utilities').cacheMiddleware;
+const memCache = require('./middleware/utilities').memCache;
 // const serveStatic = require('serve-static')
 
 request.debug = false;
@@ -758,6 +759,12 @@ app.get('/plots/testPlot', (req, res, next) => {
 //Docker Healthcheck
 app.get('/version', (req, res, next) => {
     res.send('Version: v1.0');    
+});
+
+//Node cache meta
+app.get('/node-cache', checkAuth, (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(memCache.stats());
 });
 
 // ============================================================= //

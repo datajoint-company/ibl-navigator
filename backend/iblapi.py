@@ -45,6 +45,8 @@ test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
 histology = mkvmod('histology')
 test_histology = test_mkvmod('histology')
+original_max_join_size = dj.conn().query(
+    "show variables like 'max_join_size'").fetchall()[0][1]
 
 dj.config['stores'] = {
     'ephys': dict(
@@ -240,6 +242,9 @@ def handle_q(subpath, args, proj, **kwargs):
              & (reference.Lab() * reference.LabMember()
                 & reference.LabMembership().proj('lab_name', 'user_name'))
              & args)
+        dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
+        q = q.proj(*proj).fetch(**kwargs) if proj else q.fetch(**kwargs)
+        dj.conn().query("SET SESSION max_join_size={}".format(original_max_join_size))
     elif subpath == 'subjpage':
         print('Args are:', args)
         proj_restr = None
@@ -417,10 +422,8 @@ def handle_q(subpath, args, proj, **kwargs):
     else:
         abort(404)
 
-    if proj:
-        ret = q.proj(*proj).fetch(**kwargs)
-    else:
-        ret = q.fetch(**kwargs)
+    ret = q if isinstance(q, (list, dict)) else (q.proj(*proj).fetch(**kwargs)
+                                                 if proj else q.fetch(**kwargs))
 
     # print('D type', ret.dtype)
     # print(ret)
