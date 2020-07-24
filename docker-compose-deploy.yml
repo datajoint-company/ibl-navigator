@@ -16,7 +16,7 @@ services:
       file: ./docker-compose-base.yml
       service: ibl-navigator
     environment:
-    - PROD_NODE_BACKEND=https://djcompute.internationalbrainlab.org/api
+    - PROD_NODE_BACKEND=https://${SUBDOMAINS}.${URL}/api
     <<: *net
   ibl-node-server:
     extends:
@@ -28,8 +28,8 @@ services:
       file: ./docker-compose-base.yml
       service: letsencrypt
     environment:
-    - SUBDOMAINS=djcompute
-    - URL=internationalbrainlab.org
+    - SUBDOMAINS
+    - URL
     - STAGING=true # Uncomment for Production use
     volumes:
       - ./letsencrypt-keys:/config/etc/letsencrypt
@@ -40,8 +40,8 @@ services:
       file: ./docker-compose-base.yml
       service: nginx
     environment:
-    - SUBDOMAINS=djcompute
-    - URL=internationalbrainlab.org
+    - SUBDOMAINS
+    - URL
     volumes:
       - ./letsencrypt-keys:/etc/letsencrypt:ro
     <<: *net

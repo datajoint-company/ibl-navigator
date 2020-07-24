@@ -415,7 +415,7 @@ def handle_q(subpath, args, proj, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'depthbrainregions':
-        depth_region = test_histology.DepthBrainRegion * test_histology.InsertionDataSource
+        depth_region = histology.DepthBrainRegion * histology.InsertionDataSource
 
         q = depth_region * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & 
                       (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))

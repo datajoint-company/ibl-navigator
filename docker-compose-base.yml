@@ -1,5 +1,6 @@
 # Do NOT `docker-compose up` this file.
 # This is simply a base that other docker-compose files extend based on needs.
+# You should modify image names and tags here.
 version: '2.4'
 x-net: &net
   networks:
@@ -8,9 +9,9 @@ services:
   iblapi:
     <<: *net
     # for client deploy
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.14
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.14
     # add -dev ending to testdev tag
-    # image: registry.vathes.com/ibl-navigator/iblapi:v0.2-dev14
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.2-dev17
     # for public demo
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3
     environment:
@@ -35,9 +36,9 @@ services:
   ibl-navigator:
     <<: *net
     # for client deploy
-    image: registry.vathes.com/ibl-navigator/frontend:v0.17
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.17
     # add -dev ending to testdev tag
-    # image: registry.vathes.com/ibl-navigator/frontend:v0.2-dev18
+    image: registry.vathes.com/ibl-navigator/frontend:v0.2-dev22
     # for public demo
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8
     healthcheck:
@@ -47,9 +48,9 @@ services:
   ibl-node-server:
     <<: *net
     # for client deploy
-    image: registry.vathes.com/ibl-navigator/node-server:v0.9
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.9
     # add -dev ending to testdev tag
-    # image: registry.vathes.com/ibl-navigator/node-server:v0.2-dev6
+    image: registry.vathes.com/ibl-navigator/node-server:v0.2-dev8
     # for public demo
     # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3
     environment:
