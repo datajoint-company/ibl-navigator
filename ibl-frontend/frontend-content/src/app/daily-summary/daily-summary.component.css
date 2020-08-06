@@ -1,0 +1,273 @@
+.daily-summary-container {
+    padding-top: 20px;
+}
+
+h4 {
+    font-weight: 300;
+}
+
+form { 
+    margin-bottom: 5px;
+    padding-bottom: 25px;
+    display: inline-block;
+    font-size: 80%;
+    width: 100%;
+} 
+
+label {
+    font-weight: 500;
+}
+
+mat-form-field {
+    margin: 10px;
+    width: 220px;
+    float: left;
+}
+
+mat-form-field.long {
+    width: 350px;
+}
+
+mat-form-field.short {
+    width: 190px;
+}
+
+.mat-datepicker-toggle{
+    position:absolute;
+    font-size: 3em;
+    margin-left: -50px;
+    margin-top: -20px;
+}
+
+.session-date-filter {
+    float: left;
+    width: 440px;
+    margin-top: 9px;
+    display: inline-flex;
+}
+
+.session-date-filter mat-form-field {
+    margin: 0px;
+}
+
+.range-filter-inputs mat-form-field {
+    width: 50%;
+    padding-right: 2%;
+}
+
+.date-range-toggler + mat-form-field {
+    width: 35%;
+}
+
+.date-range-toggler {
+    margin-top: 14px;
+    margin-right: 13px;
+    width: 33%;
+}
+
+.date-range-toggler div {
+    transform: translateY(-25%);
+}
+
+/* .n-sessions-since-field {
+    display: flex;
+    flex-direction: column;
+    float: left;
+}
+
+.n-sessions-since-field mat-slider {
+    width: 220px;
+}
+
+div.mat-slider-track-fill, 
+div.mat-slider-track-background {
+    background-color: #c3359d; 
+} */
+
+
+.filter-buttons {
+    width: 100%;
+    margin-top: 10px;
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.filter-buttons button {
+    float: left;
+    margin-left: 5px;
+    border: 2px solid rgb(101, 152, 184);
+}
+.filter-buttons button:hover {
+    border: 2px solid rgb(0, 124, 183);
+    background-color: rgb(0, 124, 183);
+    color: white;
+}
+
+table {
+    table-layout: fixed; 
+    width: 100%;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: scroll;
+}
+
+
+td.mat-column-last_session_time,
+td.mat-column-latest_session_ingested,
+td.mat-column-latest_session_on_flatiron,
+td.mat-column-latest_training_status {
+    padding-right: 7px;
+}
+td.mat-column-latest_task_protocol,
+td.mat-column-projects {
+    overflow-wrap: break-word;
+    padding-right: 7px;
+}
+
+th.mat-column-n_sessions_current_protocol {
+    padding-left: 40px;
+}
+td.mat-column-n_sessions_current_protocol {
+    text-align: center;
+}
+
+th.mat-column-detail_link,
+td.mat-column-detail_link {
+    width: 8%;
+}
+td.mat-column-detail_link {
+    padding-right: 8px;
+}
+
+.accordion-toggle-column {
+    width: 5%;
+    text-align: right;
+    color: rgb(170, 170, 170)
+}
+
+th.mat-column-expand_collapse:hover {
+    cursor: pointer;
+}
+
+/* td.mat-column-expand_collapse{
+    font-size: 70%;
+} */
+
+button.accordion-toggle-button {
+    transform: translateX(45%);
+    border: 2px solid rgb(2, 97, 141); 
+}
+
+button.accordion-toggle-button:hover {
+    border: 2px solid rgb(0, 124, 183);
+    background-color: rgb(0, 124, 183);
+    color: rgb(255, 246, 246);
+}
+
+
+tr.headerRow {
+    border-top: 3px solid rgb(209, 209, 209);
+    border-bottom: 3px solid rgb(209, 209, 209);
+}
+tr.statRows {
+    position: relative;
+    width: 100%;
+    z-index: 10;
+    justify-content: space-around;
+    border-top: 2px solid rgb(209, 209, 209);
+    border-bottom: 1px dashed rgb(209, 209, 209);
+}
+
+tr.plotRows {
+    position: relative;
+    z-index: 1;
+}
+tr.statRows * {
+    position: relative;
+    z-index: 10;
+}
+
+tr.plotRows * {
+    position: relative;
+    z-index: 1;
+}
+
+
+.plotsCell {
+    /* width: 800px; */
+    overflow-x: scroll;
+    width: 100%;
+}
+
+tr.statRows:hover {
+    background-color: rgba(0, 83, 145, .05);
+    cursor: pointer;
+}
+
+.loading-icon {
+    text-align: center;
+}
+
+.loading-icon img {
+    width: 100px;
+}
+
+@keyframes collapsing {
+    from {
+        height: 100%;
+    }
+    to {
+        height: 0;
+        transform: translateY(-120%);
+    }
+}
+@keyframes expanding {
+    from {
+        height: 0;
+        transform: translateY(-120%);
+    }
+}
+tr.collapsed,
+tr.collapsed * {
+    /* height: 0; */
+    /* position: relative;
+    z-index: 1; */
+}
+@media only screen and (max-width: 1600px) {
+
+    button.accordion-toggle-button {
+        transform: translateX(30%);
+        border: 2px solid rgb(2, 97, 141); 
+    }
+}
+@media only screen and (max-width: 1024px) {
+    form {
+        border-bottom: 2px solid transparent;
+    }
+    
+    .table-container {
+        overflow-x: scroll;
+    }
+    table {
+        width: 1024px;
+    }
+}
+/* note - to make sure the filter folds smoothly without getting stuck */
+/* problem folding areas */
+@media only screen and (min-width: 1872px) and (max-width: 2316px) {
+    .session-date-filter {
+        margin-bottom: 11px;
+    }
+}
+@media only screen and (min-width: 1200px) and (max-width: 1296px) {
+    .session-date-filter {
+        margin-bottom: 11px;
+    }
+}
+@media only screen and (min-width: 880px) and (max-width: 1080px) {
+    .session-date-filter {
+        margin-bottom: 11px;
+    }
+}

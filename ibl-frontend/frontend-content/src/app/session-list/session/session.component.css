@@ -1,0 +1,54 @@
+.session-info-container {
+    padding-top: 20px;
+}
+
+.session-header {
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.session-header span.badge {
+    height: 1.0rem;
+    margin-top: 4px;
+    margin-left: 5px;
+}
+
+.session-info-table {
+    font-size: 85%;
+    margin-left: 1%;
+}
+
+.session-info-table table {
+    margin-left: 1%;
+}
+
+h5 {
+    font-weight: 300;
+}
+
+.sessionBehaviorPlotSection {
+    display: table;
+}
+
+.fitParTable {
+    font-size: 75%;
+    display: table-footer-group;
+}
+
+.fitParTable th {
+    text-align: center;
+}
+
+.behavior-plots {
+    display: flex;
+    flex-direction: row;
+}
+
+@media only screen and (max-width: 768px) {
+  .behavior-plots {
+      flex-direction: column;
+  }
+  .fitParInfoSection {
+      display: table-header-group;
+  }
+}

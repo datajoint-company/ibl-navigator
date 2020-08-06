@@ -1,0 +1,208 @@
+.cell-header {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.cell-header h6 {
+    margin-left: 5px;
+}
+
+.clusterListTable thead th {
+    position: sticky;
+    top: -3px;
+    z-index: 99;
+    font-size: 0.7rem;
+}
+
+.clusterListTable tbody {
+    cursor: pointer;
+}
+plotly-plot {
+    height: 550px;
+}
+.clusterListTable * {
+    font-size: 0.8rem;
+}
+
+td span.oi {
+    z-index: 30;
+    position: relative;
+}
+
+.quality-control-nav span {
+    cursor: pointer;
+}
+
+/* .plots-navigator {
+    position: fixed;
+    z-index: 999;
+    display: inline-flex;
+    flex-direction: row;
+    right: 0;
+    bottom: 200px;
+} */
+
+.clusterListContainer {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.cluster-nav-filters {
+    display: flex;
+}
+
+.cluster-nav-filters .gc-filter-area {
+    margin-left: 12px;
+}
+
+.plots-navigator-buttons {
+    margin-right: 5px;
+    margin-top: 8px;
+}
+
+.plots-navigator-buttons span:hover {
+    cursor: pointer;
+}
+
+.rasterPlotSelectors {
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.order-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.order-button-content,
+.alternative_plot_buttons > .radio-option {
+    display: flex;
+    flex-direction: row;
+    /* padding-right: 15px; */
+}
+
+.order-button-content > label{
+    margin-right: 10px;
+    margin-top: 2px;
+}
+
+.depth-peth-plot-area .order-buttons {
+    margin-top: 15px;
+}
+
+.order-button-content .radio-option,
+.alternative_plot_buttons .radio-option  {
+    padding-right: 15px;
+}
+
+
+
+.radio-option label {
+    margin-left: 2px;
+    margin-top: 2px;
+}
+
+
+.alternative_plot_buttons .radio-option label {
+    width: 110px;
+    flex-wrap: nowrap;
+    margin-left: 6px;
+    margin-top: -6px;
+    margin-bottom: 10px;
+}
+
+.alternative_plot_buttons.x_axis {
+    margin: 0px 0 50px 300px;
+    display: flex;
+    flex-direction: row;
+}
+
+.alternative_plot_buttons.x_axis > label {
+    margin-top: -6.5px;
+    padding-right: 10px;
+}
+
+.cluster-nav-plot-area > .yaxis-selector-plot-area {
+    display: flex;
+    flex-direction: row;
+}
+.yaxis-selector-plot-area plotly-plot {
+    z-index: 99;
+}
+.yaxis-selector-plot-area .y_axis {
+    z-index:199;
+    margin-top: 200px;
+}
+
+.js-plotly-plot {
+    margin-top: -12px;
+}
+
+.row-long {
+    width: 100vw;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.radio-row {
+    margin-left: auto;
+    display: flex;
+}
+
+.radio-row .trial-contrast-options {
+    display: inline-flex;
+    flex-direction: row;
+    padding-right: 15px;
+}
+
+
+/* M (768px and up) */
+@media only screen and (max-width: 900px) {
+    .plots-navigator {
+        position: fixed;
+        z-index: 999;
+        display: inline-flex;
+        flex-direction: row;
+        right: 0;
+        bottom: 200px;
+    }
+    .clusterListTable * {
+        font-size: 0.72rem;
+    }
+    
+} 
+
+/* L (900px and up) */
+@media only screen and (min-width: 901px) {
+    .plots-navigator {
+        position: fixed;
+        z-index: 999;
+        display: inline-flex;
+        flex-direction: row;
+        right: 0;
+        bottom: 430px;
+    }
+
+} 
+
+/* L (1420px and up) */
+@media only screen and (min-width: 1420px) {
+    .plots-navigator {
+        /* position: relative;
+        z-index: 999;
+        display: inline-flex;
+        flex-direction: row;
+        right: 0;
+        bottom: 0px; */
+        position: fixed;
+        z-index: 999;
+        display: inline-flex;
+        flex-direction: row;
+        right: 0;
+        bottom: 430px;
+    }
+
+} 
+
+

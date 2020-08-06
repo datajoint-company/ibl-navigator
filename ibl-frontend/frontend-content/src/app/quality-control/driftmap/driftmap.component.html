@@ -1,0 +1,6 @@
+
+<div *ngIf="driftmapLookup[driftmapInfo['probe_idx']]">
+<!-- <p>about to show depth raster image of: <a target="_blank" href="{{driftmapLookup[driftmapInfo['probe_idx']]['layout']['images'][0]['source']}}" >{{ driftmapLookup[driftmapInfo['probe_idx']]['layout']['images'][0]['source'] }}</a></p> -->
+<p *ngIf="driftmapLoading"><b style="color: red;">Depth Raster Loading...</b> <br>* Zoom in is unavailable until plot is fully loaded and this message disappears.</p>
+<plotly-plot (initialized)="plotInitialized()" [data]="driftmapLookup[driftmapInfo['probe_idx']]['data']" [layout]="driftmapLookup[driftmapInfo['probe_idx']]['layout']" [config]="driftmapLookup[driftmapInfo['probe_idx']]['config']"></plotly-plot> 
+</div>

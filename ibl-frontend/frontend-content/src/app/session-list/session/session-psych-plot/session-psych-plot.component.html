@@ -1,0 +1,13 @@
+<div [hidden]="dialogClosed">
+  <div #session_psych_plot></div>
+</div> 
+<div>
+  <img id="SPCpngExport" (click)="plotClicked($event)" />
+</div>
+<div *ngIf="plotLoading">
+  <p>plot loading...</p>
+</div>
+<div *ngIf="psychPlotIsAvailable !== null && !psychPlotIsAvailable && plotLoading == false" class="missingPlotNotice">
+    <p>Psychometric plot not available for this session</p>
+</div>
+   

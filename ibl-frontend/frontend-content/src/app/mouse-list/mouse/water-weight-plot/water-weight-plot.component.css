@@ -1,0 +1,8 @@
+.WWI-container {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.WWI-container:hover {
+    overflow-x: auto;
+}

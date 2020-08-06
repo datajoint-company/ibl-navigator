@@ -1,0 +1,7 @@
+.TCSDplot-container {
+    width: 100%;
+    overflow-x: hidden;
+}
+.TCSDplot-container:hover {
+    overflow-x: auto;
+}
