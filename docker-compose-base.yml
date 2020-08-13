@@ -8,12 +8,8 @@ x-net: &net
 services:
   iblapi:
     <<: *net
-    # for client deploy
-    # image: registry.vathes.com/ibl-navigator/iblapi:v0.14
-    # add -dev ending to testdev tag
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.2-dev17
-    # for public demo
-    # image: registry.vathes.com/ibl-navigator/iblapi:v0.0-public3
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.1.0 # for internal demo
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.1.0-public # for public demo
     environment:
     - DJ_USER=maho
     - DJ_HOST=datajoint.internationalbrainlab.org
@@ -35,24 +31,16 @@ services:
     #cpu_period: 100ms
   ibl-navigator:
     <<: *net
-    # for client deploy
-    # image: registry.vathes.com/ibl-navigator/frontend:v0.17
-    # add -dev ending to testdev tag
-    image: registry.vathes.com/ibl-navigator/frontend:v0.2-dev22
-    # for public demo
-    # image: registry.vathes.com/ibl-navigator/frontend:v0.0-public8
+    image: registry.vathes.com/ibl-navigator/frontend:v0.1.0 # for internal demo
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.1.0-public # for public demo
     healthcheck:
       test: curl --fail http://localhost:9000 || exit 1
       timeout: 3s
       retries: 20
   ibl-node-server:
     <<: *net
-    # for client deploy
-    # image: registry.vathes.com/ibl-navigator/node-server:v0.9
-    # add -dev ending to testdev tag
-    image: registry.vathes.com/ibl-navigator/node-server:v0.2-dev8
-    # for public demo
-    # image: registry.vathes.com/ibl-navigator/node-server:v0.0-public3
+    image: registry.vathes.com/ibl-navigator/node-server:v0.1.0 # for internal demo
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.1.0-public # for public demo
     environment:
     - NODE_ENV=development
     - DEMO_USERNAME=ibluser

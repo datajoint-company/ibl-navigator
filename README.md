@@ -19,7 +19,7 @@ AWS_ACCESS_KEY_ID=aws_key
 AWS_SECRET_ACCESS_KEY=aws_secret
 DEMO_PASSWORD=ibl_navigator_password
 JWT_SECRET=secret
-# utilized for production deployment
+# utilized for remote deployment
 SUBDOMAINS=sub
 URL=example.com
 # utilized for load testing
@@ -47,8 +47,9 @@ For detached mode and to add log after the fact
 `docker-compose -f docker-compose-dev.yml up -d`
 `docker-compose -f docker-compose-dev.yml logs -f`
 
-To see the production build using `ng build --prod`,
-do the regular docker-compose up then go to localhost:9000
+**To see the production build using `ng build --prod`, make sure to increment the `vX.X.X` portion of the image tag and if it relates to public site add `-public` at the end.**
+
+to do the regular docker-compose up then go to localhost:9000
 `docker-compose -f docker-compose-build.yml up --build`
 
 to check inside docker 

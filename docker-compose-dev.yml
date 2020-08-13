@@ -9,7 +9,7 @@ services:
     extends:
       file: ./docker-compose-build.yml
       service: iblapi
-    image: iblapi:v1.0
+    image: iblapi:v0.0.0
     ports:
     - "5000:5000" # iblapi
     #entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
@@ -21,7 +21,7 @@ services:
     build: 
       context: ./ibl-frontend
       dockerfile: dev.dockerfile
-    image: ibl-navigator:v1.0
+    image: ibl-navigator:v0.0.0
     environment:
       # - DEV_NODE_BACKEND=http://localhost:3333/api
       - DEV_NODE_BACKEND=https://fakeservices.datajoint.io/api
@@ -33,7 +33,7 @@ services:
     extends:
       file: ./docker-compose-build.yml
       service: ibl-node-server
-    image: ibl-node-server:v1.0
+    image: ibl-node-server:v0.0.0
     # command: nodemon /src/server.js
     volumes:
       - ./node_server/app.js:/src/app.js
