@@ -758,7 +758,14 @@ app.get('/plots/testPlot', (req, res, next) => {
 
 //Docker Healthcheck
 app.get('/version', (req, res, next) => {
-    res.send('Version: v1.0');    
+    versions = {
+        "DJ_API_VERSION": process.env['DJ_API_VERSION'],
+        "FRONTEND_VERSION": process.env['FRONTEND_VERSION'],
+        "NODE_API_VERSION": process.env['NODE_API_VERSION'],
+        "DJ_NGINX_VERSION": process.env['DJ_NGINX_VERSION']
+    };
+    res.setHeader("Content-Type", "application/json");
+    res.send(JSON.stringify(versions));
 });
 
 //Node cache meta

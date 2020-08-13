@@ -1,6 +1,5 @@
 # Do NOT `docker-compose up` this file.
 # This is simply a base that other docker-compose files extend based on needs.
-# You should modify image names and tags here.
 version: '2.4'
 x-net: &net
   networks:
@@ -8,8 +7,7 @@ x-net: &net
 services:
   iblapi:
     <<: *net
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.1.0 # for internal demo
-    # image: registry.vathes.com/ibl-navigator/iblapi:v0.1.0-public # for public demo
+    image: registry.vathes.com/ibl-navigator/iblapi:${DJ_API_VERSION}
     environment:
     - DJ_USER=maho
     - DJ_HOST=datajoint.internationalbrainlab.org
@@ -22,7 +20,7 @@ services:
     healthcheck:
       test: >
         wget --quiet --tries=1 --spider \
-          http://localhost:5000/v0/lab > /dev/null 2>&1 || exit 1
+          http://localhost:5000/v0/_health > /dev/null 2>&1 || exit 1
       timeout: 3s
       retries: 20
     entrypoint: ["/src/iblapi/run-ibl-api.prod.sh"]
@@ -31,21 +29,21 @@ services:
     #cpu_period: 100ms
   ibl-navigator:
     <<: *net
-    image: registry.vathes.com/ibl-navigator/frontend:v0.1.0 # for internal demo
-    # image: registry.vathes.com/ibl-navigator/frontend:v0.1.0-public # for public demo
+    image: registry.vathes.com/ibl-navigator/frontend:${FRONTEND_VERSION}
     healthcheck:
       test: curl --fail http://localhost:9000 || exit 1
       timeout: 3s
       retries: 20
   ibl-node-server:
     <<: *net
-    image: registry.vathes.com/ibl-navigator/node-server:v0.1.0 # for internal demo
-    # image: registry.vathes.com/ibl-navigator/node-server:v0.1.0-public # for public demo
+    image: registry.vathes.com/ibl-navigator/node-server:${NODE_API_VERSION}
     environment:
     - NODE_ENV=development
     - DEMO_USERNAME=ibluser
     - PY_BACKEND=http://iblapi:5000
-    env_file: .env
+    env_file:
+      - .env
+      - version.env
     healthcheck:
       test: curl --fail http://localhost:3333/version || exit 1
       timeout: 3s
@@ -71,7 +69,7 @@ services:
     #     condition: service_healthy
   nginx:
     <<: *net
-    image: raphaelguzman/nginx:v0.0.8
+    image: raphaelguzman/nginx:${DJ_NGINX_VERSION}
     environment:
       - ADD_frontend_TYPE=REST
       - ADD_frontend_ENDPOINT=ibl-navigator:9000

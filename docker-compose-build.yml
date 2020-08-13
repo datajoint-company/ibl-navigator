@@ -1,6 +1,6 @@
 # Use: Production build and manual test. Provided things look good, you may follow with a push.
-# docker-compose -f docker-compose-build.yml up --build
-# docker-compose -f docker-compose-build.yml push
+# env $(grep -hv '^#' version.env) docker-compose -f docker-compose-build.yml up --build
+# env $(grep -hv '^#' version.env) docker-compose -f docker-compose-build.yml push
 version: '2.4'
 x-net: &net
   networks:

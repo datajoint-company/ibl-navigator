@@ -1,5 +1,5 @@
 # Use: Local development.
-# docker-compose -f docker-compose-dev.yml up --build
+# env $(grep -hv '^#' version.env) docker-compose -f docker-compose-dev.yml up --build
 version: '2.4'
 x-net: &net
   networks:
@@ -9,7 +9,6 @@ services:
     extends:
       file: ./docker-compose-build.yml
       service: iblapi
-    image: iblapi:v0.0.0
     ports:
     - "5000:5000" # iblapi
     #entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
@@ -21,7 +20,6 @@ services:
     build: 
       context: ./ibl-frontend
       dockerfile: dev.dockerfile
-    image: ibl-navigator:v0.0.0
     environment:
       # - DEV_NODE_BACKEND=http://localhost:3333/api
       - DEV_NODE_BACKEND=https://fakeservices.datajoint.io/api
@@ -33,7 +31,6 @@ services:
     extends:
       file: ./docker-compose-build.yml
       service: ibl-node-server
-    image: ibl-node-server:v0.0.0
     # command: nodemon /src/server.js
     volumes:
       - ./node_server/app.js:/src/app.js

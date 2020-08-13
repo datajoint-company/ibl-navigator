@@ -105,6 +105,7 @@ class DateTimeEncoder(json.JSONEncoder):
 
 reqmap = {
     '_q': None,
+    '_health': None,
     'lab': reference.Lab,
     'labmember': reference.LabMember,
     'labmembership': reference.LabMembership,
@@ -188,6 +189,8 @@ def do_req(subpath):
         abort(404)
     elif obj == '_q':
         return handle_q(pathparts[1], args, proj, **kwargs)
+    elif obj == '_health':
+        return dumps(dict(healthy=True))
     else:
         q = (reqmap[obj] & args)
         if proj:
