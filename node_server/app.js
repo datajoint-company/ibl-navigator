@@ -7,7 +7,9 @@ const request = require('request');
 const http = require('http');
 const path = require('path');
 const jwt = require('jsonwebtoken');
-const checkAuth = require('./middleware/check-auth');
+const checkAuth = require('./middleware/utilities').checkAuth;
+const cacheMiddleware = require('./middleware/utilities').cacheMiddleware;
+const memCache = require('./middleware/utilities').memCache;
 // const serveStatic = require('serve-static')
 
 request.debug = false;
@@ -186,7 +188,7 @@ app.get('/sessions', checkAuth, (req, res) => {
     });
 })
 
-app.post('/sessions', checkAuth, (req, res) => {
+app.post('/sessions', checkAuth, cacheMiddleware(15*60), (req, res) => {
     // console.log('posting to filter session page');
     
     request.post(flask_backend + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
@@ -265,7 +267,7 @@ app.post('/mice', checkAuth, (req, res) => {
 })
 
 
-app.post('/summary', checkAuth, (req, res) => {
+app.post('/summary', checkAuth, cacheMiddleware(15*60), (req, res) => {
 
     request.post(flask_backend + '/v0/_q/dailysummary', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
@@ -401,7 +403,7 @@ app.post('/plot/dateReactionTimeTrialNumberPlot', checkAuth, (req, res) => {
     })
 })
 
-app.post('/plot/cluster', checkAuth, (req, res) => {
+app.post('/plot/cluster', checkAuth, cacheMiddleware(15*60), (req, res) => {
     const timeX = new Date()
     // console.log('requesting cluster list at time: ', timeX, 'request: ', req.body);
     
@@ -757,6 +759,12 @@ app.get('/plots/testPlot', (req, res, next) => {
 //Docker Healthcheck
 app.get('/version', (req, res, next) => {
     res.send('Version: v1.0');    
+});
+
+//Node cache meta
+app.get('/node-cache', checkAuth, (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(memCache.stats());
 });
 
 // ============================================================= //

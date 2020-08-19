@@ -1,0 +1,43 @@
+# Use: Production build and manual test. Provided things look good, you may follow with a push.
+# docker-compose -f docker-compose-build.yml up --build
+# docker-compose -f docker-compose-build.yml push
+version: '2.4'
+x-net: &net
+  networks:
+      - main
+services:
+  iblapi:
+    extends:
+      file: ./docker-compose-base.yml
+      service: iblapi
+    build: ./backend
+    <<: *net
+  ibl-navigator:
+    extends:
+      file: ./docker-compose-base.yml
+      service: ibl-navigator
+    build: ./ibl-frontend
+    environment:
+    - PROD_NODE_BACKEND=https://fakeservices.datajoint.io/api
+    <<: *net
+  ibl-node-server:
+    extends:
+      file: ./docker-compose-base.yml
+      service: ibl-node-server
+    build: ./node_server
+    <<: *net
+  nginx:
+    extends:
+      file: ./docker-compose-base.yml
+      service: nginx
+    environment:
+    - SUBDOMAINS=fakeservices
+    - URL=datajoint.io
+    - CERTBOT_HOST=
+    <<: *net
+networks:
+  main:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.28.0.0/16
