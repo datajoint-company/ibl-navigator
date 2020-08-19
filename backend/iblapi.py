@@ -232,16 +232,9 @@ def handle_q(subpath, args, proj, **kwargs):
             ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
             nprobe='count(dummy2)',
             keep_all_rows=True)
-        training_status = acquisition.Session.aggr(
-            analyses_behavior.SessionTrainingStatus.proj(dummy3='"x"') * dj.U('dummy3'),
-            nstatus='count(dummy3)',
-            keep_all_rows=True)
-
-        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * training_status
-             * subject.Subject() * subject.SubjectLab()
-             & (reference.Lab() * reference.LabMember()
-                & reference.LabMembership().proj('lab_name', 'user_name'))
-             & args)
+        q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
+              subject.SubjectLab() * subject.SubjectUser() *
+              analyses_behavior.SessionTrainingStatus()) & args)
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
         q = q.proj(*proj).fetch(**kwargs) if proj else q.fetch(**kwargs)
         dj.conn().query("SET SESSION max_join_size={}".format(original_max_join_size))
