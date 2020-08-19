@@ -41,6 +41,9 @@
     <p>No probe trajectory information found for the selected probe.</p>
   </div>
   <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
+  <div style="background-color: rgb(151, 9, 4); width: fit-content; padding: 0 8px;" *ngIf="plot_data_4real && plot_data_4real[0] && probeTrajInfo && probeTrajInfo.trajectory_source !== 'Ephys aligned histology track'">
+    <b style="color:white;" >Temporary plot alignment: NOT based on ephys-aligned histology</b>
+  </div>
   <div class="row">
     <br />
     <div class="cluster-nav-plot-area col-7 col-xl-6">
