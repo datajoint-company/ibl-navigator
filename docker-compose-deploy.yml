@@ -1,6 +1,6 @@
 # Use: Production remote deployment.
 # docker-compose -f docker-compose-deploy.yml pull
-# docker-compose -f docker-compose-deploy.yml up
+# docker-compose -f docker-compose-deploy.yml up -d
 version: '2.4'
 x-net: &net
   networks:
