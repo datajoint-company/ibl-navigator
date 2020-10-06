@@ -142,6 +142,7 @@ reqmap = {
     'spikeamptimetemplate': plotting_ephys.SpikeAmpTimeTemplate,
     'waveformtemplate': plotting_ephys.WaveformTemplate,
     # 'depthbrainregions': test_histology.DepthBrainRegion,
+    'brainregions': reference.BrainRegion
 
 }
 dumps = DateTimeEncoder.dumps

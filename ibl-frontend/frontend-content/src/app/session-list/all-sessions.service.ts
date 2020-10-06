@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
+
 const BACKEND_API_URL = environment.backend_url;
 
 @Injectable({
@@ -21,6 +22,8 @@ export class AllSessionsService {
 
   private retrievedSessions2;
   private newSessionsLoaded2 = new Subject();
+
+  private brainRegionTreeLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -107,6 +110,27 @@ export class AllSessionsService {
       );
   }
 
+  getBrainRegionTree() {
+    console.log('getting brain regions');
+    this.http.get(BACKEND_API_URL + `/brainRegionTree`, { responseType: 'json' })
+      .subscribe(
+        (brainregions) => {
+          console.log('retrieved brain tree');
+          // console.log(brainregions);
+          // somehow there's a VOID region included in the tree but it's never going to be used so removing it here
+          let brainTree = Object.values(brainregions).filter(function(value, index, arr) {return value.acronym != 'void';}) 
+
+          console.log('brainTree: ', brainTree)
+
+          this.brainRegionTreeLoaded.next(brainTree);
+        },
+        (err: any) => {
+          console.log('err in fetching brain region tree');
+          console.error(err);
+        }
+      );
+  }
+
   getSessionsLoadedListener() {
     return this.sessionsLoaded.asObservable();
   }
@@ -124,6 +148,10 @@ export class AllSessionsService {
   }
   getNewSessionsLoadedListener2() {
     return this.newSessionsLoaded2.asObservable();
+  }
+
+  getBrainRegionTreeLoadedListener() {
+    return this.brainRegionTreeLoaded.asObservable();
   }
 }
 

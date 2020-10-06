@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const http = require('http');
 const path = require('path');
+const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('./middleware/utilities').checkAuth;
 const cacheMiddleware = require('./middleware/utilities').cacheMiddleware;
@@ -728,6 +729,39 @@ app.post('/plot/waveform', checkAuth, (req, res) => {
         res.send(body);
     })
 })
+
+app.get('/brainRegionTree', checkAuth, cacheMiddleware(15*60), (req, res) => {
+    request.get(flask_backend + '/v0/brainregions', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [brain region fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        console.log('brain regions fetched - ')
+        function makeTree(allregions) {
+            let nodes = {};
+            return allregions.filter(function(region) {
+              let ID = region['brain_region_pk']
+              let parentID = region['parent']
+
+              let display = `[${region['acronym']}] ` + region['brain_region_name']
+              let isSelected = false;
+              let value = region['acronym'];
+
+              nodes[ID] = _.defaults(region, nodes[ID], { children: [], display, isSelected, value});
+              parentID && (nodes[parentID] = (nodes[parentID] || {children: []}))['children'].push(region)
+
+              return !parentID;
+            })
+          }
+
+        let brainTree = makeTree(JSON.parse(body))
+        console.log('[END]=======brain region===============[END]')
+        res.send(brainTree);
+        // res.send(body);
+    })
+})
+
 
 
 app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {

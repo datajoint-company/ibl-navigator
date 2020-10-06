@@ -3,13 +3,20 @@ import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatTreeNestedDataSource } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
 import { SessionComponent } from './session/session.component';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
+import { NestedTreeControl } from '@angular/cdk/tree';
 
+interface BrainTreeNode {
+  display: string;
+  value: any;
+  children?: BrainTreeNode[];
+  isSelected: boolean;
+}
 
 @Component({
   selector: 'app-session-list',
@@ -68,6 +75,19 @@ export class SessionListComponent implements OnInit, OnDestroy {
   pageSize = 25;
   pageSizeOptions: number[] = [10, 25, 50, 100];
 
+  // for brain region tree selector
+  brainRegionTree;
+  treeControl = new NestedTreeControl<BrainTreeNode> (node => node.children);
+  treeDataSource = new MatTreeNestedDataSource<BrainTreeNode>();
+  // BT_childIsSelectedList = [];
+  BT_selections: BrainTreeNode[] = [];
+  BT_selectionStatus = {};
+  BT_nodeLookup = {};
+
+  BT_hasChild = (_: number, node: BrainTreeNode) => !!node.children && node.children.length > 0;
+  BT_partlySelected = (node) => (this.BT_selectionStatus[node.value] == 1);
+  BT_allSelected = (node) => (this.BT_selectionStatus[node.value] == 2);
+
   // queryValues = {
   //   'task_protocol': '_iblrig_tasks_habituationChoiceWorld3.7.6',
   //   // '__order': 'session_start_time'
@@ -82,7 +102,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
   private allSessionMenuSubscription: Subscription;
   private reqSessionsSubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {}
+  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {
+    this.treeDataSource.data = this.brainRegionTree
+  }
   // @Input('preRestriction') preRestrictedMouseInfo: Object;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -180,8 +202,19 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.allSessions = sessions_all;
         this.createMenu(sessions_all);
       });
-  }
 
+    this.allSessionsService.getBrainRegionTree();
+    this.allSessionsService.getBrainRegionTreeLoadedListener()
+      .subscribe((allBrainRegions) => {
+        this.brainRegionTree = allBrainRegions;
+        console.log('brain tree retrieved: ');
+        console.log(allBrainRegions)
+        this.treeDataSource.data = this.brainRegionTree;
+        this.treeControl.dataNodes = this.treeDataSource.data;
+        this.buildLookup();
+      })
+  }
+  
   ngOnDestroy() {
     // console.log('destroying while storing these sessions: ', this.sessions);
     this.filterStoreService.storeSessionTableState2(this.paginator.pageIndex, this.pageSize, this.sort, this.sessions)
@@ -831,4 +864,112 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.updateSelection();
   }
 
+  //==**==**==**==**+=**+== [START] brain tree functions **==**==**==**==**==**==**==**==**==**+=//
+  buildLookup() {
+    for (let child of this.brainRegionTree) {
+      this.buildNodeLookup(child);
+    }
+  }
+
+  buildNodeLookup(node) {
+    this.BT_nodeLookup[node.value] = node;
+    if (node.children && node.children.length) {
+      for (let child of node.children) {
+        this.buildNodeLookup(child);
+      }
+    }
+  }
+
+  filterTree(word) {
+    let newData = []
+    for (let child of this.brainRegionTree) {
+      let result = this.filterNode(child, word, false);
+      if (result) newData.push(result);
+    }
+    return newData;
+  }
+
+  filterNode(node, word, selectAll){
+    let children = []
+    let newNode = {
+      display: node.display,
+      value: node.value,
+      isSelected: node.isSelected,
+      children: []
+    }
+    // let nodeHit = newNode.value.toLowerCase().includes(word) || selectAll;
+    let nodeHit = newNode.display.toLowerCase().includes(word) || selectAll;
+    if (node.children && node.children.length) {
+      for (let child of node.children) {
+        let subtree = this.filterNode(child, word, nodeHit);
+        if (subtree || nodeHit) {
+          newNode.children.push(subtree);
+        }
+      }
+    }
+    if (nodeHit || newNode.children.length > 0) {
+      return newNode;
+    }
+    return null;
+  }
+
+  /**
+   * Recursively applies the selection `isChecked` to the node and
+   * all of its descendants (if they exist)
+   */
+  selectionToggle(isChecked, node) {
+    let newValue = isChecked? 2: 0;
+    this.BT_selectionStatus[node.value] = newValue;
+    if (node.children && node.children.length) {
+      for (let child of node.children) {
+        this.selectionToggle(isChecked, child);
+      }
+    }
+    // update the status of all nodes' selection
+    this.updateSelectionStatus();
+  }
+
+  updateSelectionStatus() {
+    for (let child of this.brainRegionTree) { 
+      this.setSelectionStatus(child);
+    }
+    // fill the selection list with the selected items
+    let currentSelection = []
+    for (let key in this.BT_selectionStatus) {
+      if (this.BT_selectionStatus[key] > 0) currentSelection.push(key);
+    }
+    this.BT_selections = currentSelection;
+  }
+
+  setSelectionStatus(node) {
+    let allSelected = true;
+    let partlySelected = false;
+    if (node.children && node.children.length) {
+      for (let child of node.children) {
+        let status = this.setSelectionStatus(child);
+        allSelected = allSelected && status[0]; 
+        partlySelected = partlySelected || status[1]
+      }
+    } else { // for leaf nodes
+      allSelected = partlySelected = this.BT_selectionStatus[node.value] > 0; 
+    }
+    this.BT_selectionStatus[node.value] = Number(allSelected) + Number(partlySelected);
+    return [allSelected, partlySelected];
+  }
+
+  filterChanged(inputValue) {
+    let newData = this.filterTree(inputValue);
+    // console.log('newData: ', newData)
+    // console.log('dataNodes: ', this.treeControl.dataNodes);
+    this.treeDataSource.data = newData;
+    this.treeControl.dataNodes = this.treeDataSource.data;
+    // console.log('treeControl: ', this.treeControl);
+    this.treeControl.expandAll();
+  }
+
+  chipClicked(item) {
+    let node = this.BT_nodeLookup[item];
+    this.selectionToggle(false, node);
+  }
+  //===**==**==**==**+=**+== [END] brain tree functions **==**==**==**==**==**==**==**==**==**+=//
 }
