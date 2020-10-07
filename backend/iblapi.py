@@ -217,6 +217,7 @@ def handle_q(subpath, args, proj, **kwargs):
     ret = []
     post_process = None
     if subpath == 'sessionpage':
+        print('type of args: {}'.format(type(args)))
         sess_proj = acquisition.Session().aggr(
             acquisition.SessionProject().proj('session_project', dummy2='"x"')
             * dj.U('dummy2'),
@@ -233,9 +234,17 @@ def handle_q(subpath, args, proj, **kwargs):
             ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
             nprobe='count(dummy2)',
             keep_all_rows=True)
+        regions = args.pop("brain_regions", None)
+        #   expected format of brain_regions = ["AB", "ABCa", "CS of TCV"]
+        if regions is not None and len(regions) > 0: 
+            region_restr = [{'acronym': v} for v in regions]
+            brain_restriction = histology.SessionBrainRegion() & region_restr
+        else:
+            brain_restriction = {}
         q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
               subject.SubjectLab() * subject.SubjectUser() *
-              analyses_behavior.SessionTrainingStatus()) & args)
+              analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
+        
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
         q = q.proj(*proj).fetch(**kwargs) if proj else q.fetch(**kwargs)
         dj.conn().query("SET SESSION max_join_size={}".format(original_max_join_size))
