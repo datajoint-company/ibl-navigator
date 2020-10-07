@@ -155,7 +155,8 @@
         </mat-form-field>
         <div>Selected Brain Region:
           <div class="chip-list">
-            <div class="selected-chip" *ngFor="let item of BT_selections">
+            <!-- <div class="selected-chip" *ngFor="let item of BT_selections"> -->
+            <div class="selected-chip" *ngFor="let item of requested_BR">
               <div>{{ item }}</div>
               <div class="chip-close" (click)="chipClicked(item)"><mat-icon class="mat-icon-close">{{'close'}}</mat-icon></div>
             </div>

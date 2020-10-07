@@ -81,6 +81,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   treeDataSource = new MatTreeNestedDataSource<BrainTreeNode>();
   // BT_childIsSelectedList = [];
   BT_selections: BrainTreeNode[] = [];
+  requested_BR = [];
   BT_selectionStatus = {};
   BT_nodeLookup = {};
 
@@ -397,9 +398,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   filterRequests(focusedField?: string) {
     const filterList = Object.entries(this.session_filter_form.getRawValue());
+    const brainRegionRequest = this.requested_BR;
     const requestFilter = {};
     let requestJSONstring = '';
+    
     filterList.forEach(filter => {
+      console.log('filter: ', filter);
       // filter is [["session_lab_control", "somelab"], ["subject_nickname_control", null]...]
       const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'session_lab_control'
       if (filter[1] && filterKey !== focusedField) {
@@ -499,9 +503,32 @@ export class SessionListComponent implements OnInit, OnDestroy {
         //   console.log('gender or session start time restricted');
         //   requestFilter['__json'] = '[' + requestGenderArray + rangeStart + ',' + rangeEnd + ']';
         // }
+        console.log('requestJSONstring: ', requestJSONstring);
+        let BR_JSONstring = '';
+        if (brainRegionRequest && brainRegionRequest.length > 0) {
+          BR_JSONstring = '';
+          console.log('BT_selections: ', brainRegionRequest);
+          brainRegionRequest.filter(function(selection, index) {
+            console.log('selection in filter: ', selection)
+            console.log('index in filter: ', index)
+            if (index > 0) {
+              BR_JSONstring += `, {"acronym": "${selection}"}`
+            } else {
+              BR_JSONstring += `{"acronym": "${selection}"}`
+            }
+          })
+          
+          BR_JSONstring = '[' + BR_JSONstring + ']'
+          
+        }
+        console.log('BR_JSONstring: ', BR_JSONstring);
 
-        if (requestJSONstring.length > 0) {
+        if (requestJSONstring.length > 0 && BR_JSONstring.length == 0) {
           requestFilter['__json'] = '[' + requestJSONstring + ']';
+        } else if (requestJSONstring.length > 0 && BR_JSONstring.length > 0) {
+          requestFilter['__json'] = '[' + requestJSONstring + ',' + BR_JSONstring + ']';
+        } else if (requestJSONstring.length == 0 && BR_JSONstring.length > 0) {
+          requestFilter['__json'] = '[' + BR_JSONstring + ']';
         }
       }
     });
@@ -519,6 +546,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const request = this.filterRequests();
     request['__order'] = 'session_start_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
+      console.log('printing request: ', request)
+      console.log('request type: ', typeof request)
       this.filterStoreService.storeSessionFilter(request);
       this.allSessionsService.retrieveSessions2(request);
       this.reqSessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener2()
@@ -935,10 +964,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
     // fill the selection list with the selected items
     let currentSelection = []
+    let requestSelection = []
     for (let key in this.BT_selectionStatus) {
       if (this.BT_selectionStatus[key] > 0) currentSelection.push(key);
+      if (this.BT_selectionStatus[key] > 1) requestSelection.push(key)
     }
     this.BT_selections = currentSelection;
+    this.requested_BR = requestSelection;
   }
 
   setSelectionStatus(node) {
