@@ -156,44 +156,41 @@ def mkpath(path):
 def do_req(subpath):
     app.logger.info("method: '{}', path: {}, values: {}".format(
         request.method, request.path, request.values))
-
     # 1) parse request & arguments
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
-
     values = request.values
     postargs, jsonargs = {}, None
-
+    # construct kwargs
+    kwargs = {'as_dict': True}
     limit = int(request.values['__limit']) if '__limit' in values else None
     order = request.values['__order'] if '__order' in values else None
     proj = json.loads(request.values['__proj']) if '__proj' in values else None
-
-    special_fields = ['__json', '__limit', '__order', '__proj']
+    special_fields = ['__json', '__limit', '__order', '__proj', '__json_kwargs']
     for a in (v for v in values if v not in special_fields):
         # HACK: 'uuid' attrs -> UUID type (see also: datajoint-python #594)
         postargs[a] = UUID(values[a]) if 'uuid' in a else values[a]
-
     args = [postargs] if len(postargs) else []
     if '__json' in values:
         jsonargs = json.loads(request.values['__json'])
         args += jsonargs if type(jsonargs) == list else [jsonargs]
-
+    json_kwargs = {}
+    if '__json_kwargs' in values:
+        json_kwargs = json.loads(request.values['__json_kwargs'])
     args = {} if not args else dj.AndList(args)
-    kwargs = {i[0]: i[1] for i in (('as_dict', True,),
+    kwargs = {k: v for k, v in (('as_dict', True,),
                                    ('limit', limit,),
-                                   ('order_by', order,)) if i[1] is not None}
-
+                                   ('order_by', order,)) if v is not None}
     # 2) and dispatch
     app.logger.debug("args: '{}', kwargs: {}".format(args, kwargs))
     if obj not in reqmap:
         abort(404)
     elif obj == '_q':
-        return handle_q(pathparts[1], args, proj, **kwargs)
+        return handle_q(pathparts[1], args, proj, fetch_args=kwargs, **json_kwargs)
     else:
         q = (reqmap[obj] & args)
         if proj:
             q = q.proj(*proj)
-
         from time import time
         start = time()
         print('about to fetch requested object')
@@ -206,14 +203,16 @@ def do_req(subpath):
         
 
 
-def handle_q(subpath, args, proj, **kwargs):
+def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
     '''
     special queries (under '/_q/ URL Space)
       - for sessionpage, provide:
         ((session * subject * lab * user) & arg).proj(flist)
     '''
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
+    app.logger.info('key words: {}'.format(kwargs))
 
+    fetch_args = {} if fetch_args is None else fetch_args
     ret = []
     post_process = None
     if subpath == 'sessionpage':
@@ -234,7 +233,7 @@ def handle_q(subpath, args, proj, **kwargs):
             ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
             nprobe='count(dummy2)',
             keep_all_rows=True)
-        regions = args.pop("brain_regions", None)
+        regions = kwargs.get('brain_regions', None)
         #   expected format of brain_regions = ["AB", "ABCa", "CS of TCV"]
         if regions is not None and len(regions) > 0: 
             region_restr = [{'acronym': v} for v in regions]
@@ -246,10 +245,9 @@ def handle_q(subpath, args, proj, **kwargs):
               analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
         
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
-        q = q.proj(*proj).fetch(**kwargs) if proj else q.fetch(**kwargs)
+        q = q.proj(*proj).fetch(**fetch_args) if proj else q.fetch(**fetch_args)
         dj.conn().query("SET SESSION max_join_size={}".format(original_max_join_size))
     elif subpath == 'subjpage':
-        print('Args are:', args)
         proj_restr = None
         for e in args:
             if 'projects' in e and e['projects'] != 'unassigned':
@@ -425,8 +423,8 @@ def handle_q(subpath, args, proj, **kwargs):
     else:
         abort(404)
 
-    ret = q if isinstance(q, (list, dict)) else (q.proj(*proj).fetch(**kwargs)
-                                                 if proj else q.fetch(**kwargs))
+    ret = q if isinstance(q, (list, dict)) else (q.proj(*proj).fetch(**fetch_args)
+                                                 if proj else q.fetch(**fetch_args))
 
     # print('D type', ret.dtype)
     # print(ret)

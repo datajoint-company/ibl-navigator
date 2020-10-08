@@ -208,8 +208,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.allSessionsService.getBrainRegionTreeLoadedListener()
       .subscribe((allBrainRegions) => {
         this.brainRegionTree = allBrainRegions;
-        console.log('brain tree retrieved: ');
-        console.log(allBrainRegions)
+        // console.log('brain tree retrieved: ');
+        console.log('all regions: ', allBrainRegions)
         this.treeDataSource.data = this.brainRegionTree;
         this.treeControl.dataNodes = this.treeDataSource.data;
         this.buildLookup();
@@ -403,7 +403,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     let requestJSONstring = '';
     
     filterList.forEach(filter => {
-      console.log('filter: ', filter);
       // filter is [["session_lab_control", "somelab"], ["subject_nickname_control", null]...]
       const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'session_lab_control'
       if (filter[1] && filterKey !== focusedField) {
@@ -503,35 +502,37 @@ export class SessionListComponent implements OnInit, OnDestroy {
         //   console.log('gender or session start time restricted');
         //   requestFilter['__json'] = '[' + requestGenderArray + rangeStart + ',' + rangeEnd + ']';
         // }
-        console.log('requestJSONstring: ', requestJSONstring);
         let BR_JSONstring = '';
         if (brainRegionRequest && brainRegionRequest.length > 0) {
           BR_JSONstring = '';
-          console.log('BT_selections: ', brainRegionRequest);
           brainRegionRequest.filter(function(selection, index) {
-            console.log('selection in filter: ', selection)
-            console.log('index in filter: ', index)
             if (index > 0) {
-              BR_JSONstring += `, {"acronym": "${selection}"}`
+              BR_JSONstring += `, "${selection}"`
             } else {
-              BR_JSONstring += `{"acronym": "${selection}"}`
+              BR_JSONstring += `"${selection}"`
             }
           })
           
           BR_JSONstring = '[' + BR_JSONstring + ']'
           
         }
-        console.log('BR_JSONstring: ', BR_JSONstring);
 
-        if (requestJSONstring.length > 0 && BR_JSONstring.length == 0) {
+        // if (requestJSONstring.length > 0 && BR_JSONstring.length == 0) {
+        //   requestFilter['__json'] = '[' + requestJSONstring + ']';
+        // } else if (requestJSONstring.length > 0 && BR_JSONstring.length > 0) {
+        //   requestFilter['__json'] = '[' + requestJSONstring + ',' + BR_JSONstring + ']';
+        // } else if (requestJSONstring.length == 0 && BR_JSONstring.length > 0) {
+        //   requestFilter['__json'] = '[' + BR_JSONstring + ']';
+        // }
+        if (requestJSONstring.length > 0) {
           requestFilter['__json'] = '[' + requestJSONstring + ']';
-        } else if (requestJSONstring.length > 0 && BR_JSONstring.length > 0) {
-          requestFilter['__json'] = '[' + requestJSONstring + ',' + BR_JSONstring + ']';
-        } else if (requestJSONstring.length == 0 && BR_JSONstring.length > 0) {
-          requestFilter['__json'] = '[' + BR_JSONstring + ']';
+        }
+        if (brainRegionRequest.length > 0) {
+          requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
         }
       }
     });
+    console.log('requestFilter: ', requestFilter)
     return requestFilter;
   }
 
@@ -547,7 +548,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     request['__order'] = 'session_start_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
       console.log('printing request: ', request)
-      console.log('request type: ', typeof request)
       this.filterStoreService.storeSessionFilter(request);
       this.allSessionsService.retrieveSessions2(request);
       this.reqSessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener2()
@@ -963,14 +963,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.setSelectionStatus(child);
     }
     // fill the selection list with the selected items
-    let currentSelection = []
-    let requestSelection = []
+    let currentSelection = [];
     for (let key in this.BT_selectionStatus) {
       if (this.BT_selectionStatus[key] > 0) currentSelection.push(key);
-      if (this.BT_selectionStatus[key] > 1) requestSelection.push(key)
     }
     this.BT_selections = currentSelection;
-    this.requested_BR = requestSelection;
+    this.requested_BR = this.enlist(this.brainRegionTree);
+
   }
 
   setSelectionStatus(node) {
@@ -1003,5 +1002,26 @@ export class SessionListComponent implements OnInit, OnDestroy {
     let node = this.BT_nodeLookup[item];
     this.selectionToggle(false, node);
   }
+
+  enlist(nodes) {
+    let region_list = [];
+    for (let region of nodes) {
+      this.enlistNode(region, region_list);
+    }
+    
+    return region_list;
+  }
+
+  enlistNode(node, region_list) {
+    if (this.BT_selectionStatus[node['value']] == 2) {
+      region_list.push(node['value']);
+      return;
+    }   
+    for (let child of node['children']) {
+      this.enlistNode(child, region_list)
+    }
+  }
+
+  
   //===**==**==**==**+=**+== [END] brain tree functions **==**==**==**==**==**==**==**==**==**+=//
 }
