@@ -1,70 +1,54 @@
-# docker-compose up -d --build
+# Use: Local development.
+# docker-compose -f docker-compose-dev.yml up --build
 version: '2.4'
-services:     
-  iblapi:
-    build: ./backend
-    image: iblapi:v1.0
-    environment:
-    - DJ_USER=maho
-    - DJ_HOST=datajoint.internationalbrainlab.org
-    # - DJ_USER=ibl-navigator # from publicdemo
-    # - DJ_HOST=datajoint-public.internationalbrainlab.org # from publicdemo
-    # - AWS_DEFAULT_REGION=us-east-1 # from publicdemo
-    - WORKER_COUNT=4
-    env_file: ./.env
-    ports:
-      - "5555:5000"
-    healthcheck: # from publicdemo
-      test: curl --fail http://localhost:5000/v0/lab || exit 1
-      timeout: 3s
-      retries: 20
-    entrypoint: ["/src/iblapi/run-ibl-api.prod.sh"]
-    #entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
-    networks:
+x-net: &net
+  networks:
       - main
+services:
+  iblapi:
+    extends:
+      file: ./docker-compose-build.yml
+      service: iblapi
+    image: iblapi:v0.0.0
+    ports:
+    - "5000:5000" # iblapi
+    #entrypoint: ["/src/iblapi/run-ibl-api.dev.sh", "development"]
+    <<: *net
   ibl-navigator:
+    extends:
+      file: ./docker-compose-build.yml
+      service: ibl-navigator
     build: 
       context: ./ibl-frontend
-      dockerfile: Dockerfile.dev
-    image: ibl-navigator:v1.0
+      dockerfile: dev.dockerfile
+    image: ibl-navigator:v0.0.0
+    environment:
+      # - DEV_NODE_BACKEND=http://localhost:3333/api
+      - DEV_NODE_BACKEND=https://fakeservices.datajoint.io/api
     volumes:
-      - ./ibl-frontend/frontend-content/src:/frontend/src
-      - ./ibl-frontend/frontend-content/angular.json:/frontend/angular.json
-    healthcheck: # from publicdemo
-      test: curl --fail http://localhost:9000 || exit 1
-      timeout: 3s
-      retries: 20
-    ports:
-      - "9000:9000"
-    networks:
-      - main
-    depends_on:
-      ibl-node-server:
-        condition: service_healthy
-      iblapi:
-        condition: service_healthy
+      - ./ibl-frontend/frontend-content/src:/app/src
+      - ./ibl-frontend/frontend-content/angular.json:/app/angular.json
+    <<: *net
   ibl-node-server:
-    build: ./node_server
-    image: ibl-node-server:v1.0
+    extends:
+      file: ./docker-compose-build.yml
+      service: ibl-node-server
+    image: ibl-node-server:v0.0.0
     # command: nodemon /src/server.js
     volumes:
       - ./node_server/app.js:/src/app.js
-    environment:
-      - NODE_ENV=development
-      - DEMO_USERNAME=ibluser
-      - PY_BACKEND=http://iblapi:5000
-    env_file: .env
-    healthcheck: # from publicdemo
-      test: curl --fail http://localhost:3333/version || exit 1
-      timeout: 3s
-      retries: 20
+    <<: *net
+  nginx:
+    extends:
+      file: ./docker-compose-build.yml
+      service: nginx
     ports:
-      - "3333:3333"
-    networks:
-      - main
+    - "3333:3333" # node-server    
+    - "9000:9000" # frontend
+    <<: *net
 networks:
-    main:
-        ipam:
-            driver: default
-            config:
-                - subnet: 10.28.0.0/16
+  main:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.28.0.0/16

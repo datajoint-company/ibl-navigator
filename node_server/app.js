@@ -6,8 +6,11 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const http = require('http');
 const path = require('path');
+const _ = require('lodash');
 const jwt = require('jsonwebtoken');
-const checkAuth = require('./middleware/check-auth');
+const checkAuth = require('./middleware/utilities').checkAuth;
+const cacheMiddleware = require('./middleware/utilities').cacheMiddleware;
+const memCache = require('./middleware/utilities').memCache;
 // const serveStatic = require('serve-static')
 
 request.debug = false;
@@ -186,9 +189,10 @@ app.get('/sessions', checkAuth, (req, res) => {
     });
 })
 
-app.post('/sessions', checkAuth, (req, res) => {
+app.post('/sessions', checkAuth, cacheMiddleware(15*60), (req, res) => {
     // console.log('posting to filter session page');
-    
+    console.log('req.body: ', req.body)
+    console.log('type: ', typeof req.body)
     request.post(flask_backend + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error [session list fetch]: ', error);
@@ -265,7 +269,7 @@ app.post('/mice', checkAuth, (req, res) => {
 })
 
 
-app.post('/summary', checkAuth, (req, res) => {
+app.post('/summary', checkAuth, cacheMiddleware(15*60), (req, res) => {
 
     request.post(flask_backend + '/v0/_q/dailysummary', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
@@ -401,7 +405,7 @@ app.post('/plot/dateReactionTimeTrialNumberPlot', checkAuth, (req, res) => {
     })
 })
 
-app.post('/plot/cluster', checkAuth, (req, res) => {
+app.post('/plot/cluster', checkAuth, cacheMiddleware(15*60), (req, res) => {
     const timeX = new Date()
     // console.log('requesting cluster list at time: ', timeX, 'request: ', req.body);
     
@@ -727,6 +731,39 @@ app.post('/plot/waveform', checkAuth, (req, res) => {
     })
 })
 
+app.get('/brainRegionTree', checkAuth, cacheMiddleware(15*60), (req, res) => {
+    request.get(flask_backend + '/v0/brainregions', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [brain region fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        console.log('brain regions fetched - ')
+        function makeTree(allregions) {
+            let nodes = {};
+            return allregions.filter(function(region) {
+              let ID = region['brain_region_pk']
+              let parentID = region['parent']
+
+              let display = `[${region['acronym']}] ` + region['brain_region_name']
+              let isSelected = false;
+              let value = region['acronym'];
+
+              nodes[ID] = _.defaults(region, nodes[ID], { children: [], display, isSelected, value});
+              parentID && (nodes[parentID] = (nodes[parentID] || {children: []}))['children'].push(region)
+
+              return !parentID;
+            })
+          }
+
+        let brainTree = makeTree(JSON.parse(body))
+        console.log('[END]=======brain region===============[END]')
+        res.send(brainTree);
+        // res.send(body);
+    })
+})
+
+
 
 app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {
     let p = path.join(__dirname, `/test/raster/${req.params.mouse_id}/${req.params.session_time}/${req.params.probe_index}/${req.params.cluster_revision}/${req.params.event_type}/${req.params.sort_by}/0.png`)
@@ -757,6 +794,12 @@ app.get('/plots/testPlot', (req, res, next) => {
 //Docker Healthcheck
 app.get('/version', (req, res, next) => {
     res.send('Version: v1.0');    
+});
+
+//Node cache meta
+app.get('/node-cache', checkAuth, (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(memCache.stats());
 });
 
 // ============================================================= //
