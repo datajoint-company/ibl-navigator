@@ -5,8 +5,14 @@
 export const environment = {
   production: false,
   // api_url: '$DEV_NODE_API',
-  backend_url: 'https://fakeservices.datajoint.io/api'
+  backend_url: '$DEV_NODE_BACKEND'
 };
+
+// export const environment = {
+//   production: false,
+//   // api_url: '$DEV_NODE_API',
+//   backend_url: '$DEV_NODE_BACKEND'
+// };
 
 /*
  * For easier debugging in development mode, you can import the following file
