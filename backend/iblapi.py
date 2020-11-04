@@ -313,7 +313,8 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         q = (ephys.DefaultCluster & args).proj(..., *exclude_attrs) * ephys.DefaultCluster.Metrics.proj('firing_rate') 
         print(q)
     elif subpath == 'probetrajectory':
-        traj = histology.ProbeTrajectory * histology.InsertionDataSource
+        # traj = histology.ProbeTrajectory * histology.InsertionDataSource
+        traj = histology.ProbeTrajectoryTemp * histology.Provenance
 
         traj_latest = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
@@ -417,10 +418,15 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'depthbrainregions':
-        depth_region = histology.DepthBrainRegion * histology.InsertionDataSource
+        # depth_region = histology.DepthBrainRegion * histology.InsertionDataSource
 
+        # q = depth_region * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & 
+        #               (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
+        depth_region = histology.DepthBrainRegionTemp * histology.Provenance
         q = depth_region * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & 
-                      (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
+                    (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
+        # q = histology.DepthBrainRegionTemp * histology.Provenance & 
+        #     (ephys.ProbeInsertion.aggr(histology.DepthBrainRegionTemp, provenance='max(provenance)') & args)
     else:
         abort(404)
 

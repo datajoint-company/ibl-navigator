@@ -619,8 +619,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
             .subscribe((probeTraj) => {
               if (probeTraj && probeTraj[0]) {
-
-                this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+                // trajectory_source was formerly pulled from data_source table but now from provenance table as provenance_description
+                // this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source; 
+                this.probeTrajInfo['trajectory_source'] = probeTraj[0].provenance_description; // 
                 this.probeTrajInfo['LM'] = probeTraj[0].x;
                 this.probeTrajInfo['AP'] = probeTraj[0].y;
                 this.probeTrajInfo['z'] = probeTraj[0].z;
@@ -634,7 +635,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 } else if (probeTraj[0].x > 0) {
                   this.probeTrajInfo['hemisphere'] = 'right'
                 }
-                // console.log('probeTrajInfo: ', this.probeTrajInfo)
+                console.log('probeTrajInfo: ', this.probeTrajInfo)
               } 
             });
           this.updateDepthBrainRegionInfo(probeTrajQueryInfo)
@@ -1459,9 +1460,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
     this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
       .subscribe((probeTraj) => {
-          this.probeTrajInfo = {};
+        this.probeTrajInfo = {};
         if (probeTraj && probeTraj[0]) {
-          this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+          // this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+          this.probeTrajInfo['trajectory_source'] = probeTraj[0].provenance_description;
           this.probeTrajInfo['LM'] = probeTraj[0].x;
           this.probeTrajInfo['AP'] = probeTraj[0].y;
           this.probeTrajInfo['z'] = probeTraj[0].z;
@@ -1475,7 +1477,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           } else if (probeTraj[0].x > 0) {
             this.probeTrajInfo['hemisphere'] = 'right'
           }
+          console.log('probeTrajInfo2: ', this.probeTrajInfo)
         }
+        
         
       });
 
