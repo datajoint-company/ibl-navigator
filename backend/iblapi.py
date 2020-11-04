@@ -237,7 +237,8 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         #   expected format of brain_regions = ["AB", "ABCa", "CS of TCV"]
         if regions is not None and len(regions) > 0: 
             region_restr = [{'acronym': v} for v in regions]
-            brain_restriction = histology.SessionBrainRegion() & region_restr
+            brain_restriction = histology.ProbeBrainRegionTemp() & region_restr
+            # brain_restriction = histology.SessionBrainRegion() & region_restr
         else:
             brain_restriction = {}
         q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
