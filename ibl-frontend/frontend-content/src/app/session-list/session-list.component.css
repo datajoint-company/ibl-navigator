@@ -216,10 +216,19 @@ mat-checkbox.mouse_sex_menu_chbox {
     flex-direction: column;
 }
 
-.brain-tree {
+.br-selection-area {
+    max-height: 400px;
+    max-width: 600px;
+    overflow: scroll;
     box-shadow: 1px 1px 4px rgba(102, 102, 102, 0.25);
-    padding-right: 30px;
+    position: relative;
+}
+
+.brain-tree {
     margin-top: 10px;
+    padding-right: 30px;
+    width: fit-content;
+    height: fit-content;
 }
 .brain-tree-invisible {
     display: none;
