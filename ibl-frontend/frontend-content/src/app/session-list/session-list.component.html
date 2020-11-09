@@ -151,7 +151,7 @@
       <div class="brain-tree-zone">
         <mat-form-field>
           <label>Brain Regions</label>
-          <input matInput (input)="filterChanged($event.target.value)">
+          <input matInput (input)="filterChanged($event.target.value.toLowerCase())">
         </mat-form-field>
         <div>Selected Brain Region:
           <div class="chip-list">
