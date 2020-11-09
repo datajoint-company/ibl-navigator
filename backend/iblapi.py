@@ -241,9 +241,12 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             # brain_restriction = histology.SessionBrainRegion() & region_restr
         else:
             brain_restriction = {}
+        # q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
+        #       subject.SubjectLab() * subject.SubjectUser() *
+        #       analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
+
         q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
-              subject.SubjectLab() * subject.SubjectUser() *
-              analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
+              subject.SubjectLab() * subject.SubjectUser()) & args & brain_restriction)
         
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
         q = q.proj(*proj).fetch(**fetch_args) if proj else q.fetch(**fetch_args)
