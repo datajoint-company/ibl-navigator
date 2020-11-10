@@ -230,9 +230,16 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             nplot='count(dummy)',
             keep_all_rows=True)
         ephys_data = acquisition.Session().aggr(
-            ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
-            nprobe='count(dummy2)',
+            ephys.ProbeInsertion().proj(dummy3='"x"') * dj.U('dummy3'),
+            nprobe='count(dummy3)',
             keep_all_rows=True)
+        trainingStatus = acquisition.Session().aggr(
+            analyses_behavior.SessionTrainingStatus().proj(dummy4='"x"') * dj.U('dummy4'),
+            keep_all_rows=True) * acquisition.Session().aggr(
+            (analyses_behavior.SessionTrainingStatus()),
+            training_status='training_status', good_enough_for_brainwide_map='good_enough_for_brainwide_map',
+            keep_all_rows=True
+            )
         regions = kwargs.get('brain_regions', None)
         #   expected format of brain_regions = ["AB", "ABCa", "CS of TCV"]
         if regions is not None and len(regions) > 0: 
@@ -246,7 +253,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         #       analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
 
         q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
-              subject.SubjectLab() * subject.SubjectUser()) & args & brain_restriction)
+              subject.SubjectLab() * subject.SubjectUser() * trainingStatus) & args & brain_restriction)
         
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
         q = q.proj(*proj).fetch(**fetch_args) if proj else q.fetch(**fetch_args)
