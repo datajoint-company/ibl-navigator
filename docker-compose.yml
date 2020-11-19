@@ -29,9 +29,9 @@ services:
     #cpu_quota: 100000
     #cpu_period: 100ms
   ibl-navigator:
-    # build: ./ibl-frontend
+    build: ./ibl-frontend
     # image: registry.vathes.com/ibl-navigator/frontend:v0.0-dev3 # add -dev ending to testdev tag
-    image: registry.vathes.com/ibl-navigator/frontend:v0.0-public13 # for public demo
+    image: registry.vathes.com/ibl-navigator/frontend:v0.0-public14 # for public demo
     environment:
     # - PROD_NODE_API=https://testdev.datajoint.io/api # for testdev deploy
     # - PROD_NODE_BACKEND=https://testdev.datajoint.io/api # for testdev deploy
