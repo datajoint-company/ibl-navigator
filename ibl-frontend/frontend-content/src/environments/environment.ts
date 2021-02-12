@@ -5,13 +5,13 @@
 export const environment = {
   production: false,
   // api_url: '$DEV_NODE_API',
-  backend_url: '$DEV_NODE_BACKEND'
+  backend_url: 'https://fakeservices.datajoint.io/api'
 };
 
 // export const environment = {
 //   production: false,
 //   // api_url: '$DEV_NODE_API',
-//   backend_url: '$DEV_NODE_BACKEND'
+//   backend_url: 'https://fakeservices.datajoint.io/api'
 // };
 
 /*

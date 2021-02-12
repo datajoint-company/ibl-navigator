@@ -6,6 +6,8 @@ import { CellListService } from './cell-list.service';
 
 import { Sort } from '@angular/material/sort';
 
+import { SuperGif } from '@wizpanda/super-gif';
+
 declare var Plotly: any;
 
 @Component({
@@ -270,6 +272,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private fullRasterPSTHLoaded = new Subject();
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
+  @ViewChild('.brainGIF') brain_gif: ElementRef;
+  spinningBrain;
 
   constructor(public cellListService: CellListService) { }
   @HostListener('window:keyup', ['$event']) keyEvent(event) {
@@ -1452,6 +1456,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
 
+    let brainImage = this.brain_gif.nativeElement
+    this.spinningBrain = new SuperGif(brainImage, {rubbable: true})
+    
     // requesting probe trajectory for selected probe 
     let probeTrajQueryInfo = {};
     probeTrajQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
