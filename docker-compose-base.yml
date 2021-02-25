@@ -71,11 +71,11 @@ services:
     #     condition: service_healthy
   nginx:
     <<: *net
-    image: raphaelguzman/nginx:v0.0.10
+    image: raphaelguzman/nginx:v0.0.15
     environment:
-      - ADD_frontend_TYPE=REST
-      - ADD_frontend_ENDPOINT=ibl-navigator:9000
-      - ADD_frontend_PREFIX=/
+      - ADD_zfrontend_TYPE=REST
+      - ADD_zfrontend_ENDPOINT=ibl-navigator:9000
+      - ADD_zfrontend_PREFIX=/
       - ADD_nodebackend_TYPE=REST
       - ADD_nodebackend_ENDPOINT=ibl-node-server:3333
       - ADD_nodebackend_PREFIX=/api
