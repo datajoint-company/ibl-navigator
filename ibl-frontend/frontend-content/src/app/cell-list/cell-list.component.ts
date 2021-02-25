@@ -272,7 +272,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private fullRasterPSTHLoaded = new Subject();
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
-  @ViewChild('.brainGIF') brain_gif: ElementRef;
+  @ViewChild('brainGIF') brain_gif: ElementRef;
   spinningBrain;
 
   constructor(public cellListService: CellListService) { }
@@ -544,11 +544,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             },
 
           };
+         
 
           // initially set the navigation plot to show the depth brain region
           
           this.plot_layout_4real = deepCopy(this.plot_layout_DBR);
-          console.log('looking at plot_layout_4real: ', this.plot_layout_4real)
           /////////////////////////////////////////old way - but still in use /////////////////////////////////////////////////////
           const queryInfo = {};
           queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -1318,10 +1318,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               // console.log('sliderDepthTrialLookup object keys: ', Object.keys(this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType]))
               // console.log("###sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialId]: ", this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][this.featuredTrialId])
 
-            });  
+            }); 
+            
+            
         }
       });
   }
+
+  // *****************
+  // End of ngOnInit
+  // *****************
+
 
   ngDoCheck() {
     // console.log('do check ran');
@@ -1440,11 +1447,22 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     if (this.fullRasterPSTHSubscription) {
       this.fullRasterPSTHSubscription.unsubscribe();
     }
-
   }
 
+
+  loadSpinningBrain(probeInsNum=0) {
+    console.log('attempting to load spinning brain super gif for probe insertion: ', probeInsNum)
+    let brainImage = this.brain_gif.nativeElement
+    this.spinningBrain = new SuperGif(brainImage, {autoPlay: true, maxWidth: 360})
+    this.spinningBrain.load(() => {
+      console.log('spinning brain in SuperGIF mode should now be loaded...')
+    })
+  }
+
+
   probe_selected(probeInsNum) {
-    // console.log('probe change requested - ', probeInsNum)
+    this.loadSpinningBrain(probeInsNum)
+    console.log('probe change requested - ', probeInsNum)
     this.cluster_amp_data = [];
     this.cluster_depth_data = [];
     this.firing_rate_data = [];
@@ -1456,9 +1474,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
 
-    let brainImage = this.brain_gif.nativeElement
-    this.spinningBrain = new SuperGif(brainImage, {rubbable: true})
     
+
     // requesting probe trajectory for selected probe 
     let probeTrajQueryInfo = {};
     probeTrajQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];

@@ -85,8 +85,20 @@
       </div> 
     </div>
     <div class="col-xl-3">
-      <img class="brainGIF" src="../../assets/images/spinningBrainTest.gif" />
-      <!-- <img class="brainGIF" [animated_src]="spinningBrain" /> -->
+      <!-- <img class="brainGIF" src="../../assets/images/spinningBrainTest.gif" /> -->
+      <div class="super-gif-container">
+        <img #brainGIF src="../../assets/images/spinningBrainTest.gif"/>
+        <div *ngIf="spinningBrain && spinningBrain.isReady()" style="margin-left:120px" class="spinning-brain-controls">
+          <button (click)="spinningBrain.pause()">pause</button>
+          <button (click)="spinningBrain.play()">play</button>
+          <button (click)="spinningBrain.stepFrame(-1)">-1</button>
+          <button (click)="spinningBrain.stepFrame(1)">+1</button>
+          <div style="height:10px; width: 200px; border: 1px solid black">
+            <div style="background-color: rgb(165, 10, 10); height: 8px;" [style.width]="(spinningBrain.getCurrentFrame()/spinningBrain.getLength()) * 100 + '%'"></div>
+          </div>
+          <p>{{spinningBrain.getCurrentFrame()}}/{{spinningBrain.getLength()}}</p>
+        </div>
+      </div>
     </div>
     <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
       <!-- <p>rasterEventLacksMovement: {{rasterEventLacksMovement}}</p> <br>
