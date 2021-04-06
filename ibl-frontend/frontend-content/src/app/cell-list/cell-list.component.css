@@ -52,7 +52,7 @@ td span.oi {
 }
 
 .cluster-nav-filters .gc-filter-area {
-    margin-left: 12px;
+    margin-top:8px;
 }
 
 .plots-navigator-buttons {
@@ -162,6 +162,7 @@ td span.oi {
 
 .coronal-section-area {
     position: relative;
+    margin-bottom: 8px;
 }
 
 .coronal-section-probe-options {
@@ -175,10 +176,25 @@ td span.oi {
     border: 1px solid lightgray;
     margin-right: 24px;
     cursor: pointer;
+    box-shadow: gray 1px 2px 1px;
+    align-items: center;
+    width: 300px;
+}
+
+.coronal-section-probe-options .probe-selector * {
+    cursor: pointer;
+}
+
+.coronal-section-probe-options .probe-selector:hover {
+    box-shadow: gray 1px 2px 4px;
 }
 
 .probe-selector img {
-    width: 300px;
+    width: 100%;
+}
+
+.probe-selector img.selected {
+    border: 6px solid #03a2da;
 }
 
 /* M (768px and up) */

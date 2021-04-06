@@ -11,26 +11,7 @@
   <br />
   <div class="cell-header">
     <h3>Cells</h3>
-    <div class="coronal-section-area">
-      <div class="coronal-section-probe-options" *ngIf="coronalSections && coronalSections.length > 0">
-        <div class="probe-selector" *ngFor="let section of coronalSections" (click)="probe_selected(section.probe_idx)">
-          <img class="coronal-section-image" [src]="section.probe_trajectory_coronal_link" />
-          <div class="radio-options">
-            <input type="radio" [name]="section.probe_idx" [checked]="section.probe_idx == probeIndex" />
-            <label [for]="section.probe_idx">&nbsp;{{section.probe_idx}}</label>
-          </div>
-        </div>
-      </div>
-      <div class="coronal-section-probe-options" *ngIf="coronalSections && coronalSections.length == 0">
-        <div class="probe-selector" *ngFor="let probe of probeIndices" (click)="probe_selected(probe)">
-          <div>Probe trajectory not yet resolved</div>
-          <div class="radio-options">
-            <input type="radio" [name]="probe" [checked]="probe == probeIndex" />
-            <label [for]="probe">&nbsp;{{probe}}</label>
-          </div>
-        </div>
-      </div>
-    </div>
+    
 
     <h6>(Total clusters for probe {{probeIndex}}: {{cellsByProbeIns.length}})</h6>
     <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="/qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}" [queryParams]="{nickname: ${sessionInfo?.subject_nickname}, lab: ${sessionInfo?.session_lab}, project: ${sessionInfo?.session_project}, protocol: ${sessionInfo?.task_protocol}}"></span></div> -->
@@ -38,20 +19,29 @@
 
     <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}?nickname=${sessionInfo?.subject_nickname}"></span></div> -->
   </div>
-  <span class="cluster-nav-filters">
-    <div class="probe-selection-area">
-      <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
-      <select name="probe_idx" (change)="probe_selected($event.target.value)">
-        <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{probeIns}}</option>
-      </select>
+  <div class="coronal-section-area">
+    <!-- This probe selection section is for when coronal sections are available -->
+    <div class="coronal-section-probe-options" *ngIf="coronalSections && coronalSections.length > 0">
+      <div class="probe-selector" *ngFor="let section of coronalSections" (click)="probe_selected(section.probe_idx)">
+        <img [ngClass]="section.probe_idx == probeIndex ? 'selected coronal-section-image' : 'coronal-section-image'" [src]="section.probe_trajectory_coronal_link" />
+        <div class="radio-options">
+          <input type="radio" [name]="section.probe_idx" [checked]="section.probe_idx == probeIndex"/>
+          <label [for]="section.probe_idx">&nbsp;Probe {{section.probe_idx}}</label>
+        </div>
+      </div>
     </div>
-    <div class="gc-filter-area">
-      <label for="gc-filter">Select Good Cluster Criterion Filter:&nbsp;&nbsp;  </label>
-      <select name="gc-filter" (change)="gcfilter_selected($event.target.value)">
-        <option *ngFor="let gcfilter of gcfilter_types | keyvalue" [value]="gcfilter.key" [selected]="gcfilter == gcfilter_types[0]">{{ gcfilter.value }}</option>
-      </select>
+    <!-- This probe selection section is for when coronal sections are unavailable -->
+    <div class="coronal-section-probe-options" *ngIf="coronalSections && coronalSections.length == 0">
+      <div class="probe-selector" *ngFor="let probe of probeIndices" (click)="probe_selected(probe)">
+        <div class="dummy-image">Probe trajectory not yet resolved</div>
+        <div class="radio-options">
+          <input type="radio" [name]="probe" [checked]="probe == probeIndex" />
+          <label [for]="probe">&nbsp;Probe {{probe}}</label>
+        </div>
+      </div>
     </div>
-  </span>
+  </div>
+  
   <div *ngIf="probeTrajInfo && probeTrajInfo.LM">
     <b>LM</b>: {{probeTrajInfo.LM}}, <b>AP</b>: {{probeTrajInfo.AP}}, <b>z</b>: {{probeTrajInfo.z}}, <b>depth</b>: {{probeTrajInfo.depth}}, 
     <b>angle</b>: {{probeTrajInfo.angle}}, <b>hemisphere</b>: {{probeTrajInfo.hemisphere}}, <b>trajectory source</b>: {{probeTrajInfo.trajectory_source}}
@@ -63,6 +53,22 @@
   <div style="background-color: rgb(151, 9, 4); width: fit-content; padding: 0 8px;" *ngIf="plot_data_4real && plot_data_4real[0] && probeTrajInfo && probeTrajInfo.trajectory_source !== 'Ephys aligned histology track'">
     <b style="color:white;" >Temporary plot alignment: NOT based on ephys-aligned histology</b>
   </div>
+
+  <span class="cluster-nav-filters">
+    <!-- <div class="probe-selection-area">
+      <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
+      <select name="probe_idx" (change)="probe_selected($event.target.value)">
+        <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{probeIns}}</option>
+      </select>
+    </div> -->
+    <div class="gc-filter-area">
+      <label for="gc-filter">Select Good Cluster Criterion Filter:&nbsp;&nbsp;  </label>
+      <select name="gc-filter" (change)="gcfilter_selected($event.target.value)">
+        <option *ngFor="let gcfilter of gcfilter_types | keyvalue" [value]="gcfilter.key" [selected]="gcfilter == gcfilter_types[0]">{{ gcfilter.value }}</option>
+      </select>
+    </div>
+  </span>
+
   <div class="row">
     <br />
     <div class="cluster-nav-plot-area col-7 col-xl-6">
