@@ -20,27 +20,29 @@
     <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}?nickname=${sessionInfo?.subject_nickname}"></span></div> -->
   </div>
   <div class="coronal-section-area">
-    <!-- This probe selection section is for when coronal sections are available -->
-    <div class="coronal-section-probe-options" *ngIf="coronalSections && coronalSections.length > 0">
-      <div class="probe-selector" *ngFor="let section of coronalSections" (click)="probe_selected(section.probe_idx)">
-        <img [ngClass]="section.probe_idx == probeIndex ? 'selected coronal-section-image' : 'coronal-section-image'" [src]="section.probe_trajectory_coronal_link" />
-        <div class="radio-options">
-          <input type="radio" [name]="section.probe_idx" [checked]="section.probe_idx == probeIndex"/>
-          <label [for]="section.probe_idx">&nbsp;Probe {{section.probe_idx}}</label>
+    <!-- This coronal section probe selector replaces the original dropdown probe selectors -->
+    <div class="coronal-section-probe-options">
+      <div *ngFor="let probe of probeIndices">
+        <div *ngIf="coronalSectionProbeList.length > 0">
+          <div *ngFor="let section of coronalSections">
+            <div *ngIf="section.probe_idx === probe" class="probe-selector" (click)="probe_selected(section.probe_idx)">
+              <img [ngClass]="probe == probeIndex ? 'selected coronal-section-image' : 'coronal-section-image'" [src]="section.probe_trajectory_coronal_link" />
+              <div class="radio-options">
+                <input type="radio" [name]="section.probe_idx" [checked]="section.probe_idx == probeIndex"/>
+                <label [for]="section.probe_idx">&nbsp;Probe {{section.probe_idx}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!coronalSectionProbeList.includes(probe)" class="probe-selector" (click)="probe_selected(probe)">
+          <div [ngClass]="probe == probeIndex ? 'selected dummy-image' : 'dummy-image'">Probe trajectory not yet resolved</div>
+          <div class="radio-options">
+            <input type="radio" [name]="probe" [checked]="probe == probeIndex" />
+            <label [for]="probe">&nbsp;Probe {{probe}}</label>
+          </div>
         </div>
       </div>
     </div>
-    <!-- This probe selection section is for when coronal sections are unavailable -->
-    <div class="coronal-section-probe-options" *ngIf="coronalSections && coronalSections.length == 0">
-      <div class="probe-selector" *ngFor="let probe of probeIndices" (click)="probe_selected(probe)">
-        <div class="dummy-image">Probe trajectory not yet resolved</div>
-        <div class="radio-options">
-          <input type="radio" [name]="probe" [checked]="probe == probeIndex" />
-          <label [for]="probe">&nbsp;Probe {{probe}}</label>
-        </div>
-      </div>
-    </div>
-  </div>
   
   <div *ngIf="probeTrajInfo && probeTrajInfo.LM">
     <b>LM</b>: {{probeTrajInfo.LM}}, <b>AP</b>: {{probeTrajInfo.AP}}, <b>z</b>: {{probeTrajInfo.z}}, <b>depth</b>: {{probeTrajInfo.depth}}, 
@@ -55,12 +57,12 @@
   </div>
 
   <span class="cluster-nav-filters">
-    <!-- <div class="probe-selection-area">
+    <div class="probe-selection-area">
       <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
       <select name="probe_idx" (change)="probe_selected($event.target.value)">
         <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{probeIns}}</option>
       </select>
-    </div> -->
+    </div>
     <div class="gc-filter-area">
       <label for="gc-filter">Select Good Cluster Criterion Filter:&nbsp;&nbsp;  </label>
       <select name="gc-filter" (change)="gcfilter_selected($event.target.value)">
@@ -109,21 +111,7 @@
         </div>
       </div> 
     </div>
-    <!-- <div class="col-xl-3">
-      <div class="super-gif-container">
-        <img #brainGIF src="../../assets/images/spinningBrainTest.gif"/>
-        <div *ngIf="spinningBrain && spinningBrain.isReady()" style="margin-left:120px" class="spinning-brain-controls">
-          <button (click)="spinningBrain.pause()">pause</button>
-          <button (click)="spinningBrain.play()">play</button>
-          <button (click)="spinningBrain.stepFrame(-1)">-1</button>
-          <button (click)="spinningBrain.stepFrame(1)">+1</button>
-          <div style="height:10px; width: 200px; border: 1px solid black">
-            <div style="background-color: rgb(165, 10, 10); height: 8px;" [style.width]="(spinningBrain.getCurrentFrame()/spinningBrain.getLength()) * 100 + '%'"></div>
-          </div>
-          <p>{{spinningBrain.getCurrentFrame()}}/{{spinningBrain.getLength()}}</p>
-        </div>
-      </div>
-    </div> -->
+
     <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
       <!-- <p>rasterEventLacksMovement: {{rasterEventLacksMovement}}</p> <br>
       <p>psthEventLacksMovement: {{psthEventLacksMovement}}</p> <br>

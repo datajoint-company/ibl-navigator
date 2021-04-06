@@ -193,8 +193,19 @@ td span.oi {
     width: 100%;
 }
 
-.probe-selector img.selected {
+.probe-selector img.selected,
+.probe-selector .dummy-image.selected {
     border: 6px solid #03a2da;
+}
+
+.probe-selector .dummy-image {
+    height: 200px;
+    width: 100%;
+    border: 1px solid lightgray;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* M (768px and up) */

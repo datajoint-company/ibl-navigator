@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, DoCheck, HostListener} from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, DoCheck, HostListener } from '@angular/core';
 
 import { Subscription, Subject } from 'rxjs';
 
@@ -77,6 +77,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   probeIndex;
   probeIndices = [];
   coronalSections;
+  coronalSectionProbeList = [];
 
   gcfilter_types = {0: 'show all'};
   goodClusters = [];
@@ -341,9 +342,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   
     this.cellListService.retrieveCoronalSections(this.sessionInfo)
     this.coronalSectionsSubscription = this.cellListService.getCoronalSectionsLoadedListener()
-      .subscribe(coronalSections => {
+      .subscribe((coronalSections: Array<Object>) => {
         console.log('retrieved coronal sections: ', coronalSections)
-        this.coronalSections = coronalSections
+        this.coronalSections = coronalSections;
+        for (let section of coronalSections) {
+          this.coronalSectionProbeList.push(section['probe_idx'])
+        }
+        console.log('coronal section probe list: ', this.coronalSectionProbeList)
       });
 
     this.cellListService.retrieveCellList(this.sessionInfo);
