@@ -76,8 +76,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   sortType;
   probeIndex;
   probeIndices = [];
-  coronalSections;
-  coronalSectionProbeList = [];
+  coronalSections: Array<Object>; // contains coronal sections object with the link to S3
+  coronalSectionProbeList = []; // extracted just the corresponding probe indexes for easier rendering 
 
   gcfilter_types = {0: 'show all'};
   goodClusters = [];
@@ -340,15 +340,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         }
       })
   
+    /*
+    ** Fetch list of available coronal sections for the particular session
+    */
     this.cellListService.retrieveCoronalSections(this.sessionInfo)
     this.coronalSectionsSubscription = this.cellListService.getCoronalSectionsLoadedListener()
       .subscribe((coronalSections: Array<Object>) => {
-        console.log('retrieved coronal sections: ', coronalSections)
+        // once coronal sections come back successfully, store and extract just the probe indexes for rendering
         this.coronalSections = coronalSections;
         for (let section of coronalSections) {
           this.coronalSectionProbeList.push(section['probe_idx'])
         }
-        console.log('coronal section probe list: ', this.coronalSectionProbeList)
       });
 
     this.cellListService.retrieveCellList(this.sessionInfo);

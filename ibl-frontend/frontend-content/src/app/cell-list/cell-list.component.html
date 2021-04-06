@@ -43,7 +43,7 @@
         </div>
       </div>
     </div>
-  
+  </div>
   <div *ngIf="probeTrajInfo && probeTrajInfo.LM">
     <b>LM</b>: {{probeTrajInfo.LM}}, <b>AP</b>: {{probeTrajInfo.AP}}, <b>z</b>: {{probeTrajInfo.z}}, <b>depth</b>: {{probeTrajInfo.depth}}, 
     <b>angle</b>: {{probeTrajInfo.angle}}, <b>hemisphere</b>: {{probeTrajInfo.hemisphere}}, <b>trajectory source</b>: {{probeTrajInfo.trajectory_source}}
@@ -57,12 +57,13 @@
   </div>
 
   <span class="cluster-nav-filters">
-    <div class="probe-selection-area">
+    <!-- used for debugging the coronal section probe selectors -->
+    <!-- <div class="probe-selection-area">
       <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
       <select name="probe_idx" (change)="probe_selected($event.target.value)">
         <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{probeIns}}</option>
       </select>
-    </div>
+    </div> -->
     <div class="gc-filter-area">
       <label for="gc-filter">Select Good Cluster Criterion Filter:&nbsp;&nbsp;  </label>
       <select name="gc-filter" (change)="gcfilter_selected($event.target.value)">
@@ -125,13 +126,13 @@
             <label for="stim on">Stim On</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="depthPETHevent" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
-            <label for="feedback">Feedback</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="depthPETHevent" id="movement" value="movement" [checked]="eventType === 'movement'" [disabled]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement" (change)="order_by_event($event.target.value)">
             <label for="movement" [style.color]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement ? 'lightgrey' : ''">Movement</label>
           </div>
+          <div class="radio-option">
+            <input type="radio" name="depthPETHevent" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
+            <label for="feedback">Feedback</label>
+          </div>    
         </div>  
       </div>
       <div>
@@ -192,12 +193,12 @@
             <label for="stim on">Stim On</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
-            <label for="feedback">Feedback</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="event" id="movement" value="movement" [disabled]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement" [checked]="eventType === 'movement'" (change)="order_by_event($event.target.value)">
             <label for="movement" [style.color]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement ? 'lightgrey' : ''">Movement</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
+            <label for="feedback">Feedback</label>
           </div>
         </div>  
       </div>
@@ -216,10 +217,6 @@
             <label for="trial_id">Trial ID</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="sort_by" id="feedback - stim on" value="feedback - stim on" [disabled]="eventType==='feedback' || eventType==='movement'" [checked]="sortType === 'feedback - stim on'" (change)="order_by_sorting($event.target.value)">
-            <label for="feedback - stim on" [style.color]="eventType==='feedback' || eventType==='movement' ? 'lightgrey' : ''">Feedback - Stim On</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="sort_by" id="contrast" value="contrast" [disabled]="eventType==='feedback' || eventType==='movement'" [checked]="sortType === 'contrast'" (change)="order_by_sorting($event.target.value)">
             <label for="contrast" [style.color]="eventType==='feedback' || eventType==='movement' ? 'lightgrey' : ''">Contrast</label>
           </div>
@@ -230,6 +227,10 @@
           <div class="radio-option">
             <input type="radio" name="sort_by" id="movement - stim on" value="movement - stim on" [disabled]="eventType==='feedback'" [checked]="sortType === 'movement - stim on'" (change)="order_by_sorting($event.target.value)">
             <label for="movement - stim on" [style.color]="eventType==='feedback' ? 'lightgrey' : ''">Movement - Stim On</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="sort_by" id="feedback - stim on" value="feedback - stim on" [disabled]="eventType==='feedback' || eventType==='movement'" [checked]="sortType === 'feedback - stim on'" (change)="order_by_sorting($event.target.value)">
+            <label for="feedback - stim on" [style.color]="eventType==='feedback' || eventType==='movement' ? 'lightgrey' : ''">Feedback - Stim On</label>
           </div>
           <div class="radio-option">
             <input type="radio" name="sort_by" id="feedback - movement" value="feedback - movement" [disabled]="eventType==='stim on' || eventType==='feedback'" [checked]="sortType === 'feedback - movement'" (change)="order_by_sorting($event.target.value)">

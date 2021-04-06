@@ -191,6 +191,7 @@ td span.oi {
 
 .probe-selector img {
     width: 100%;
+    margin-bottom: 8px;
 }
 
 .probe-selector img.selected,
@@ -206,6 +207,7 @@ td span.oi {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 8px;
 }
 
 /* M (768px and up) */
