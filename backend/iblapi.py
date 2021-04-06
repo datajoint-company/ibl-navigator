@@ -41,6 +41,7 @@ acquisition = mkvmod('acquisition')
 plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
+plotting_histology = mkvmod('plotting_histology')
 test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
 histology = mkvmod('histology')
@@ -252,7 +253,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         #       subject.SubjectLab() * subject.SubjectUser() *
         #       analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
 
-        q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
+        q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() *
               subject.SubjectLab() * subject.SubjectUser() * trainingStatus) & args & brain_restriction)
         
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
@@ -437,8 +438,37 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                     (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
         # q = histology.DepthBrainRegionTemp * histology.Provenance & 
         #     (ephys.ProbeInsertion.aggr(histology.DepthBrainRegionTemp, provenance='max(provenance)') & args)
+    elif subpath == 'spinningbrain':
+        q = plotting_ephys.SubjectSpinningBrain & args
+        # # Switch to plotting_histology once ingested
+        # q = plotting_histology.SubjectSpinningBrain & args
+        def post_process(ret):
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['subject_spinning_brain_link'] != '':  # if empty link, skip
+                    parsed_item['subject_spinning_brain_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['subject_spinning_brain_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
+    elif subpath == 'coronalsections':
+        q = plotting_histology.ProbeTrajectoryCoronal & args
+        def post_process(ret):
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['probe_trajectory_coronal_link'] != '':  # if empty link, skip
+                    parsed_item['probe_trajectory_coronal_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['probe_trajectory_coronal_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
     else:
         abort(404)
+    
 
     ret = q if isinstance(q, (list, dict)) else (q.proj(*proj).fetch(**fetch_args)
                                                  if proj else q.fetch(**fetch_args))
