@@ -1,0 +1,17 @@
+<div class="super-gif-container">
+  <img #brainGIF [src]="spinningBrainSrc" />
+  <a [href]="spinningBrainSrc" download>Download</a>
+  <img #brainGIF2 [src]="base64GIFsrc" />
+  <!-- <img #brainGIF src="../../assets/images/spinningBrainTest.gif"/> -->
+  <!-- <img #brainGIF src="https://ibl-dj-external.s3.amazonaws.com/subject_spinning_brain/e202718f-ff1c-459e-9bd0-09600adb4909.gif?AWSAccessKeyId=AKIAX2NIY5IRKBJX3NMQ&Signature=JEBa5JxFJeqABgxEswAcbyDJESU%3D&Expires=1617328378"/> -->
+  <div *ngIf="spinningBrain && spinningBrain.isReady()" style="margin-left:120px" class="spinning-brain-controls">
+    <button (click)="spinningBrain.pause()">pause</button>
+    <button (click)="spinningBrain.play()">play</button>
+    <button (click)="spinningBrain.stepFrame(-1)">-1</button>
+    <button (click)="spinningBrain.stepFrame(1)">+1</button>
+    <div style="height:10px; width: 200px; border: 1px solid black">
+      <div style="background-color: rgb(165, 10, 10); height: 8px;" [style.width]="(spinningBrain.getCurrentFrame()/spinningBrain.getLength()) * 100 + '%'"></div>
+    </div>
+    <p>{{spinningBrain.getCurrentFrame()}}/{{spinningBrain.getLength()}}</p>
+  </div>
+</div>

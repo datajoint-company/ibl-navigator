@@ -57,6 +57,9 @@
         <td>{{ mouse?.subject_description }}</td>
       </tr>
     </table>
+    <div class="col-lg-3" *ngIf="mouse">
+      <app-spinning-brain [mouseInfo]="mouse"></app-spinning-brain>
+    </div>
   </div>
 </div>
 <hr>

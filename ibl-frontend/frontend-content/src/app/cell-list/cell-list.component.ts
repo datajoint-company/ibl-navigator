@@ -76,6 +76,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   sortType;
   probeIndex;
   probeIndices = [];
+  coronalSections;
 
   gcfilter_types = {0: 'show all'};
   goodClusters = [];
@@ -228,6 +229,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private spikeAmpTimeSubscription: Subscription;
   private acgSubscription: Subscription;
   private waveformSubscription: Subscription;
+  private coronalSectionsSubscription: Subscription;
 
   private rasterListSubscription0: Subscription;
   private rasterListSubscription1: Subscription;
@@ -272,8 +274,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private fullRasterPSTHLoaded = new Subject();
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
-  @ViewChild('brainGIF') brain_gif: ElementRef;
-  spinningBrain;
+  // @ViewChild('brainGIF') brain_gif: ElementRef;
+  // spinningBrain;
 
   constructor(public cellListService: CellListService) { }
   @HostListener('window:keyup', ['$event']) keyEvent(event) {
@@ -336,6 +338,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           }
         }
       })
+  
+    this.cellListService.retrieveCoronalSections(this.sessionInfo)
+    this.coronalSectionsSubscription = this.cellListService.getCoronalSectionsLoadedListener()
+      .subscribe(coronalSections => {
+        console.log('retrieved coronal sections: ', coronalSections)
+        this.coronalSections = coronalSections
+      });
 
     this.cellListService.retrieveCellList(this.sessionInfo);
     this.cellListSubscription = this.cellListService.getCellListLoadedListener()
@@ -1450,18 +1459,18 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
 
-  loadSpinningBrain(probeInsNum=0) {
-    console.log('attempting to load spinning brain super gif for probe insertion: ', probeInsNum)
-    let brainImage = this.brain_gif.nativeElement
-    this.spinningBrain = new SuperGif(brainImage, {autoPlay: true, maxWidth: 360})
-    this.spinningBrain.load(() => {
-      console.log('spinning brain in SuperGIF mode should now be loaded...')
-    })
-  }
+  // loadSpinningBrain(probeInsNum=0) {
+  //   console.log('attempting to load spinning brain super gif for probe insertion: ', probeInsNum)
+  //   let brainImage = this.brain_gif.nativeElement
+  //   this.spinningBrain = new SuperGif(brainImage, {autoPlay: true, maxWidth: 360})
+  //   this.spinningBrain.load(() => {
+  //     console.log('spinning brain in SuperGIF mode should now be loaded...')
+  //   })
+  // }
 
 
   probe_selected(probeInsNum) {
-    this.loadSpinningBrain(probeInsNum)
+    // this.loadSpinningBrain(probeInsNum)
     console.log('probe change requested - ', probeInsNum)
     this.cluster_amp_data = [];
     this.cluster_depth_data = [];

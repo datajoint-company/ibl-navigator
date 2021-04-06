@@ -160,6 +160,27 @@ td span.oi {
     margin-left: 20px;
 }
 
+.coronal-section-area {
+    position: relative;
+}
+
+.coronal-section-probe-options {
+    display: flex;
+    flex-direction: row;
+}
+
+.coronal-section-probe-options .probe-selector {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid lightgray;
+    margin-right: 24px;
+    cursor: pointer;
+}
+
+.probe-selector img {
+    width: 300px;
+}
+
 /* M (768px and up) */
 @media only screen and (max-width: 900px) {
     .plots-navigator {
