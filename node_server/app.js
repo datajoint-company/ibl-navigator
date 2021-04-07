@@ -777,6 +777,7 @@ app.post('/plot/spinningBrain', checkAuth, (req, res) => {
         downloadGIF(GIFlinkURL, subjectUUID)
         .then(localGIFlink => {    
             console.log('localGIFlink: ', localGIFlink);
+            // if GIF was successfully downloaded locally, adding that path info to the object that is sent back to front
             body['localGIFlink'] = localGIFlink
             res.send(body);
         }).catch(err => {
@@ -789,7 +790,7 @@ app.post('/plot/spinningBrain', checkAuth, (req, res) => {
     })
 
     /* 
-    ** download gif from s3 to local storage and return path
+    ** attempt to download gif from s3 to local storage and return path
     */
     let downloadGIF = async function(S3Link, subjectUUID) {
         console.log('running downloadGIF function')
@@ -809,7 +810,7 @@ app.post('/plot/spinningBrain', checkAuth, (req, res) => {
             });
         };
           
-        download(S3Link, `/${subjectUUID}.gif`, function(){
+        download(S3Link, `/GIFtempStorage/${subjectUUID}.gif`, function(){
             console.log('done writing to file');
             return `/GIFtempStorage/${subjectUUID}.gif`
         });

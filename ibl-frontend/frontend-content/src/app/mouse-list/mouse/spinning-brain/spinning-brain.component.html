@@ -1,9 +1,10 @@
-<div class="super-gif-container">
-  <img #brainGIF [src]="spinningBrainSrc" />
-  <a [href]="spinningBrainSrc" download>Download</a>
-  <img #brainGIF2 [src]="base64GIFsrc" />
+<div class="brain-gif-container">
+  <!-- from the original S3 link - super GIF player won't work on this one -->
+  <img class="brainGIF-image" [src]="spinningBrainSrc" />
+  <!-- ideally GIF url placed under same domain/port as frontend - super GIF player should work on this one -->
+  <!-- <img #brainGIF [src]="base64GIFsrc" /> -->
+  <!-- super gif test case of spinningBrain in the frontend asset folder -->
   <!-- <img #brainGIF src="../../assets/images/spinningBrainTest.gif"/> -->
-  <!-- <img #brainGIF src="https://ibl-dj-external.s3.amazonaws.com/subject_spinning_brain/e202718f-ff1c-459e-9bd0-09600adb4909.gif?AWSAccessKeyId=AKIAX2NIY5IRKBJX3NMQ&Signature=JEBa5JxFJeqABgxEswAcbyDJESU%3D&Expires=1617328378"/> -->
   <div *ngIf="spinningBrain && spinningBrain.isReady()" style="margin-left:120px" class="spinning-brain-controls">
     <button (click)="spinningBrain.pause()">pause</button>
     <button (click)="spinningBrain.play()">play</button>

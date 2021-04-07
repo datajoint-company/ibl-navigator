@@ -25,58 +25,60 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
     this.mousePlotsService.getSpinningBrain({'subject_uuid': this.mouseInfo['subject_uuid']});
     this.spinningBrainSubscription = this.mousePlotsService.getSpinningBrainLoadedListener()
       .subscribe((spinningBrain: any) => {
-        console.log('got the spinning brain');
         console.log(spinningBrain[0]['subject_spinning_brain_link']);
         this.spinningBrainSrc = spinningBrain[0]['subject_spinning_brain_link']
+        this.convertToBase64(this.spinningBrainSrc).subscribe(base64data => {    
+          console.log('base64data: ', base64data);
+          // this is the image as dataUrl
+          this.base64GIFsrc = 'data:image/gif;base64,' + base64data;
+        });
 
-        // this.convertToBase64(this.spinningBrainSrc).subscribe(base64data => {    
-        //   console.log('base64data: ', base64data);
-        //   // this is the image as dataUrl
-        //   this.base64GIFsrc = 'data:image/gif;base64,' + base64data;
-        // });
-        
         // once spinning brain link is set, load the player
         // Note on the player: The GIF has to be on the same domain (and port and protocol) as the page you're loading
         // this.loadSpinningBrainPlayer()
       });
   }
 
+  /* 
+  ** returns base64 image url? from source url
+  */
   convertToBase64(url: string) {
-    // console.log('converting to base 64...')
-    // return Observable.create((observer: Observer<string>) => {
-    //   // create an image object
-    //   let img = new Image();
-    //   img.src = url;
-    //   if (!img.complete) {
-    //       // This will call another method that will create image from url
-    //       img.onload = () => {
-    //       observer.next(this.getBase64Image(img));
-    //       observer.complete();
-    //     };
-    //     img.onerror = (err) => {
-    //        observer.error(err);
-    //     };
-    //   } else {
-    //       observer.next(this.getBase64Image(img));
-    //       observer.complete();
-    //   }
-    // });
+    console.log('converting to base 64...')
+    return Observable.create((observer: Observer<string>) => {
+      // create an image object
+      let img = new Image();
+      img.src = url;
+      if (!img.complete) {
+          // This will call another method that will create image from url
+          img.onload = () => {
+          observer.next(this.getBase64Image(img));
+          observer.complete();
+        };
+        img.onerror = (err) => {
+           observer.error(err);
+        };
+      } else {
+          observer.next(this.getBase64Image(img));
+          observer.complete();
+      }
+    });
   }
 
   /* 
-  ** creates base64 images from the image object (HTMLImageElement??) that was created from the source url
+  ** creates base64 images from the image object that was created from the source url
   */
   getBase64Image(img: any) {
-    // // Create a HTML canvas object that will create a 2d image
-    // var canvas = document.createElement("canvas");
-    // canvas.width = img.width;
-    // canvas.height = img.height;
-    // var ctx = canvas.getContext("2d");
-    // // This will draw image    
-    // ctx.drawImage(img, 0, 0);
-    // // Convert the drawn image to Data URL
-    // var dataURL = canvas.toDataURL("image/png");
-    // return dataURL.replace(/^data:image\/(gif);base64,/, "");
+    console.log('what is inside img: ', img)
+    // Create a HTML canvas object that will create a 2d image - this needs to be tweaked to work on GIF instead
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext("2d");
+    // This will draw image    
+    ctx.drawImage(img, 0, 0);
+    // Convert the drawn image to Data URL
+    var dataURL = canvas.toDataURL("image/gif");
+    return dataURL.replace(/^data:image\/(gif);base64,/, "");
  }
 
   loadSpinningBrainPlayer() {

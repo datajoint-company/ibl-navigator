@@ -154,6 +154,7 @@ export class MousePlotsService {
     this.http.post(BACKEND_API_URL + `/plot/spinningBrain`, subjectInfo)
       .subscribe(
         (spinningBrain) => {
+          console.log('spinningbrain data from node server: ', spinningBrain)
           this.spinningBrainLoaded.next(spinningBrain);
         },
         (error: any) => {
