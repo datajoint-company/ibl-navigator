@@ -30,6 +30,8 @@ TEST_DJ_PASS=test_db_password
 
 ### Build
 
+When building in local/dev mode, make sure to not commit the changes in the frontend/src/environment folder - especially the part where backend_url gets overwritten by the fakeservices.datajoint.io url.
+
 To be 100% sure of the new build to be reflected - use below
 `docker-compose -f docker-compose-dev.yml build --no-cache`
 

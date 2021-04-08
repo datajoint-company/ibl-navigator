@@ -24,6 +24,7 @@ export class MousePlotsService {
   private dateRTContrastPlotLoaded = new Subject();
   private dateRTTrialPlotLoaded = new Subject();
   private animationPCplotLoaded = new Subject();
+  private spinningBrainLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -149,6 +150,20 @@ export class MousePlotsService {
       );
   }
 
+  getSpinningBrain(subjectInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/spinningBrain`, subjectInfo)
+      .subscribe(
+        (spinningBrain) => {
+          console.log('spinningbrain data from node server: ', spinningBrain)
+          this.spinningBrainLoaded.next(spinningBrain);
+        },
+        (error: any) => {
+          console.log('error in retrieving spinning brain data');
+          console.error(error);
+        }
+      )
+  }
+
   getWaterWeightPlotLoadedListener() {
     return this.waterWeightPlotLoaded.asObservable();
   }
@@ -175,5 +190,8 @@ export class MousePlotsService {
   }
   getAnimatedPCplotLoadedListener() {
     return this.animationPCplotLoaded.asObservable();
+  }
+  getSpinningBrainLoadedListener() {
+    return this.spinningBrainLoaded.asObservable();
   }
 }

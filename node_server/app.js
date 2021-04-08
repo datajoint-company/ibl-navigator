@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const http = require('http');
 const path = require('path');
+const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('./middleware/utilities').checkAuth;
 const cacheMiddleware = require('./middleware/utilities').cacheMiddleware;
@@ -190,7 +191,8 @@ app.get('/sessions', checkAuth, (req, res) => {
 
 app.post('/sessions', checkAuth, cacheMiddleware(15*60), (req, res) => {
     // console.log('posting to filter session page');
-    
+    console.log('req.body: ', req.body)
+    console.log('type: ', typeof req.body)
     request.post(flask_backend + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
         if (error) {
             console.error('error [session list fetch]: ', error);
@@ -729,6 +731,104 @@ app.post('/plot/waveform', checkAuth, (req, res) => {
     })
 })
 
+app.get('/brainRegionTree', checkAuth, cacheMiddleware(15*60), (req, res) => {
+    request.get(flask_backend + '/v0/brainregions', function(error, httpResponse, body) {
+        if (error) {
+            console.error('error [brain region fetch]: ', error);
+            res.status(500).end();
+            return;
+        }
+        console.log('brain regions fetched - ')
+        function makeTree(allregions) {
+            let nodes = {};
+            return allregions.filter(function(region) {
+              let ID = region['brain_region_pk']
+              let parentID = region['parent']
+
+              let display = `[${region['acronym']}] ` + region['brain_region_name']
+              let isSelected = false;
+              let value = region['acronym'];
+
+              nodes[ID] = _.defaults(region, nodes[ID], { children: [], display, isSelected, value});
+              parentID && (nodes[parentID] = (nodes[parentID] || {children: []}))['children'].push(region)
+
+              return !parentID;
+            })
+          }
+
+        let brainTree = makeTree(JSON.parse(body))
+        console.log('[END]=======brain region===============[END]')
+        res.send(brainTree);
+        // res.send(body);
+    })
+})
+
+app.post('/plot/spinningBrain', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/_q/spinningbrain', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [Spinning Brain]: ', error);
+            res.status(500).end();
+            return;
+        }
+        console.log('body[0] for spinningBrain: ', JSON.parse(body)[0])
+        var GIFlinkURL = JSON.parse(body)[0]['subject_spinning_brain_link']
+        var subjectUUID = JSON.parse(body)[0]['subject_uuid']
+        console.log('gif link: ', GIFlinkURL)
+        downloadGIF(GIFlinkURL, subjectUUID)
+        .then(localGIFlink => {    
+            console.log('localGIFlink: ', localGIFlink);
+            // if GIF was successfully downloaded locally, adding that path info to the object that is sent back to front
+            body['localGIFlink'] = localGIFlink
+            res.send(body);
+        }).catch(err => {
+            // something happened in the download process, returning regular body without local link
+            console.error(err)
+            res.send(body)
+        })
+        
+        // res.send(body);
+    })
+
+    /* 
+    ** attempt to download gif from s3 to local storage and return path
+    */
+    let downloadGIF = async function(S3Link, subjectUUID) {
+        console.log('running downloadGIF function')
+
+        // trying to write the S3 link gif into a local file
+        download = function(url, filename, callback){
+            request.head(url, function(err, res, body){
+                console.log('content-type:', res.headers['content-type']);
+                console.log('content-length:', res.headers['content-length']);
+          
+                request(url)
+                .pipe(fs.createWriteStream(filename, {flag: 'a', encoding: 'base64'}))
+                .on('close', callback)
+                .on('error', (err) => {
+                    console.error(err)
+                })
+            });
+        };
+          
+        download(S3Link, `/GIFtempStorage/${subjectUUID}.gif`, function(){
+            console.log('done writing to file');
+            return `/GIFtempStorage/${subjectUUID}.gif`
+        });
+
+        // return `/GIFtempStorage/${subjectUUID}.gif`
+    }
+})
+
+app.post('/plot/coronalSections', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/_q/coronalsections', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [coronal sections]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
 
 app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {
     let p = path.join(__dirname, `/test/raster/${req.params.mouse_id}/${req.params.session_time}/${req.params.probe_index}/${req.params.cluster_revision}/${req.params.event_type}/${req.params.sort_by}/0.png`)

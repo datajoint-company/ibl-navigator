@@ -19,20 +19,31 @@
 
     <!-- <div class="quality-control-nav">&nbsp;Quality Control&nbsp;<span class="oi oi-external-link" routerLink="qc/{{sessionInfo?.subject_uuid}}/{{sessionInfo?.session_start_time}}?nickname=${sessionInfo?.subject_nickname}"></span></div> -->
   </div>
-  <span class="cluster-nav-filters">
-    <div class="probe-selection-area">
-      <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
-      <select name="probe_idx" (change)="probe_selected($event.target.value)">
-        <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{ probeIns }}</option>
-      </select>
+  <div class="coronal-section-area">
+    <!-- This coronal section probe selector replaces the original dropdown probe selectors -->
+    <div class="coronal-section-probe-options">
+      <div *ngFor="let probe of probeIndices">
+        <div *ngIf="coronalSectionProbeList.length > 0">
+          <div *ngFor="let section of coronalSections">
+            <div *ngIf="section.probe_idx === probe" class="probe-selector" (click)="probe_selected(section.probe_idx)">
+              <img [ngClass]="probe == probeIndex ? 'selected coronal-section-image' : 'coronal-section-image'" [src]="section.probe_trajectory_coronal_link" />
+              <div class="radio-options">
+                <input type="radio" [name]="section.probe_idx" [checked]="section.probe_idx == probeIndex"/>
+                <label [for]="section.probe_idx">&nbsp;Probe {{section.probe_idx}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!coronalSectionProbeList.includes(probe)" class="probe-selector" (click)="probe_selected(probe)">
+          <div [ngClass]="probe == probeIndex ? 'selected dummy-image' : 'dummy-image'">Probe trajectory not yet resolved</div>
+          <div class="radio-options">
+            <input type="radio" [name]="probe" [checked]="probe == probeIndex" />
+            <label [for]="probe">&nbsp;Probe {{probe}}</label>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="gc-filter-area">
-      <label for="gc-filter">Select Good Cluster Criterion Filter:&nbsp;&nbsp;  </label>
-      <select name="gc-filter" (change)="gcfilter_selected($event.target.value)">
-        <option *ngFor="let gcfilter of gcfilter_types | keyvalue" [value]="gcfilter.key" [selected]="gcfilter == gcfilter_types[0]">{{ gcfilter.value }}</option>
-      </select>
-    </div>
-  </span>
+  </div>
   <div *ngIf="probeTrajInfo && probeTrajInfo.LM">
     <b>LM</b>: {{probeTrajInfo.LM}}, <b>AP</b>: {{probeTrajInfo.AP}}, <b>z</b>: {{probeTrajInfo.z}}, <b>depth</b>: {{probeTrajInfo.depth}}, 
     <b>angle</b>: {{probeTrajInfo.angle}}, <b>hemisphere</b>: {{probeTrajInfo.hemisphere}}, <b>trajectory source</b>: {{probeTrajInfo.trajectory_source}}
@@ -41,6 +52,26 @@
     <p>No probe trajectory information found for the selected probe.</p>
   </div>
   <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
+  <div style="background-color: rgb(151, 9, 4); width: fit-content; padding: 0 8px;" *ngIf="plot_data_4real && plot_data_4real[0] && probeTrajInfo && probeTrajInfo.trajectory_source !== 'Ephys aligned histology track'">
+    <b style="color:white;" >Temporary plot alignment: NOT based on ephys-aligned histology</b>
+  </div>
+
+  <span class="cluster-nav-filters">
+    <!-- used for debugging the coronal section probe selectors -->
+    <!-- <div class="probe-selection-area">
+      <label for="probe_idx">Select Probe Insertion Index:&nbsp;&nbsp;  </label>
+      <select name="probe_idx" (change)="probe_selected($event.target.value)">
+        <option *ngFor="let probeIns of probeIndices" [value]="probeIns" [selected]="probeIns == probeIndices[0]">{{probeIns}}</option>
+      </select>
+    </div> -->
+    <div class="gc-filter-area">
+      <label for="gc-filter">Select Good Cluster Criterion Filter:&nbsp;&nbsp;  </label>
+      <select name="gc-filter" (change)="gcfilter_selected($event.target.value)">
+        <option *ngFor="let gcfilter of gcfilter_types | keyvalue" [value]="gcfilter.key" [selected]="gcfilter == gcfilter_types[0]">{{ gcfilter.value }}</option>
+      </select>
+    </div>
+  </span>
+
   <div class="row">
     <br />
     <div class="cluster-nav-plot-area col-7 col-xl-6">
@@ -81,6 +112,7 @@
         </div>
       </div> 
     </div>
+
     <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
       <!-- <p>rasterEventLacksMovement: {{rasterEventLacksMovement}}</p> <br>
       <p>psthEventLacksMovement: {{psthEventLacksMovement}}</p> <br>
@@ -94,13 +126,13 @@
             <label for="stim on">Stim On</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="depthPETHevent" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
-            <label for="feedback">Feedback</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="depthPETHevent" id="movement" value="movement" [checked]="eventType === 'movement'" [disabled]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement" (change)="order_by_event($event.target.value)">
             <label for="movement" [style.color]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement ? 'lightgrey' : ''">Movement</label>
           </div>
+          <div class="radio-option">
+            <input type="radio" name="depthPETHevent" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
+            <label for="feedback">Feedback</label>
+          </div>    
         </div>  
       </div>
       <div>
@@ -161,12 +193,12 @@
             <label for="stim on">Stim On</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
-            <label for="feedback">Feedback</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="event" id="movement" value="movement" [disabled]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement" [checked]="eventType === 'movement'" (change)="order_by_event($event.target.value)">
             <label for="movement" [style.color]="rasterEventLacksMovement && psthEventLacksMovement && depthPethEventLacksMovement ? 'lightgrey' : ''">Movement</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="event" id="feedback" value="feedback" [checked]="eventType === 'feedback'" (change)="order_by_event($event.target.value)">
+            <label for="feedback">Feedback</label>
           </div>
         </div>  
       </div>
@@ -185,10 +217,6 @@
             <label for="trial_id">Trial ID</label>
           </div>
           <div class="radio-option">
-            <input type="radio" name="sort_by" id="feedback - stim on" value="feedback - stim on" [disabled]="eventType==='feedback' || eventType==='movement'" [checked]="sortType === 'feedback - stim on'" (change)="order_by_sorting($event.target.value)">
-            <label for="feedback - stim on" [style.color]="eventType==='feedback' || eventType==='movement' ? 'lightgrey' : ''">Feedback - Stim On</label>
-          </div>
-          <div class="radio-option">
             <input type="radio" name="sort_by" id="contrast" value="contrast" [disabled]="eventType==='feedback' || eventType==='movement'" [checked]="sortType === 'contrast'" (change)="order_by_sorting($event.target.value)">
             <label for="contrast" [style.color]="eventType==='feedback' || eventType==='movement' ? 'lightgrey' : ''">Contrast</label>
           </div>
@@ -199,6 +227,10 @@
           <div class="radio-option">
             <input type="radio" name="sort_by" id="movement - stim on" value="movement - stim on" [disabled]="eventType==='feedback'" [checked]="sortType === 'movement - stim on'" (change)="order_by_sorting($event.target.value)">
             <label for="movement - stim on" [style.color]="eventType==='feedback' ? 'lightgrey' : ''">Movement - Stim On</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="sort_by" id="feedback - stim on" value="feedback - stim on" [disabled]="eventType==='feedback' || eventType==='movement'" [checked]="sortType === 'feedback - stim on'" (change)="order_by_sorting($event.target.value)">
+            <label for="feedback - stim on" [style.color]="eventType==='feedback' || eventType==='movement' ? 'lightgrey' : ''">Feedback - Stim On</label>
           </div>
           <div class="radio-option">
             <input type="radio" name="sort_by" id="feedback - movement" value="feedback - movement" [disabled]="eventType==='stim on' || eventType==='feedback'" [checked]="sortType === 'feedback - movement'" (change)="order_by_sorting($event.target.value)">

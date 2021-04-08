@@ -1,6 +1,6 @@
 # Use: Production remote deployment.
 # docker-compose -f docker-compose-deploy.yml pull
-# docker-compose -f docker-compose-deploy.yml up
+# docker-compose -f docker-compose-deploy.yml up -d
 version: '2.4'
 x-net: &net
   networks:
@@ -30,7 +30,7 @@ services:
     environment:
     - SUBDOMAINS
     - URL
-    - STAGING=true # Uncomment for Production use
+    - STAGING=true # Keep uncommented for dev, comment out for Production use
     volumes:
       - ./letsencrypt-keys:/config/etc/letsencrypt
       - ./letsencrypt/healthcheck.sh:/healthcheck.sh

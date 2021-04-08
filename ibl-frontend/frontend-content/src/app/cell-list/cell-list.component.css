@@ -52,7 +52,7 @@ td span.oi {
 }
 
 .cluster-nav-filters .gc-filter-area {
-    margin-left: 12px;
+    margin-top:8px;
 }
 
 .plots-navigator-buttons {
@@ -156,6 +156,55 @@ td span.oi {
     padding-right: 15px;
 }
 
+.coronal-section-area {
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.coronal-section-probe-options {
+    display: flex;
+    flex-direction: row;
+}
+
+.coronal-section-probe-options .probe-selector {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid lightgray;
+    margin-right: 24px;
+    cursor: pointer;
+    box-shadow: gray 1px 2px 1px;
+    align-items: center;
+    width: 300px;
+}
+
+.coronal-section-probe-options .probe-selector * {
+    cursor: pointer;
+}
+
+.coronal-section-probe-options .probe-selector:hover {
+    box-shadow: gray 1px 2px 4px;
+}
+
+.probe-selector img {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.probe-selector img.selected,
+.probe-selector .dummy-image.selected {
+    border: 6px solid #03a2da;
+}
+
+.probe-selector .dummy-image {
+    height: 200px;
+    width: 100%;
+    border: 1px solid lightgray;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+}
 
 /* M (768px and up) */
 @media only screen and (max-width: 900px) {

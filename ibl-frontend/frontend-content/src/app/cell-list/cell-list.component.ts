@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, DoCheck, HostListener} from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, DoCheck, HostListener } from '@angular/core';
 
 import { Subscription, Subject } from 'rxjs';
 
 import { CellListService } from './cell-list.service';
 
 import { Sort } from '@angular/material/sort';
+
+import { SuperGif } from '@wizpanda/super-gif';
 
 declare var Plotly: any;
 
@@ -74,6 +76,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   sortType;
   probeIndex;
   probeIndices = [];
+  coronalSections: Array<Object>; // contains coronal sections object with the link to S3
+  coronalSectionProbeList = []; // extracted just the corresponding probe indexes for easier rendering 
 
   gcfilter_types = {0: 'show all'};
   goodClusters = [];
@@ -226,6 +230,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private spikeAmpTimeSubscription: Subscription;
   private acgSubscription: Subscription;
   private waveformSubscription: Subscription;
+  private coronalSectionsSubscription: Subscription;
 
   private rasterListSubscription0: Subscription;
   private rasterListSubscription1: Subscription;
@@ -270,6 +275,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private fullRasterPSTHLoaded = new Subject();
   @Input() sessionInfo: Object;
   @ViewChild('navTable') el_nav: ElementRef;
+  // @ViewChild('brainGIF') brain_gif: ElementRef;
+  // spinningBrain;
 
   constructor(public cellListService: CellListService) { }
   @HostListener('window:keyup', ['$event']) keyEvent(event) {
@@ -332,6 +339,19 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           }
         }
       })
+  
+    /*
+    ** Fetch list of available coronal sections for the particular session
+    */
+    this.cellListService.retrieveCoronalSections(this.sessionInfo)
+    this.coronalSectionsSubscription = this.cellListService.getCoronalSectionsLoadedListener()
+      .subscribe((coronalSections: Array<Object>) => {
+        // once coronal sections come back successfully, store and extract just the probe indexes for rendering
+        this.coronalSections = coronalSections;
+        for (let section of coronalSections) {
+          this.coronalSectionProbeList.push(section['probe_idx'])
+        }
+      });
 
     this.cellListService.retrieveCellList(this.sessionInfo);
     this.cellListSubscription = this.cellListService.getCellListLoadedListener()
@@ -540,11 +560,11 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             },
 
           };
+         
 
           // initially set the navigation plot to show the depth brain region
           
           this.plot_layout_4real = deepCopy(this.plot_layout_DBR);
-          console.log('looking at plot_layout_4real: ', this.plot_layout_4real)
           /////////////////////////////////////////old way - but still in use /////////////////////////////////////////////////////
           const queryInfo = {};
           queryInfo['subject_uuid'] = this.sessionInfo['subject_uuid'];
@@ -619,8 +639,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
             .subscribe((probeTraj) => {
               if (probeTraj && probeTraj[0]) {
-
-                this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+                // trajectory_source was formerly pulled from data_source table but now from provenance table as provenance_description
+                // this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source; 
+                this.probeTrajInfo['trajectory_source'] = probeTraj[0].provenance_description; // 
                 this.probeTrajInfo['LM'] = probeTraj[0].x;
                 this.probeTrajInfo['AP'] = probeTraj[0].y;
                 this.probeTrajInfo['z'] = probeTraj[0].z;
@@ -634,7 +655,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 } else if (probeTraj[0].x > 0) {
                   this.probeTrajInfo['hemisphere'] = 'right'
                 }
-                // console.log('probeTrajInfo: ', this.probeTrajInfo)
+                console.log('probeTrajInfo: ', this.probeTrajInfo)
               } 
             });
           this.updateDepthBrainRegionInfo(probeTrajQueryInfo)
@@ -1313,10 +1334,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
               // console.log('sliderDepthTrialLookup object keys: ', Object.keys(this.sliderDepthRasterTrialLookup[this.probeIndex][this.selectedTrialType]))
               // console.log("###sliderDepthRasterTrialLookupB[probeIndex][selectedTrialType][selectedTrialContrast][featuredTrialId]: ", this.sliderDepthRasterTrialLookupB[this.probeIndex][this.selectedTrialType][this.selectedTrialContrast][this.featuredTrialId])
 
-            });  
+            }); 
+            
+            
         }
       });
   }
+
+  // *****************
+  // End of ngOnInit
+  // *****************
+
 
   ngDoCheck() {
     // console.log('do check ran');
@@ -1435,11 +1463,22 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     if (this.fullRasterPSTHSubscription) {
       this.fullRasterPSTHSubscription.unsubscribe();
     }
-
   }
 
+
+  // loadSpinningBrain(probeInsNum=0) {
+  //   console.log('attempting to load spinning brain super gif for probe insertion: ', probeInsNum)
+  //   let brainImage = this.brain_gif.nativeElement
+  //   this.spinningBrain = new SuperGif(brainImage, {autoPlay: true, maxWidth: 360})
+  //   this.spinningBrain.load(() => {
+  //     console.log('spinning brain in SuperGIF mode should now be loaded...')
+  //   })
+  // }
+
+
   probe_selected(probeInsNum) {
-    // console.log('probe change requested - ', probeInsNum)
+    // this.loadSpinningBrain(probeInsNum)
+    console.log('probe change requested - ', probeInsNum)
     this.cluster_amp_data = [];
     this.cluster_depth_data = [];
     this.firing_rate_data = [];
@@ -1451,6 +1490,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.sortedCellsByProbeIns = [];
     this.probeIndex = parseInt(probeInsNum, 10);
 
+    
+
     // requesting probe trajectory for selected probe 
     let probeTrajQueryInfo = {};
     probeTrajQueryInfo['session_start_time'] = this.sessionInfo['session_start_time'];
@@ -1459,9 +1500,10 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveProbeTrajectory(probeTrajQueryInfo);
     this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
       .subscribe((probeTraj) => {
-          this.probeTrajInfo = {};
+        this.probeTrajInfo = {};
         if (probeTraj && probeTraj[0]) {
-          this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+          // this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source;
+          this.probeTrajInfo['trajectory_source'] = probeTraj[0].provenance_description;
           this.probeTrajInfo['LM'] = probeTraj[0].x;
           this.probeTrajInfo['AP'] = probeTraj[0].y;
           this.probeTrajInfo['z'] = probeTraj[0].z;
@@ -1475,7 +1517,9 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           } else if (probeTraj[0].x > 0) {
             this.probeTrajInfo['hemisphere'] = 'right'
           }
+          console.log('probeTrajInfo2: ', this.probeTrajInfo)
         }
+        
         
       });
 
