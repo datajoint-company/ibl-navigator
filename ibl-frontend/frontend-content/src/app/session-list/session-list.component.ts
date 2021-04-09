@@ -11,6 +11,13 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import { NestedTreeControl } from '@angular/cdk/tree';
 
+
+enum Sex {
+  MALE,
+  FEMALE,
+  UNDEFINED
+}
+
 interface BrainTreeNode {
   display: string;
   value: any;
@@ -43,7 +50,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   });
   loading = true;
   filterExpanded;
-  sessions;
+  restrictedSessions;
   allSessions;
   // currentlyLoadedSessions;
   sessionDateFilter: Function;
@@ -59,7 +66,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   filteredSubjectUuidOptions: Observable<string[]>;
   filteredSubjectLineOptions: Observable<string[]>;
   filteredResponsibleUserOptions: Observable<string[]>;
-  session_menu: any;
+  session_menu: any; // 
 
   hideMissingPlots = false;
   hideMissingEphys = false;
@@ -106,96 +113,132 @@ export class SessionListComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {
     this.treeDataSource.data = this.brainRegionTree
   }
-  // @Input('preRestriction') preRestrictedMouseInfo: Object;
+
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
-    this.session_menu = {};
-    this.loading = true;
-    this.session_menu['sex'] = { F: null, M: null, U: null };
+    // Hide filter if screen size is smaller than the values of 1250x750
     if (window.innerWidth < 1250 || window.innerHeight < 750) {
       this.filterExpanded = false;
-    } else {
+    } 
+    else {
       this.filterExpanded = true;
     }
+
+    // Read previous store state if it exist inside of filterStoreService
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState(); // PageIndex, PageSize, SortInfo
     const tableState2: [number, number, Object, Object] = this.filterStoreService.retrieveSessionTableState2(); // PageIndex, PageSize, SortInfo, loadedSessions
-    // console.log('tableState: ', tableState);
-    this.route.queryParams
-      .subscribe(params => {
-        // console.log('params loading sessions: ', params);
-        if (Object.entries(params).length === 0) {
-          params = this.filterStoreService.retrieveSessionFilter();
-          if (!params) {
-            this.updateMenu();
-          }
-        }
-        for (const key in params) {
-          if (key === '__json') {
-            // console.log('inside __json filter');
-            // console.log('params[key] is', params[key]);
-            const JSONcontent = JSON.parse(params[key]);
-            const dateRange = ['', ''];
-            for (const item of JSONcontent) {
-              if (typeof item === 'string') {
-                 // item = "session_start_time>'2019-04-24T00:00:00'"
-                if (item.split('>')[1]) {
-                  dateRange[0] = item.split('>')[1].split('T')[0].split('\'')[1];
-                }
-                if (item.split('<')[1]) {
-                  dateRange[1] = item.split('<')[1].split('T')[0].split('\'')[1];
-                }
 
-              } else {
-                for (const gender of item) {
-                  // console.log(gender); // gender = { sex: "F"}
-                  this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[gender['sex']]].patchValue(true);
-                }
+    // Parse URL params to extract the restrictions and apply them accordingly
+    this.route.queryParams.subscribe(urlParams => {
+      // Storage for filter params
+      var params: any = {};
+
+      // Find any params in either the url or storage
+      if (!Object.keys(urlParams).length) {
+        // There are no urlParams, thus we need to check the storage to see if there any filter there that needs to be loaded
+        params = this.filterStoreService.retrieveSessionFilter();
+        if (!params) {
+          // There are no params in storage either, thus call updateMenu()
+          this.updateMenu();
+        }
+      }
+      else {
+        // UrlParams exist thus set them to params
+        params = urlParams;
+      }
+
+      // Process the params to conver them IBLAPI format
+      for (const key in params) {
+        if (key === '__json') {
+          // If key is __json than to reformat to IBL API format
+          const JSONcontent = JSON.parse(params[key]);
+          const dateRange = ['', '']; // First value is start date, second value is end date
+
+          // Loop through each item in JSON Content and figgure out it is a date or a gender
+          for (const item of JSONcontent) {
+            if (typeof item === 'string') {
+              // Example item = "session_start_time>'2019-04-24T00:00:00'"
+              
+              // Split raw string restriction and shove it in date
+              const itemSplitByGreaterThan = item.split('>')
+              if (itemSplitByGreaterThan[1]) {
+                dateRange[0] = itemSplitByGreaterThan[1].split('T')[0].split('\'')[1];
+              }
+
+              const itemSplitByLessThan = item.split('<')
+              if (itemSplitByLessThan[1]) {
+                dateRange[1] = itemSplitByLessThan[1].split('T')[0].split('\'')[1];
+              }
+            } 
+            else {
+              for (const gender of item) {
+                // If gender is defined then we need to tell the material controls to match the actual values
+                // Example gender = { sex: "F" }
+                this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[gender['sex']]].patchValue(true);
               }
             }
-            if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
+          }
+
+          // Process the date range assuming that it is valid
+          if (dateRange[0] !== '') {
+            if (dateRange[0] === dateRange[1]) {
+              // Start Date and End date is the same, thus update materials controls to reflect the actual dates
               this.dateRangeToggle = false;
-              // console.log('loggin date range[0]- ', dateRange[0]);
               this.session_filter_form.controls.session_start_time_control.patchValue(moment.utc(dateRange[0]));
-            } else if (dateRange[0] !== '') {
+            }
+            else {
+              // Set start date and end date respectively
               this.dateRangeToggle = true;
-              // console.log('loggin date range[1]- ', dateRange[1]);
               this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(moment.utc(dateRange[0]));
               this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(moment.utc(dateRange[1]));
             }
-          } else if (key === 'sex') {
-            this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
-          } else if (key === 'subject_birth_date') {
-            this.session_filter_form.controls.subject_birth_date_control.patchValue(moment.utc(params[key]));
-          } else if ( key !== 'session_start_time' && key !== '__json' && key !== '__order') {
-            const controlName = key + '_control';
-            if (this.session_filter_form.controls[controlName]) {
-              const toPatch = {};
-              toPatch[controlName] = params[key];
-              this.session_filter_form.patchValue(toPatch);
-            }
+          }
+        } 
+        else if (key === 'sex') {
+          // Maho said that this is for a single selection of sex, don't know wtf this is the case when there is a json up there for mutiple values (FIX LATER)
+          this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+        } 
+        else if (key === 'subject_birth_date') {
+          // Set subject Birth date
+          this.session_filter_form.controls.subject_birth_date_control.patchValue(moment.utc(params[key]));
+        } 
+        else if ( key !== 'session_start_time' && key !== '__json' && key !== '__order') {
+          // Handle session start time
+          const controlName = key + '_control';
+          if (this.session_filter_form.controls[controlName]) {
+            const toPatch = {};
+            toPatch[controlName] = params[key];
+            this.session_filter_form.patchValue(toPatch);
           }
         }
-        if (tableState[1]) {
-          this.paginator.pageIndex = tableState[0];
-          this.pageSize = tableState[1];
-        }
-        if (tableState[2] && Object.entries(tableState[2]).length > 0 && this.sort) {
-          this.sort.active = Object.keys(tableState[2])[0];
-          this.sort.direction = Object.values(tableState[2])[0].direction;
-        }
-        if (tableState2[3]) { // checks if there are any pre-loaded session upon returning
-          // console.log('session stored in tableState2 is: ', tableState2);
-          this.applyPreloadedSessions(tableState2)
+      }
 
-        } else {
-          // console.log('nothing found in session storage - applying regular filter');
-          this.applyFilter();
-        }
-        // this.applyFilter();
+      // Reading out the stored table state from the filter state
+      if (tableState[1]) {
+        this.paginator.pageIndex = tableState[0];
+        this.pageSize = tableState[1];
+      }
 
-      });
+      if (tableState[2] && Object.entries(tableState[2]).length > 0 && this.sort) {
+        this.sort.active = Object.keys(tableState[2])[0];
+        this.sort.direction = Object.values(tableState[2])[0].direction;
+      }
+
+
+      if (tableState2[3]) { 
+        // checks if there are any pre-loaded session upon returning
+        this.applyPreloadedSessions(tableState2)
+      } 
+      else {
+        // Nothing was found in storage, thus apply default filter (This shouldn't be needed)
+        this.fetchSessions();
+      }
+
+    });
+
     // TODO: create menu content using separate api designated for menu instead of getting all session info
+    /*
     this.allSessionsService.getAllSessionMenu({'__order': 'session_lab'});
     this.allSessionMenuSubscription = this.allSessionsService.getAllSessionMenuLoadedListener()
       .subscribe((sessions_all: any) => {
@@ -203,22 +246,23 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.allSessions = sessions_all;
         this.createMenu(sessions_all);
       });
+    */
 
+    // Brain tree is part of the filter, this code seems to be independent of the other filter construction
     this.allSessionsService.getBrainRegionTree();
-    this.allSessionsService.getBrainRegionTreeLoadedListener()
-      .subscribe((allBrainRegions) => {
-        this.brainRegionTree = allBrainRegions;
-        // console.log('brain tree retrieved: ');
-        console.log('all regions: ', allBrainRegions)
-        this.treeDataSource.data = this.brainRegionTree;
-        this.treeControl.dataNodes = this.treeDataSource.data;
-        this.buildLookup();
-      })
+    this.allSessionsService.getBrainRegionTreeLoadedListener().subscribe((allBrainRegions) => {
+      this.brainRegionTree = allBrainRegions;
+      // console.log('brain tree retrieved: ');
+      console.log('all regions: ', allBrainRegions)
+      this.treeDataSource.data = this.brainRegionTree;
+      this.treeControl.dataNodes = this.treeDataSource.data;
+      this.buildLookup();
+    })
   }
   
   ngOnDestroy() {
     // console.log('destroying while storing these sessions: ', this.sessions);
-    this.filterStoreService.storeSessionTableState2(this.paginator.pageIndex, this.pageSize, this.sort, this.sessions)
+    this.filterStoreService.storeSessionTableState2(this.paginator.pageIndex, this.pageSize, this.sort, this.restrictedSessions)
 
     if (this.sessionsSubscription) {
       this.sessionsSubscription.unsubscribe();
@@ -234,7 +278,35 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Fetch sessiosn with the current restrictions obtainn from the filter form
+   */
+  fetchSessions() {
+    const filters = this.getFiltersRequests();
+
+    this.hideMissingPlots = false;
+    this.hideMissingEphys = false;
+    this.hideNG4BrainMap = false;
+    this.hideNotReady4Delay = false;
+
+    // Store the filters, regardless if it is empty
+    this.filterStoreService.storeSessionFilter(filters);
+    
+    // Add the default sorting for the api request
+    filters['__order'] = 'session_start_time DESC';
+
+    this.allSessionsService.fetchSessions(filters).subscribe((sessions: Array<any>) => {
+      this.restrictedSessions = sessions;
+      this.dataSource = new MatTableDataSource(this.restrictedSessions);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+
+      console.log(this.dataSource)
+    })
+  }
+
   private createMenu(sessions) {
+    return;
     // console.log('now creating menu');
     this.session_menu = {};
     const keys = ['task_protocol', 'session_start_time',
@@ -360,8 +432,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   updateMenu() {
-
-    const menuRequest = this.filterRequests();
+    const menuRequest = this.getFiltersRequests();
     if (Object.entries(menuRequest).length > 1) {
       menuRequest['order__'] = 'session_lab';
       this.allSessionsService.getSessionMenu(menuRequest);
@@ -379,7 +450,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     } else {
       focusOn = event.target.name;
     }
-    const referenceMenuReq = this.filterRequests(focusOn);
+    const referenceMenuReq = this.getFiltersRequests(focusOn);
     if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
       referenceMenuReq['order__'] = 'session_lab';
       this.allSessionsService.getSessionMenu(referenceMenuReq);
@@ -388,15 +459,21 @@ export class SessionListComponent implements OnInit, OnDestroy {
           this.createMenu(sessions);
         });
     } else {
-      this.createMenu(this.allSessions);
+      this.createMenu(this.allSessions); // No guarrenty
     }
 
   }
+
   genderSelected(genderForm) {
     return genderForm.includes(true);
   }
 
-  filterRequests(focusedField?: string) {
+  /**
+   * Format whatever the user inputed inside filter form
+   * @param focusedField 
+   * @returns 
+   */
+  getFiltersRequests(focusedField?: string) {
     const filterList = Object.entries(this.session_filter_form.getRawValue());
     const brainRegionRequest = this.requested_BR;
     const requestFilter = {};
@@ -537,14 +614,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
+    return;
+    console.log('apply filter')
     this.hideMissingPlots = false;
     this.hideMissingEphys = false;
     this.hideNG4BrainMap = false;
     this.hideNotReady4Delay = false;
     // console.log('applying filter');
     this.loading = true;
-    this.sessions = [];
-    const request = this.filterRequests();
+    this.restrictedSessions = [];
+    const request = this.getFiltersRequests();
     request['__order'] = 'session_start_time DESC';
     if (Object.entries(request) && Object.entries(request).length > 1) {
       console.log('printing request: ', request)
@@ -552,9 +631,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.allSessionsService.retrieveSessions2(request);
       this.reqSessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener2()
         .subscribe((newSessions: any) => {
-          // console.log('sessions loaded: ', newSessions);
+          console.log('sessions loaded: ', newSessions);
           this.loading = false;
-          this.sessions = newSessions;
+          this.restrictedSessions = newSessions;
           this.dataSource = new MatTableDataSource(newSessions);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
@@ -589,21 +668,21 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.dataSource.paginator.pageIndex = 0
     }
     
-    this.sessions = storedTableInfo[3];
+    this.restrictedSessions = storedTableInfo[3];
     this.loading = false;
   }
 
   resetFilter() {
-    // console.log('resetting filter');
+    console.log('resetting filter');
     this.loading = true;
     this.allSessionsService.retrieveSessions({ '__order': 'session_start_time DESC'});
     this.filterStoreService.clearSessionFilter();
     this.allSessionsService.getNewSessionsLoadedListener()
       .subscribe((sessionsAll: any) => {
         this.loading = false;
-        this.sessions = sessionsAll;
+        this.restrictedSessions = sessionsAll;
         this.allSessions = sessionsAll;
-        this.dataSource = new MatTableDataSource(this.sessions);
+        this.dataSource = new MatTableDataSource(this.restrictedSessions);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       });
@@ -756,7 +835,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
     }
     this.filterStoreService.storeSessionTableState(pageIndex, pageSize, sorter);
-    this.filterStoreService.storeSessionTableState2(pageIndex, pageSize, sorter, this.sessions);
+    this.filterStoreService.storeSessionTableState2(pageIndex, pageSize, sorter, this.restrictedSessions);
   }
 
   sessionSelected(session) {
@@ -837,30 +916,30 @@ export class SessionListComponent implements OnInit, OnDestroy {
   updateSelection() {
     let criteria = []
     if (this.hideMissingPlots) {
-        criteria.push(_.map(this.sessions, x => x.nplot === 1));
+        criteria.push(_.map(this.restrictedSessions, x => x.nplot === 1));
     }
 ​
     if (this.hideMissingEphys) {
-        criteria.push(_.map(this.sessions, x => x.nprobe > 0));
+        criteria.push(_.map(this.restrictedSessions, x => x.nprobe > 0));
     }
 
     if (this.hideNG4BrainMap) {
       console.log('only show those good for brain map')
       
-      criteria.push(_.map(this.sessions, x => x.good_enough_for_brainwide_map > 0));
+      criteria.push(_.map(this.restrictedSessions, x => x.good_enough_for_brainwide_map > 0));
     }
     
     if (this.hideNotReady4Delay) {
       console.log('only show those ready for delay')
-      criteria.push(_.map(this.sessions, x => x.training_status == 'ready4delay'));
+      criteria.push(_.map(this.restrictedSessions, x => x.training_status == 'ready4delay'));
       // training_status: "ready4delay"
     }
 ​    
-    let selectedSessions = this.sessions;
+    let selectedSessions = this.restrictedSessions;
 
 ​    if (criteria.length > 0) {
       let selection = _.map(_.zip(...criteria), (x) => _.every(x));
-      selectedSessions = _.filter(this.sessions, (x, i) => selection[i]);
+      selectedSessions = _.filter(this.restrictedSessions, (x, i) => selection[i]);
     }
     
     this.dataSource = new MatTableDataSource(selectedSessions);

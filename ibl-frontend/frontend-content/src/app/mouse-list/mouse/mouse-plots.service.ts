@@ -155,7 +155,7 @@ export class MousePlotsService {
    * @param subjectInfo Object with subject primary key
    * @returns Observable for the fetching
    */
-  getSpinningBrain(subjectInfo) {
+  fetchSpinningBrain(subjectInfo) {
     return this.http.post<any>(BACKEND_API_URL + `/plot/spinningBrain`, subjectInfo);
   }
 

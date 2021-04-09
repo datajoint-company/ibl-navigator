@@ -23,7 +23,7 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // 
-    this.mousePlotsService.getSpinningBrain({'subject_uuid': this.mouseInfo['subject_uuid']}).subscribe({
+    const fetchSpinningBrain = this.mousePlotsService.fetchSpinningBrain({'subject_uuid': this.mouseInfo['subject_uuid']}).subscribe({
       next: spinningBrain => {
         console.log('spinning brain returned: ',spinningBrain[0]['subject_spinning_brain_link']);
         this.spinningBrainSrc = spinningBrain[0]['subject_spinning_brain_link']
@@ -39,9 +39,9 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
         console.error(error);
       }
     })
-        // once spinning brain link is set, load the player
-        // Note on the player: The GIF has to be on the same domain (and port and protocol) as the page you're loading
-        this.loadSpinningBrainPlayer()
+    // once spinning brain link is set, load the player
+    // Note on the player: The GIF has to be on the same domain (and port and protocol) as the page you're loading
+    // this.loadSpinningBrainPlayer()
   }
 
   /* 

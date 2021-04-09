@@ -27,6 +27,15 @@ export class AllSessionsService {
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Function to fetch 
+   * @param sessionFilters Object of filters
+   * @returns Observable from http.post
+   */
+  fetchSessions(sessionFilters: any) {
+    return this.http.post(BACKEND_API_URL + '/sessions/', sessionFilters, { responseType: 'json'})
+  }
+
   getAllSessions() {
     let start = new Date();
     this.http.get(BACKEND_API_URL + `/sessions`)
@@ -36,6 +45,7 @@ export class AllSessionsService {
         this.sessionsLoaded.next(this.allSessions);
       });
   }
+
   getAllSessionMenu(sessionsFilter) {
     // console.log('POSTing for:', sessionsFilter);
     this.http.post(BACKEND_API_URL + `/sessions/`, sessionsFilter, { responseType: 'json' })
