@@ -22,21 +22,26 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
   constructor(public mousePlotsService: MousePlotsService) { }
 
   ngOnInit() {
-    this.mousePlotsService.getSpinningBrain({'subject_uuid': this.mouseInfo['subject_uuid']});
-    this.spinningBrainSubscription = this.mousePlotsService.getSpinningBrainLoadedListener()
-      .subscribe((spinningBrain: any) => {
-        console.log(spinningBrain[0]['subject_spinning_brain_link']);
+    // 
+    this.mousePlotsService.getSpinningBrain({'subject_uuid': this.mouseInfo['subject_uuid']}).subscribe({
+      next: spinningBrain => {
+        console.log('spinning brain returned: ',spinningBrain[0]['subject_spinning_brain_link']);
         this.spinningBrainSrc = spinningBrain[0]['subject_spinning_brain_link']
-        this.convertToBase64(this.spinningBrainSrc).subscribe(base64data => {    
-          console.log('base64data: ', base64data);
-          // this is the image as dataUrl
-          this.base64GIFsrc = 'data:image/gif;base64,' + base64data;
-        });
-
+        console.log(this.spinningBrainSrc)
+        // this.convertToBase64(this.spinningBrainSrc).subscribe(base64data => {
+        //   console.log('base64data: ', base64data);
+        //   // this is the image as dataUrl
+        //   this.base64GIFsrc = 'data:image/gif;base64,' + base64data;
+        // });
+      },
+      error: error => {
+        console.log('error in retrieving spinning brain data');
+        console.error(error);
+      }
+    })
         // once spinning brain link is set, load the player
         // Note on the player: The GIF has to be on the same domain (and port and protocol) as the page you're loading
-        // this.loadSpinningBrainPlayer()
-      });
+        this.loadSpinningBrainPlayer()
   }
 
   /* 

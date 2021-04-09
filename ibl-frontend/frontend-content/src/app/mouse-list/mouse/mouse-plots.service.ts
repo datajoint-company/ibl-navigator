@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
@@ -150,18 +150,13 @@ export class MousePlotsService {
       );
   }
 
+  /**
+   * 
+   * @param subjectInfo Object with subject primary key
+   * @returns Observable for the fetching
+   */
   getSpinningBrain(subjectInfo) {
-    this.http.post(BACKEND_API_URL + `/plot/spinningBrain`, subjectInfo)
-      .subscribe(
-        (spinningBrain) => {
-          console.log('spinningbrain data from node server: ', spinningBrain)
-          this.spinningBrainLoaded.next(spinningBrain);
-        },
-        (error: any) => {
-          console.log('error in retrieving spinning brain data');
-          console.error(error);
-        }
-      )
+    return this.http.post<any>(BACKEND_API_URL + `/plot/spinningBrain`, subjectInfo);
   }
 
   getWaterWeightPlotLoadedListener() {
