@@ -7,7 +7,7 @@
 <button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="false" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
 
 
-<!-- <form [formGroup]="session_filter_form" *ngIf="true">
+<form [formGroup]="session_filter_form" *ngIf="true">
   <div [class]="filterExpanded ? 'filters col-12 filterExpand':'filters col-12 filterCollapse'">
     <div class="session-field-filters form-section">
       <mat-form-field class="long">
@@ -71,7 +71,7 @@
         <input matInput type="text" name="session_lab" formControlName="session_lab_control" [matAutocomplete]="autoCompLN"
           (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompLN="matAutocomplete">
-          <mat-option *ngFor="let lab of filteredSessionLabOptions | async" [value]="lab" (click)="updateMenu()">
+          <mat-option *ngFor="let lab of dropDownMenuOptions.filteredSessionLabOptions | async" [value]="lab" (click)="updateMenu()">
             {{ lab }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -147,7 +147,7 @@
         </mat-autocomplete>
       </mat-form-field>
 
-      // Brain Tree Selection Area
+      <!-- // Brain Tree Selection Area
       <div class="brain-tree-zone">
         <mat-form-field>
           <label>Brain Regions</label>
@@ -194,7 +194,8 @@
             </mat-nested-tree-node>
           </mat-tree>
         </div>
-      </div>
+      </div> -->
+
     </div>
   </div>
   <br>
@@ -233,7 +234,7 @@
       </div>
     </div>
   </div>
-</form> -->
+</form>
 
 <div class="loading-icon" *ngIf="false">
   <img src="assets/images/loading_icon.gif">

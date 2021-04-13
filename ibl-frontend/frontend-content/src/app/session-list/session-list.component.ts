@@ -13,8 +13,8 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 
 
 enum Sex {
-  MALE,
   FEMALE,
+  MALE,
   UNDEFINED
 }
 
@@ -58,15 +58,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
   sessionMinDate: Date;
   sessionMaxDate: Date;
   dateRangeToggle: boolean;
-  filteredTaskProtocolOptions: Observable<string[]>;
-  filteredSessionUuidOptions: Observable<string[]>;
-  filteredSessionLabOptions: Observable<string[]>;
-  filteredSubjectNicknameOptions: Observable<string[]>;
-  filteredSessionProjectOptions: Observable<string[]>;
-  filteredSubjectUuidOptions: Observable<string[]>;
-  filteredSubjectLineOptions: Observable<string[]>;
-  filteredResponsibleUserOptions: Observable<string[]>;
-  session_menu: any; // 
+  dropDownMenuOptions: any = {};
+  // filteredTaskProtocolOptions: Observable<string[]>;
+  // filteredSessionUuidOptions: Observable<string[]>;
+  // filteredSessionLabOptions: Observable<string[]>;
+  // filteredSubjectNicknameOptions: Observable<string[]>;
+  // filteredSessionProjectOptions: Observable<string[]>;
+  // filteredSubjectUuidOptions: Observable<string[]>;
+  // filteredSubjectLineOptions: Observable<string[]>;
+  // filteredResponsibleUserOptions: Observable<string[]>;
+  session_menu: any = {}; // 
 
   hideMissingPlots = false;
   hideMissingEphys = false;
@@ -117,6 +118,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    // Patch job to initalized sex to the filters can be rendered
+    this.session_menu['sex'] = {
+      F: false,
+      M: false,
+      U: false
+    }
+
     // Hide filter if screen size is smaller than the values of 1250x750
     if (window.innerWidth < 1250 || window.innerHeight < 750) {
       this.filterExpanded = false;
@@ -150,6 +158,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
       // Process the params to conver them IBLAPI format
       for (const key in params) {
+        console.log('going through params key: ', key)
         if (key === '__json') {
           // If key is __json than to reformat to IBL API format
           const JSONcontent = JSON.parse(params[key]);
@@ -255,7 +264,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.treeDataSource.data = this.brainRegionTree;
       this.treeControl.dataNodes = this.treeDataSource.data;
       this.buildLookup();
+      console.log('done fetching brain regions')
     })
+    console.log('Finsihed running init')
   }
   
   ngOnDestroy() {
@@ -280,6 +291,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Fetch sessiosn with the current restrictions obtainn from the filter form
    */
   fetchSessions() {
+    console.log('fetching sessions')
     const filters = this.getFiltersRequests();
 
     this.hideMissingPlots = false;
@@ -298,8 +310,30 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.dataSource = new MatTableDataSource(this.restrictedSessions);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
+      console.log('datasource ready - table should be here')
       this.createMenu();
     })
+  }
+
+  setDropDownFormOptions(dropDownMenuOptionKey, formControl: FormControl, key: string) {
+    this.dropDownMenuOptions[dropDownMenuOptionKey] = formControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value, key))
+    )
+  }
+
+  /**
+   * Helper function to help patch the material radio button
+   * @param sexType Should either be M, F, or U
+   */
+  private patchSexMaterial(sexType: Sex, enable: boolean) {
+    if (enable) {
+      this.session_filter_form.controls.sex_control['controls'][sexType].enable();
+    }
+    else {
+      this.session_filter_form.controls.sex_control['controls'][sexType].patchValue(false);
+      this.session_filter_form.controls.sex_control['controls'][sexType].disable();
+    }
   }
 
   private createMenu() {
@@ -324,8 +358,35 @@ export class SessionListComponent implements OnInit, OnDestroy {
         }
       })
     });
+    
+    // Deal with specific case for
+    this.patchSexMaterial(Sex.FEMALE, uniqueValuesForColumns['sex'].has('F'));
+    this.patchSexMaterial(Sex.MALE, uniqueValuesForColumns['sex'].has('M'));
+    this.patchSexMaterial(Sex.UNDEFINED, uniqueValuesForColumns['sex'].has('U'));
 
+    // This is for selected or not for sex, don't know why this is here blame Maho
+    uniqueValuesForColumns['sex'] = {
+      F: false,
+      M: false,
+      U: false
+    }
+
+    this.session_menu = uniqueValuesForColumns;
+    console.log(this.session_menu)
     console.log(performance.now() - t0);
+
+    // Set material from drop down
+    console.log(this.dropDownMenuOptions['filteredSessionLabOptions'])
+    this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab_control, 'session_lab');
+    console.log(this.dropDownMenuOptions['filteredSessionLabOptions'])
+    this.setDropDownFormOptions('filteredSubjectNicknameOptions', this.session_filter_form.controls.subject_nickname_control, 'subject_nickname');
+    this.setDropDownFormOptions('filteredSessionProjectOptions', this.session_filter_form.controls.session_project_control, 'session_project');
+    this.setDropDownFormOptions('filteredSubjectUuidOptions',  this.session_filter_form.controls.subject_uuid_control, 'subject_uuid');
+    this.setDropDownFormOptions('filteredSessionUuidOptions',  this.session_filter_form.controls.session_uuid_control, 'session_uuid');
+    this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol_control, 'task_protocol');
+    this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line_control, 'subject_line');
+    this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user_control, 'responsible_user');
+
     return;
     /*
     // console.log('now creating menu');
@@ -441,15 +502,29 @@ export class SessionListComponent implements OnInit, OnDestroy {
 */
   }
 
+  /**
+   * Call back to filter the avalible results down to the array with only the valid entries that matches the filter value
+   * @param value 
+   * @param menuType 
+   * @returns 
+   */
   private _filter(value: string, menuType: string): string[] {
+    console.log('filter running: ', value)
+    console.log(this.session_menu[menuType])
+    if (!value) {
+      return Array.from(this.session_menu[menuType])
+    }
+    
     const filterValue = value.toLowerCase();
-    const result =  this.session_menu[menuType].filter(menu_items => {
-      if (menu_items && menu_items.toLowerCase().includes(filterValue)) {
-        return true;
-      }
-    });
-    return result;
+    let restricted_values = []
 
+    for (let item of this.session_menu[menuType]) {
+      if (item.includes(filterValue)) {
+        restricted_values.push(filterValue);
+      }
+    }
+    console.log(restricted_values)
+    return restricted_values
   }
 
   updateMenu() {
@@ -459,7 +534,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.allSessionsService.getSessionMenu(menuRequest);
       this.allSessionsService.getSessionMenuLoadedListener()
         .subscribe((sessions: any) => {
-          this.createMenu(sessions);
+          //this.createMenu(sessions);
         });
     }
   }
@@ -477,10 +552,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.allSessionsService.getSessionMenu(referenceMenuReq);
       this.allSessionsService.getSessionMenuLoadedListener()
         .subscribe((sessions: any) => {
-          this.createMenu(sessions);
+          //this.createMenu(sessions);
         });
     } else {
-      this.createMenu(this.allSessions); // No guarrenty
+      //this.createMenu(this.allSessions); // No guarrenty
     }
 
   }
