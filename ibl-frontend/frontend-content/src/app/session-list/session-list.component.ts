@@ -252,8 +252,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.allSessionsService.getBrainRegionTree();
     this.allSessionsService.getBrainRegionTreeLoadedListener().subscribe((allBrainRegions) => {
       this.brainRegionTree = allBrainRegions;
-      // console.log('brain tree retrieved: ');
-      console.log('all regions: ', allBrainRegions)
       this.treeDataSource.data = this.brainRegionTree;
       this.treeControl.dataNodes = this.treeDataSource.data;
       this.buildLookup();
@@ -300,13 +298,36 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.dataSource = new MatTableDataSource(this.restrictedSessions);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
-
-      console.log(this.dataSource)
+      this.createMenu();
     })
   }
 
-  private createMenu(sessions) {
+  private createMenu() {
+    const keys = ['task_protocol', 'session_start_time',
+    'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
+    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
+
+    let uniqueValuesForColumns = {}
+    keys.forEach(key => {
+      uniqueValuesForColumns[key] = new Set();
+    })
+
+    console.log(this.restrictedSessions)
+
+    const t0 = performance.now();
+    // Loop through each tuple
+    this.restrictedSessions.forEach(tuple => {
+      keys.forEach(key => {
+        if (!uniqueValuesForColumns[key].has(tuple[key])) {
+          // Add it to the uniqueValuesForColumns if it doesn't already exist in there
+          uniqueValuesForColumns[key].add(tuple[key])
+        }
+      })
+    });
+
+    console.log(performance.now() - t0);
     return;
+    /*
     // console.log('now creating menu');
     this.session_menu = {};
     const keys = ['task_protocol', 'session_start_time',
@@ -417,7 +438,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       return birthDates.includes(d.toISOString().split('T')[0]);
     };
 
-
+*/
   }
 
   private _filter(value: string, menuType: string): string[] {
@@ -609,7 +630,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         }
       }
     });
-    console.log('requestFilter: ', requestFilter)
     return requestFilter;
   }
 

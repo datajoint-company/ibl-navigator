@@ -19,6 +19,7 @@ form {
     height: auto;
     visibility: visible;
 }
+
 .filterCollapse,
 .filterCollapse * {
     height: 0;

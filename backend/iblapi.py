@@ -201,8 +201,6 @@ def do_req(subpath):
         print('Took {} seconds to fetch dataset'.format(dur))
         return dumps(fetched)
         # return dumps(q.fetch(**kwargs))
-        
-
 
 def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
     '''
