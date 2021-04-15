@@ -387,6 +387,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line_control, 'subject_line');
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user_control, 'responsible_user');
 
+    this.loading = false
     return;
     /*
     // console.log('now creating menu');

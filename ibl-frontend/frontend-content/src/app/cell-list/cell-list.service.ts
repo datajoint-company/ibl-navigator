@@ -249,6 +249,10 @@ export class CellListService {
       );
   }
 
+  // for fetching probe name from available probe insertions
+  retrieveProbeInfo(queryInfo) {
+    return this.http.post(BACKEND_API_URL + '/plot/probeinsertion', queryInfo, { responseType: 'json'})
+  }
 
   // === // == // Depth Raster Trials // == // == // == // == // == //
   retrieveDepthRasterTrialPlot(queryInfo) {
