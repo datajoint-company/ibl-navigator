@@ -18,6 +18,8 @@ enum Sex {
   UNDEFINED
 }
 
+const MAX_NUMBER_OF_SUGGESTIONS = 50
+
 interface BrainTreeNode {
   display: string;
   value: any;
@@ -67,7 +69,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   // filteredSubjectUuidOptions: Observable<string[]>;
   // filteredSubjectLineOptions: Observable<string[]>;
   // filteredResponsibleUserOptions: Observable<string[]>;
-  session_menu: any = {}; // 
+  uniqueValuesForEachAttribute: any = {}; // 
 
   hideMissingPlots = false;
   hideMissingEphys = false;
@@ -119,7 +121,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     // Patch job to initalized sex to the filters can be rendered
-    this.session_menu['sex'] = {
+    this.uniqueValuesForEachAttribute['sex'] = {
       F: false,
       M: false,
       U: false
@@ -246,18 +248,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
     });
 
-    // TODO: create menu content using separate api designated for menu instead of getting all session info
-    /*
-    this.allSessionsService.getAllSessionMenu({'__order': 'session_lab'});
-    this.allSessionMenuSubscription = this.allSessionsService.getAllSessionMenuLoadedListener()
-      .subscribe((sessions_all: any) => {
-        // console.log('initializing menu - loaded all sessions for menu')
-        this.allSessions = sessions_all;
-        this.createMenu(sessions_all);
-      });
-    */
-
     // Brain tree is part of the filter, this code seems to be independent of the other filter construction
+    /*
     this.allSessionsService.getBrainRegionTree();
     this.allSessionsService.getBrainRegionTreeLoadedListener().subscribe((allBrainRegions) => {
       this.brainRegionTree = allBrainRegions;
@@ -267,6 +259,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       console.log('done fetching brain regions')
     })
     console.log('Finsihed running init')
+    */
   }
   
   ngOnDestroy() {
@@ -352,7 +345,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // Loop through each tuple
     this.restrictedSessions.forEach(tuple => {
       keys.forEach(key => {
-        if (!uniqueValuesForColumns[key].has(tuple[key])) {
+        if (tuple[key] !== null && !uniqueValuesForColumns[key].has(tuple[key])) {
           // Add it to the uniqueValuesForColumns if it doesn't already exist in there
           uniqueValuesForColumns[key].add(tuple[key])
         }
@@ -371,14 +364,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
       U: false
     }
 
-    this.session_menu = uniqueValuesForColumns;
-    console.log(this.session_menu)
+    this.uniqueValuesForEachAttribute = uniqueValuesForColumns;
+    console.log(this.uniqueValuesForEachAttribute)
     console.log(performance.now() - t0);
 
     // Set material from drop down
-    console.log(this.dropDownMenuOptions['filteredSessionLabOptions'])
     this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab_control, 'session_lab');
-    console.log(this.dropDownMenuOptions['filteredSessionLabOptions'])
+    
     this.setDropDownFormOptions('filteredSubjectNicknameOptions', this.session_filter_form.controls.subject_nickname_control, 'subject_nickname');
     this.setDropDownFormOptions('filteredSessionProjectOptions', this.session_filter_form.controls.session_project_control, 'session_project');
     this.setDropDownFormOptions('filteredSubjectUuidOptions',  this.session_filter_form.controls.subject_uuid_control, 'subject_uuid');
@@ -505,27 +497,55 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   /**
    * Call back to filter the avalible results down to the array with only the valid entries that matches the filter value
-   * @param value 
-   * @param menuType 
+   * @param userRestrictionString 
+   * @param attributeName 
    * @returns 
    */
-  private _filter(value: string, menuType: string): string[] {
-    console.log('filter running: ', value)
-    console.log(this.session_menu[menuType])
-    if (!value) {
-      return Array.from(this.session_menu[menuType])
+  private _filter(userRestrictionString: string, attributeName: string): string[] {
+    // If the value is an empty string then just return the array of the unique set
+    if (userRestrictionString === '') {
+      if (this.uniqueValuesForEachAttribute[attributeName].size > MAX_NUMBER_OF_SUGGESTIONS) {
+        return (Array.from(this.uniqueValuesForEachAttribute[attributeName]) as Array<string>).slice(0, MAX_NUMBER_OF_SUGGESTIONS);
+      }
+      return Array.from(this.uniqueValuesForEachAttribute[attributeName]) // This is converting the set to an array
     }
-    
-    const filterValue = value.toLowerCase();
-    let restricted_values = []
 
-    for (let item of this.session_menu[menuType]) {
-      if (item.includes(filterValue)) {
-        restricted_values.push(filterValue);
+    // If the userRestrictionString not an empty string, we basically need to loop through each of the unique values and see which of them contains the userRestrictionString
+    var validUniqueValues = [] // Unqiue values that contains the user restrction string
+
+    // If attribute has more than 10000 entires, restrict by substring match, otherwise restrict via include
+    if (this.uniqueValuesForEachAttribute[attributeName].size > 10000) {
+      // Check if the userRestriction string is at least of length 2 before trying to restrict (This is due to performance reasons)
+      if (userRestrictionString.length >= 2) {
+        this.uniqueValuesForEachAttribute[attributeName].forEach(uniqueValue => {
+          if (userRestrictionString === uniqueValue.substr(0, userRestrictionString.length)) {
+            // The unique value does include the user restrction string, thus we need to add it to the validUniqueValues array
+            validUniqueValues.push(uniqueValue);
+          }
+    
+          if (validUniqueValues.length > MAX_NUMBER_OF_SUGGESTIONS) {
+            return;
+          }
+        })
+      }
+      else {
+        return
       }
     }
-    console.log(restricted_values)
-    return restricted_values
+    else {
+      this.uniqueValuesForEachAttribute[attributeName].forEach(uniqueValue => {
+        if (uniqueValue.includes(userRestrictionString)) {
+          // The unique value does include the user restrction string, thus we need to add it to the validUniqueValues array
+          validUniqueValues.push(uniqueValue);
+        }
+  
+        if (validUniqueValues.length > MAX_NUMBER_OF_SUGGESTIONS) {
+          return;
+        }
+      })
+    }
+    
+    return validUniqueValues
   }
 
   updateMenu() {
@@ -587,7 +607,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
           const requestGenderArray = [];
           for (const index in filter[1]) {
             if (filter[1][index]) {
-              requestedGender = Object.keys(this.session_menu['sex'])[index];
+              requestedGender = Object.keys(this.uniqueValuesForEachAttribute['sex'])[index];
               // console.log('type of JSON.stringify({sex: requestedGender}) is: ', typeof JSON.stringify({ 'sex': requestedGender}));
               requestGenderArray.push(JSON.stringify({ 'sex': requestedGender}));
               // requestedGender = this.session_menu['sex'][index];
@@ -791,7 +811,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.loading = true;
     let params = this.filterStoreService.retrieveSessionFilter();
  
-
     for (const key in params) {
       if (key === '__json') {
         // console.log('inside __json filter');
