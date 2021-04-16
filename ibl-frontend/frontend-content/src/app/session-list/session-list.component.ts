@@ -334,39 +334,61 @@ export class SessionListComponent implements OnInit, OnDestroy {
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
 
-    let uniqueValuesForColumns = {}
     keys.forEach(key => {
-      uniqueValuesForColumns[key] = new Set();
+      this.uniqueValuesForEachAttribute[key] = new Set();
     })
-
-    console.log(this.restrictedSessions)
 
     const t0 = performance.now();
     // Loop through each tuple
     this.restrictedSessions.forEach(tuple => {
       keys.forEach(key => {
-        if (tuple[key] !== null && !uniqueValuesForColumns[key].has(tuple[key])) {
+        if (tuple[key] !== null && !this.uniqueValuesForEachAttribute[key].has(tuple[key])) {
           // Add it to the uniqueValuesForColumns if it doesn't already exist in there
-          uniqueValuesForColumns[key].add(tuple[key])
+          this.uniqueValuesForEachAttribute[key].add(tuple[key])
         }
       })
     });
     
     // Deal with specific case for
-    this.patchSexMaterial(Sex.FEMALE, uniqueValuesForColumns['sex'].has('F'));
-    this.patchSexMaterial(Sex.MALE, uniqueValuesForColumns['sex'].has('M'));
-    this.patchSexMaterial(Sex.UNDEFINED, uniqueValuesForColumns['sex'].has('U'));
+    this.patchSexMaterial(Sex.FEMALE, this.uniqueValuesForEachAttribute['sex'].has('F'));
+    this.patchSexMaterial(Sex.MALE, this.uniqueValuesForEachAttribute['sex'].has('M'));
+    this.patchSexMaterial(Sex.UNDEFINED, this.uniqueValuesForEachAttribute['sex'].has('U'));
 
     // This is for selected or not for sex, don't know why this is here blame Maho
-    uniqueValuesForColumns['sex'] = {
+    this.uniqueValuesForEachAttribute['sex'] = {
       F: false,
       M: false,
       U: false
     }
 
-    this.uniqueValuesForEachAttribute = uniqueValuesForColumns;
-    console.log(this.uniqueValuesForEachAttribute)
-    console.log(performance.now() - t0);
+    // Deal with figureing out the range of dates
+    const sessionSeconds = [];
+    this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
+      sessionSeconds.push(new Date(date).getTime());
+    });
+
+    this.sessionMinDate = new Date(Math.min(...sessionSeconds));
+    this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
+
+    // Figure out what dates are valid and assign it to this.sessionDateFilter for the material table to highlight those date
+    this.sessionDateFilter = (date: Date): boolean => {
+      let sessionDates = [];
+      this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
+        sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
+      });
+
+      // filter out dates without any session
+      return sessionDates.includes(date.toISOString().substring(0, 10));
+    };
+
+    // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
+    this.miceBirthdayFilter = (calendarDate: Date): boolean => {
+      let birthDates = [];
+      this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
+        birthDates.push(date);
+      });
+      return birthDates.includes(calendarDate.toISOString().substring(0, 10));
+    };
 
     // Set material from drop down
     this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab_control, 'session_lab');
@@ -380,6 +402,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user_control, 'responsible_user');
 
     this.loading = false
+
     return;
     /*
     // console.log('now creating menu');
@@ -544,7 +567,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
         }
       })
     }
-    
+
     return validUniqueValues
   }
 
