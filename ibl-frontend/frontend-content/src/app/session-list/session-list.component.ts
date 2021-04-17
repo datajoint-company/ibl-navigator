@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
-import { FormControl, FormGroup, FormArray } from '@angular/forms';
+import { FormControl, FormGroup, FormArray, AbstractControl} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -34,21 +34,21 @@ interface BrainTreeNode {
 })
 export class SessionListComponent implements OnInit, OnDestroy {
   session_filter_form = new FormGroup({
-    task_protocol_control : new FormControl(),
-    session_uuid_control : new FormControl(),
-    session_start_time_control : new FormControl(),
+    task_protocol: new FormControl(),
+    session_uuid: new FormControl(),
+    session_start_time: new FormControl(),
     session_range_filter: new FormGroup({
-      session_range_start_control: new FormControl(),
-      session_range_end_control: new FormControl()
+      session_range_start: new FormControl(),
+      session_range_end: new FormControl()
     }),
-    session_lab_control: new FormControl(),
-    subject_nickname_control: new FormControl(),
-    session_project_control: new FormControl(),
-    subject_uuid_control: new FormControl(),
-    sex_control: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
-    subject_birth_date_control: new FormControl(),
-    subject_line_control: new FormControl(),
-    responsible_user_control: new FormControl()
+    session_lab: new FormControl(),
+    subject_nickname: new FormControl(),
+    session_project: new FormControl(),
+    subject_uuid: new FormControl(),
+    sex: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
+    subject_birth_date: new FormControl(),
+    subject_line: new FormControl(),
+    responsible_user: new FormControl()
   });
   loading = true;
   filterExpanded;
@@ -59,7 +59,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   miceBirthdayFilter: Function;
   sessionMinDate: Date;
   sessionMaxDate: Date;
-  dateRangeToggle: boolean;
+  isSessionDateUsingRange: boolean;
   dropDownMenuOptions: any = {};
   // filteredTaskProtocolOptions: Observable<string[]>;
   // filteredSessionUuidOptions: Observable<string[]>;
@@ -186,7 +186,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
               for (const gender of item) {
                 // If gender is defined then we need to tell the material controls to match the actual values
                 // Example gender = { sex: "F" }
-                this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[gender['sex']]].patchValue(true);
+                this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[gender['sex']]].patchValue(true);
               }
             }
           }
@@ -195,28 +195,28 @@ export class SessionListComponent implements OnInit, OnDestroy {
           if (dateRange[0] !== '') {
             if (dateRange[0] === dateRange[1]) {
               // Start Date and End date is the same, thus update materials controls to reflect the actual dates
-              this.dateRangeToggle = false;
-              this.session_filter_form.controls.session_start_time_control.patchValue(moment.utc(dateRange[0]));
+              this.isSessionDateUsingRange = false;
+              this.session_filter_form.controls.session_start_time.patchValue(moment.utc(dateRange[0]));
             }
             else {
               // Set start date and end date respectively
-              this.dateRangeToggle = true;
-              this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(moment.utc(dateRange[0]));
-              this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(moment.utc(dateRange[1]));
+              this.isSessionDateUsingRange = true;
+              this.session_filter_form.controls.session_range_filter['controls'].session_range_start.patchValue(moment.utc(dateRange[0]));
+              this.session_filter_form.controls.session_range_filter['controls'].session_range_end.patchValue(moment.utc(dateRange[1]));
             }
           }
         } 
         else if (key === 'sex') {
           // Maho said that this is for a single selection of sex, don't know wtf this is the case when there is a json up there for mutiple values (FIX LATER)
-          this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+          this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
         } 
         else if (key === 'subject_birth_date') {
           // Set subject Birth date
-          this.session_filter_form.controls.subject_birth_date_control.patchValue(moment.utc(params[key]));
+          this.session_filter_form.controls.subject_birth_date.patchValue(moment.utc(params[key]));
         } 
         else if ( key !== 'session_start_time' && key !== '__json' && key !== '__order') {
           // Handle session start time
-          const controlName = key + '_control';
+          const controlName = key + '';
           if (this.session_filter_form.controls[controlName]) {
             const toPatch = {};
             toPatch[controlName] = params[key];
@@ -249,7 +249,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     });
 
     // Brain tree is part of the filter, this code seems to be independent of the other filter construction
-    /*
     this.allSessionsService.getBrainRegionTree();
     this.allSessionsService.getBrainRegionTreeLoadedListener().subscribe((allBrainRegions) => {
       this.brainRegionTree = allBrainRegions;
@@ -258,8 +257,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.buildLookup();
       console.log('done fetching brain regions')
     })
-    console.log('Finsihed running init')
-    */
+    
   }
   
   ngOnDestroy() {
@@ -285,7 +283,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    */
   fetchSessions() {
     console.log('fetching sessions')
-    const filters = this.getFiltersRequests();
+    const filters = this.getFiltersRequests(); // TODO we need to rewrite restrictions
 
     this.hideMissingPlots = false;
     this.hideMissingEphys = false;
@@ -299,8 +297,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
     filters['__order'] = 'session_start_time DESC';
 
     this.allSessionsService.fetchSessions(filters).subscribe((sessions: Array<any>) => {
-      this.restrictedSessions = sessions;
-      this.dataSource = new MatTableDataSource(this.restrictedSessions);
+      this.allSessions = sessions;
+      this.restrictedSessions = this.allSessions // Incorrect
+      this.dataSource = new MatTableDataSource(this.allSessions);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
       console.log('datasource ready - table should be here')
@@ -308,7 +307,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     })
   }
 
-  setDropDownFormOptions(dropDownMenuOptionKey, formControl: FormControl, key: string) {
+  setDropDownFormOptions(dropDownMenuOptionKey, formControl: AbstractControl, key: string) {
     this.dropDownMenuOptions[dropDownMenuOptionKey] = formControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value, key))
@@ -321,11 +320,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
    */
   private patchSexMaterial(sexType: Sex, enable: boolean) {
     if (enable) {
-      this.session_filter_form.controls.sex_control['controls'][sexType].enable();
+      this.session_filter_form.controls.sex['controls'][sexType].enable();
     }
     else {
-      this.session_filter_form.controls.sex_control['controls'][sexType].patchValue(false);
-      this.session_filter_form.controls.sex_control['controls'][sexType].disable();
+      this.session_filter_form.controls.sex['controls'][sexType].patchValue(false);
+      this.session_filter_form.controls.sex['controls'][sexType].disable();
     }
   }
 
@@ -391,15 +390,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
     };
 
     // Set material from drop down
-    this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab_control, 'session_lab');
+    this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab, 'session_lab');
     
-    this.setDropDownFormOptions('filteredSubjectNicknameOptions', this.session_filter_form.controls.subject_nickname_control, 'subject_nickname');
-    this.setDropDownFormOptions('filteredSessionProjectOptions', this.session_filter_form.controls.session_project_control, 'session_project');
-    this.setDropDownFormOptions('filteredSubjectUuidOptions',  this.session_filter_form.controls.subject_uuid_control, 'subject_uuid');
-    this.setDropDownFormOptions('filteredSessionUuidOptions',  this.session_filter_form.controls.session_uuid_control, 'session_uuid');
-    this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol_control, 'task_protocol');
-    this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line_control, 'subject_line');
-    this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user_control, 'responsible_user');
+    this.setDropDownFormOptions('filteredSubjectNicknameOptions', this.session_filter_form.controls.subject_nickname, 'subject_nickname');
+    this.setDropDownFormOptions('filteredSessionProjectOptions', this.session_filter_form.controls.session_project, 'session_project');
+    this.setDropDownFormOptions('filteredSubjectUuidOptions',  this.session_filter_form.controls.subject_uuid, 'subject_uuid');
+    this.setDropDownFormOptions('filteredSessionUuidOptions',  this.session_filter_form.controls.session_uuid, 'session_uuid');
+    this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol, 'task_protocol');
+    this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line, 'subject_line');
+    this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
 
     this.loading = false
 
@@ -431,15 +430,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
 
     // create formcontrol for item in menus
-    // const sex_control_array = <FormArray>this.session_filter_form.controls['sex_control'];
+    // const sex_array = <FormArray>this.session_filter_form.controls['sex'];
 
 
     for (const item in this.session_menu['sex']) {
       if (!this.session_menu['sex'][item]) {
-        this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[item]].patchValue(false);
-        this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[item]].disable();
+        this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[item]].patchValue(false);
+        this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[item]].disable();
       } else {
-        this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[item]].enable();
+        this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[item]].enable();
       }
     }
 
@@ -450,49 +449,49 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.sessionMinDate = new Date(Math.min(...sessionSeconds));
     this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
 
-    this.filteredSessionLabOptions = this.session_filter_form.controls.session_lab_control.valueChanges
+    this.filteredSessionLabOptions = this.session_filter_form.controls.session_lab.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'session_lab'))
       );
 
-    this.filteredSubjectNicknameOptions = this.session_filter_form.controls.subject_nickname_control.valueChanges
+    this.filteredSubjectNicknameOptions = this.session_filter_form.controls.subject_nickname.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'subject_nickname'))
       );
 
-    this.filteredSessionProjectOptions = this.session_filter_form.controls.session_project_control.valueChanges
+    this.filteredSessionProjectOptions = this.session_filter_form.controls.session_project.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'session_project'))
       );
 
-    this.filteredSubjectUuidOptions = this.session_filter_form.controls.subject_uuid_control.valueChanges
+    this.filteredSubjectUuidOptions = this.session_filter_form.controls.subject_uuid.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'subject_uuid'))
       );
 
-    this.filteredSessionUuidOptions = this.session_filter_form.controls.session_uuid_control.valueChanges
+    this.filteredSessionUuidOptions = this.session_filter_form.controls.session_uuid.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'session_uuid'))
       );
 
-    this.filteredTaskProtocolOptions = this.session_filter_form.controls.task_protocol_control.valueChanges
+    this.filteredTaskProtocolOptions = this.session_filter_form.controls.task_protocol.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'task_protocol'))
       );
 
-    this.filteredSubjectLineOptions = this.session_filter_form.controls.subject_line_control.valueChanges
+    this.filteredSubjectLineOptions = this.session_filter_form.controls.subject_line.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'subject_line'))
       );
 
-    this.filteredResponsibleUserOptions = this.session_filter_form.controls.responsible_user_control.valueChanges
+    this.filteredResponsibleUserOptions = this.session_filter_form.controls.responsible_user.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value, 'responsible_user'))
@@ -572,6 +571,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   updateMenu() {
+    return;
     const menuRequest = this.getFiltersRequests();
     if (Object.entries(menuRequest).length > 1) {
       menuRequest['order__'] = 'session_lab';
@@ -584,6 +584,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   stepBackMenu(event) {
+    return;
     let focusOn: string;
     if (event.checked) {
       focusOn = 'sex';
@@ -620,8 +621,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     let requestJSONstring = '';
     
     filterList.forEach(filter => {
-      // filter is [["session_lab_control", "somelab"], ["subject_nickname_control", null]...]
-      const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'session_lab_control'
+      // filter is [["session_lab", "somelab"], ["subject_nickname", null]...]
+      const filterKey = filter[0].split('')[0]; // filter[0] is control name like 'session_lab'
       if (filter[1] && filterKey !== focusedField) {
         if (filterKey === 'sex' && this.genderSelected(filter[1])) {
           // only accepts single selection - this case the last selection.
@@ -656,7 +657,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
               requestFilter[filterKey] = mouseDOB.toISOString().split('T')[0];
             } 
           } else if (filterKey === 'session_start_time') {
-              if (!this.dateRangeToggle) {
+              if (!this.isSessionDateUsingRange) {
                 const sessionST = moment.utc(filter[1].toString());
                 const rangeStartTime = '00:00:00';
                 const rangeEndTime = '23:59:59';
@@ -672,11 +673,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
               }
           } else if (filterKey === 'session_range_filter') {
             //// Note: filter =
-            ////      ["session_range_filter", { session_range_start_control: null, session_range_end_control: null }]
-            if (this.dateRangeToggle && filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
+            ////      ["session_range_filter", { session_range_start: null, session_range_end: null }]
+            if (this.isSessionDateUsingRange && filter[1]['session_range_start'] && filter[1]['session_range_end']) {
 
-              const sessionStart = moment.utc(filter[1]['session_range_start_control'].toString());
-              const sessionEnd = moment.utc(filter[1]['session_range_end_control'].toString());
+              const sessionStart = moment.utc(filter[1]['session_range_start'].toString());
+              const sessionEnd = moment.utc(filter[1]['session_range_end'].toString());
                 const rangeStartTime = '00:00:00';
                 const rangeEndTime = '23:59:59';
                 const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
@@ -688,9 +689,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 } else {
                   requestJSONstring += rangeStart + ',' + rangeEnd;
                 }
-            } else if (this.dateRangeToggle && filter[1]['session_range_start_control'] && !filter[1]['session_range_end_control']) {
-                // console.log('all session from ', filter[1]['session_range_start_control'], ' requested!');
-              const sessionStart = moment.utc(filter[1]['session_range_start_control'].toString());
+            } else if (this.isSessionDateUsingRange && filter[1]['session_range_start'] && !filter[1]['session_range_end']) {
+                // console.log('all session from ', filter[1]['session_range_start'], ' requested!');
+              const sessionStart = moment.utc(filter[1]['session_range_start'].toString());
                 const rangeStartTime = '00:00:00';
                 const startString = sessionStart.toISOString().split('T')[0] + 'T' + rangeStartTime;
                 const rangeStart = '"' + 'session_start_time>' + '\'' + startString + '\'' + '"';
@@ -699,9 +700,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 } else {
                   requestJSONstring += rangeStart;
                 }
-            } else if (this.dateRangeToggle && !filter[1]['session_range_start_control'] && filter[1]['session_range_end_control']) {
-                // console.log('all session up to ', filter[1]['session_range_end_control'], ' requested!');
-              const sessionEnd = moment.utc(filter[1]['session_range_end_control'].toString());
+            } else if (this.isSessionDateUsingRange && !filter[1]['session_range_start'] && filter[1]['session_range_end']) {
+                // console.log('all session up to ', filter[1]['session_range_end'], ' requested!');
+              const sessionEnd = moment.utc(filter[1]['session_range_end'].toString());
                 const rangeEndTime = '23:59:59';
                 const endString = sessionEnd.toISOString().split('T')[0] + 'T' + rangeEndTime;
                 const rangeEnd = '"' + 'session_start_time<' + '\'' + endString + '\'' + '"';
@@ -752,7 +753,166 @@ export class SessionListComponent implements OnInit, OnDestroy {
     return requestFilter;
   }
 
-  applyFilter() {
+  testFunction(){
+    console.log('testFunction')
+    return true;
+  }
+
+  /**
+   * 
+   * @param tuple Tuple object, the keys should be the attribute names
+   * @param restrictionObjectFromForm restriction object
+   * @returns boolean of whether the tuple match the restriction or not
+   */
+  doesTupleMatchRestriction(tuple: any, restrictionObject: any): boolean {
+    for (let attributeName of Object.keys(restrictionObject)) {
+      if (restrictionObject[attributeName] !== null) {
+        if (attributeName === 'session_range_filter') {
+          if (this.isSessionDateUsingRange) {
+            const tupleDate = new moment.utc(tuple['session_start_time'])
+
+            // Deals with start time
+            if (restrictionObject[attributeName]['session_range_start'] && tupleDate - restrictionObject[attributeName]['session_range_start'] < 0) {
+              // Session start date is valid thus check if the tuple matches the requirement
+              return false;
+            }
+
+            // Deal with end time
+            let modifiedEndDate =  restrictionObject[attributeName]['session_range_end'];
+            modifiedEndDate.add(1, 'day');
+            if (restrictionObject[attributeName]['session_range_end'] && tupleDate - modifiedEndDate >= 0) {
+              return false;
+            }
+          }  
+        }
+        else if (attributeName === 'session_start_time') {
+          if (!this.isSessionDateUsingRange) {
+            if (tuple[attributeName] !== restrictionObject[attributeName].format('YYYY-MM-DD')) {
+              return false;
+            }
+          }
+        }
+        else if (attributeName === 'subject_birth_date') {
+          if (tuple[attributeName] !== restrictionObject[attributeName].format('YYYY-MM-DD')) {
+            return false;
+          }
+        }
+        else if (attributeName === 'sex') {
+          let isTheFormNotNull = false;
+          // Check if the form for sex has anything checked
+          for (let sexOption of restrictionObject[attributeName]) {
+            if (sexOption) {
+              isTheFormNotNull = true;
+              break
+            }
+          }
+
+          // Check if the form is not null, if so then do the procesing
+          if (isTheFormNotNull) {
+            // Handle sex
+            let indexToCheck = this.genderForm2MenuMap[tuple[attributeName]];
+
+            if (indexToCheck === undefined) {
+              throw Error('Invalid gender found in the tuple object of: ' + String(tuple))
+            }
+
+            if (!restrictionObject[attributeName][indexToCheck]) {
+              // The tuple doesn't have the right sex, thus return false
+              return false;
+            }
+          }
+        }
+        else if (tuple[attributeName] !== restrictionObject[attributeName]) {
+          // The attribute type is not one of the speical ones, thus just check if it equals each other
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Update the table view to this.restrictedSessions
+   */
+  updateTableView() {
+    this.dataSource = new MatTableDataSource(this.restrictedSessions);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
+  async applyFilter() {
+    // this.loading = true;
+    console.log('apply filter pressed')
+    if (!this.allSessions) {
+      this.restrictedSessions = [];
+      return;
+    }
+
+    // Hide certain checkboxes
+    this.hideMissingPlots = false;
+    this.hideMissingEphys = false;
+    this.hideNG4BrainMap = false;
+    this.hideNotReady4Delay = false;
+    
+    let tupleToRestrict = this.allSessions // By default this should be all sessions
+
+    // Check if there is a brain region request, if so override the tupleToRestrict reference
+    const brainRegionRequest = this.requested_BR;
+    if (brainRegionRequest !== []) {
+      // BrainRegionRequest is not empty, thus query the backend for it
+      let requestFilter = {}
+      let BR_JSONstring = '';
+      if (brainRegionRequest.length > 0) {
+        BR_JSONstring = '';
+        brainRegionRequest.filter(function(selection, index) {
+          if (index > 0) {
+            BR_JSONstring += `, "${selection}"`
+          } else {
+            BR_JSONstring += `"${selection}"`
+          }
+        })
+        BR_JSONstring = '[' + BR_JSONstring + ']'
+      }
+
+      // Add it it to the requestFilter object
+      if (brainRegionRequest.length > 0) {
+        requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
+      }
+
+      // Query back end
+      tupleToRestrict = await this.allSessionsService.fetchSessions(requestFilter).toPromise();
+    }
+    
+    // Filter based on what the user requested
+    const restrictionObjectFromForm = this.session_filter_form.getRawValue();
+
+    // Iterate through the tuples and restrict accordingly
+    this.restrictedSessions = [];
+    for (let tuple of tupleToRestrict) {
+      if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
+        this.restrictedSessions.push(tuple);
+      }
+    }
+
+    // Set the view
+    this.updateTableView();
+    
+
+    // if (requestJSONstring.length > 0 && BR_JSONstring.length == 0) {
+    //   requestFilter['__json'] = '[' + requestJSONstring + ']';
+    // } else if (requestJSONstring.length > 0 && BR_JSONstring.length > 0) {
+    //   requestFilter['__json'] = '[' + requestJSONstring + ',' + BR_JSONstring + ']';
+    // } else if (requestJSONstring.length == 0 && BR_JSONstring.length > 0) {
+    //   requestFilter['__json'] = '[' + BR_JSONstring + ']';
+    // }
+    
+    // if (requestJSONstring.length > 0) {
+    //   requestFilter['__json'] = '[' + requestJSONstring + ']';
+    // }
+    // if (brainRegionRequest.length > 0) {
+    //   requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
+    // }
+
     return;
     console.log('apply filter')
     this.hideMissingPlots = false;
@@ -853,26 +1013,26 @@ export class SessionListComponent implements OnInit, OnDestroy {
           } else {
             for (const gender of item) {
               // console.log(gender); // gender = { sex: "F"}
-              this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[gender['sex']]].patchValue(true);
+              this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[gender['sex']]].patchValue(true);
             }
           }
         }
         if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
-          this.dateRangeToggle = false;
+          this.isSessionDateUsingRange = false;
           // console.log('loggin date range[0]- ', dateRange[0]);
-          this.session_filter_form.controls.session_start_time_control.patchValue(moment.utc(dateRange[0]));
+          this.session_filter_form.controls.session_start_time.patchValue(moment.utc(dateRange[0]));
         } else if (dateRange[0] !== '') {
-          this.dateRangeToggle = true;
+          this.isSessionDateUsingRange = true;
           // console.log('loggin date range[1]- ', dateRange[1]);
-          this.session_filter_form.controls.session_range_filter['controls'].session_range_start_control.patchValue(moment.utc(dateRange[0]));
-          this.session_filter_form.controls.session_range_filter['controls'].session_range_end_control.patchValue(moment.utc(dateRange[1]));
+          this.session_filter_form.controls.session_range_filter['controls'].session_range_start.patchValue(moment.utc(dateRange[0]));
+          this.session_filter_form.controls.session_range_filter['controls'].session_range_end.patchValue(moment.utc(dateRange[1]));
         }
       } else if (key === 'sex') {
-        this.session_filter_form.controls.sex_control['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+        this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
       } else if (key === 'subject_birth_date') {
-        this.session_filter_form.controls.subject_birth_date_control.patchValue(moment.utc(params[key]));
+        this.session_filter_form.controls.subject_birth_date.patchValue(moment.utc(params[key]));
       } else if ( key !== 'session_start_time' && key !== '__json' && key !== '__order') {
-        const controlName = key + '_control';
+        const controlName = key + '';
         if (this.session_filter_form.controls[controlName]) {
           const toPatch = {};
           toPatch[controlName] = params[key];
@@ -910,9 +1070,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
       const toReset = {}
       
       if (control === 'session_range_filter') {
-        toReset[control] = { 'session_range_start_control': null, 'session_range_end_control': null}
+        toReset[control] = { 'session_range_start': null, 'session_range_end': null}
         
-      } else if (control === 'sex_control') {
+      } else if (control === 'sex') {
         toReset[control] = [false, false, false];
         for (const index in this.session_filter_form.get(control)['controls']) {
           this.session_filter_form.get(control).get([index]).enable();
