@@ -201,10 +201,10 @@
   <br>
   <div *ngIf="filterExpanded" class="form-submit-button-area">
     <div>
-      <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
+      <button mat-raised-button class="btn" (click)="handleApplyFilterButtonPress()">Apply Filter</button>
     </div>
     <div>
-      <button mat-raised-button class="btn btn-reset" (click)="clearControl()">Reset Filter</button>
+      <button mat-raised-button class="btn btn-reset" (click)="handleResetFilterButtonPress()">Reset Filter</button>
     </div>
     <div>
       <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>

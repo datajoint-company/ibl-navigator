@@ -282,13 +282,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Fetch sessiosn with the current restrictions obtainn from the filter form
    */
   fetchSessions() {
-    console.log('fetching sessions')
-    const filters = this.getFiltersRequests(); // TODO we need to rewrite restrictions
-
     this.hideMissingPlots = false;
     this.hideMissingEphys = false;
     this.hideNG4BrainMap = false;
     this.hideNotReady4Delay = false;
+
+    const filters = {}
 
     // Store the filters, regardless if it is empty
     this.filterStoreService.storeSessionFilter(filters);
@@ -296,14 +295,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // Add the default sorting for the api request
     filters['__order'] = 'session_start_time DESC';
 
-    this.allSessionsService.fetchSessions(filters).subscribe((sessions: Array<any>) => {
+    this.allSessionsService.fetchSessions(filters).subscribe(async (sessions: Array<any>) => {
       this.allSessions = sessions;
-      this.restrictedSessions = this.allSessions // Incorrect
-      this.dataSource = new MatTableDataSource(this.allSessions);
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-      console.log('datasource ready - table should be here')
+      await this.applyFilter();
       this.createMenu();
+      this.updateTableView();
     })
   }
 
@@ -391,7 +387,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
     // Set material from drop down
     this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab, 'session_lab');
-    
     this.setDropDownFormOptions('filteredSubjectNicknameOptions', this.session_filter_form.controls.subject_nickname, 'subject_nickname');
     this.setDropDownFormOptions('filteredSessionProjectOptions', this.session_filter_form.controls.session_project, 'session_project');
     this.setDropDownFormOptions('filteredSubjectUuidOptions',  this.session_filter_form.controls.subject_uuid, 'subject_uuid');
@@ -525,7 +520,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    */
   private _filter(userRestrictionString: string, attributeName: string): string[] {
     // If the value is an empty string then just return the array of the unique set
-    if (userRestrictionString === '') {
+    if (userRestrictionString === '' || userRestrictionString === null) {
       if (this.uniqueValuesForEachAttribute[attributeName].size > MAX_NUMBER_OF_SUGGESTIONS) {
         return (Array.from(this.uniqueValuesForEachAttribute[attributeName]) as Array<string>).slice(0, MAX_NUMBER_OF_SUGGESTIONS);
       }
@@ -570,17 +565,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
     return validUniqueValues
   }
 
-  updateMenu() {
-    return;
-    const menuRequest = this.getFiltersRequests();
-    if (Object.entries(menuRequest).length > 1) {
-      menuRequest['order__'] = 'session_lab';
-      this.allSessionsService.getSessionMenu(menuRequest);
-      this.allSessionsService.getSessionMenuLoadedListener()
-        .subscribe((sessions: any) => {
-          //this.createMenu(sessions);
-        });
-    }
+  async updateMenu() {
+    await this.applyFilter();
+    this.createMenu();
   }
 
   stepBackMenu(event) {
@@ -754,9 +741,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   testFunction(){
-    console.log('testFunction')
     return true;
   }
+
 
   /**
    * 
@@ -769,18 +756,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
       if (restrictionObject[attributeName] !== null) {
         if (attributeName === 'session_range_filter') {
           if (this.isSessionDateUsingRange) {
-            const tupleDate = new moment.utc(tuple['session_start_time'])
+            const tupleDate = moment.utc(tuple['session_start_time'])
 
             // Deals with start time
-            if (restrictionObject[attributeName]['session_range_start'] && tupleDate - restrictionObject[attributeName]['session_range_start'] < 0) {
+            if (restrictionObject[attributeName]['session_range_start'] && tupleDate.valueOf() - restrictionObject[attributeName]['session_range_start'].valueOf() < 0) {
               // Session start date is valid thus check if the tuple matches the requirement
               return false;
             }
 
-            // Deal with end time
-            let modifiedEndDate =  restrictionObject[attributeName]['session_range_end'];
-            modifiedEndDate.add(1, 'day');
-            if (restrictionObject[attributeName]['session_range_end'] && tupleDate - modifiedEndDate >= 0) {
+            // Deal with end time - adding 1 day in milliseconds to make sure the end date is inclusive up to 1 millisecond before midnight of the next day
+            if (restrictionObject[attributeName]['session_range_end'] && tupleDate.valueOf() - (restrictionObject[attributeName]['session_range_end'].valueOf() + 86400000) >= 0) {
               return false;
             }
           }  
@@ -834,15 +819,23 @@ export class SessionListComponent implements OnInit, OnDestroy {
   /**
    * Update the table view to this.restrictedSessions
    */
-  updateTableView() {
+  async updateTableView() {
     this.dataSource = new MatTableDataSource(this.restrictedSessions);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
 
+  async handleApplyFilterButtonPress() {
+    await this.applyFilter();
+    this.createMenu();
+    this.updateTableView();
+  }
+
+  /**
+   * Computes the restrictions based on what filters are provided and dump what tuples matches into this.restrictedTuple()
+   * @returns 
+   */
   async applyFilter() {
-    // this.loading = true;
-    console.log('apply filter pressed')
     if (!this.allSessions) {
       this.restrictedSessions = [];
       return;
@@ -887,59 +880,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const restrictionObjectFromForm = this.session_filter_form.getRawValue();
 
     // Iterate through the tuples and restrict accordingly
+    // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
     this.restrictedSessions = [];
     for (let tuple of tupleToRestrict) {
       if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
         this.restrictedSessions.push(tuple);
       }
-    }
-
-    // Set the view
-    this.updateTableView();
-    
-
-    // if (requestJSONstring.length > 0 && BR_JSONstring.length == 0) {
-    //   requestFilter['__json'] = '[' + requestJSONstring + ']';
-    // } else if (requestJSONstring.length > 0 && BR_JSONstring.length > 0) {
-    //   requestFilter['__json'] = '[' + requestJSONstring + ',' + BR_JSONstring + ']';
-    // } else if (requestJSONstring.length == 0 && BR_JSONstring.length > 0) {
-    //   requestFilter['__json'] = '[' + BR_JSONstring + ']';
-    // }
-    
-    // if (requestJSONstring.length > 0) {
-    //   requestFilter['__json'] = '[' + requestJSONstring + ']';
-    // }
-    // if (brainRegionRequest.length > 0) {
-    //   requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
-    // }
-
-    return;
-    console.log('apply filter')
-    this.hideMissingPlots = false;
-    this.hideMissingEphys = false;
-    this.hideNG4BrainMap = false;
-    this.hideNotReady4Delay = false;
-    // console.log('applying filter');
-    this.loading = true;
-    this.restrictedSessions = [];
-    const request = this.getFiltersRequests();
-    request['__order'] = 'session_start_time DESC';
-    if (Object.entries(request) && Object.entries(request).length > 1) {
-      console.log('printing request: ', request)
-      this.filterStoreService.storeSessionFilter(request);
-      this.allSessionsService.retrieveSessions2(request);
-      this.reqSessionsSubscription = this.allSessionsService.getNewSessionsLoadedListener2()
-        .subscribe((newSessions: any) => {
-          console.log('sessions loaded: ', newSessions);
-          this.loading = false;
-          this.restrictedSessions = newSessions;
-          this.dataSource = new MatTableDataSource(newSessions);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-        });
-    } else {
-      this.resetFilter();
-      // this.refreshData();
     }
   }
 
@@ -971,76 +917,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.loading = false;
   }
 
-  resetFilter() {
-    console.log('resetting filter');
-    this.loading = true;
-    this.allSessionsService.retrieveSessions({ '__order': 'session_start_time DESC'});
-    this.filterStoreService.clearSessionFilter();
-    this.allSessionsService.getNewSessionsLoadedListener()
-      .subscribe((sessionsAll: any) => {
-        this.loading = false;
-        this.restrictedSessions = sessionsAll;
-        this.allSessions = sessionsAll;
-        this.dataSource = new MatTableDataSource(this.restrictedSessions);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-      });
-  }
-
-
-  refreshData() {
+  async refreshData() {
     // console.log('refreshing data to newest:');
     this.filterStoreService.refreshSessionTableState();
     this.loading = true;
-    let params = this.filterStoreService.retrieveSessionFilter();
- 
-    for (const key in params) {
-      if (key === '__json') {
-        // console.log('inside __json filter');
-        // console.log('params[key] is', params[key]);
-        const JSONcontent = JSON.parse(params[key]);
-        const dateRange = ['', ''];
-        for (const item of JSONcontent) {
-          if (typeof item === 'string') {
-             // item = "session_start_time>'2019-04-24T00:00:00'"
-            if (item.split('>')[1]) {
-              dateRange[0] = item.split('>')[1].split('T')[0].split('\'')[1];
-            }
-            if (item.split('<')[1]) {
-              dateRange[1] = item.split('<')[1].split('T')[0].split('\'')[1];
-            }
-
-          } else {
-            for (const gender of item) {
-              // console.log(gender); // gender = { sex: "F"}
-              this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[gender['sex']]].patchValue(true);
-            }
-          }
-        }
-        if (dateRange[0] !== '' && dateRange[0] === dateRange[1]) {
-          this.isSessionDateUsingRange = false;
-          // console.log('loggin date range[0]- ', dateRange[0]);
-          this.session_filter_form.controls.session_start_time.patchValue(moment.utc(dateRange[0]));
-        } else if (dateRange[0] !== '') {
-          this.isSessionDateUsingRange = true;
-          // console.log('loggin date range[1]- ', dateRange[1]);
-          this.session_filter_form.controls.session_range_filter['controls'].session_range_start.patchValue(moment.utc(dateRange[0]));
-          this.session_filter_form.controls.session_range_filter['controls'].session_range_end.patchValue(moment.utc(dateRange[1]));
-        }
-      } else if (key === 'sex') {
-        this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
-      } else if (key === 'subject_birth_date') {
-        this.session_filter_form.controls.subject_birth_date.patchValue(moment.utc(params[key]));
-      } else if ( key !== 'session_start_time' && key !== '__json' && key !== '__order') {
-        const controlName = key + '';
-        if (this.session_filter_form.controls[controlName]) {
-          const toPatch = {};
-          toPatch[controlName] = params[key];
-          this.session_filter_form.patchValue(toPatch);
-        }
-      }
-    }
-    this.applyFilter();
+    this.fetchSessions();
     // if (tableState[1]) {
     //   this.paginator.pageIndex = tableState[0];
     //   this.pageSize = tableState[1];
@@ -1049,23 +930,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
     //   this.sort.active = Object.keys(tableState[2])[0];
     //   this.sort.direction = Object.values(tableState[2])[0].direction;
     // }
-
-
-    // this.allSessionsService.retrieveSessions({ '__order': 'session_start_time DESC'});
-    // this.allSessionsService.getNewSessionsLoadedListener()
-    //   .subscribe((sessionsAll: any) => {
-    //     this.loading = false;
-    //     this.sessions = sessionsAll;
-    //     this.allSessions = sessionsAll;
-    //     this.dataSource = new MatTableDataSource(sessionsAll);
-    //     this.dataSource.sort = this.sort;
-    //     this.dataSource.paginator = this.paginator;
-    //   });
-    
   }
 
-  clearControl() {
-    // console.log('clearing control and storage');
+  handleResetFilterButtonPress() {
     for (const control in this.session_filter_form.controls) {
       const toReset = {}
       
@@ -1078,10 +945,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
           this.session_filter_form.get(control).get([index]).enable();
         }
       } else {
-        toReset[control] = '';
+        toReset[control] = null;
       }
       this.session_filter_form.patchValue(toReset); 
-      // console.log('going through controls - ', control);
     }
     
 
@@ -1105,7 +971,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.filterStoreService.clearSessionTableState();
 
     // console.log(this.route.queryParams);
-    this.route.queryParams.subscribe(param => {
+    this.route.queryParams.subscribe(async param => {
       if (Object.keys(param).length > 0) {
         this.router.navigate(
           [],
@@ -1113,8 +979,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
             relativeTo: this.route,
             queryParams: null
           });
-      } else {
-        this.applyFilter();
+      } 
+      else {
+        await this.applyFilter();
+        this.createMenu();
+        this.updateTableView();
       }
      });
   }
