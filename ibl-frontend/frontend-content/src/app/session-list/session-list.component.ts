@@ -324,7 +324,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createMenu(focusFieldKey?: string) {
+  private createMenu() {
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
