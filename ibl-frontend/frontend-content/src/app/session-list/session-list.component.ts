@@ -50,7 +50,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     subject_line: new FormControl(),
     responsible_user: new FormControl()
   });
-  loading = true;
+  loading;
   filterExpanded;
   restrictedSessions;
   allSessions;
@@ -120,6 +120,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    this.loading = true;
+
     // Patch job to initalized sex to the filters can be rendered
     this.uniqueValuesForEachAttribute['sex'] = {
       F: false,
@@ -282,6 +284,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Fetch sessiosn with the current restrictions obtainn from the filter form
    */
   fetchSessions() {
+    this.loading = true;
     this.hideMissingPlots = false;
     this.hideMissingEphys = false;
     this.hideNG4BrainMap = false;
@@ -394,8 +397,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol, 'task_protocol');
     this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line, 'subject_line');
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
-
-    this.loading = false
 
     return;
     /*
@@ -565,31 +566,25 @@ export class SessionListComponent implements OnInit, OnDestroy {
     return validUniqueValues
   }
 
+  /**
+   * Updates filter menu whenever user selects a filter option
+   * @param event
+   */
   async updateMenu() {
     await this.applyFilter();
     this.createMenu();
   }
 
-  stepBackMenu(event) {
-    return;
-    let focusOn: string;
-    if (event.checked) {
-      focusOn = 'sex';
-    } else {
-      focusOn = event.target.name;
-    }
-    const referenceMenuReq = this.getFiltersRequests(focusOn);
-    if (Object.entries(referenceMenuReq) && Object.entries(referenceMenuReq).length > 0) {
-      referenceMenuReq['order__'] = 'session_lab';
-      this.allSessionsService.getSessionMenu(referenceMenuReq);
-      this.allSessionsService.getSessionMenuLoadedListener()
-        .subscribe((sessions: any) => {
-          //this.createMenu(sessions);
-        });
-    } else {
-      //this.createMenu(this.allSessions); // No guarrenty
-    }
+  /**
+   * Recreates menu for the focused field without restriction on the focused field
+   * @param event
+   */
+  async stepBackMenu(event) {
+    // disregard the sex option since user can always see the options and unclick to de-restrict
+    let focusOn: string = event.target.name;
 
+    await this.applyFilter(focusOn)
+    this.createMenu();
   }
 
   genderSelected(genderForm) {
@@ -823,9 +818,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.restrictedSessions);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+    this.loading = false;
   }
 
   async handleApplyFilterButtonPress() {
+    this.loading = true;
     await this.applyFilter();
     this.createMenu();
     this.updateTableView();
@@ -835,7 +832,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Computes the restrictions based on what filters are provided and dump what tuples matches into this.restrictedTuple()
    * @returns 
    */
-  async applyFilter() {
+  async applyFilter(focusFieldKey?: string) {
     if (!this.allSessions) {
       this.restrictedSessions = [];
       return;
@@ -877,7 +874,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
     
     // Filter based on what the user requested
-    const restrictionObjectFromForm = this.session_filter_form.getRawValue();
+    let restrictionObjectFromForm = this.session_filter_form.getRawValue();
+
+    // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
+    if (focusFieldKey) {
+      restrictionObjectFromForm[focusFieldKey] = null;
+    }
 
     // Iterate through the tuples and restrict accordingly
     // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
@@ -933,6 +935,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   handleResetFilterButtonPress() {
+    this.loading = true;
     for (const control in this.session_filter_form.controls) {
       const toReset = {}
       
