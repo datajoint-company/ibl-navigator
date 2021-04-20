@@ -138,6 +138,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
 
     // Read previous store state if it exist inside of filterStoreService
+    // the SessionTableState and SessionTableState2 is result of Maho being confused about subscription/observable handling - two separate ones had to be made to avoid conflicts in data
+    // but basically the TableState is the original for storing table info like index, pagesize and sort, but the second one is for once sessions are restricted - if 
+    // the second one can be used for all cases (with or without restricted data) without data conflict, then that should be ideal
     const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState(); // PageIndex, PageSize, SortInfo
     const tableState2: [number, number, Object, Object] = this.filterStoreService.retrieveSessionTableState2(); // PageIndex, PageSize, SortInfo, loadedSessions
 
@@ -150,12 +153,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
       if (!Object.keys(urlParams).length) {
         // There are no urlParams, thus we need to check the storage to see if there any filter there that needs to be loaded
         params = this.filterStoreService.retrieveSessionFilter();
+        console.log('nothing in url - checked the storage: ', params)
         if (!params) {
           // There are no params in storage either, thus call updateMenu()
           this.updateMenu();
         }
       }
       else {
+        console.log('params exist')
         // UrlParams exist thus set them to params
         params = urlParams;
       }
@@ -228,6 +233,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
 
       // Reading out the stored table state from the filter state
+      console.log('tableState: ', tableState)
+      console.log('tableState2: ', tableState2)
       if (tableState[1]) {
         this.paginator.pageIndex = tableState[0];
         this.pageSize = tableState[1];
@@ -263,7 +270,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy() {
-    // console.log('destroying while storing these sessions: ', this.sessions);
+    console.log('destroying while storing restricted sessions');
     this.filterStoreService.storeSessionTableState2(this.paginator.pageIndex, this.pageSize, this.sort, this.restrictedSessions)
 
     if (this.sessionsSubscription) {
@@ -597,6 +604,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   getFiltersRequests(focusedField?: string) {
+    console.log("shoulnd't be using getFIltersREquest anymore returning")
+    return;
     const filterList = Object.entries(this.session_filter_form.getRawValue());
     const brainRegionRequest = this.requested_BR;
     const requestFilter = {};
@@ -767,7 +776,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
         }
         else if (attributeName === 'session_start_time') {
           if (!this.isSessionDateUsingRange) {
-            if (tuple[attributeName] !== restrictionObject[attributeName].format('YYYY-MM-DD')) {
+            // make sure only  the date of the tuple value is compared to the form restriction value
+            if (tuple[attributeName].substr(0, 10) !== restrictionObject[attributeName].format('YYYY-MM-DD')) {
               return false;
             }
           }
@@ -821,8 +831,27 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.loading = false;
   }
 
+  /**
+   * Triggers when user presses the apply filter button
+   */
   async handleApplyFilterButtonPress() {
     this.loading = true;
+
+    // store current filter content to storage
+    console.log('form content: ', this.session_filter_form.getRawValue())
+    let filter = Object.assign({}, this.session_filter_form.getRawValue())
+    // NOTE: deleting the non-dropdown field for now - needs to process filter form data to match the format read by the params like below if we are to keep the existing param read parsing style
+    // sex field needs to be converted into {__json: '[[{"sex":"F"}]]' } for single selection, {_json: '[[{"sex":"F"},{"sex":"M"}]]'} for multiple selection for param to work 
+    // not sure about the start time/range filter application at the moment
+    // format for start_time on the djcompute along with the sex field is like this 
+    // {__json: "["session_start_time>'2021-04-08T00:00:00'","session_start_time<'2021-04-08T23:59:59'",[{"sex":"F"},{"sex":"M"}]]"}
+    delete filter.session_range_filter
+    delete filter.session_start_time
+    delete filter.sex
+    // filter['__json'] = '[[{"sex":"F"},{"sex":"M"}]]'
+    console.log('filter after removing the exception filters: ', filter)
+    this.filterStoreService.storeSessionFilter(filter);
+
     await this.applyFilter();
     this.createMenu();
     this.updateTableView();
@@ -919,7 +948,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.loading = false;
   }
 
+  /**
+   * Triggers when user presses the refresh data button - filters persist, data is refetched
+   */
   async refreshData() {
+    // TODO: here, the user should see the old filters kept as the data is refreshed to the latest
     // console.log('refreshing data to newest:');
     this.filterStoreService.refreshSessionTableState();
     this.loading = true;
@@ -934,6 +967,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // }
   }
 
+  /**
+   * Triggers when user presses the reset filter button - no new fetch here, just clearing the input fields and stored state
+   */
   handleResetFilterButtonPress() {
     this.loading = true;
     for (const control in this.session_filter_form.controls) {

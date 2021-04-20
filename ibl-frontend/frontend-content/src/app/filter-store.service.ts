@@ -24,6 +24,7 @@ export class FilterStoreService {
 
   // ========= Session List Filter Sticky ===============//
   storeSessionFilter(filterForm) {
+    console.log('session filters stored: ', filterForm)
     this.sessionFilter = filterForm;
   }
 
