@@ -50,7 +50,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     subject_line: new FormControl(),
     responsible_user: new FormControl()
   });
-  loading = true;
+  loading;
   filterExpanded;
   restrictedSessions;
   allSessions;
@@ -120,6 +120,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    this.loading = true;
+
     // Patch job to initalized sex to the filters can be rendered
     this.uniqueValuesForEachAttribute['sex'] = {
       F: false,
@@ -282,6 +284,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Fetch sessiosn with the current restrictions obtainn from the filter form
    */
   fetchSessions() {
+    this.loading = true;
     this.hideMissingPlots = false;
     this.hideMissingEphys = false;
     this.hideNG4BrainMap = false;
@@ -394,8 +397,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol, 'task_protocol');
     this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line, 'subject_line');
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
-
-    this.loading = false
 
     return;
     /*
@@ -817,9 +818,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.restrictedSessions);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+    this.loading = false;
   }
 
   async handleApplyFilterButtonPress() {
+    this.loading = true;
     await this.applyFilter();
     this.createMenu();
     this.updateTableView();
@@ -932,6 +935,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   handleResetFilterButtonPress() {
+    this.loading = true;
     for (const control in this.session_filter_form.controls) {
       const toReset = {}
       
