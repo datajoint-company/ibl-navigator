@@ -5,7 +5,6 @@ import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort, MatTreeNestedDataSource } from '@angular/material';
 import { AllSessionsService } from './all-sessions.service';
-import { SessionComponent } from './session/session.component';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -50,10 +49,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
     subject_line: new FormControl(),
     responsible_user: new FormControl()
   });
-  loading;
+  isLoading;
   filterExpanded;
-  restrictedSessions;
   allSessions;
+  restrictedSessions: Array<any>;
   // currentlyLoadedSessions;
   sessionDateFilter: Function;
   miceBirthdayFilter: Function;
@@ -120,8 +119,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
-    this.loading = true;
-
     // Patch job to initalized sex to the filters can be rendered
     this.uniqueValuesForEachAttribute['sex'] = {
       F: false,
@@ -145,7 +142,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const tableState2: [number, number, Object, Object] = this.filterStoreService.retrieveSessionTableState2(); // PageIndex, PageSize, SortInfo, loadedSessions
 
     // Parse URL params to extract the restrictions and apply them accordingly
-    this.route.queryParams.subscribe(urlParams => {
+    this.route.queryParams.subscribe(async urlParams => {
       // Storage for filter params
       var params: any = {};
 
@@ -153,21 +150,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
       if (!Object.keys(urlParams).length) {
         // There are no urlParams, thus we need to check the storage to see if there any filter there that needs to be loaded
         params = this.filterStoreService.retrieveSessionFilter();
-        console.log('nothing in url - checked the storage: ', params)
-        if (!params) {
-          // There are no params in storage either, thus call updateMenu()
-          this.updateMenu();
-        }
       }
       else {
-        console.log('params exist')
         // UrlParams exist thus set them to params
         params = urlParams;
+        console.log('param')
       }
 
       // Process the params to conver them IBLAPI format
       for (const key in params) {
-        console.log('going through params key: ', key)
+        console.log('logging keys in params: ', key)
         if (key === '__json') {
           // If key is __json than to reformat to IBL API format
           const JSONcontent = JSON.parse(params[key]);
@@ -233,8 +225,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
 
       // Reading out the stored table state from the filter state
-      console.log('tableState: ', tableState)
-      console.log('tableState2: ', tableState2)
       if (tableState[1]) {
         this.paginator.pageIndex = tableState[0];
         this.pageSize = tableState[1];
@@ -250,10 +240,25 @@ export class SessionListComponent implements OnInit, OnDestroy {
         // checks if there are any pre-loaded session upon returning
         this.applyPreloadedSessions(tableState2)
       } 
-      else {
-        // Nothing was found in storage, thus apply default filter (This shouldn't be needed)
-        this.fetchSessions();
+
+      // Nothing was found in storage, thus apply default filter (This shouldn't be needed)
+      this.isLoading = true;
+      console.log('else')
+      await this.fetchSessions();
+      if (params !== {}) {
+        // There are params, thus apply the filter and get the restricted sessions
+        this.restrictedSessions = await this.applyFilter(); 
       }
+      else {
+        // There are no params so just set restricted Session to all sessions
+        this.restrictedSessions = this.allSessions
+      }
+
+      // Create Menu, Update table view and set loading to false
+      this.createMenu(this.restrictedSessions);
+      await this.updateTableView(this.restrictedSessions);
+      this.isLoading = false;
+        
 
     });
 
@@ -290,8 +295,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
   /**
    * Fetch sessiosn with the current restrictions obtainn from the filter form
    */
-  fetchSessions() {
-    this.loading = true;
+  async fetchSessions() {
+    console.log('fetch session is called')
     this.hideMissingPlots = false;
     this.hideMissingEphys = false;
     this.hideNG4BrainMap = false;
@@ -305,12 +310,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // Add the default sorting for the api request
     filters['__order'] = 'session_start_time DESC';
 
-    this.allSessionsService.fetchSessions(filters).subscribe(async (sessions: Array<any>) => {
-      this.allSessions = sessions;
-      await this.applyFilter();
-      this.createMenu();
-      this.updateTableView();
-    })
+    this.allSessions = await this.allSessionsService.fetchSessions(filters).toPromise();
   }
 
   setDropDownFormOptions(dropDownMenuOptionKey, formControl: AbstractControl, key: string) {
@@ -334,7 +334,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createMenu() {
+  private createMenu(restrictedSessions: Array<any>) {
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
@@ -343,9 +343,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.uniqueValuesForEachAttribute[key] = new Set();
     })
 
-    const t0 = performance.now();
     // Loop through each tuple
-    this.restrictedSessions.forEach(tuple => {
+    restrictedSessions.forEach(tuple => {
       keys.forEach(key => {
         if (tuple[key] !== null && !this.uniqueValuesForEachAttribute[key].has(tuple[key])) {
           // Add it to the uniqueValuesForColumns if it doesn't already exist in there
@@ -404,120 +403,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol, 'task_protocol');
     this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line, 'subject_line');
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
-
-    return;
-    /*
-    // console.log('now creating menu');
-    this.session_menu = {};
-    const keys = ['task_protocol', 'session_start_time',
-    'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
-    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
-    for (const key of keys) {
-      if (key !== 'sex') {
-        this.session_menu[key] = [];
-      } else {
-        this.session_menu[key] = { F: false, M: false, U: false };
-      }
-    }
-    for (const session of sessions) {
-      for (const key of keys) {
-        if (key !== 'sex' && !this.session_menu[key].includes(session[key])) {
-          this.session_menu[key].push(session[key]);
-        } else if (key === 'sex') {
-          // console.log('creating sex menu - looking at ', this.session_menu[key], ' and ', session[key]);
-          if (Object.keys(this.session_menu[key]).includes(session[key]) && !this.session_menu[key][session[key]]) {
-            this.session_menu[key][session[key]] = true;
-          }
-        }
-      }
-    }
-
-    // create formcontrol for item in menus
-    // const sex_array = <FormArray>this.session_filter_form.controls['sex'];
-
-
-    for (const item in this.session_menu['sex']) {
-      if (!this.session_menu['sex'][item]) {
-        this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[item]].patchValue(false);
-        this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[item]].disable();
-      } else {
-        this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[item]].enable();
-      }
-    }
-
-    const sessionSeconds = [];
-    for (const date of this.session_menu['session_start_time']) {
-      sessionSeconds.push(new Date(date).getTime());
-    }
-    this.sessionMinDate = new Date(Math.min(...sessionSeconds));
-    this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
-
-    this.filteredSessionLabOptions = this.session_filter_form.controls.session_lab.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, 'session_lab'))
-      );
-
-    this.filteredSubjectNicknameOptions = this.session_filter_form.controls.subject_nickname.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, 'subject_nickname'))
-      );
-
-    this.filteredSessionProjectOptions = this.session_filter_form.controls.session_project.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, 'session_project'))
-      );
-
-    this.filteredSubjectUuidOptions = this.session_filter_form.controls.subject_uuid.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, 'subject_uuid'))
-      );
-
-    this.filteredSessionUuidOptions = this.session_filter_form.controls.session_uuid.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, 'session_uuid'))
-      );
-
-    this.filteredTaskProtocolOptions = this.session_filter_form.controls.task_protocol.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, 'task_protocol'))
-      );
-
-    this.filteredSubjectLineOptions = this.session_filter_form.controls.subject_line.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, 'subject_line'))
-      );
-
-    this.filteredResponsibleUserOptions = this.session_filter_form.controls.responsible_user.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, 'responsible_user'))
-      );
-
-    this.sessionDateFilter = (d: Date): boolean => {
-      const sessionDates = [];
-      for (const date of this.session_menu['session_start_time']) {
-        sessionDates.push(date.split('T')[0]);
-      }
-
-      // filter out dates without any session
-      return sessionDates.includes(d.toISOString().split('T')[0]);
-    };
-    this.miceBirthdayFilter = (d: Date): boolean => {
-      const birthDates = [];
-      for (const date of this.session_menu['subject_birth_date']) {
-        birthDates.push(date);
-      }
-      return birthDates.includes(d.toISOString().split('T')[0]);
-    };
-
-*/
+    console.log('create_menu is done')
   }
 
   /**
@@ -578,8 +464,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @param event
    */
   async updateMenu() {
-    await this.applyFilter();
-    this.createMenu();
+    console.log('updateMenu called')
+    const restrictedSessions = await this.applyFilter();
+    this.createMenu(restrictedSessions);
   }
 
   /**
@@ -587,11 +474,26 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @param event
    */
   async stepBackMenu(event) {
+    //this.isLoading = true;
     // disregard the sex option since user can always see the options and unclick to de-restrict
-    let focusOn: string = event.target.name;
+    console.log('stepBackMenu')
+    console.log(event)
+    let currentlyActiveAttributeName: string = event.target.name;
+    console.log(currentlyActiveAttributeName)
+    
+    console.log(this.session_filter_form.getRawValue())
+    // Check if the field is filled out, if not then ignore
+    const restrictionObject = this.session_filter_form.getRawValue();
+    if (restrictionObject[currentlyActiveAttributeName] !== null && restrictionObject[currentlyActiveAttributeName] !== '') {
+      const t0 = performance.now()
+      const restrictedSessions = await this.applyFilter(currentlyActiveAttributeName);
+      console.log('Computation time apply Filter only', performance.now() - t0)
+      await this.createMenu(restrictedSessions);
+      console.log('Computation time', performance.now() - t0)
+    }
 
-    await this.applyFilter(focusOn)
-    this.createMenu();
+    //this.isLoading = false;
+    console.log('stepBackMenu completed')
   }
 
   genderSelected(genderForm) {
@@ -744,11 +646,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     return requestFilter;
   }
 
-  testFunction(){
-    return true;
-  }
-
-
   /**
    * 
    * @param tuple Tuple object, the keys should be the attribute names
@@ -757,7 +654,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    */
   doesTupleMatchRestriction(tuple: any, restrictionObject: any): boolean {
     for (let attributeName of Object.keys(restrictionObject)) {
-      if (restrictionObject[attributeName] !== null) {
+      if (restrictionObject[attributeName] !== null && restrictionObject[attributeName] !== '') {
         if (attributeName === 'session_range_filter') {
           if (this.isSessionDateUsingRange) {
             const tupleDate = moment.utc(tuple['session_start_time'])
@@ -824,19 +721,20 @@ export class SessionListComponent implements OnInit, OnDestroy {
   /**
    * Update the table view to this.restrictedSessions
    */
-  async updateTableView() {
-    this.dataSource = new MatTableDataSource(this.restrictedSessions);
+  async updateTableView(restrictedSessions: Array<any>) {
+    this.dataSource = new MatTableDataSource(restrictedSessions);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-    this.loading = false;
+    console.log('updateTableView is done')
   }
 
   /**
    * Triggers when user presses the apply filter button
    */
   async handleApplyFilterButtonPress() {
-    this.loading = true;
-
+    console.log('apple button pressed')
+    const t0 = performance.now();
+    this.isLoading = true;
     // store current filter content to storage
     console.log('form content: ', this.session_filter_form.getRawValue())
     let filter = Object.assign({}, this.session_filter_form.getRawValue())
@@ -852,9 +750,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     console.log('filter after removing the exception filters: ', filter)
     this.filterStoreService.storeSessionFilter(filter);
 
-    await this.applyFilter();
-    this.createMenu();
-    this.updateTableView();
+    this.restrictedSessions = await this.applyFilter();
+    this.createMenu(this.restrictedSessions);
+    await this.updateTableView(this.restrictedSessions);
+    this.isLoading = false;
+    console.log('apply filter finish running', performance.now() - t0)
   }
 
   /**
@@ -863,8 +763,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    */
   async applyFilter(focusFieldKey?: string) {
     if (!this.allSessions) {
-      this.restrictedSessions = [];
-      return;
+      return [];
     }
 
     // Hide certain checkboxes
@@ -912,12 +811,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
     // Iterate through the tuples and restrict accordingly
     // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
-    this.restrictedSessions = [];
+    let restrictedSessions = [];
     for (let tuple of tupleToRestrict) {
       if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
-        this.restrictedSessions.push(tuple);
+        restrictedSessions.push(tuple);
       }
     }
+
+    return restrictedSessions;
   }
 
   applyPreloadedSessions(storedTableInfo) { // PageIndex, PageSize, SortInfo, loadedSessions
@@ -934,18 +835,19 @@ export class SessionListComponent implements OnInit, OnDestroy {
       // console.log('printing datasource: ', this.dataSource)
       // console.log('printing this.paginator: ', this.paginator)
       this.dataSource.paginator.pageSize = storedTableInfo[1];
-    } else {
+    } 
+    else {
       this.dataSource.paginator.pageSize = this.pageSize
     }
 
     if (storedTableInfo[0]) {
       this.dataSource.paginator.pageIndex = storedTableInfo[0];
-    } else {
+    } 
+    else {
       this.dataSource.paginator.pageIndex = 0
     }
     
-    this.restrictedSessions = storedTableInfo[3];
-    this.loading = false;
+    //this.restrictedSessions = storedTableInfo[3];
   }
 
   /**
@@ -954,9 +856,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
   async refreshData() {
     // TODO: here, the user should see the old filters kept as the data is refreshed to the latest
     // console.log('refreshing data to newest:');
+    this.isLoading = true;
+    console.log('RefeshData called')
     this.filterStoreService.refreshSessionTableState();
-    this.loading = true;
-    this.fetchSessions();
+    await this.fetchSessions();
+    this.restrictedSessions = await this.applyFilter();
+    this.createMenu(this.restrictedSessions);
+    await this.updateTableView(this.restrictedSessions);
+    this.isLoading = false;
     // if (tableState[1]) {
     //   this.paginator.pageIndex = tableState[0];
     //   this.pageSize = tableState[1];
@@ -970,8 +877,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   /**
    * Triggers when user presses the reset filter button - no new fetch here, just clearing the input fields and stored state
    */
-  handleResetFilterButtonPress() {
-    this.loading = true;
+  async handleResetFilterButtonPress() {
     for (const control in this.session_filter_form.controls) {
       const toReset = {}
       
@@ -988,6 +894,25 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
       this.session_filter_form.patchValue(toReset); 
     }
+
+    this.route.queryParams.subscribe(async param => {
+      if (Object.keys(param).length > 0) {
+        // Clear all URL params, and do a fresh fetch
+        this.router.navigate(
+          [],
+          {
+            relativeTo: this.route,
+            queryParams: null
+          });
+      }
+    })
+
+    // 
+    this.restrictedSessions = await this.applyFilter();
+    this.createMenu(this.restrictedSessions);
+    await this.updateTableView(this.restrictedSessions);
+    console.log('rest filter is done')
+    return;
     
 
     // // attempting to just reset the table and not the actual session
@@ -1022,7 +947,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       else {
         await this.applyFilter();
         this.createMenu();
-        this.updateTableView();
+        await this.updateTableView();
+        this.isLoading = false;
       }
      });
   }

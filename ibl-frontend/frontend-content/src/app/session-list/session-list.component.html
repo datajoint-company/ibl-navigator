@@ -7,7 +7,7 @@
 <button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="false" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
 
 
-<form [formGroup]="session_filter_form" *ngIf="!loading">
+<form [formGroup]="session_filter_form" [class]="isLoading ? 'loading': ''">
   <div [class]="filterExpanded ? 'filters col-12 filterExpand':'filters col-12 filterCollapse'">
     <div class="session-field-filters form-section">
       <mat-form-field class="long">
@@ -236,7 +236,7 @@
   </div>
 </form>
 
-<div class="loading-icon" *ngIf="loading">
+<div [class]="isLoading? 'loading-icon loading': 'loading-icon'">
   <img src="assets/images/loading_icon.gif">
 </div>
 <div class="table-container">
