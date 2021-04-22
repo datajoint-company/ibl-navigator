@@ -8,7 +8,7 @@ x-net: &net
 services:
   iblapi:
     <<: *net
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.4.0 # for internal demo
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.4.1 # for internal demo
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.1.0-public # for public demo
     environment:
     - DJ_USER=maho
