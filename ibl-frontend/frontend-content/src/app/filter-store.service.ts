@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class FilterStoreService {
-  loadedSessions: Object;
+  loadedSessions: Array<Object>;
   sessionFilter: Object;
   mouseFilter: Object;
   summaryFilter: Object;
@@ -13,7 +13,8 @@ export class FilterStoreService {
   // sortInfo: Object;
   sessionPageIndexInfo: number;
   sessionPageSizeInfo: number;
-  sessionSortInfo: Object;
+  sessionPaginator: any;
+  sessionSortInfo: any;
   micePageIndexInfo: number;
   micePageSizeInfo: number;
   miceSortInfo: Object;
@@ -25,27 +26,31 @@ export class FilterStoreService {
   // ========= Session List Filter Sticky ===============//
   storeSessionFilter(filterForm) {
     console.log('session filters stored: ', filterForm)
-    this.sessionFilter = filterForm;
+    
+    this.sessionFilter = Object.assign({}, filterForm); // Make a shallow copy
   }
 
   storeSessionTableState(pageIndex, pageSize, sorter) {
+    console.log('store session table state 1')
     if (pageSize) {
       this.sessionPageIndexInfo = pageIndex;
       this.sessionPageSizeInfo = pageSize;
-    } else if (sorter) {
-      this.sessionSortInfo = sorter;
+    } 
+    else if (sorter) {
+      this.sessionSortInfo = Object.assign({}, sorter);
     }
     // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo);
   }
 
   storeSessionTableState2(pageIndex, pageSize, sorter, sessionList) {
-    // console.log('storing info to table state 2')
+    console.log('storing info to table state 2')
     this.loadedSessions = sessionList;
     if (pageSize) {
       this.sessionPageIndexInfo = pageIndex;
       this.sessionPageSizeInfo = pageSize;
-    } else if (sorter) {
-      this.sessionSortInfo = sorter;
+    } 
+    else if (sorter) {
+      this.sessionSortInfo = Object.assign({}, sorter);
     }
     // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
   }
@@ -55,9 +60,11 @@ export class FilterStoreService {
   }
 
   retrieveSessionTableState() {
+    console.log('retrieving session table state1')
     return <[number, number, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo];
   }
   retrieveSessionTableState2() {
+    console.log('retrieving session table state2')
     return <[number, number, Object, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, 
       this.sessionSortInfo, this.loadedSessions];
   }
