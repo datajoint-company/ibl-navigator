@@ -119,6 +119,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    // Initalized the material table
+    this.dataSource = new MatTableDataSource<any>();
+
     // Patch job to initalized sex to the filters can be rendered
     this.uniqueValuesForEachAttribute['sex'] = {
       F: false,
@@ -138,23 +141,25 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // the SessionTableState and SessionTableState2 is result of Maho being confused about subscription/observable handling - two separate ones had to be made to avoid conflicts in data
     // but basically the TableState is the original for storing table info like index, pagesize and sort, but the second one is for once sessions are restricted - if 
     // the second one can be used for all cases (with or without restricted data) without data conflict, then that should be ideal
-    const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState(); // PageIndex, PageSize, SortInfo
-    const tableState2: [number, number, Object, Object] = this.filterStoreService.retrieveSessionTableState2(); // PageIndex, PageSize, SortInfo, loadedSessions
+    //const tableState: [number, number, Object] = this.filterStoreService.retrieveSessionTableState(); // PageIndex, PageSize, SortInfo
+    //const tableState2: [number, number, Object, Object] = this.filterStoreService.retrieveSessionTableState2(); // PageIndex, PageSize, SortInfo, loadedSessions
 
     // Parse URL params to extract the restrictions and apply them accordingly
     this.route.queryParams.subscribe(async urlParams => {
       // Storage for filter params
-      var params: any = {};
+      let params: any = undefined;
 
       // Find any params in either the url or storage
       if (!Object.keys(urlParams).length) {
         // There are no urlParams, thus we need to check the storage to see if there any filter there that needs to be loaded
+        console.log('params if')
         params = this.filterStoreService.retrieveSessionFilter();
+        console.log(params);
       }
       else {
         // UrlParams exist thus set them to params
+        console.log('params else')
         params = urlParams;
-        console.log('param')
       }
 
       // Process the params to conver them IBLAPI format
@@ -205,13 +210,25 @@ export class SessionListComponent implements OnInit, OnDestroy {
             }
           }
         } 
-        else if (key === 'sex') {
-          // Maho said that this is for a single selection of sex, don't know wtf this is the case when there is a json up there for mutiple values (FIX LATER)
-          this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+        else if (key === 'session_start_time' && params[key] !== null) {
+          this.session_filter_form.controls.session_start_time.patchValue(moment.utc(params[key]));
+        }
+        else if (key === 'session_range_filter') {
+          if (params[key]['session_range_start'] !== null && params[key]['session_range_end'] !== null) {
+            this.isSessionDateUsingRange = true;
+            this.session_filter_form.controls.session_range_filter['controls'].session_range_start.patchValue(moment.utc(params[key]['session_range_start']));
+            this.session_filter_form.controls.session_range_filter['controls'].session_range_end.patchValue(moment.utc(params[key]['session_range_end']));
+          }
+        }
+        else if (key === 'sex' && params[key] !== null) {
+          this.session_filter_form.controls.sex.patchValue(params[key]);
         } 
         else if (key === 'subject_birth_date') {
           // Set subject Birth date
-          this.session_filter_form.controls.subject_birth_date.patchValue(moment.utc(params[key]));
+          if (params[key] !== null) {
+            this.session_filter_form.controls.subject_birth_date.patchValue(moment.utc(params[key]));
+          }
+          
         } 
         else if ( key !== 'session_start_time' && key !== '__json' && key !== '__order') {
           // Handle session start time
@@ -224,30 +241,76 @@ export class SessionListComponent implements OnInit, OnDestroy {
         }
       }
 
+      // Check storage to see if there is anything there
+      console.log(this.filterStoreService)
+      
+      // Check if paginiator info is there
+      /*
+      if (this.filterStoreService.sessionPageIndexInfo !== undefined && this.filterStoreService.sessionPageSizeInfo !== undefined) {
+        console.log('PageIndex and PAge size is valid', this.filterStoreService.sessionPageIndexInfo, this.filterStoreService.sessionPageSizeInfo)
+        // Both are not undefined thus set the page index and size
+        this.paginator.pageIndex = this.filterStoreService.sessionPageIndexInfo;
+        this.paginator.pageSize = this.filterStoreService.sessionPageSizeInfo;
+      }
+      */
+
+      this.isLoading = true;
+
+      // Check for paginator
+      console.log(this.filterStoreService.sessionPaginator)
+      if (this.filterStoreService.sessionPaginator) {
+        console.log('Paginator is valid', this.filterStoreService.sessionPaginator)
+        this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
+        this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
+        console.log(this.paginator['pageIndex'])
+      }
+
+      // Check for sort info
+      if (this.filterStoreService.sessionSortInfo && this.filterStoreService.sessionSortInfo['active'] !== undefined && this.filterStoreService.sessionSortInfo['direction'] !== '') {
+        console.log('Sort info is valid', this.filterStoreService.sessionSortInfo)
+        // Session sort info is valid, thus set it locally
+        this.sort.active = this.filterStoreService.sessionSortInfo.active;
+        this.sort.direction = this.filterStoreService.sessionSortInfo.direction;
+      }
+
+      // Check for preloaded sessions
+      if (this.filterStoreService.loadedSessions) {
+        console.log('pre loaded sessiosn are valid', this.filterStoreService.loadedSessions)
+        // We have previously loaded sessions, thus just use that
+        this.allSessions = this.filterStoreService.loadedSessions;
+      }
+      else {
+        // Else fetch from database
+        await this.fetchSessions();
+      }
+
+      console.log(this.paginator['pageIndex'])
+
+      /*
       // Reading out the stored table state from the filter state
       if (tableState[1]) {
-        this.paginator.pageIndex = tableState[0];
-        this.pageSize = tableState[1];
+        console.log('reading table state 1[1]: ', tableState[1])
+        //this.paginator.pageIndex = tableState[0];
+        //this.pageSize = tableState[1];
       }
 
       if (tableState[2] && Object.entries(tableState[2]).length > 0 && this.sort) {
-        this.sort.active = Object.keys(tableState[2])[0];
-        this.sort.direction = Object.values(tableState[2])[0].direction;
+        console.log('reading table state 1[2]: ', tableState[2])
+        this.sort = tableState[2]
+        // this.sort.active = Object.keys(tableState[2])[0];
+        // this.sort.direction = Object.values(tableState[2])[0].direction;
       }
-
-
-      if (tableState2[3]) { 
-        // checks if there are any pre-loaded session upon returning
-        this.applyPreloadedSessions(tableState2)
-      } 
+      */
 
       // Nothing was found in storage, thus apply default filter (This shouldn't be needed)
-      this.isLoading = true;
-      console.log('else')
-      await this.fetchSessions();
-      if (params !== {}) {
+      
+      
+      // Check if there are params, if they are then apply them via this.applyFilter();
+      if (params !== undefined && Object.keys(params).length !== 0) {
+        console.log('params is not none')
         // There are params, thus apply the filter and get the restricted sessions
         this.restrictedSessions = await this.applyFilter(); 
+        console.log(this.restrictedSessions)
       }
       else {
         // There are no params so just set restricted Session to all sessions
@@ -256,9 +319,34 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
       // Create Menu, Update table view and set loading to false
       this.createMenu(this.restrictedSessions);
-      await this.updateTableView(this.restrictedSessions);
+      console.log(this.paginator['pageIndex'])
+      
+      /*
+      if (tableState2[3]) { 
+        console.log('applying preloaded sessions from tableState2: ', tableState2)
+        // checks if there are any pre-loaded session upon returning
+        this.applyPreloadedSessions(tableState2)
+      }
+      */
+    
+      
+      
+      this.updateTableView(this.restrictedSessions);
+      
+      
+      console.log(this.paginator['pageIndex'])
+      console.log(this.paginator)
+      console.log(this.sort)
       this.isLoading = false;
-        
+
+      // Check for paginator
+      console.log(this.filterStoreService.sessionPaginator)
+      if (this.filterStoreService.sessionPaginator) {
+        console.log('Paginator is valid', this.filterStoreService.sessionPaginator)
+        this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
+        this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
+        console.log(this.paginator['pageIndex'])
+      }
 
     });
 
@@ -269,14 +357,20 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.treeDataSource.data = this.brainRegionTree;
       this.treeControl.dataNodes = this.treeDataSource.data;
       this.buildLookup();
-      console.log('done fetching brain regions')
     })
     
   }
   
+  
   ngOnDestroy() {
-    console.log('destroying while storing restricted sessions');
-    this.filterStoreService.storeSessionTableState2(this.paginator.pageIndex, this.pageSize, this.sort, this.restrictedSessions)
+    console.log(this.paginator)
+    console.log(this.sort)
+    this.filterStoreService.sessionPaginator = {pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
+    
+    this.filterStoreService.sessionSortInfo = {active: this.sort.active, direction: this.sort.direction};
+    console.log(this.filterStoreService.sessionSortInfo)
+    this.filterStoreService.loadedSessions = this.allSessions
+    console.log('NgONDestory', this.filterStoreService.sessionPageIndexInfo, this.filterStoreService.sessionPageSizeInfo, this.filterStoreService.sessionSortInfo, this.filterStoreService.loadedSessions)
 
     if (this.sessionsSubscription) {
       this.sessionsSubscription.unsubscribe();
@@ -311,6 +405,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     filters['__order'] = 'session_start_time DESC';
 
     this.allSessions = await this.allSessionsService.fetchSessions(filters).toPromise();
+    console.log('fetchSessions completed')
   }
 
   setDropDownFormOptions(dropDownMenuOptionKey, formControl: AbstractControl, key: string) {
@@ -403,7 +498,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol, 'task_protocol');
     this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line, 'subject_line');
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
-    console.log('create_menu is done')
   }
 
   /**
@@ -464,7 +558,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @param event
    */
   async updateMenu() {
-    console.log('updateMenu called')
     const restrictedSessions = await this.applyFilter();
     this.createMenu(restrictedSessions);
   }
@@ -476,24 +569,17 @@ export class SessionListComponent implements OnInit, OnDestroy {
   async stepBackMenu(event) {
     //this.isLoading = true;
     // disregard the sex option since user can always see the options and unclick to de-restrict
-    console.log('stepBackMenu')
-    console.log(event)
     let currentlyActiveAttributeName: string = event.target.name;
-    console.log(currentlyActiveAttributeName)
     
-    console.log(this.session_filter_form.getRawValue())
     // Check if the field is filled out, if not then ignore
     const restrictionObject = this.session_filter_form.getRawValue();
     if (restrictionObject[currentlyActiveAttributeName] !== null && restrictionObject[currentlyActiveAttributeName] !== '') {
       const t0 = performance.now()
       const restrictedSessions = await this.applyFilter(currentlyActiveAttributeName);
-      console.log('Computation time apply Filter only', performance.now() - t0)
       await this.createMenu(restrictedSessions);
-      console.log('Computation time', performance.now() - t0)
     }
 
     //this.isLoading = false;
-    console.log('stepBackMenu completed')
   }
 
   genderSelected(genderForm) {
@@ -721,11 +807,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
   /**
    * Update the table view to this.restrictedSessions
    */
-  async updateTableView(restrictedSessions: Array<any>) {
-    this.dataSource = new MatTableDataSource(restrictedSessions);
-    this.dataSource.sort = this.sort;
+  updateTableView(restrictedSessions: Array<any>) {
+    console.log(this.paginator['pageIndex'])
     this.dataSource.paginator = this.paginator;
-    console.log('updateTableView is done')
+    console.log(this.paginator['pageIndex'])
+    this.dataSource.sort = this.sort;
+    console.log(this.paginator['pageIndex'])
+    this.dataSource.data = restrictedSessions;
+    console.log(this.paginator['pageIndex'])
+    
+    console.log('From update tableView', this.dataSource.sort.active, this.dataSource.sort.direction)
   }
 
   /**
@@ -736,25 +827,26 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const t0 = performance.now();
     this.isLoading = true;
     // store current filter content to storage
-    console.log('form content: ', this.session_filter_form.getRawValue())
     let filter = Object.assign({}, this.session_filter_form.getRawValue())
     // NOTE: deleting the non-dropdown field for now - needs to process filter form data to match the format read by the params like below if we are to keep the existing param read parsing style
     // sex field needs to be converted into {__json: '[[{"sex":"F"}]]' } for single selection, {_json: '[[{"sex":"F"},{"sex":"M"}]]'} for multiple selection for param to work 
     // not sure about the start time/range filter application at the moment
     // format for start_time on the djcompute along with the sex field is like this 
     // {__json: "["session_start_time>'2021-04-08T00:00:00'","session_start_time<'2021-04-08T23:59:59'",[{"sex":"F"},{"sex":"M"}]]"}
-    delete filter.session_range_filter
-    delete filter.session_start_time
-    delete filter.sex
     // filter['__json'] = '[[{"sex":"F"},{"sex":"M"}]]'
-    console.log('filter after removing the exception filters: ', filter)
+    if (this.isSessionDateUsingRange) {
+      delete filter.session_start_time
+    }
+    else {
+      delete filter.session_range_filter
+    }
     this.filterStoreService.storeSessionFilter(filter);
+
 
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
     await this.updateTableView(this.restrictedSessions);
     this.isLoading = false;
-    console.log('apply filter finish running', performance.now() - t0)
   }
 
   /**
@@ -762,6 +854,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   async applyFilter(focusFieldKey?: string) {
+    console.log(this.paginator['pageIndex'])
+    let t0 = performance.now()
     if (!this.allSessions) {
       return [];
     }
@@ -803,6 +897,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     
     // Filter based on what the user requested
     let restrictionObjectFromForm = this.session_filter_form.getRawValue();
+    console.log('from apply filter', restrictionObjectFromForm)
 
     // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
     if (focusFieldKey) {
@@ -818,15 +913,31 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
     }
 
+    console.log('apply filter took: ', performance.now() - t0)
     return restrictedSessions;
   }
 
   applyPreloadedSessions(storedTableInfo) { // PageIndex, PageSize, SortInfo, loadedSessions
     // console.log('trying to apply preloaded sessions');
-    this.dataSource = new MatTableDataSource(storedTableInfo[3]);
-    this.dataSource.sort = storedTableInfo[2];
-    this.dataSource.paginator = this.paginator
+    // this.dataSource = new MatTableDataSource(storedTableInfo[3]);
+    // this.dataSource = new MatTableDataSource([]);
+    //this.dataSource.sort = storedTableInfo[2];
+    console.log(Object.keys(storedTableInfo[2])[0], storedTableInfo[2][Object.keys(storedTableInfo[2])[0]]['direction'])
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.data = this.restrictedSessions;
+    this.dataSource.sort = this.sort;
+    console.log('this.dataSource: ', this.dataSource)
+    // this.dataSource.sort = storedTableInfo[2];
+    
+    //this.dataSource.sort.active = Object.keys(storedTableInfo[2])[0]
+    //this.dataSource.sort.direction = storedTableInfo[2][Object.keys(storedTableInfo[2])[0]]['direction']
+    // console.log('From applyPreloadedSessions', this.dataSource.sort.active, this.dataSource.sort.direction)
+    console.log('tableStorage', storedTableInfo)
+    console.log('this.dataSource: ', this.dataSource)
+    // this.sort = storedTableInfo[2]
+    // this.dataSource.paginator = this.paginator
 
+    /*
     this.hideMissingPlots = false;
     this.hideMissingEphys = false;
     this.hideNG4BrainMap = false;
@@ -834,20 +945,24 @@ export class SessionListComponent implements OnInit, OnDestroy {
     if (storedTableInfo[1]) {
       // console.log('printing datasource: ', this.dataSource)
       // console.log('printing this.paginator: ', this.paginator)
-      this.dataSource.paginator.pageSize = storedTableInfo[1];
+      // this.dataSource.paginator.pageSize = storedTableInfo[1];
+      this.paginator.pageSize = storedTableInfo[1]
     } 
     else {
-      this.dataSource.paginator.pageSize = this.pageSize
+      // this.dataSource.paginator.pageSize = this.pageSize
     }
 
     if (storedTableInfo[0]) {
-      this.dataSource.paginator.pageIndex = storedTableInfo[0];
+      // this.dataSource.paginator.pageIndex = storedTableInfo[0];
+      this.paginator.pageIndex = storedTableInfo[0]
     } 
     else {
-      this.dataSource.paginator.pageIndex = 0
+      // this.dataSource.paginator.pageIndex = 0
+      this.paginator.pageIndex = 0
     }
-    
-    //this.restrictedSessions = storedTableInfo[3];
+    // this.restrictedSessions = storedTableInfo[3];
+*/
+    //this.updateSelection();
   }
 
   /**
@@ -954,6 +1069,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   storeTableInfo(event) {
+    return;
     let pageIndex;
     let pageSize;
     const sorter = {};
