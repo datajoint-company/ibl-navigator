@@ -25,9 +25,9 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
     // 
     const fetchSpinningBrain = this.mousePlotsService.fetchSpinningBrain({'subject_uuid': this.mouseInfo['subject_uuid']}).subscribe({
       next: spinningBrain => {
-        console.log('spinning brain returned: ',spinningBrain[0]['subject_spinning_brain_link']);
+        // console.log('spinning brain returned: ',spinningBrain[0]['subject_spinning_brain_link']);
         this.spinningBrainSrc = spinningBrain[0]['subject_spinning_brain_link']
-        console.log(this.spinningBrainSrc)
+        // console.log(this.spinningBrainSrc)
         // this.convertToBase64(this.spinningBrainSrc).subscribe(base64data => {
         //   console.log('base64data: ', base64data);
         //   // this is the image as dataUrl
@@ -48,7 +48,7 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
   ** returns base64 image url? from source url
   */
   convertToBase64(url: string) {
-    console.log('converting to base 64...')
+    // console.log('converting to base 64...')
     return Observable.create((observer: Observer<string>) => {
       // create an image object
       let img = new Image();
@@ -73,7 +73,7 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
   ** creates base64 images from the image object that was created from the source url
   */
   getBase64Image(img: any) {
-    console.log('what is inside img: ', img)
+    // console.log('what is inside img: ', img)
     // Create a HTML canvas object that will create a 2d image - this needs to be tweaked to work on GIF instead
     var canvas = document.createElement("canvas");
     canvas.width = img.width;
@@ -87,13 +87,13 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
  }
 
   loadSpinningBrainPlayer() {
-    console.log('attempting to load spinning brain super gif')
+    // console.log('attempting to load spinning brain super gif')
     let brainImage = this.brain_gif.nativeElement;
-    console.log('brainImage element: ', brainImage);
+    // console.log('brainImage element: ', brainImage);
     this.spinningBrain = new SuperGif(brainImage, {autoPlay: true, maxWidth: 360});
-    console.log('what is in spinning brain: ', this.spinningBrain)
+    // console.log('what is in spinning brain: ', this.spinningBrain)
     this.spinningBrain.load(() => {
-      console.log('spinning brain in SuperGIF mode should now be loaded...');
+      // console.log('spinning brain in SuperGIF mode should now be loaded...');
     })
   }
 

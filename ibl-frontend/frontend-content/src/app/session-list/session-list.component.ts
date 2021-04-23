@@ -541,7 +541,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   getFiltersRequests(focusedField?: string) {
-    console.log("shoulnd't be using getFIltersREquest anymore returning")
+    // console.log("shoulnd't be using getFIltersREquest anymore returning")
     return;
     const filterList = Object.entries(this.session_filter_form.getRawValue());
     const brainRegionRequest = this.requested_BR;
@@ -859,18 +859,18 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // this.dataSource = new MatTableDataSource(storedTableInfo[3]);
     // this.dataSource = new MatTableDataSource([]);
     //this.dataSource.sort = storedTableInfo[2];
-    console.log(Object.keys(storedTableInfo[2])[0], storedTableInfo[2][Object.keys(storedTableInfo[2])[0]]['direction'])
+    // console.log(Object.keys(storedTableInfo[2])[0], storedTableInfo[2][Object.keys(storedTableInfo[2])[0]]['direction'])
     this.dataSource.paginator = this.paginator;
     this.dataSource.data = this.restrictedSessions;
     this.dataSource.sort = this.sort;
-    console.log('this.dataSource: ', this.dataSource)
+    // console.log('this.dataSource: ', this.dataSource)
     // this.dataSource.sort = storedTableInfo[2];
     
     //this.dataSource.sort.active = Object.keys(storedTableInfo[2])[0]
     //this.dataSource.sort.direction = storedTableInfo[2][Object.keys(storedTableInfo[2])[0]]['direction']
     // console.log('From applyPreloadedSessions', this.dataSource.sort.active, this.dataSource.sort.direction)
-    console.log('tableStorage', storedTableInfo)
-    console.log('this.dataSource: ', this.dataSource)
+    // console.log('tableStorage', storedTableInfo)
+    // console.log('this.dataSource: ', this.dataSource)
     // this.sort = storedTableInfo[2]
     // this.dataSource.paginator = this.paginator
 
@@ -909,7 +909,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     // TODO: here, the user should see the old filters kept as the data is refreshed to the latest
     // console.log('refreshing data to newest:');
     this.isLoading = true;
-    console.log('RefeshData called')
+    // console.log('RefeshData called')
     this.filterStoreService.refreshSessionTableState();
     await this.fetchSessions();
     this.restrictedSessions = await this.applyFilter();
@@ -963,7 +963,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
     await this.updateTableView(this.restrictedSessions);
-    console.log('rest filter is done')
+    // console.log('reset filter is done')
     return;
     
 
@@ -1109,13 +1109,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
     }
 
     if (this.hideNG4BrainMap) {
-      console.log('only show those good for brain map')
+      // console.log('only show those good for brain map')
       
       criteria.push(_.map(this.restrictedSessions, x => x.good_enough_for_brainwide_map > 0));
     }
     
     if (this.hideNotReady4Delay) {
-      console.log('only show those ready for delay')
+      // console.log('only show those ready for delay')
       criteria.push(_.map(this.restrictedSessions, x => x.training_status == 'ready4delay'));
       // training_status: "ready4delay"
     }

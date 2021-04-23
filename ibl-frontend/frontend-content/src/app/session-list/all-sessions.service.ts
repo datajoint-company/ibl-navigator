@@ -64,7 +64,7 @@ export class AllSessionsService {
   }
 
   getSessionMenu(sessionsFilter) {
-    console.log('POSTing for:', sessionsFilter);
+    // console.log('POSTing for:', sessionsFilter);
     this.http.post(BACKEND_API_URL + `/sessions/`, sessionsFilter, { responseType: 'json' })
       .subscribe(
         (filteredSessionsData) => {
@@ -87,7 +87,7 @@ export class AllSessionsService {
       .subscribe(
         (filteredSessionsData) => {
           let end = new Date();
-          console.log(`It took ${Number(end) - Number(start)}ms to retrieve the session list information`)
+          // console.log(`It took ${Number(end) - Number(start)}ms to retrieve the session list information`)
           this.retrievedSessions = filteredSessionsData;
           // console.log('retrievedSessions data are: ');
           // console.log(this.retrievedSessions);
@@ -101,17 +101,17 @@ export class AllSessionsService {
   }
 
   retrieveSessions2(sessionsFilter) {
-    console.log('POSTing for:', sessionsFilter);
+    // console.log('POSTing for:', sessionsFilter);
     let start = new Date()
     this.http.post(BACKEND_API_URL + `/sessions/`, sessionsFilter, { responseType: 'json' })
       .subscribe(
         (filteredSessionsData) => {
           let end = new Date();
-          console.log(`It took ${Number(end) - Number(start)}ms to retrieve the session list information`)
+          // console.log(`It took ${Number(end) - Number(start)}ms to retrieve the session list information`)
           // console.log(filteredSessionsData);
           this.retrievedSessions2 = filteredSessionsData;
-          console.log('retrievedSessions data are: ');
-          console.log(this.retrievedSessions2);
+          // console.log('retrievedSessions data are: ');
+          // console.log(this.retrievedSessions2);
           this.newSessionsLoaded2.next(this.retrievedSessions2);
         },
         (err: any) => {

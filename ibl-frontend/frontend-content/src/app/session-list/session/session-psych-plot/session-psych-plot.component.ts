@@ -200,7 +200,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   }
 
   plotClicked(event) {
-    console.log('session psych plot clicked');
+    // console.log('session psych plot clicked');
     this.openSPCplot.emit({showSPCplot: true});
   }
 

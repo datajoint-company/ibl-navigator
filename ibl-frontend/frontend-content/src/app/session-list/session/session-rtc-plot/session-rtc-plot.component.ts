@@ -179,7 +179,7 @@ export class SessionRTCPlotComponent implements OnInit, OnDestroy {
   }
 
   plotClicked(event) {
-    console.log('session RTC plot clicked');
+    // console.log('session RTC plot clicked');
     this.openSRTCplot.emit({ showSRTCplot: true });
   }
 
