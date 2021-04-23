@@ -1023,42 +1023,42 @@ export class SessionListComponent implements OnInit, OnDestroy {
     return;
     
 
-    // // attempting to just reset the table and not the actual session
-    // this.dataSource = new MatTableDataSource(this.allSessions);
-    // this.dataSource.paginator = this.paginator;
-    // this.sessions = this.allSessions
-    // console.log('length of all sessions: ', this.allSessions.length);
+    // // // attempting to just reset the table and not the actual session
+    // // this.dataSource = new MatTableDataSource(this.allSessions);
+    // // this.dataSource.paginator = this.paginator;
+    // // this.sessions = this.allSessions
+    // // console.log('length of all sessions: ', this.allSessions.length);
 
-    this.paginator.pageSize = 25;
-    this.paginator.pageIndex = null;
+    // this.paginator.pageSize = 25;
+    // this.paginator.pageIndex = null;
     
 
-    // the below sort is to reset the arrow UI that doesn't go away after this.sort.active = '' 
-    this.sort.sortables.forEach(sortItem => {
-      this.sort.sort(sortItem);
-    });
+    // // the below sort is to reset the arrow UI that doesn't go away after this.sort.active = '' 
+    // this.sort.sortables.forEach(sortItem => {
+    //   this.sort.sort(sortItem);
+    // });
     
-    this.sort.active = '';
+    // this.sort.active = '';
 
-    this.filterStoreService.clearSessionTableState();
+    // this.filterStoreService.clearSessionTableState();
 
-    // console.log(this.route.queryParams);
-    this.route.queryParams.subscribe(async param => {
-      if (Object.keys(param).length > 0) {
-        this.router.navigate(
-          [],
-          {
-            relativeTo: this.route,
-            queryParams: null
-          });
-      } 
-      else {
-        await this.applyFilter();
-        this.createMenu();
-        await this.updateTableView();
-        this.isLoading = false;
-      }
-     });
+    // // console.log(this.route.queryParams);
+    // this.route.queryParams.subscribe(async param => {
+    //   if (Object.keys(param).length > 0) {
+    //     this.router.navigate(
+    //       [],
+    //       {
+    //         relativeTo: this.route,
+    //         queryParams: null
+    //       });
+    //   } 
+    //   else {
+    //     await this.applyFilter();
+    //     this.createMenu();
+    //     await this.updateTableView();
+    //     this.isLoading = false;
+    //   }
+    //  });
   }
 
   storeTableInfo(event) {

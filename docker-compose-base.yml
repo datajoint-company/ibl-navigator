@@ -8,7 +8,7 @@ x-net: &net
 services:
   iblapi:
     <<: *net
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.3.1 # for internal demo
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.4.1 # for internal demo
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.1.0-public # for public demo
     environment:
     - DJ_USER=maho
@@ -31,7 +31,7 @@ services:
     #cpu_period: 100ms
   ibl-navigator:
     <<: *net
-    image: registry.vathes.com/ibl-navigator/frontend:v0.2.2 # for internal demo
+    image: registry.vathes.com/ibl-navigator/frontend:v0.3.1 # for internal demo
     # image: registry.vathes.com/ibl-navigator/frontend:v0.1.0-public # for public demo
     healthcheck:
       test: curl --fail http://localhost:9000 || exit 1
@@ -39,7 +39,7 @@ services:
       retries: 20
   ibl-node-server:
     <<: *net
-    image: registry.vathes.com/ibl-navigator/node-server:v0.2.0 # for internal demo
+    image: registry.vathes.com/ibl-navigator/node-server:v0.3.0 # for internal demo
     # image: registry.vathes.com/ibl-navigator/node-server:v0.1.0-public # for public demo
     environment:
     - NODE_ENV=development
