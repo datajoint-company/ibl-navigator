@@ -25,13 +25,10 @@ export class FilterStoreService {
 
   // ========= Session List Filter Sticky ===============//
   storeSessionFilter(filterForm) {
-    console.log('session filters stored: ', filterForm)
-    
     this.sessionFilter = Object.assign({}, filterForm); // Make a shallow copy
   }
 
   storeSessionTableState(pageIndex, pageSize, sorter) {
-    console.log('store session table state 1')
     if (pageSize) {
       this.sessionPageIndexInfo = pageIndex;
       this.sessionPageSizeInfo = pageSize;
@@ -39,11 +36,9 @@ export class FilterStoreService {
     else if (sorter) {
       this.sessionSortInfo = Object.assign({}, sorter);
     }
-    // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo);
   }
 
   storeSessionTableState2(pageIndex, pageSize, sorter, sessionList) {
-    console.log('storing info to table state 2')
     this.loadedSessions = sessionList;
     if (pageSize) {
       this.sessionPageIndexInfo = pageIndex;
@@ -52,7 +47,6 @@ export class FilterStoreService {
     else if (sorter) {
       this.sessionSortInfo = Object.assign({}, sorter);
     }
-    // console.log(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
   }
 
   retrieveSessionFilter() {
@@ -60,11 +54,9 @@ export class FilterStoreService {
   }
 
   retrieveSessionTableState() {
-    console.log('retrieving session table state1')
     return <[number, number, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo];
   }
   retrieveSessionTableState2() {
-    console.log('retrieving session table state2')
     return <[number, number, Object, Object]>[this.sessionPageIndexInfo, this.sessionPageSizeInfo, 
       this.sessionSortInfo, this.loadedSessions];
   }
@@ -83,9 +75,7 @@ export class FilterStoreService {
 
   refreshSessionTableState() {
     this.loadedSessions = null;
-    // console.log('refreshing table state to follows: ', this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions)
     this.storeSessionTableState2(this.sessionPageIndexInfo, this.sessionPageSizeInfo, this.sessionSortInfo, this.loadedSessions);
-
   }
 
 // ========= Mouse List Filter Sticky ===============//
@@ -100,7 +90,6 @@ export class FilterStoreService {
     } else if (sorter) {
       this.miceSortInfo = sorter;
     }
-    // console.log(this.micePageIndexInfo, this.micePageSizeInfo, this.miceSortInfo);
   }
 
   retrieveMouseFilter() {

@@ -115,15 +115,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {
     this.treeDataSource.data = this.brainRegionTree
-  }
-
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
-  ngOnInit() {
-    this.isLoading = true;
-
     // Initalized the material table
     this.dataSource = new MatTableDataSource<any>();
+  }
+
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  ngOnInit() {
+    this.isLoading = true;
 
     // Patch job to initalized sex to the filters can be rendered
     this.uniqueValuesForEachAttribute['sex'] = {
@@ -155,19 +154,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
       // Find any params in either the url or storage
       if (!Object.keys(urlParams).length) {
         // There are no urlParams, thus we need to check the storage to see if there any filter there that needs to be loaded
-        console.log('params if')
         params = this.filterStoreService.retrieveSessionFilter();
-        console.log(params);
       }
       else {
         // UrlParams exist thus set them to params
-        console.log('params else')
         params = urlParams;
       }
 
       // Process the params to conver them IBLAPI format
       for (const key in params) {
-        console.log('logging keys in params: ', key)
         if (key === '__json') {
           // If key is __json than to reformat to IBL API format
           const JSONcontent = JSON.parse(params[key]);
@@ -245,7 +240,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
 
       // Check storage to see if there is anything there
-      console.log(this.filterStoreService)
       
       // Check if paginiator info is there
       /*
@@ -257,17 +251,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
       */
       // Check for paginator
-      console.log(this.filterStoreService.sessionPaginator)
       if (this.filterStoreService.sessionPaginator) {
-        console.log('Paginator is valid', this.filterStoreService.sessionPaginator)
         this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
         this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
-        console.log(this.paginator['pageIndex'])
       }
 
       // Check for sort info
       if (this.filterStoreService.sessionSortInfo && this.filterStoreService.sessionSortInfo['active'] !== undefined && this.filterStoreService.sessionSortInfo['direction'] !== '') {
-        console.log('Sort info is valid', this.filterStoreService.sessionSortInfo)
         // Session sort info is valid, thus set it locally
         this.sort.active = this.filterStoreService.sessionSortInfo.active;
         this.sort.direction = this.filterStoreService.sessionSortInfo.direction;
@@ -275,7 +265,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
       // Check for preloaded sessions
       if (this.filterStoreService.loadedSessions) {
-        console.log('pre loaded sessiosn are valid', this.filterStoreService.loadedSessions)
         // We have previously loaded sessions, thus just use that
         this.allSessions = this.filterStoreService.loadedSessions;
       }
@@ -283,15 +272,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
         // Else fetch from database
         await this.fetchSessions();
       }
-
-      console.log(this.paginator['pageIndex'])
       
       // Check if there are params, if they are then apply them via this.applyFilter();
       if (params !== undefined && Object.keys(params).length !== 0) {
-        console.log('params is not none')
         // There are params, thus apply the filter and get the restricted sessions
         this.restrictedSessions = await this.applyFilter(); 
-        console.log(this.restrictedSessions)
       }
       else {
         // There are no params so just set restricted Session to all sessions
@@ -300,7 +285,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
       // Create Menu, Update table view and set loading to false
       this.createMenu(this.restrictedSessions);
-      console.log(this.paginator['pageIndex'])
       
       /*
       if (tableState2[3]) { 
@@ -312,13 +296,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
     
       
       this.updateTableView(this.restrictedSessions);
-
-      
-      console.log(this.paginator['pageIndex'])
-      console.log(this.paginator)
-      console.log(this.sort)
       this.isLoading = false;
-      console.log('init is done()')
+
+      if (this.filterStoreService.sessionPaginator) {
+        this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
+        this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
+        
+        this.dataSource.paginator = this.paginator
+      }
     });
 
     // Brain tree is part of the filter, this code seems to be independent of the other filter construction
@@ -329,40 +314,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.treeControl.dataNodes = this.treeDataSource.data;
       this.buildLookup();
     })
-    
   }
-
-  ngAfterViewInit() {
-    console.log(this.paginator['pageIndex'])
-    console.log(this.dataSource.paginator['pageIndex'])
-    console.log(this.dataSource.paginator)
-    console.log(this.paginator)
-    if (this.filterStoreService.sessionPaginator) {
-      console.log('Paginator is valid', this.filterStoreService.sessionPaginator)
-      console.log('what is currently in this.paginator: ', this.paginator)
-      //this.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
-      this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
-      this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
-      //console.log(this.paginator['pageIndex'])
-      
-      this.dataSource.paginator = this.paginator
-      this.dataSource.data = this.restrictedSessions
-    }
-    console.log(this.paginator['pageIndex'])
-    console.log(this.dataSource.paginator['pageIndex'])
-  }
-  
   
   ngOnDestroy() {
-    console.log(this.paginator)
-    console.log(this.sort)
     //this.filterStoreService.sessionPaginator = {pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
     this.filterStoreService.sessionPaginator = {length: this.paginator.length, pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
     
     this.filterStoreService.sessionSortInfo = {active: this.sort.active, direction: this.sort.direction};
-    console.log(this.filterStoreService.sessionSortInfo)
     this.filterStoreService.loadedSessions = this.allSessions
-    console.log('NgONDestory', this.filterStoreService.sessionPageIndexInfo, this.filterStoreService.sessionPageSizeInfo, this.filterStoreService.sessionSortInfo, this.filterStoreService.loadedSessions)
 
     if (this.sessionsSubscription) {
       this.sessionsSubscription.unsubscribe();
@@ -382,7 +341,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Fetch sessiosn with the current restrictions obtainn from the filter form
    */
   async fetchSessions() {
-    console.log('fetch session is called')
     this.hideMissingPlots = false;
     this.hideMissingEphys = false;
     this.hideNG4BrainMap = false;
@@ -397,7 +355,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     filters['__order'] = 'session_start_time DESC';
 
     this.allSessions = await this.allSessionsService.fetchSessions(filters).toPromise();
-    console.log('fetchSessions completed')
   }
 
   setDropDownFormOptions(dropDownMenuOptionKey, formControl: AbstractControl, key: string) {
@@ -800,24 +757,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Update the table view to this.restrictedSessions
    */
   updateTableView(restrictedSessions: Array<any>) {
-    console.log(this.paginator['pageIndex'])
     this.dataSource.paginator = this.paginator;
-    this.dataSource.paginator['pageIndex'] = this.paginator.pageIndex
-    console.log(this.paginator['pageIndex'])
     this.dataSource.sort = this.sort;
-    console.log(this.paginator['pageIndex'])
     this.dataSource.data = restrictedSessions;
-    console.log(this.paginator['pageIndex'])
-    
-    console.log('From update tableView', this.dataSource.sort.active, this.dataSource.sort.direction, this.dataSource.paginator)
   }
 
   /**
    * Triggers when user presses the apply filter button
    */
   async handleApplyFilterButtonPress() {
-    console.log('apple button pressed')
-    const t0 = performance.now();
     this.isLoading = true;
     // store current filter content to storage
     let filter = Object.assign({}, this.session_filter_form.getRawValue())
@@ -847,7 +795,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   async applyFilter(focusFieldKey?: string) {
-    console.log(this.paginator['pageIndex'])
     let t0 = performance.now()
     if (!this.allSessions) {
       return [];
@@ -890,7 +837,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     
     // Filter based on what the user requested
     let restrictionObjectFromForm = this.session_filter_form.getRawValue();
-    console.log('from apply filter', restrictionObjectFromForm)
 
     // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
     if (focusFieldKey) {
@@ -905,8 +851,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         restrictedSessions.push(tuple);
       }
     }
-
-    console.log('apply filter took: ', performance.now() - t0)
     return restrictedSessions;
   }
 
