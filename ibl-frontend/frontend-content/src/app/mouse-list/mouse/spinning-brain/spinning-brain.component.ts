@@ -26,13 +26,16 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
     const fetchSpinningBrain = this.mousePlotsService.fetchSpinningBrain({'subject_uuid': this.mouseInfo['subject_uuid']}).subscribe({
       next: spinningBrain => {
         // console.log('spinning brain returned: ',spinningBrain[0]['subject_spinning_brain_link']);
-        this.spinningBrainSrc = spinningBrain[0]['subject_spinning_brain_link']
-        // console.log(this.spinningBrainSrc)
-        // this.convertToBase64(this.spinningBrainSrc).subscribe(base64data => {
-        //   console.log('base64data: ', base64data);
-        //   // this is the image as dataUrl
-        //   this.base64GIFsrc = 'data:image/gif;base64,' + base64data;
-        // });
+        if (spinningBrain[0]) {
+          this.spinningBrainSrc = spinningBrain[0]['subject_spinning_brain_link']
+          // console.log(this.spinningBrainSrc)
+          // this.convertToBase64(this.spinningBrainSrc).subscribe(base64data => {
+          //   console.log('base64data: ', base64data);
+          //   // this is the image as dataUrl
+          //   this.base64GIFsrc = 'data:image/gif;base64,' + base64data;
+          // });
+        }
+        
       },
       error: error => {
         console.log('error in retrieving spinning brain data');

@@ -361,8 +361,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         for (let section of coronalSections) {
           this.coronalSectionProbeList.push(section['probe_idx'])
         }
-        console.log('coronalSections: ', coronalSections)
-        console.log('coronalsectionprobelist: ', this.coronalSectionProbeList)
+        // console.log('coronalSections: ', coronalSections)
+        // console.log('coronalsectionprobelist: ', this.coronalSectionProbeList)
       });
 
     this.cellListService.retrieveCellList(this.sessionInfo);
