@@ -81,6 +81,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
+  pageIndex: number;
   pageSize = 25;
   pageSizeOptions: number[] = [10, 25, 50, 100];
 
@@ -116,9 +117,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.treeDataSource.data = this.brainRegionTree
   }
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   ngOnInit() {
+    this.isLoading = true;
+
     // Initalized the material table
     this.dataSource = new MatTableDataSource<any>();
 
@@ -253,9 +256,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.paginator.pageSize = this.filterStoreService.sessionPageSizeInfo;
       }
       */
-
-      this.isLoading = true;
-
       // Check for paginator
       console.log(this.filterStoreService.sessionPaginator)
       if (this.filterStoreService.sessionPaginator) {
@@ -285,25 +285,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
 
       console.log(this.paginator['pageIndex'])
-
-      /*
-      // Reading out the stored table state from the filter state
-      if (tableState[1]) {
-        console.log('reading table state 1[1]: ', tableState[1])
-        //this.paginator.pageIndex = tableState[0];
-        //this.pageSize = tableState[1];
-      }
-
-      if (tableState[2] && Object.entries(tableState[2]).length > 0 && this.sort) {
-        console.log('reading table state 1[2]: ', tableState[2])
-        this.sort = tableState[2]
-        // this.sort.active = Object.keys(tableState[2])[0];
-        // this.sort.direction = Object.values(tableState[2])[0].direction;
-      }
-      */
-
-      // Nothing was found in storage, thus apply default filter (This shouldn't be needed)
-      
       
       // Check if there are params, if they are then apply them via this.applyFilter();
       if (params !== undefined && Object.keys(params).length !== 0) {
@@ -330,24 +311,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
       */
     
       
-      
       this.updateTableView(this.restrictedSessions);
-      
+
       
       console.log(this.paginator['pageIndex'])
       console.log(this.paginator)
       console.log(this.sort)
       this.isLoading = false;
-
-      // Check for paginator
-      console.log(this.filterStoreService.sessionPaginator)
-      if (this.filterStoreService.sessionPaginator) {
-        console.log('Paginator is valid', this.filterStoreService.sessionPaginator)
-        this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
-        this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
-        console.log(this.paginator['pageIndex'])
-      }
-
+      console.log('init is done()')
     });
 
     // Brain tree is part of the filter, this code seems to be independent of the other filter construction
@@ -360,12 +331,33 @@ export class SessionListComponent implements OnInit, OnDestroy {
     })
     
   }
+
+  ngAfterViewInit() {
+    console.log(this.paginator['pageIndex'])
+    console.log(this.dataSource.paginator['pageIndex'])
+    console.log(this.dataSource.paginator)
+    console.log(this.paginator)
+    if (this.filterStoreService.sessionPaginator) {
+      console.log('Paginator is valid', this.filterStoreService.sessionPaginator)
+      console.log('what is currently in this.paginator: ', this.paginator)
+      //this.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
+      this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
+      this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
+      //console.log(this.paginator['pageIndex'])
+      
+      this.dataSource.paginator = this.paginator
+      this.dataSource.data = this.restrictedSessions
+    }
+    console.log(this.paginator['pageIndex'])
+    console.log(this.dataSource.paginator['pageIndex'])
+  }
   
   
   ngOnDestroy() {
     console.log(this.paginator)
     console.log(this.sort)
-    this.filterStoreService.sessionPaginator = {pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
+    //this.filterStoreService.sessionPaginator = {pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
+    this.filterStoreService.sessionPaginator = {length: this.paginator.length, pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
     
     this.filterStoreService.sessionSortInfo = {active: this.sort.active, direction: this.sort.direction};
     console.log(this.filterStoreService.sessionSortInfo)
@@ -810,13 +802,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
   updateTableView(restrictedSessions: Array<any>) {
     console.log(this.paginator['pageIndex'])
     this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator['pageIndex'] = this.paginator.pageIndex
     console.log(this.paginator['pageIndex'])
     this.dataSource.sort = this.sort;
     console.log(this.paginator['pageIndex'])
     this.dataSource.data = restrictedSessions;
     console.log(this.paginator['pageIndex'])
     
-    console.log('From update tableView', this.dataSource.sort.active, this.dataSource.sort.direction)
+    console.log('From update tableView', this.dataSource.sort.active, this.dataSource.sort.direction, this.dataSource.paginator)
   }
 
   /**
