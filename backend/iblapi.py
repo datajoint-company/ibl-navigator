@@ -437,7 +437,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         # q = histology.DepthBrainRegionTemp * histology.Provenance & 
         #     (ephys.ProbeInsertion.aggr(histology.DepthBrainRegionTemp, provenance='max(provenance)') & args)
     elif subpath == 'spinningbrain':
-        q = plotting_ephys.SubjectSpinningBrain & args
+        q = plotting_histology.SubjectSpinningBrain & args
         # # Switch to plotting_histology once ingested
         # q = plotting_histology.SubjectSpinningBrain & args
         def post_process(ret):
