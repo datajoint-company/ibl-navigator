@@ -74,7 +74,7 @@
 
   <div class="row">
     <br />
-    <div class="cluster-nav-plot-area col-7 col-xl-6">
+    <div class="cluster-nav-plot-area col-10 col-xl-6">
       <div *ngIf="plot_data_4real && plot_data_4real[0]" class="yaxis-selector-plot-area">
         <div class="alternative_plot_buttons y_axis">
           <label for="y_label"><b>y axis</b></label>
@@ -113,7 +113,7 @@
       </div> 
     </div>
 
-    <div class="depth-peth-plot-area col-4 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
+    <div class="depth-peth-plot-area col-10 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
       <!-- <p>rasterEventLacksMovement: {{rasterEventLacksMovement}}</p> <br>
       <p>psthEventLacksMovement: {{psthEventLacksMovement}}</p> <br>
       <p>depthPethEventLacksMovement: {{depthPethEventLacksMovement}}</p> -->
@@ -139,9 +139,9 @@
         <plotly-plot [data]="depthPethLookup[eventType]['data']" [layout]="depthPethLookup[eventType]['layout']" [config]="depthPethLookup[eventType]['config']"></plotly-plot> 
       </div>
     </div>
-    <div class="plots-navigator" *ngIf="showController">
+    <div [class]="minimizeController? 'plots-navigator minimize': 'plots-navigator'" *ngIf="showController">
       <div *ngIf="cells" class="clusterListContainer">
-        <table matSort (matSortChange)="sortData($event)" class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable>
+        <table matSort (matSortChange)="sortData($event)" class="table table-sm table-hover ml-auto clusterListTable" #navTable>
         <!-- <table class="table table-sm table-hover col-5 ml-auto clusterListTable" #navTable> -->
           <thead class="thead-light">
             <th mat-sort-header="cluster_id">Cluster ID</th>
@@ -175,6 +175,9 @@
         </table>
       </div>
       <div class="plots-navigator-buttons">
+        <h3><span class="oi oi-collapse-right" (click)="minimizeController = true" *ngIf="showController && !minimizeController"></span></h3>
+        <h3><span class="oi oi-collapse-left" (click)="minimizeController = false" *ngIf="showController && minimizeController"></span></h3>
+        <br>
         <h3><span class="oi oi-arrow-circle-top" (click)="navigate_cell_plots($event, 'up')"></span></h3>
         <h3><span class="oi oi-arrow-circle-bottom" (click)="navigate_cell_plots($event, 'down')"></span></h3>
       </div>

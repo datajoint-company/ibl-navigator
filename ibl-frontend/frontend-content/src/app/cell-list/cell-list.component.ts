@@ -128,6 +128,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   availableTrialContrasts = [];
 
   showController = false;
+  minimizeController = false;
 
   depthPETHtimeA;
   depthPETHtimeB;
