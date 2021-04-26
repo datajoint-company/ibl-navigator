@@ -667,7 +667,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 } else if (probeTraj[0].x > 0) {
                   this.probeTrajInfo['hemisphere'] = 'right'
                 }
-                console.log('probeTrajInfo: ', this.probeTrajInfo)
+                // console.log('probeTrajInfo: ', this.probeTrajInfo)
               } 
             });
           this.updateDepthBrainRegionInfo(probeTrajQueryInfo)
@@ -1490,7 +1490,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
   probe_selected(probeInsNum) {
     // this.loadSpinningBrain(probeInsNum)
-    console.log('probe change requested - ', probeInsNum)
+    // console.log('probe change requested - ', probeInsNum)
     this.cluster_amp_data = [];
     this.cluster_depth_data = [];
     this.firing_rate_data = [];
@@ -1529,7 +1529,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           } else if (probeTraj[0].x > 0) {
             this.probeTrajInfo['hemisphere'] = 'right'
           }
-          console.log('probeTrajInfo2: ', this.probeTrajInfo)
+          // console.log('probeTrajInfo2: ', this.probeTrajInfo)
         }
         
         
@@ -1867,16 +1867,13 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   restylePlot(data) {
-    console.log('restyling the plot: ', data);
     if (data[0]['selected_y']) {
       
       let selected_plot = data[0]['selected_y'];
-      console.log('y axis to change to: ', selected_plot)
       this.plot_data[0].y = this[`${selected_plot}_data`];
       this.toPlot_y = selected_plot;
     } else if (data[0]['selected_x']) {
       let selected_plot = data[0]['selected_x'];
-      console.log('x axis to change to: ', selected_plot)
       this.plot_data[0].x = this[`${selected_plot}_data`];
       this.toPlot_x = selected_plot;
     }
@@ -1892,9 +1889,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         this.plot_data_4real = deepCopy(this.plot_data)
       }
     }
-    
-    console.log('looking at plot_layout_4real: ', this.plot_layout_4real)
-    console.log('looking at plot_data_4real: ', this.plot_data_4real)
   }
 
 
@@ -1925,10 +1919,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   updateDepthBrainRegionInfo(queryInfo) {
 
     this.cellListService.retrieveDepthBrainRegions(queryInfo);
-    console.log('updating depth brain region - ')
     this.depthBrainRegionsSubscription = this.cellListService.getDepthBrainRegionsLoadedListener()
       .subscribe((depthBrainRegions) => {
-        console.log('retrieved depth brain regions:', depthBrainRegions)
         if (depthBrainRegions && depthBrainRegions[0]) {
           depthBrainRegions = depthBrainRegions[0];
           this.BRtestData = []
