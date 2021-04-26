@@ -770,21 +770,6 @@ app.post('/plot/spinningBrain', checkAuth, (req, res) => {
             res.status(500).end();
             return;
         }
-        // console.log('body[0] for spinningBrain: ', JSON.parse(body)[0])
-        // var GIFlinkURL = JSON.parse(body)[0]['subject_spinning_brain_link']
-        // var subjectUUID = JSON.parse(body)[0]['subject_uuid']
-        // console.log('gif link: ', GIFlinkURL)
-        // downloadGIF(GIFlinkURL, subjectUUID)
-        // .then(localGIFlink => {    
-        //     console.log('localGIFlink: ', localGIFlink);
-        //     // if GIF was successfully downloaded locally, adding that path info to the object that is sent back to front
-        //     body['localGIFlink'] = localGIFlink
-        //     res.send(body);
-        // }).catch(err => {
-        //     // something happened in the download process, returning regular body without local link
-        //     console.error(err)
-        //     res.send(body)
-        // })
         
         res.send(body);
     })

@@ -286,15 +286,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       // Create Menu, Update table view and set loading to false
       this.createMenu(this.restrictedSessions);
       
-      /*
-      if (tableState2[3]) { 
-        console.log('applying preloaded sessions from tableState2: ', tableState2)
-        // checks if there are any pre-loaded session upon returning
-        this.applyPreloadedSessions(tableState2)
-      }
-      */
-    
-      
       this.updateTableView(this.restrictedSessions);
       this.isLoading = false;
 
@@ -854,76 +845,17 @@ export class SessionListComponent implements OnInit, OnDestroy {
     return restrictedSessions;
   }
 
-  applyPreloadedSessions(storedTableInfo) { // PageIndex, PageSize, SortInfo, loadedSessions
-    // console.log('trying to apply preloaded sessions');
-    // this.dataSource = new MatTableDataSource(storedTableInfo[3]);
-    // this.dataSource = new MatTableDataSource([]);
-    //this.dataSource.sort = storedTableInfo[2];
-    // console.log(Object.keys(storedTableInfo[2])[0], storedTableInfo[2][Object.keys(storedTableInfo[2])[0]]['direction'])
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.data = this.restrictedSessions;
-    this.dataSource.sort = this.sort;
-    // console.log('this.dataSource: ', this.dataSource)
-    // this.dataSource.sort = storedTableInfo[2];
-    
-    //this.dataSource.sort.active = Object.keys(storedTableInfo[2])[0]
-    //this.dataSource.sort.direction = storedTableInfo[2][Object.keys(storedTableInfo[2])[0]]['direction']
-    // console.log('From applyPreloadedSessions', this.dataSource.sort.active, this.dataSource.sort.direction)
-    // console.log('tableStorage', storedTableInfo)
-    // console.log('this.dataSource: ', this.dataSource)
-    // this.sort = storedTableInfo[2]
-    // this.dataSource.paginator = this.paginator
-
-    /*
-    this.hideMissingPlots = false;
-    this.hideMissingEphys = false;
-    this.hideNG4BrainMap = false;
-    this.hideNotReady4Delay = false;
-    if (storedTableInfo[1]) {
-      // console.log('printing datasource: ', this.dataSource)
-      // console.log('printing this.paginator: ', this.paginator)
-      // this.dataSource.paginator.pageSize = storedTableInfo[1];
-      this.paginator.pageSize = storedTableInfo[1]
-    } 
-    else {
-      // this.dataSource.paginator.pageSize = this.pageSize
-    }
-
-    if (storedTableInfo[0]) {
-      // this.dataSource.paginator.pageIndex = storedTableInfo[0];
-      this.paginator.pageIndex = storedTableInfo[0]
-    } 
-    else {
-      // this.dataSource.paginator.pageIndex = 0
-      this.paginator.pageIndex = 0
-    }
-    // this.restrictedSessions = storedTableInfo[3];
-*/
-    //this.updateSelection();
-  }
-
   /**
    * Triggers when user presses the refresh data button - filters persist, data is refetched
    */
   async refreshData() {
-    // TODO: here, the user should see the old filters kept as the data is refreshed to the latest
-    // console.log('refreshing data to newest:');
     this.isLoading = true;
-    // console.log('RefeshData called')
     this.filterStoreService.refreshSessionTableState();
     await this.fetchSessions();
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
     await this.updateTableView(this.restrictedSessions);
     this.isLoading = false;
-    // if (tableState[1]) {
-    //   this.paginator.pageIndex = tableState[0];
-    //   this.pageSize = tableState[1];
-    // }
-    // if (tableState[2] && Object.entries(tableState[2]).length > 0 && this.sort) {
-    //   this.sort.active = Object.keys(tableState[2])[0];
-    //   this.sort.direction = Object.values(tableState[2])[0].direction;
-    // }
   }
 
   /**
@@ -965,44 +897,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
     await this.updateTableView(this.restrictedSessions);
     // console.log('reset filter is done')
     return;
-    
-
-    // // // attempting to just reset the table and not the actual session
-    // // this.dataSource = new MatTableDataSource(this.allSessions);
-    // // this.dataSource.paginator = this.paginator;
-    // // this.sessions = this.allSessions
-    // // console.log('length of all sessions: ', this.allSessions.length);
-
-    // this.paginator.pageSize = 25;
-    // this.paginator.pageIndex = null;
-    
-
-    // // the below sort is to reset the arrow UI that doesn't go away after this.sort.active = '' 
-    // this.sort.sortables.forEach(sortItem => {
-    //   this.sort.sort(sortItem);
-    // });
-    
-    // this.sort.active = '';
-
-    // this.filterStoreService.clearSessionTableState();
-
-    // // console.log(this.route.queryParams);
-    // this.route.queryParams.subscribe(async param => {
-    //   if (Object.keys(param).length > 0) {
-    //     this.router.navigate(
-    //       [],
-    //       {
-    //         relativeTo: this.route,
-    //         queryParams: null
-    //       });
-    //   } 
-    //   else {
-    //     await this.applyFilter();
-    //     this.createMenu();
-    //     await this.updateTableView();
-    //     this.isLoading = false;
-    //   }
-    //  });
   }
 
   storeTableInfo(event) {

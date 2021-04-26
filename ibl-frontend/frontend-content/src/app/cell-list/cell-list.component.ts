@@ -362,8 +362,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         for (let section of coronalSections) {
           this.coronalSectionProbeList.push(section['probe_idx'])
         }
-        // console.log('coronalSections: ', coronalSections)
-        // console.log('coronalsectionprobelist: ', this.coronalSectionProbeList)
       });
 
     this.cellListService.retrieveCellList(this.sessionInfo);
@@ -661,7 +659,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
                 this.probeTrajInfo['depth'] = probeTraj[0].depth;
                 this.probeTrajInfo['angle'] = probeTraj[0].theta;
                 this.probeTrajInfo['phi'] = probeTraj[0].phi;
-                this.probeTrajInfo['roll'] = probeTraj[0].roll;
+                this.probeTrajInfo['roll'] = probeTraj[0].roll; 
                 this.probeTrajInfo['provenance'] = probeTraj[0].provenance;
                 if (probeTraj[0].x < 0) {
                   this.probeTrajInfo['hemisphere'] = 'left';

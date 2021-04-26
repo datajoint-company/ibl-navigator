@@ -13,8 +13,8 @@ export class FilterStoreService {
   // sortInfo: Object;
   sessionPageIndexInfo: number;
   sessionPageSizeInfo: number;
-  sessionPaginator: any;
-  sessionSortInfo: any;
+  sessionPaginator: Object;
+  sessionSortInfo: Object;
   micePageIndexInfo: number;
   micePageSizeInfo: number;
   miceSortInfo: Object;
