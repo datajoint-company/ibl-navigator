@@ -244,7 +244,8 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         if regions is not None and len(regions) > 0: 
             region_restr = [{'acronym': v} for v in regions]
             brain_restriction = histology.ProbeBrainRegionTemp() & region_restr
-            # brain_restriction = histology.SessionBrainRegion() & region_restr
+            # keep the temp table for internal site since temp table has more entries for internal users to see
+            # for public site replace ProbeBrainRegionTemp() with ProbeBrainRegion() table.
         else:
             brain_restriction = {}
         # q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
@@ -322,15 +323,17 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         q = (ephys.DefaultCluster & args).proj(..., *exclude_attrs) * ephys.DefaultCluster.Metrics.proj('firing_rate') 
         print(q)
     elif subpath == 'probetrajectory':
-        # traj = histology.ProbeTrajectory * histology.InsertionDataSource
+        # keep the provenance and temp table for internal site
         traj = histology.ProbeTrajectoryTemp * histology.Provenance
 
         traj_latest = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
-        # x, y, z, phi, theta, depth, roll, trajectory_source = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
-        # q = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
+
         q = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
+
+        # for public site we don't need the trajectory source info (uses provenance) anymore so -> traj = histology.ProbeTrajectory
+        # or basically for public -> q = histology.ProbeTrajectory & args
     elif subpath == 'rasterlight':
         # q = plotting_ephys.RasterLinkS3 & args
         q = plotting_ephys.Raster & args # temp test table
@@ -427,15 +430,13 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'depthbrainregions':
-        # depth_region = histology.DepthBrainRegion * histology.InsertionDataSource
+        # depth_region = histology.DepthBrainRegionTemp * histology.Provenance
 
         # q = depth_region * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & 
-        #               (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
-        depth_region = histology.DepthBrainRegionTemp * histology.Provenance
-        q = depth_region * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & 
-                    (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
-        # q = histology.DepthBrainRegionTemp * histology.Provenance & 
-        #     (ephys.ProbeInsertion.aggr(histology.DepthBrainRegionTemp, provenance='max(provenance)') & args)
+        #             (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
+                
+        # NEW: test this before deploy to internal
+        q = histology.DepthBrainRegion & args
     elif subpath == 'spinningbrain':
         q = plotting_histology.SubjectSpinningBrain & args
         # # Switch to plotting_histology once ingested
