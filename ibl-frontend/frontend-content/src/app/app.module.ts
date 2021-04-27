@@ -22,7 +22,9 @@ import { MatSelectModule,
          MatSortModule,
          MatSliderModule,
          MatExpansionModule,
-         MatDialogModule } from '@angular/material';
+         MatDialogModule,
+         MatTreeModule,
+         MatFormFieldModule } from '@angular/material';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -61,6 +63,7 @@ import { RasterPlotsComponent } from './cell-list/cell/raster-plots/raster-plots
 import { PsthPlotsComponent } from './cell-list/cell/psth-plots/psth-plots.component';
 import { QualityControlComponent } from './quality-control/quality-control.component';
 import { DriftmapComponent } from './quality-control/driftmap/driftmap.component';
+import { SpinningBrainComponent } from './mouse-list/mouse/spinning-brain/spinning-brain.component';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -157,7 +160,8 @@ const appRoutes: Routes = [
     RasterPlotsComponent,
     PsthPlotsComponent,
     QualityControlComponent,
-    DriftmapComponent
+    DriftmapComponent,
+    SpinningBrainComponent
   ],
   imports: [
     CommonModule, PlotlyModule,
@@ -169,7 +173,7 @@ const appRoutes: Routes = [
     MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule,
     MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatMomentDateModule, MatSlideToggleModule,
     MatCardModule, MatButtonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSliderModule, MatExpansionModule,
-    MatDialogModule, ReactiveFormsModule, FlexLayoutModule
+    MatDialogModule, ReactiveFormsModule, FlexLayoutModule, MatTreeModule, MatFormFieldModule
   ],
   providers: [AuthService, AuthGuard, PlotsService,
               { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

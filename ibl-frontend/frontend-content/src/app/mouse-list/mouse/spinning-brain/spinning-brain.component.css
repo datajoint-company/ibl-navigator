@@ -1,0 +1,11 @@
+.brain-gif-container {
+  width: 20vw;
+  height: 220px;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+}
+
+img.brainGIF-image {
+  width: 100%;
+}

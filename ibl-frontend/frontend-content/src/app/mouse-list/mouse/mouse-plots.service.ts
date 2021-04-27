@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
@@ -24,6 +24,7 @@ export class MousePlotsService {
   private dateRTContrastPlotLoaded = new Subject();
   private dateRTTrialPlotLoaded = new Subject();
   private animationPCplotLoaded = new Subject();
+  private spinningBrainLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -149,6 +150,15 @@ export class MousePlotsService {
       );
   }
 
+  /**
+   * 
+   * @param subjectInfo Object with subject primary key
+   * @returns Observable for the fetching
+   */
+  fetchSpinningBrain(subjectInfo) {
+    return this.http.post<any>(BACKEND_API_URL + `/plot/spinningBrain`, subjectInfo);
+  }
+
   getWaterWeightPlotLoadedListener() {
     return this.waterWeightPlotLoaded.asObservable();
   }
@@ -175,5 +185,8 @@ export class MousePlotsService {
   }
   getAnimatedPCplotLoadedListener() {
     return this.animationPCplotLoaded.asObservable();
+  }
+  getSpinningBrainLoadedListener() {
+    return this.spinningBrainLoaded.asObservable();
   }
 }

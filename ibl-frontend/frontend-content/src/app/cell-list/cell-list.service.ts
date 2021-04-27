@@ -110,6 +110,7 @@ export class CellListService {
   private autocorrelogramLoaded = new Subject();
   private waveformTemplateLoaded = new Subject();
   private waveformLoaded = new Subject();
+  private coronalSectionsLoaded = new Subject();
 
   constructor(private http: HttpClient) { }
 
@@ -246,6 +247,11 @@ export class CellListService {
           console.error(err);
         }
       );
+  }
+
+  // for fetching probe name from available probe insertions
+  retrieveProbeInfo(queryInfo) {
+    return this.http.post(BACKEND_API_URL + '/plot/probeinsertion', queryInfo, { responseType: 'json'})
   }
 
   // === // == // Depth Raster Trials // == // == // == // == // == //
@@ -395,6 +401,19 @@ export class CellListService {
       );
   }
 
+  // === // == // Coronal Sections (for probe selection) // == // == // == // == // == //
+  retrieveCoronalSections(queryInfo) {
+    this.http.post(BACKEND_API_URL + `/plot/coronalSections`, queryInfo)
+      .subscribe(
+        (coronalSectionData) => {
+          this.coronalSectionsLoaded.next(coronalSectionData);
+        },
+        (err: any) => {
+          console.log('error in retrieving coronal sections for session');
+          console.error(err);
+        }
+      );
+  }
 
 
 ///////////////////// needs fix /////////////////////
@@ -870,6 +889,10 @@ export class CellListService {
 
   getWaveformTemplateLoadedListener() {
     return this.waveformTemplateLoaded.asObservable();
+  }
+
+  getCoronalSectionsLoadedListener() {
+    return this.coronalSectionsLoaded.asObservable();
   }
 
 

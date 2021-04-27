@@ -1,0 +1,53 @@
+# Use: Production remote deployment.
+# docker-compose -f docker-compose-deploy.yml pull
+# docker-compose -f docker-compose-deploy.yml up -d
+version: '2.4'
+x-net: &net
+  networks:
+      - main
+services:
+  iblapi:
+    extends:
+      file: ./docker-compose-base.yml
+      service: iblapi
+    <<: *net
+  ibl-navigator:
+    extends:
+      file: ./docker-compose-base.yml
+      service: ibl-navigator
+    environment:
+    - PROD_NODE_BACKEND=https://${SUBDOMAINS}.${URL}/api
+    <<: *net
+  ibl-node-server:
+    extends:
+      file: ./docker-compose-base.yml
+      service: ibl-node-server
+    <<: *net
+  letsencrypt:
+    extends:
+      file: ./docker-compose-base.yml
+      service: letsencrypt
+    environment:
+    - SUBDOMAINS
+    - URL
+    - STAGING=true # Keep uncommented for dev, comment out for Production use
+    volumes:
+      - ./letsencrypt-keys:/config/etc/letsencrypt
+      - ./letsencrypt/healthcheck.sh:/healthcheck.sh
+    <<: *net
+  nginx:
+    extends:
+      file: ./docker-compose-base.yml
+      service: nginx
+    environment:
+    - SUBDOMAINS
+    - URL
+    volumes:
+      - ./letsencrypt-keys:/etc/letsencrypt:ro
+    <<: *net
+networks:
+  main:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.28.0.0/16

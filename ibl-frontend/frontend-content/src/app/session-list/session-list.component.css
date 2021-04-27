@@ -15,10 +15,15 @@ form {
     width: 100%;
 } 
 
+form.loading {
+    display: none;
+}
+
 .filterExpand {
     height: auto;
     visibility: visible;
 }
+
 .filterCollapse,
 .filterCollapse * {
     height: 0;
@@ -78,9 +83,14 @@ label {
 
 .loading-icon {
     text-align: center;
+    display: none;
 }
 
-.loading-icon img {
+.loading-icon.loading {
+    display: block;
+}
+
+.loading-icon.loading img {
     width: 100px;
 }
 
@@ -139,12 +149,12 @@ tr.mat-row:hover {
     cursor: pointer;
 }
 
-button {
+button:not(.treeChevron) {
     float: left;
     margin-left: 5px;
     border: 2px solid rgb(101, 152, 184);
 }
-button:hover {
+button:hover:not(.treeChevron) {
     border: 2px solid rgb(0, 124, 183);
     background-color: rgb(0, 124, 183);
     color: white;
@@ -209,6 +219,80 @@ mat-checkbox.mouse_sex_menu_chbox {
     margin-left: 15px;
     margin-top: 7px;
 }
+
+/* [START] for brain tree selector area */
+.brain-tree-zone {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.br-selection-area {
+    max-height: 400px;
+    max-width: 600px;
+    overflow: scroll;
+    box-shadow: 1px 1px 4px rgba(102, 102, 102, 0.25);
+    position: relative;
+}
+
+.brain-tree {
+    margin-top: 10px;
+    padding-right: 30px;
+    width: fit-content;
+    height: fit-content;
+}
+.brain-tree-invisible {
+    display: none;
+}
+
+.brain-tree ul,
+.brain-tree li {
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style-type: none;
+}
+
+.chip-list {
+    overflow-wrap: normal;
+}
+
+.selected-chip {
+    border: 1px solid rgba(102, 102, 102, 0.25);
+    /* background-color: pink; */
+    width: fit-content;
+    height: 20px;
+    display: inline-flex;
+    flex-direction: row;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    text-align: center;
+    padding: 2px 0px 3px 2px;
+    line-height: normal;
+    box-shadow: 1px 1px 4px lightgrey;
+
+    
+
+}
+
+.chip-close {
+    background-color: #c3359d;
+    width: 20px;
+    height: 18px;
+    margin-top: -1.5px;
+    margin-left: 2px;
+    cursor: pointer;
+}
+
+.chip-close > .mat-icon-close {
+    color: white;
+    margin-left: -1.5px;
+    margin-top: -3px;
+    /* margin-right: 2px; */
+}
+
+button.treeChevron {
+    margin-top: -10px;
+}
+/* [END] Brain Tree Selector Area */
 
 /* for different screen sizes */
 /* XS and S (768px and down) */

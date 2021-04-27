@@ -1,0 +1,99 @@
+# Do NOT `docker-compose up` this file.
+# This is simply a base that other docker-compose files extend based on needs.
+# You should modify image names and tags here.
+version: '2.4'
+x-net: &net
+  networks:
+      - main
+services:
+  iblapi:
+    <<: *net
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.5.0 # for internal demo
+    # image: registry.vathes.com/ibl-navigator/iblapi:v0.1.0-public # for public demo
+    environment:
+    - DJ_USER=maho
+    - DJ_HOST=datajoint.internationalbrainlab.org
+    # for public demo
+    # - DJ_USER=ibl-navigator
+    # - DJ_HOST=datajoint-public.internationalbrainlab.org
+    - AWS_DEFAULT_REGION=us-east-1
+    - WORKER_COUNT=4
+    env_file: ./.env
+    healthcheck:
+      test: >
+        wget --quiet --tries=1 --spider \
+          http://localhost:5000/v0/lab > /dev/null 2>&1 || exit 1
+      timeout: 3s
+      retries: 20
+    entrypoint: ["/src/iblapi/run-ibl-api.prod.sh"]
+    # cpus: 0.65
+    #cpu_quota: 100000
+    #cpu_period: 100ms
+  ibl-navigator:
+    <<: *net
+    image: registry.vathes.com/ibl-navigator/frontend:v0.4.0 # for internal demo
+    # image: registry.vathes.com/ibl-navigator/frontend:v0.1.0-public # for public demo
+    healthcheck:
+      test: curl --fail http://localhost:9000 || exit 1
+      timeout: 3s
+      retries: 20
+  ibl-node-server:
+    <<: *net
+    image: registry.vathes.com/ibl-navigator/node-server:v0.3.0 # for internal demo
+    # image: registry.vathes.com/ibl-navigator/node-server:v0.1.0-public # for public demo
+    environment:
+    - NODE_ENV=development
+    - DEMO_USERNAME=ibluser
+    - PY_BACKEND=http://iblapi:5000
+    env_file: .env
+    healthcheck:
+      test: curl --fail http://localhost:3333/version || exit 1
+      timeout: 3s
+      retries: 20
+      # interval: 1s
+  letsencrypt:
+    <<: *net
+    image: linuxserver/letsencrypt:amd64-0.38.0-ls62
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - EMAIL=service-health@vathes.com
+      - TZ=Europe/London
+      - ONLY_SUBDOMAINS=true
+      - VALIDATION=http
+    healthcheck:
+      test: /healthcheck.sh
+      timeout: 5s
+      retries: 300
+      interval: 1s
+    # depends_on:
+    #   nginx:
+    #     condition: service_healthy
+  nginx:
+    <<: *net
+    image: datajoint/nginx:v0.0.16
+    environment:
+      - ADD_zfrontend_TYPE=REST
+      - ADD_zfrontend_ENDPOINT=ibl-navigator:9000
+      - ADD_zfrontend_PREFIX=/
+      - ADD_nodebackend_TYPE=REST
+      - ADD_nodebackend_ENDPOINT=ibl-node-server:3333
+      - ADD_nodebackend_PREFIX=/api
+      - HTTPS_PASSTHRU=TRUE
+      - CERTBOT_HOST=letsencrypt:80
+    ports:
+      - "80:80"
+      - "443:443"
+    # depends_on:
+    #   iblapi:
+    #     condition: service_healthy
+    #   ibl-node-server:
+    #     condition: service_healthy
+    #   ibl-navigator:
+    #     condition: service_healthy
+networks:
+  main:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.28.0.0/16

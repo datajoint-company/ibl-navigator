@@ -41,10 +41,13 @@ acquisition = mkvmod('acquisition')
 plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
+plotting_histology = mkvmod('plotting_histology')
 test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
 histology = mkvmod('histology')
 test_histology = test_mkvmod('histology')
+original_max_join_size = dj.conn().query(
+    "show variables like 'max_join_size'").fetchall()[0][1]
 
 dj.config['stores'] = {
     'ephys': dict(
@@ -140,6 +143,7 @@ reqmap = {
     'spikeamptimetemplate': plotting_ephys.SpikeAmpTimeTemplate,
     'waveformtemplate': plotting_ephys.WaveformTemplate,
     # 'depthbrainregions': test_histology.DepthBrainRegion,
+    'brainregions': reference.BrainRegion
 
 }
 dumps = DateTimeEncoder.dumps
@@ -153,44 +157,41 @@ def mkpath(path):
 def do_req(subpath):
     app.logger.info("method: '{}', path: {}, values: {}".format(
         request.method, request.path, request.values))
-
     # 1) parse request & arguments
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
-
     values = request.values
     postargs, jsonargs = {}, None
-
+    # construct kwargs
+    kwargs = {'as_dict': True}
     limit = int(request.values['__limit']) if '__limit' in values else None
     order = request.values['__order'] if '__order' in values else None
     proj = json.loads(request.values['__proj']) if '__proj' in values else None
-
-    special_fields = ['__json', '__limit', '__order', '__proj']
+    special_fields = ['__json', '__limit', '__order', '__proj', '__json_kwargs']
     for a in (v for v in values if v not in special_fields):
         # HACK: 'uuid' attrs -> UUID type (see also: datajoint-python #594)
         postargs[a] = UUID(values[a]) if 'uuid' in a else values[a]
-
     args = [postargs] if len(postargs) else []
     if '__json' in values:
         jsonargs = json.loads(request.values['__json'])
         args += jsonargs if type(jsonargs) == list else [jsonargs]
-
+    json_kwargs = {}
+    if '__json_kwargs' in values:
+        json_kwargs = json.loads(request.values['__json_kwargs'])
     args = {} if not args else dj.AndList(args)
-    kwargs = {i[0]: i[1] for i in (('as_dict', True,),
+    kwargs = {k: v for k, v in (('as_dict', True,),
                                    ('limit', limit,),
-                                   ('order_by', order,)) if i[1] is not None}
-
+                                   ('order_by', order,)) if v is not None}
     # 2) and dispatch
     app.logger.debug("args: '{}', kwargs: {}".format(args, kwargs))
     if obj not in reqmap:
         abort(404)
     elif obj == '_q':
-        return handle_q(pathparts[1], args, proj, **kwargs)
+        return handle_q(pathparts[1], args, proj, fetch_args=kwargs, **json_kwargs)
     else:
         q = (reqmap[obj] & args)
         if proj:
             q = q.proj(*proj)
-
         from time import time
         start = time()
         print('about to fetch requested object')
@@ -200,22 +201,24 @@ def do_req(subpath):
         print('Took {} seconds to fetch dataset'.format(dur))
         return dumps(fetched)
         # return dumps(q.fetch(**kwargs))
-        
 
-
-def handle_q(subpath, args, proj, **kwargs):
+def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
     '''
     special queries (under '/_q/ URL Space)
       - for sessionpage, provide:
         ((session * subject * lab * user) & arg).proj(flist)
     '''
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
+    app.logger.info('key words: {}'.format(kwargs))
 
+    fetch_args = {} if fetch_args is None else fetch_args
     ret = []
     post_process = None
     if subpath == 'sessionpage':
+        print('type of args: {}'.format(type(args)))
         sess_proj = acquisition.Session().aggr(
-            acquisition.SessionProject().proj('session_project', dummy2='"x"') * dj.U('dummy2'),
+            acquisition.SessionProject().proj('session_project', dummy2='"x"')
+            * dj.U('dummy2'),
             session_project='IFNULL(session_project, "unassigned")',
             keep_all_rows=True
         )
@@ -226,18 +229,36 @@ def handle_q(subpath, args, proj, **kwargs):
             nplot='count(dummy)',
             keep_all_rows=True)
         ephys_data = acquisition.Session().aggr(
-            ephys.ProbeInsertion().proj(dummy2='"x"') * dj.U('dummy2'),
-            nprobe='count(dummy2)',
+            ephys.ProbeInsertion().proj(dummy3='"x"') * dj.U('dummy3'),
+            nprobe='count(dummy3)',
             keep_all_rows=True)
-        # q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() * subject.SubjectLab() * subject.SubjectUser() * analyses_behavior.SessionTrainingStatus()
-        #      & ((reference.Lab() * reference.LabMember())
-        #         & reference.LabMembership().proj('lab_name', 'user_name'))
-        #     & args)
-        q = (acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() * subject.SubjectLab() * subject.SubjectUser() * analyses_behavior.SessionTrainingStatus()) & args
-        # training_status = acquisition.Session.aggr(analyses_behavior.SessionTrainingStatus.proj(dummy3='"x"') * dj.U('dummy3'), nstatus='count(dummy3)', keep_all_rows=True) 
-        # q = acquisition.Session() * sess_proj * psych_curve * ephys_data * training_status * subject.Subject() * subject.SubjectLab() & ((reference.Lab() * reference.LabMember() & reference.LabMembership().proj('lab_name', 'user_name')))
+        trainingStatus = acquisition.Session().aggr(
+            analyses_behavior.SessionTrainingStatus().proj(dummy4='"x"') * dj.U('dummy4'),
+            keep_all_rows=True) * acquisition.Session().aggr(
+            (analyses_behavior.SessionTrainingStatus()),
+            training_status='training_status', good_enough_for_brainwide_map='good_enough_for_brainwide_map',
+            keep_all_rows=True
+            )
+        regions = kwargs.get('brain_regions', None)
+        #   expected format of brain_regions = ["AB", "ABCa", "CS of TCV"]
+        if regions is not None and len(regions) > 0: 
+            region_restr = [{'acronym': v} for v in regions]
+            brain_restriction = histology.ProbeBrainRegionTemp() & region_restr
+            # keep the temp table for internal site since temp table has more entries for internal users to see
+            # for public site replace ProbeBrainRegionTemp() with ProbeBrainRegion() table.
+        else:
+            brain_restriction = {}
+        # q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
+        #       subject.SubjectLab() * subject.SubjectUser() *
+        #       analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
+
+        q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() *
+              subject.SubjectLab() * subject.SubjectUser() * trainingStatus) & args & brain_restriction)
+        
+        dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
+        q = q.proj(*proj).fetch(**fetch_args) if proj else q.fetch(**fetch_args)
+        dj.conn().query("SET SESSION max_join_size={}".format(original_max_join_size))
     elif subpath == 'subjpage':
-        print('Args are:', args)
         proj_restr = None
         for e in args:
             if 'projects' in e and e['projects'] != 'unassigned':
@@ -302,14 +323,17 @@ def handle_q(subpath, args, proj, **kwargs):
         q = (ephys.DefaultCluster & args).proj(..., *exclude_attrs) * ephys.DefaultCluster.Metrics.proj('firing_rate') 
         print(q)
     elif subpath == 'probetrajectory':
-        traj = histology.ProbeTrajectory * histology.InsertionDataSource
+        # keep the provenance and temp table for internal site
+        traj = histology.ProbeTrajectoryTemp * histology.Provenance
 
         traj_latest = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
-        # x, y, z, phi, theta, depth, roll, trajectory_source = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
-        # q = traj_latest.fetch1('x', 'y', 'z', 'phi', 'theta', 'depth', 'roll', 'insertion_data_source')
+
         q = traj * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & \
                       (ephys.ProbeInsertion & args).aggr(traj, provenance='max(provenance)'))
+
+        # for public site we don't need the trajectory source info (uses provenance) anymore so -> traj = histology.ProbeTrajectory
+        # or basically for public -> q = histology.ProbeTrajectory & args
     elif subpath == 'rasterlight':
         # q = plotting_ephys.RasterLinkS3 & args
         q = plotting_ephys.Raster & args # temp test table
@@ -406,17 +430,47 @@ def handle_q(subpath, args, proj, **kwargs):
                 parsed_items.append(parsed_item)
             return parsed_items
     elif subpath == 'depthbrainregions':
-        depth_region = histology.DepthBrainRegion * histology.InsertionDataSource
+        # depth_region = histology.DepthBrainRegionTemp * histology.Provenance
 
-        q = depth_region * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & 
-                      (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
+        # q = depth_region * (dj.U('subject_uuid', 'session_start_time', 'probe_idx', 'provenance') & 
+        #             (ephys.ProbeInsertion & args).aggr(depth_region, provenance='max(provenance)'))
+                
+        # NEW: test this before deploy to internal
+        q = histology.DepthBrainRegion & args
+    elif subpath == 'spinningbrain':
+        q = plotting_histology.SubjectSpinningBrain & args
+        # # Switch to plotting_histology once ingested
+        # q = plotting_histology.SubjectSpinningBrain & args
+        def post_process(ret):
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['subject_spinning_brain_link'] != '':  # if empty link, skip
+                    parsed_item['subject_spinning_brain_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['subject_spinning_brain_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
+    elif subpath == 'coronalsections':
+        q = plotting_histology.ProbeTrajectoryCoronal & args
+        def post_process(ret):
+            parsed_items = []
+            for item in ret:
+                parsed_item = dict(item)
+                if parsed_item['probe_trajectory_coronal_link'] != '':  # if empty link, skip
+                    parsed_item['probe_trajectory_coronal_link'] = \
+                        s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['probe_trajectory_coronal_link']},
+                                                        ExpiresIn=3*60*60)
+                parsed_items.append(parsed_item)
+            return parsed_items
     else:
         abort(404)
+    
 
-    if proj:
-        ret = q.proj(*proj).fetch(**kwargs)
-    else:
-        ret = q.fetch(**kwargs)
+    ret = q if isinstance(q, (list, dict)) else (q.proj(*proj).fetch(**fetch_args)
+                                                 if proj else q.fetch(**fetch_args))
 
     # print('D type', ret.dtype)
     # print(ret)
