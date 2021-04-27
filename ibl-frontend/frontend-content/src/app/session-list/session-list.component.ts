@@ -532,7 +532,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   getFiltersRequests(focusedField?: string) {
-    // console.log("shoulnd't be using getFIltersREquest anymore returning")
     return;
     const filterList = Object.entries(this.session_filter_form.getRawValue());
     const brainRegionRequest = this.requested_BR;
@@ -786,7 +785,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   async applyFilter(focusFieldKey?: string) {
-    let t0 = performance.now()
     if (!this.allSessions) {
       return [];
     }
@@ -801,7 +799,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
     // Check if there is a brain region request, if so override the tupleToRestrict reference
     const brainRegionRequest = this.requested_BR;
-    if (brainRegionRequest !== []) {
+    if (brainRegionRequest.length !== 0) {
       // BrainRegionRequest is not empty, thus query the backend for it
       let requestFilter = {}
       let BR_JSONstring = '';
@@ -821,6 +819,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
       if (brainRegionRequest.length > 0) {
         requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
       }
+
+      // Add the default sorting for the api request
+      requestFilter['__order'] = 'session_start_time DESC';
 
       // Query back end
       tupleToRestrict = await this.allSessionsService.fetchSessions(requestFilter).toPromise();
@@ -1076,7 +1077,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     return newData;
   }
 
-  filterNode(node, word, selectAll){
+  filterNode(node, word, selectAll) {
     let children = []
     let newNode = {
       display: node.display,
