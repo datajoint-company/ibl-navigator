@@ -106,7 +106,7 @@
       </div> 
     </div>
 
-    <div class="depth-peth-plot-area col-10 col-xl-4" *ngIf="depthPethLookup[eventType]['layout']">
+    <div class="depth-peth-plot-area col-10 col-xl-4">
       <div class="order-buttons col-10">
         
         <div class="order-button-content">
@@ -125,8 +125,11 @@
           </div>    
         </div>  
       </div>
-      <div>
+      <div *ngIf="!depthPethIsLoading && depthPethLookup[eventType] && depthPethLookup[eventType]['data']">
         <plotly-plot [data]="depthPethLookup[eventType]['data']" [layout]="depthPethLookup[eventType]['layout']" [config]="depthPethLookup[eventType]['config']"></plotly-plot> 
+      </div>
+      <div *ngIf="!depthPethIsLoading && (!depthPethLookup[eventType] || !depthPethLookup[eventType]['data'])" class="depth-peth-not-available">
+        <p>Depth PETH plot not available for this session</p> 
       </div>
     </div>
     <div [class]="minimizeController? 'plots-navigator minimize': 'plots-navigator'" *ngIf="showController">
