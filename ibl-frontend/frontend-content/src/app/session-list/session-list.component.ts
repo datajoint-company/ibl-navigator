@@ -290,8 +290,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.isLoading = false;
 
       if (this.filterStoreService.sessionPaginator) {
-        this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
-        this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
+        this.paginator.pageSize = this.filterStoreService.sessionPaginator['pageSize'];
+        this.paginator.pageIndex = this.filterStoreService.sessionPaginator['pageIndex'];
         
         this.dataSource.paginator = this.paginator
       }
