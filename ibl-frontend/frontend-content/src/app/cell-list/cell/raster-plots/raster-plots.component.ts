@@ -69,9 +69,9 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
           this.eventType = 'feedback';
           this.sortType = 'trial_id';
           this.plotsByEvents = plots;
-          console.log('successfully fetched event feedback rasters');
-          console.log(plots);
-          console.log(timeGet);
+          // console.log('successfully fetched event feedback rasters');
+          // console.log(plots);
+          // console.log(timeGet);
           for (const item of plots) {
             if (item['sort_by'] === 'trial_id') {
               const origRaster = item['plotting_data'];
@@ -95,7 +95,7 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
   }
 
   order_by_event(eventType) {
-    console.log('raster needs to be order by event: ', eventType);
+    // console.log('raster needs to be order by event: ', eventType);
     this.eventType = eventType;
     this.eventSelected.emit(eventType);
     const element = this.el.nativeElement;
@@ -105,8 +105,8 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
       this.rasterEventFeedbackSubscription = this.cellPlotsService.getRasterEventFeedbackLoadedListener()
         .subscribe((plots: any) => {
           this.plotsByEvents = plots;
-          console.log('successfully fetched event feeback rasters');
-          console.log(Object.entries(plots).length);
+          // console.log('successfully fetched event feeback rasters');
+          // console.log(Object.entries(plots).length);
           for (const item of plots) {
             if (item['sort_by'] === this.sortType) {
               const origRaster = item['plotting_data'];
@@ -122,8 +122,8 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
       this.rasterEventResponseSubscription = this.cellPlotsService.getRasterEventResponseLoadedListener()
         .subscribe((plots: any) => {
           this.plotsByEvents = plots;
-          console.log('successfully fetched event response rasters');
-          console.log(Object.entries(plots).length);
+          // console.log('successfully fetched event response rasters');
+          // console.log(Object.entries(plots).length);
           for (const item of plots) {
             if (item['sort_by'] === this.sortType) {
               const origRaster = item['plotting_data'];
@@ -139,8 +139,8 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
       this.rasterEventStimOnSubscription = this.cellPlotsService.getRasterEventStimOnLoadedListener()
         .subscribe((plots: any) => {
           this.plotsByEvents = plots;
-          console.log('successfully fetched event stim on rasters');
-          console.log(Object.entries(plots).length);
+          // console.log('successfully fetched event stim on rasters');
+          // console.log(Object.entries(plots).length);
           for (const item of plots) {
             if (item['sort_by'] === this.sortType) {
               const origRaster = item['plotting_data'];
@@ -157,13 +157,13 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
   order_by_sorting(sortType) {
     this.sortType = sortType;
     const element = this.el.nativeElement;
-    console.log('raster needs to be order by sort: ', sortType);
+    // console.log('raster needs to be order by sort: ', sortType);
     for (const item of this.plotsByEvents) {
       // console.log('traversing plot by evnts - item sorting: ', item['sort_by']);
       // console.log('sortType was: ', sortType);
       // console.log('sortType === itemSort?: ', (item['sort_by'] === sortType));
       if (item['sort_by'] === sortType) {
-        console.log('fetching sorting raster by: ', sortType);
+        // console.log('fetching sorting raster by: ', sortType);
         const origRaster = item['plotting_data'];
         origRaster['layout']['height'] = 450;
         origRaster['layout']['width'] = 705;

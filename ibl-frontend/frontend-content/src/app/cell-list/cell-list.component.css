@@ -44,7 +44,15 @@ td span.oi {
 
 .clusterListContainer {
     height: 400px;
+    width: 320px;
     overflow-y: auto;
+    border: 1px solid rgb(150, 150, 150);
+    border-right: none;
+}
+
+.clusterListContainer .clusterListTable {
+    width: 100%;
+    background-color: white;
 }
 
 .cluster-nav-filters {
@@ -55,9 +63,33 @@ td span.oi {
     margin-top:8px;
 }
 
+.plots-navigator {
+    position: fixed;
+    z-index: 999;
+    display: inline-flex;
+    flex-direction: row;
+    right: 0;
+    bottom: 430px;
+    transition: right 0.5s;
+}
+
+.plots-navigator.minimize {
+    right: -260px;
+    transition: right 0.5s;
+    margin-left: 0;
+}
+
+.plots-navigator.minimize .plots-navigator-buttons {
+    position: fixed;
+    right: 0;
+    bottom: 258px;
+    padding-right: 16px;
+    padding-left: 14px;
+}
+
 .plots-navigator-buttons {
-    margin-right: 5px;
-    margin-top: 8px;
+    padding: 8px 5px;
+    border: 1px solid rgb(150, 150, 150);
 }
 
 .plots-navigator-buttons span:hover {
@@ -209,11 +241,6 @@ td span.oi {
 /* M (768px and up) */
 @media only screen and (max-width: 900px) {
     .plots-navigator {
-        position: fixed;
-        z-index: 999;
-        display: inline-flex;
-        flex-direction: row;
-        right: 0;
         bottom: 200px;
     }
     .clusterListTable * {
@@ -225,12 +252,12 @@ td span.oi {
 /* L (900px and up) */
 @media only screen and (min-width: 901px) {
     .plots-navigator {
-        position: fixed;
+        /* position: fixed;
         z-index: 999;
         display: inline-flex;
         flex-direction: row;
         right: 0;
-        bottom: 430px;
+        bottom: 430px; */
     }
 
 } 
@@ -238,18 +265,12 @@ td span.oi {
 /* L (1420px and up) */
 @media only screen and (min-width: 1420px) {
     .plots-navigator {
-        /* position: relative;
+        /* position: fixed;
         z-index: 999;
         display: inline-flex;
         flex-direction: row;
         right: 0;
-        bottom: 0px; */
-        position: fixed;
-        z-index: 999;
-        display: inline-flex;
-        flex-direction: row;
-        right: 0;
-        bottom: 430px;
+        bottom: 430px; */
     }
 
 } 

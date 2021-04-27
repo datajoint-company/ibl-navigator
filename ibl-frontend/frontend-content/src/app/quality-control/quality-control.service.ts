@@ -21,7 +21,7 @@ export class QualityControlService {
   constructor(private http: HttpClient) { }
 
   retrieveProbeInsertions(sessionInfo) {
-    console.log('about to fetch probe insertions: ', sessionInfo)
+    // console.log('about to fetch probe insertions: ', sessionInfo)
     this.http.post(BACKEND_API_URL + `/plot/probeinsertion`, sessionInfo)
       .subscribe(
         (retrievedProbeInsertionData) => {
