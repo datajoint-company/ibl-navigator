@@ -862,6 +862,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Triggers when user presses the reset filter button - no new fetch here, just clearing the input fields and stored state
    */
   async handleResetFilterButtonPress() {
+    this.isLoading = true;
     for (const control in this.session_filter_form.controls) {
       const toReset = {}
       
@@ -891,11 +892,23 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
     })
 
-    // 
+    // clear the filter in storage before applying filter
+    this.filterStoreService.clearSessionFilter();
+    
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
+
+    // intention here is to reset the sort/pagination to default state before updating table view 
+    this.paginator.pageIndex = 0;
+    this.paginator.pageSize = 25;
+    // the below is to remove the arrow UI that doesn't go away after this.sort.active = '' 
+    this.sort.sortables.forEach(sortItem => {
+      this.sort.sort(sortItem);
+    });
+    this.sort.active = '';
+
     await this.updateTableView(this.restrictedSessions);
-    // console.log('reset filter is done')
+    this.isLoading = false;
     return;
   }
 
