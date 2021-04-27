@@ -252,15 +252,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
       */
       // Check for paginator
       if (this.filterStoreService.sessionPaginator) {
-        this.paginator.pageSize = this.filterStoreService.sessionPaginator.pageSize;
-        this.paginator.pageIndex = this.filterStoreService.sessionPaginator.pageIndex;
+        this.paginator.pageSize = this.filterStoreService.sessionPaginator['pageSize'];
+        this.paginator.pageIndex = this.filterStoreService.sessionPaginator['pageIndex'];
       }
 
       // Check for sort info
       if (this.filterStoreService.sessionSortInfo && this.filterStoreService.sessionSortInfo['active'] !== undefined && this.filterStoreService.sessionSortInfo['direction'] !== '') {
         // Session sort info is valid, thus set it locally
-        this.sort.active = this.filterStoreService.sessionSortInfo.active;
-        this.sort.direction = this.filterStoreService.sessionSortInfo.direction;
+        this.sort.active = this.filterStoreService.sessionSortInfo['active'];
+        this.sort.direction = this.filterStoreService.sessionSortInfo['direction'];
       }
 
       // Check for preloaded sessions
