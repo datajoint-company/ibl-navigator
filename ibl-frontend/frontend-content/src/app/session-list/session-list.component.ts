@@ -862,6 +862,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * Triggers when user presses the reset filter button - no new fetch here, just clearing the input fields and stored state
    */
   async handleResetFilterButtonPress() {
+    this.isLoading = true;
     for (const control in this.session_filter_form.controls) {
       const toReset = {}
       
@@ -895,7 +896,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
     await this.updateTableView(this.restrictedSessions);
-    // console.log('reset filter is done')
+    this.isLoading = false;
     return;
   }
 
