@@ -1841,7 +1841,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveDepthBrainRegions(queryInfo);
     this.depthBrainRegionsSubscription = this.cellListService.getDepthBrainRegionsLoadedListener()
       .subscribe((depthBrainRegions) => {
-        console.log('depthbrainregions: ', depthBrainRegions)
         if (depthBrainRegions && depthBrainRegions[0]) {
           depthBrainRegions = depthBrainRegions[0];
           this.depthBrainRegionDataPts = []
