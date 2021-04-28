@@ -92,6 +92,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   depthPETH;
   depthPethTemplates = {};
   depthPethLookup = {};
+  depthPethIsLoading = false;
 
   spikeAmpTimeLookup = {};
   spikeAmpTime;
@@ -674,6 +675,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
           /////++++++///// start of grabbing depth PETH plot info /////++++++/////
           this.cellListService.getDepthPethTemplate();
+          this.depthPethIsLoading = true;
           this.depthPethTemplateSubscription = this.cellListService.getDepthPethTemplateLoadedListener()
             .subscribe((dpTemplates) => {
               // console.log('depth PETH templates retrieved: ', dpTemplates[0]);
@@ -691,12 +693,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           }
           this.depthPethSubscription = this.cellListService.getDepthPethLoadedListener()
             .subscribe((plotInfo) => {
-              this.depthPETHtimeB = new Date()
-              // console.log('retrieved depth PETH data - took ', this.depthPETHtimeB-this.depthPETHtimeA, 'ms')
               this.depthPETH = deepCopy(plotInfo);
-              // console.log('depth PETH retrieved for session: ', plotInfo);
               for (let plot of Object.values(plotInfo)) {
-                // console.log("this.depthPethTemplates[plot['depth_peth_template_idx']]: ", this.depthPethTemplates)
                 this.depthPethLookup[plot['event']]['data'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['data'])
                 this.depthPethLookup[plot['event']]['layout'] = deepCopy(this.depthPethTemplates[plot['depth_peth_template_idx']]['layout'])
                 let depth_peth_config_copy = {...this.depthPETH_config};
@@ -724,15 +722,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
 
                 this.depthPethLookup[plot['event']]['config'] = depth_peth_config_copy
               }
-              // console.log('this.DepthPethLookup: ', this.depthPethLookup)
               if (this.depthPethLookup['movement'] && Object.keys(this.depthPethLookup['movement']).length == 0) {
                 this.depthPethEventLacksMovement = true;
               } else {
                 this.depthPethEventLacksMovement = false;
               }
-              // console.log('depthPethEventLacksMovement: ', this.depthPethEventLacksMovement);
-              this.depthPETHtimeC = new Date()
-              // console.log('depth PETH done plotting - took: ', this.depthPETHtimeC-this.depthPETHtimeB, 'ms')
+              this.depthPethIsLoading = false;
             });
 
 

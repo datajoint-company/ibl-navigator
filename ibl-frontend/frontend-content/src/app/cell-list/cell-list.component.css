@@ -122,6 +122,16 @@ td span.oi {
     margin-top: 15px;
 }
 
+.depth-peth-not-available {
+    border: 1px solid gray;
+    margin: 12px;
+    width: 400px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .order-button-content .radio-option,
 .alternative_plot_buttons .radio-option  {
     padding-right: 15px;
@@ -154,6 +164,9 @@ td span.oi {
     padding-right: 10px;
 }
 
+.cluster-nav-plot-area {
+    padding-left: 12px;
+}
 .cluster-nav-plot-area > .yaxis-selector-plot-area {
     display: flex;
     flex-direction: row;
