@@ -67,7 +67,7 @@
 
   <div class="row">
     <br />
-    <div class="cluster-nav-plot-area col-10 col-xl-6">
+    <div class="cluster-nav-plot-area">
       <div *ngIf="plot_data_processed && plot_data_processed[0]" class="yaxis-selector-plot-area">
         <div class="alternative_plot_buttons y_axis">
           <label for="y_label"><b>y axis</b></label>
@@ -106,7 +106,7 @@
       </div> 
     </div>
 
-    <div class="depth-peth-plot-area col-10 col-xl-4">
+    <div class="depth-peth-plot-area">
       <div class="order-buttons col-10">
         
         <div class="order-button-content">
@@ -163,7 +163,7 @@
         <h3><span class="oi oi-arrow-circle-bottom" (click)="navigate_cell_plots($event, 'down')"></span></h3>
       </div>
     </div>
-
+    <br />
     <div class="rasterPlotSelectors col-8">
       <div class="order-buttons col-4">
         <label for="event"><b>Event</b></label>

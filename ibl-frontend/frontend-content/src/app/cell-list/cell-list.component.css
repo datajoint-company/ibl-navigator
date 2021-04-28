@@ -164,6 +164,9 @@ td span.oi {
     padding-right: 10px;
 }
 
+.cluster-nav-plot-area {
+    padding-left: 12px;
+}
 .cluster-nav-plot-area > .yaxis-selector-plot-area {
     display: flex;
     flex-direction: row;
