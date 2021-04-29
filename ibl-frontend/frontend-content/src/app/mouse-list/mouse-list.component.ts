@@ -357,7 +357,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.filterStoreService.clearMouseFilter();
     this.allMiceService.getMiceLoadedListener()
       .subscribe((mice: any) => {
-        console.log('logging retrieved micelist: ', mice)
         this.loading = false;
         this.mice = mice;
         this.allMice = mice;

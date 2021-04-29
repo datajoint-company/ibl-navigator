@@ -172,7 +172,12 @@ export class DriftmapComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-
+    if (this.driftmapTemplatesSubscription) {
+      this.driftmapTemplatesSubscription.unsubscribe();
+    }
+    if (this.driftmapPlotsSubscription) {
+      this.driftmapPlotsSubscription.unsubscribe();
+    }
   }
   
   plotInitialized() {
