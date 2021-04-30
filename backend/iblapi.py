@@ -41,10 +41,10 @@ plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
 plotting_histology = mkvmod('plotting_histology')
-test_plotting_ephys = test_mkvmod('plotting_ephys')
+# test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
 histology = mkvmod('histology')
-test_histology = test_mkvmod('histology')
+# test_histology = test_mkvmod('histology')
 original_max_join_size = dj.conn().query(
     "show variables like 'max_join_size'").fetchall()[0][1]
 
