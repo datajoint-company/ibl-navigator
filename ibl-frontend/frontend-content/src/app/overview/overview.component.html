@@ -1,5 +1,145 @@
-<div class="user-guide-container">
+<!-- <div class="user-guide-container">
 <h4>User Guide</h4>
   <iframe width="100%" height="800px"
     src="https://docs.google.com/document/d/e/2PACX-1vRG2kp5vLlRmnbo1kYkoJmmfBHWuylsDXHT0N_teP27OGyctip5_SXaxlqCaIiqGx-FysgwMP68OpHK/pub?embedded=true"></iframe>
+</div> -->
+<!-- <img class="home_banner" src="assets/images/home_ibl_brainbow.jpg"> -->
+<div class="home-container">
+  <div class="home-top-container">
+    <div class="top-text-container">
+      <h2 class="top-title">International Brain Laboratory Behavioral Data Portal</h2>
+      <div class="top-text-details">
+        <p>The <a href="https://www.internationalbrainlab.com" target="_blank">International Brain Laboratory</a> is a team of systems and computational neuroscientists, working collaboratively to understand
+        the computations that support decision-making in the brain.</p>
+        <p>This portal contains behavioral data from a standardized training pipeline, implemented across 9 labs of 7 institutions.
+        Mice learn to make decisions that combine incoming visual evidence with internal beliefs about the dynamic
+        structure of the environment. Through this portal, users can view behavioral data from mice throughout their training,
+        and see the transition from novice to expert behavior unfold.</p>
+        <p>The content of this portal reflects the data associated with around 200 mice up until 2020-03-23, 
+          described in <a target="_blank" href="https://doi.org/10.1101/2020.01.17.909838">The International Brain Laboratory et al. 2020</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="home-middle-container">
+    <div class="detail-container">
+      <h3>Behavioral Paradigm</h3>
+      <p class="detail-text">The IBL behavioral data is generated during a visual decision-making 
+        task for mice. Mice are trained to judge the spatial location of a visual stimulus 
+        (vertical grating) and report their decision by turning a wheel to move the stimulus 
+        into the center of the screen. The contrast of the visual stimulus can be varied, so 
+        that decisions range from easy to ambiguous. This allows quantification of the animals' 
+        threshold, bias, and lapse rates (below). Behavior during decision-making is characterized 
+        both using traditional metrics, such as choice and reaction time, along with video recordings 
+        from high-speed cameras.</p>
+      <div class="figures col-10 offset-1">
+        <div class="small-figures">
+          <div class="each-figure">
+            <img src="assets/images/fig1.png" class="text-image" id="fig1">
+            <p class="figure-caption"><i>Left-Right lick based behavioral paradigm</i></p>
+          </div>
+          <div class="each-figure">
+            <img src="assets/images/fig2.png" class="text-image" id="fig2">
+            <p class="figure-caption"><i>Left-Right bias conditions</i></p>
+          </div>
+        </div>
+        <div class="each-figure">
+          <img src="assets/images/fig2b.png" class="text-image-wide" id="fig3b">
+          <p class="figure-caption-long"><i>Left: Average psychometric curve for each laboratory. Circles show the mean and error bars ± 1 the S.D. 
+            Middle: Psychometric curves shift between biased blocks averaged over all animals. For each animal and signed contrast, we computed 
+            their ‘bias shift’ (Δ) by reading out the difference in choice fraction between the 80:20 and 20:80 blocks (dashed lines). 
+            Right: Average shift in rightward choices as a function of signed contrast for each laboratory (colors as in c; error bars show 
+            mean +- 68% CI)</i></p>
+        </div>
+        
+        <!-- <div class="each-figure">
+          <img src="assets/images/fig3.png" class="text-image" id="fig3">
+          <p class="figure-caption"><i>Psychometric curves</i></p>
+        </div> -->
+        
+      </div>
+      <div class="figures col-10 col-lg-8 col-xl-6 offset-1">
+        <div class="each-figure">
+          <img src="assets/images/PMFSchematic.png" class="" id="fig4">
+          <p class="figure-caption"><i>Animals' bias, threshold, and lapse rate</i></p>
+        </div>
+      </div>
+      <!-- <ol>
+        <li><a href="https://doi.org/10.1016/j.neuron.2017.12.013" target="_blank">Abbott, L. F. <i>et al.</i> An International Laboratory for Systems and Computational Neuroscience. <i>Neuron </i> <b>96</b>, 1213–1218
+        (2017).</a></li>
+        <li><a href="https://doi.org/10.1016/j.celrep.2017.08.047" target="_blank">Burgess, C. P. <i>et al</i>. High-Yield Methods for Accurate Two-Alternative Visual Psychophysics in Head-Fixed Mice. <i>Cell Rep. </i>
+        <b>20</b>, 2513–2524 (2017).</a></li>
+      </ol> -->
+    </div>
+  </div>
+
+  <div class="home-bottom-container">
+    <div class="detail-container">
+      <h3>Training Criteria</h3>
+      <p class="detail-text">
+        We present here a summary of training stages and a list of criteria. For exact definitions and calculus details, 
+        please see <a target="_blank" href="https://doi.org/10.1101/2020.01.17.909838">The International Brain Laboratory et al. 2020</a>.
+        <br>
+        The animal goes through 3 different phases:
+      </p>
+      <ol class="detail-text">
+        <li>Habituation</li>
+        <li>Training under unbiased stimulus conditions</li>
+        <li>Training under biased stimulus conditions</li>
+      </ol>
+      
+      <p class="detail-text">The training status indicated on the website are: </p>
+      <ul class="detail-text">
+        <li><b>‘Trained’</b> when phase 2 is completed</li>
+        <li><b>‘Over40days’</b> if the mouse has not reached ‘trained’ within 40 days of being into phase 2</li>
+      </ul>
+      
+    </div>
+  </div>
+  <div class="home-middle-container">
+    <!-- <div class="detail-container">
+      <h3>How can you view and access the data?</h3>
+      <ol class="detail-text">
+        <li>On this online portal, you can view and browse the data by clicking on ‘mice’ and ‘sessions’ above.</li>
+        <li>To access the data via <a target="_blank" href="https://datajoint.io">DataJoint</a>, you have two options:
+          <ol style="list-style-type: lower-alpha">
+            <li><b>Access the database via <a target="_blank" href="https://jupyterhub.internationalbrainlab.org">JupyterHub</a>:</b> this site hosts several notebooks that allow you to directly interact with the database with DataJoint. You do not need to download or install anything locally.
+              <ol style="list-style-type: lower-roman">
+                <li>Log in with your GitHub account.</li>
+                <li>Read the README</li>
+                <li>Click on <span class="code-style">public_notebooks/Explore IBL pipeline</span> to run several notebooks (one of which replicates figure 2 of the paper).</li>
+              </ol>
+            </li>
+            <br>
+            <li><b>Access the database locally with DataJoint.</b>
+              <ol style="list-style-type: lower-roman">
+                <li>Login to the <a target="_blank" href="https://jupyterhub.internationalbrainlab.org">JupyterHub</a> with your GitHub account as above.</li>
+                <li>Go to <span class="code-style">public_notebooks/Explore IBL pipeline/04-Access the database locally</span> and follow the instructions to obtain DataJoint credentials.</li>
+                <li>Follow the <a target="_blank" href="https://github.com/int-brain-lab/paper-behavior/blob/master/README.md">instructions on GitHub</a> to set up your local environment to run all the scripts that produce the figures.</li>
+              </ol>
+            </li>
+            <br>
+          </ol>
+        </li>
+        <li>Lastly, an archive of the data can be downloaded from <a target="_blank" href="https://doi.org/10.6084/m9.figshare.11636748">FigShare</a>; instructions on how this data can be read using Open Neurophysiology Environment (<b>ONE</b>) are provided there.</li>
+      </ol>
+      <p class="detail-text">Issues with data access? Create an issue at https://github.com/int-brain-lab/paper-behavior. General questions about the paper or data? Email data+behavior@internationalbrainlab.org. </p>
+    </div> -->
+    <div class="detail-container"> <!-- temporary for NMA -->
+      <h3>How can you view and access the data?</h3>
+      <ol class="detail-text">
+        <li>On this online portal, you can view and browse the data by clicking on ‘mice’ and ‘sessions’ above.</li>
+        <li>To access the data via <a target="_blank" href="https://datajoint.io">DataJoint</a>, we prepared a <a href="https://github.com/int-brain-lab/nma-ibl" target="_blank">mini environment</a> for you to
+          access the database. Please visit and register your email at <a href="https://datajoint.io/events/nma-ibl-public" target="_blank">DataJoint.io NMA Public Access</a> to receive the access credentials to
+          the database. Then you will be able to fill in the credentials in the following notebooks hosted on colab and explore the database: <br>
+          <a href="https://colab.research.google.com/github/int-brain-lab/nma-ibl/blob/master/01-Explore%20IBL%20behavior%20data%20pipeline.ipynb" target="_blank">Explore IBL behavior data pipeline</a> <br>
+          <a href="https://colab.research.google.com/github/int-brain-lab/nma-ibl/blob/master/02-Plot%20Psychometric%20curve.ipynb" target="_blank">Plot psychometric curve</a> <br>
+          <a href="https://colab.research.google.com/github/int-brain-lab/nma-ibl/blob/master/03-Replication%20of%20paper%20figures.ipynb" target="_blank">Replication of paper figures</a> <br>
+          
+        </li>
+        <li>Lastly, the data used for plotting can be accessed from the GitHub repository:  <a target="_blank" href="https://github.com/int-brain-lab/paper-behavior">https://github.com/int-brain-lab/paper-behavior</a></li>
+      </ol>
+      <p class="detail-text">Issues with data access? Create an issue at https://github.com/int-brain-lab/paper-behavior. General questions about the paper or data? Email data+behavior@internationalbrainlab.org. </p>
+    </div>
+  </div>
 </div>
