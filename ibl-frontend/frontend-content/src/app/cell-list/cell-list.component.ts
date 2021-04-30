@@ -87,6 +87,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   firing_rate_data = [];
   toPlot_x = 'cluster_amp';
   toPlot_y = 'cluster_depth';
+  probeTrajectoryIsResolved = false;
 
   probeTrajInfo = {};
   depthPETH;
@@ -1782,28 +1783,45 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.clickedClusterId = this.sortedCellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
   }
 
+  /** this is for switching the axis option for cluster navigation plot when brain region bar is available
+  * @param data is either [{selected_y: value}] or [{selected_x: value}] value can be cluster_amp, cluster_depth, or firing_rate
+  * format of data is there to match the plotly setup
+  **/
   restylePlot(data) {
-    if (data[0]['selected_y']) {
-      
+    if (data[0]['selected_y']) { 
       let selected_plot = data[0]['selected_y'];
       this.plot_data[0].y = this[`${selected_plot}_data`];
       this.toPlot_y = selected_plot;
-    } else if (data[0]['selected_x']) {
+    } 
+    else if (data[0]['selected_x']) {
       let selected_plot = data[0]['selected_x'];
       this.plot_data[0].x = this[`${selected_plot}_data`];
       this.toPlot_x = selected_plot;
     }
-    if (this.fullNavPlotData && this.fullNavPlotData[0]) {
-      if (this.toPlot_y === 'cluster_depth') {
 
+    if (this.probeTrajectoryIsResolved) {
+      if (this.toPlot_y === 'cluster_depth') {
         this.plot_layout_processed = deepCopy(this.plot_layout_DBR)
         this.plot_layout_processed['annotations'] = this.annotationField
         this.plot_data_processed = deepCopy(this.fullNavPlotData)
-      } else {
+      } 
+      else {
         this.plot_layout['updatemenus'] = [];
         this.plot_layout_processed = deepCopy(this.plot_layout)
         this.plot_data_processed = deepCopy(this.plot_data)
       }
+    }
+    else {
+      if (this.toPlot_y === 'cluster_depth') {
+        this.plot_layout_processed = deepCopy(this.plot_layout_DBR)
+      }
+      else {
+        this.plot_layout['updatemenus'] = [];
+        this.plot_layout_processed = deepCopy(this.plot_layout)
+      }
+      this.annotationField = [];
+      this.plot_layout_processed['annotations'] = this.annotationField;
+      this.plot_data_processed = deepCopy(this.plot_data)
     }
   }
 
@@ -1840,6 +1858,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           depthBrainRegions = depthBrainRegions[0];
           this.depthBrainRegionDataPts = []
           this.annotationField = []
+          this.probeTrajectoryIsResolved = true;
           
           depthBrainRegions['region_boundaries'].forEach((value, index) => {
             this.annotationField.push({
@@ -1906,11 +1925,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           // add in the depth region data and then the annotation info to existing cluster nav plot data
           this.fullNavPlotData = this.depthBrainRegionDataPts.concat(copyPlotData);
           this.plot_data_processed = deepCopy(this.fullNavPlotData);
-          this.plot_layout_processed['annotations'] = this.annotationField
+          this.plot_layout_processed['annotations'] = this.annotationField;
+          // the empty annotation needs to disappear when user has selected a y-axis different from cluster_depth prior to selecting the new probe with resolved probe trajectory
+          if (this.toPlot_y !== 'cluster_depth') {
+            this.restylePlot([{selected_y: this.toPlot_y}]);
+          }
         }
         else {
+          this.probeTrajectoryIsResolved = false;
           // make sure to empty out the brain region plot info if there is nothing returned for database
-          this.depthBrainRegionDataPts = []
+          this.depthBrainRegionDataPts = [{}, {}, {}, {}] // adding four empty objects here because that is what plotly is expecting for cases where there are both resolved and unresolved trajectories in the same session
           
           // slot for the brain region plot needs to be kept for plotly to correctly render when user switches back to the probe with brain region data
           let copyPlotData = [...this.plot_data];
@@ -1919,7 +1943,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           })
           // clear out brain region annotation info on the plot
           this.plot_data_processed = deepCopy(copyPlotData);
-          this.plot_layout_processed['annotations'] = []
+          this.annotationField = [];
+          this.plot_layout_processed['annotations'] = this.annotationField;
         }
       });
   }

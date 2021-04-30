@@ -3,8 +3,8 @@
 <h4>
   List of Sessions
 </h4>
-<button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="false" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
-<button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="false" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
+<button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="isLoading" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
+<button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="isLoading" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
 
 
 <form [formGroup]="session_filter_form" [class]="isLoading ? 'loading': ''">
@@ -236,8 +236,11 @@
   </div>
 </form>
 
-<div [class]="isLoading? 'loading-icon loading': 'loading-icon'">
+<div [class]="isLoading && initialLoad ? 'loading-icon loading initial': isLoading ? 'loading-icon loading': 'loading-icon'">
   <img src="assets/images/loading_icon.gif">
+  <p [class]="initialLoad ? 'session-list-loading-message show' : 'session-list-loading-message'">
+    Loading time for the sessions may take a while depending on your internet connection. We appreciate your patience as we load the full list of sessions.
+  </p>
 </div>
 <div class="table-container">
 <table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">

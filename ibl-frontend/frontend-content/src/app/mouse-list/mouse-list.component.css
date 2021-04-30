@@ -59,12 +59,9 @@ form {
     width: 100%;
 }
 
-.vital_status_filter {
-    margin-left: 15px;
-    margin-top: 7px;
-}
-
-.ready4delay_filter {
+.vital_status_filter,
+.ready4delay_filter,
+.spinning_brain_filter {
     margin-left: 15px;
     margin-top: 7px;
 }

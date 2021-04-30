@@ -102,6 +102,11 @@
         Only show mice with ready for delay training status
       </mat-checkbox>
     </div>
+    <div class="spinning_brain_filter">
+      <mat-checkbox class="spinning_brain_chbox" [checked]="onlyShowMiceWithSpinningBrain" (change)="toggleSpinningBrainViewStatus()">
+        Only show mice with resolved probe trajectories.
+      </mat-checkbox>
+    </div>
   </div>
 </div>
 </form>
@@ -127,7 +132,7 @@
   </ng-container>
 
   <ng-container matColumnDef="ready4delay">
-    <th mat-header-cell *matHeaderCellDef> Ready for Delay</th>
+    <th mat-header-cell *matHeaderCellDef> Ready for Delay&nbsp;&nbsp;</th>
     <td mat-cell *matCellDef="let mouse" class="to-center">
       <div *ngIf="mouse.ready4delay > 0"><span class="oi oi-lock-unlocked"></span></div>
       <div *ngIf="mouse.ready4delay == 0"></div>
@@ -154,6 +159,14 @@
     <td mat-cell *matCellDef="let mouse"> {{mouse.subject_birth_date }} </td>
   </ng-container>
   
+  <ng-container matColumnDef="spinning_brain">
+    <th mat-header-cell *matHeaderCellDef> Resolved Probe Trajectories&nbsp;&nbsp;&nbsp;</th>
+    <td mat-cell *matCellDef="let mouse" class="to-center">
+      <div *ngIf="mouse.spinningbrain > 0"><span class="oi oi-task"></span></div>
+      <div *ngIf="mouse.spinningbrain == 0"></div>
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="subject_uuid">
     <th mat-header-cell *matHeaderCellDef> Mouse UUID </th>
     <td mat-cell *matCellDef="let mouse"> {{mouse.subject_uuid}} </td>

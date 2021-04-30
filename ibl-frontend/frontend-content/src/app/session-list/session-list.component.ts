@@ -50,6 +50,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     responsible_user: new FormControl()
   });
   isLoading;
+  initialLoad;
   filterExpanded;
   allSessions;
   restrictedSessions: Array<any>;
@@ -123,6 +124,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     this.isLoading = true;
+    this.initialLoad = true;
 
     // Patch job to initalized sex to the filters can be rendered
     this.uniqueValuesForEachAttribute['sex'] = {
@@ -271,6 +273,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       else {
         // Else fetch from database
         await this.fetchSessions();
+        this.initialLoad = false;
       }
       
       // Check if there are params, if they are then apply them via this.applyFilter();
