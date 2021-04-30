@@ -32,9 +32,10 @@ export class MouseListComponent implements OnInit, OnDestroy {
   mice_menu: any;
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date',
-    'projects', 'subject_line', 'responsible_user', 'sex', 'ready4delay', 'death_date', 'subject_uuid'];
+    'projects', 'subject_line', 'responsible_user', 'sex', 'ready4delay', 'death_date', 'spinning_brain', 'subject_uuid'];
   hideDeadMice = false;
   hideNotReady4Delay = false;
+  onlyShowMiceWithSpinningBrain = false;
 
   // setup for the paginator
   dataSource;
@@ -260,7 +261,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.hideDeadMice = false;
     this.hideNotReady4Delay = false;
-
+    this.onlyShowMiceWithSpinningBrain = false;
     const request = this.filterRequests();
     if (Object.entries(request).length > 0) {
       this.filterStoreService.storeMouseFilter(request);
@@ -436,6 +437,10 @@ export class MouseListComponent implements OnInit, OnDestroy {
         criteria.push(_.map(this.mice, x => x.ready4delay > 0));
     }
 
+    if (this.onlyShowMiceWithSpinningBrain) {
+      criteria.push(_.map(this.mice, x => x.spinningbrain > 0))
+    }
+
 ​    
     let selectedMice = this.mice;
 
@@ -450,15 +455,27 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.dataSource.paginator = this.paginator;
   }
   ​
+  /**
+   * hide or show mice that are no longer alive
+   */
   toggleMiceVitalStatus() {
-    // hide or show mice that are no longer alive
     this.hideDeadMice = !this.hideDeadMice;
     this.updateSelection();
   }
   ​
+  /**
+   * hide or show mice that are don't yet have session with trainng status of "ready4delay"
+   */
   toggleR4DviewStatus() {
-    // hide or show mice that are don't yet have session with trainng status of "ready4delay"
     this.hideNotReady4Delay = !this.hideNotReady4Delay;
+    this.updateSelection();
+  }
+
+  /**
+   * hide or show mice that don't have the spinning brain 
+   */
+  toggleSpinningBrainViewStatus() {
+    this.onlyShowMiceWithSpinningBrain = !this.onlyShowMiceWithSpinningBrain;
     this.updateSelection();
   }
 

@@ -289,8 +289,13 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             subject.Death().proj('death_date') * dj.U('death_date'),
             death_date='IFNULL(death_date, 0)',
             keep_all_rows=True)
-        
-        q = subject.Subject() * dead_mice *lab_name * user_name * projects * ready4delay & args & proj_restr
+
+        spinning_brain = subject.Subject().aggr(
+            plotting_histology.SubjectSpinningBrain().proj(dummy5='"x"') * dj.U('dummy5'),
+            spinningbrain='count(dummy5)',
+            keep_all_rows=True)
+
+        q = subject.Subject() * dead_mice * spinning_brain * lab_name * user_name * projects * ready4delay & args & proj_restr
     elif subpath == 'dailysummary':
         # find the latest summary geneartion for each lab
         latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(

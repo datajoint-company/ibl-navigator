@@ -84,10 +84,32 @@ label {
 .loading-icon {
     text-align: center;
     display: none;
+    border: none;
+    padding: 0;
+    background-color:transparent;
+    width: auto;
+    margin: 0 auto;
+}
+
+.session-list-loading-message {
+    text-align: left;
+    margin: 24px auto 0;
+    display: none;
+}
+
+.session-list-loading-message.show {
+    display: block;
 }
 
 .loading-icon.loading {
     display: block;
+}
+
+.loading-icon.loading.initial {
+    border: 1px solid gray;
+    padding: 36px 24px;
+    background-color:rgba(250, 250, 250, 0.8);
+    width: 400px;
 }
 
 .loading-icon.loading img {
