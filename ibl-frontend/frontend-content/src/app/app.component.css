@@ -77,10 +77,6 @@ a.logolink * {
     text-decoration: none;
 }
 
-/* this one is not on the app component but is global across all components except for the overview component */
-.non-landing-page {
-    
-}
 
 @media (min-width: 1600px) {
     .container {

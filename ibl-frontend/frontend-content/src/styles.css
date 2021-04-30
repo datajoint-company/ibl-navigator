@@ -7,3 +7,10 @@
     font-weight: 300;
 } */
 
+/* this one is not on the app component but is global across all components except for the overview component */
+.non-landing-page {
+    width: 92%;
+    margin-left: 4% !important;
+    margin-right: 4%;
+}
+
