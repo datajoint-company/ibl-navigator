@@ -22,7 +22,7 @@
               <img [ngClass]="probe == probeIndex ? 'selected coronal-section-image' : 'coronal-section-image'" [src]="section.probe_trajectory_coronal_link" />
               <div class="radio-options">
                 <input type="radio" [name]="section.probe_idx" [checked]="section.probe_idx == probeIndex"/>
-                <label [for]="section.probe_idx">&nbsp;{{probeInfo[section.probe_idx].probe_label}}</label>
+                <!-- <label [for]="section.probe_idx">&nbsp;{{probeInfo[section.probe_idx].probe_label}}</label> -->
               </div>
             </div>
           </div>
