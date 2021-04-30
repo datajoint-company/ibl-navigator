@@ -262,7 +262,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.hideDeadMice = false;
     this.hideNotReady4Delay = false;
     this.onlyShowMiceWithSpinningBrain = false;
-    console.log('apply filter called')
     const request = this.filterRequests();
     if (Object.entries(request).length > 0) {
       this.filterStoreService.storeMouseFilter(request);
@@ -456,20 +455,26 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.dataSource.paginator = this.paginator;
   }
   ​
+  /**
+   * hide or show mice that are no longer alive
+   */
   toggleMiceVitalStatus() {
-    // hide or show mice that are no longer alive
     this.hideDeadMice = !this.hideDeadMice;
     this.updateSelection();
   }
   ​
+  /**
+   * hide or show mice that are don't yet have session with trainng status of "ready4delay"
+   */
   toggleR4DviewStatus() {
-    // hide or show mice that are don't yet have session with trainng status of "ready4delay"
     this.hideNotReady4Delay = !this.hideNotReady4Delay;
     this.updateSelection();
   }
 
+  /**
+   * hide or show mice that don't have the spinning brain 
+   */
   toggleSpinningBrainViewStatus() {
-    // hide or show mice that don't have the spinning brain 
     this.onlyShowMiceWithSpinningBrain = !this.onlyShowMiceWithSpinningBrain;
     this.updateSelection();
   }

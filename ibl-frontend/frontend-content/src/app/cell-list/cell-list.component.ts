@@ -1784,7 +1784,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   /** this is for switching the axis option for cluster navigation plot when brain region bar is available
-  * @param data // is either [{selected_y: value}] or [{selected_x: value}] value can be cluster_amp, cluster_depth, or firing_rate
+  * @param data is either [{selected_y: value}] or [{selected_x: value}] value can be cluster_amp, cluster_depth, or firing_rate
   * format of data is there to match the plotly setup
   **/
   restylePlot(data) {
