@@ -10,11 +10,11 @@ import { AuthService } from './auth/auth.service';
 export class AppComponent implements OnInit {
   // title = 'pipeline-viewer';
   smallScreen: boolean;
-  isLoggedIn = false;
+  // isLoggedIn = false;
   menuCollapsed: boolean;
-  userIsAuthenticated;
-  authListenerSubscription = new Subscription();
-  constructor(private authService: AuthService) {}
+  // userIsAuthenticated;
+  // authListenerSubscription = new Subscription();
+  // constructor(private authService: AuthService) {}
 
   ngOnInit() {
     if (window.innerWidth < 431) {
@@ -24,11 +24,11 @@ export class AppComponent implements OnInit {
       this.smallScreen = false;
       this.menuCollapsed = false;
     }
-    this.authListenerSubscription = this.authService.getAuthStatusListener()
-      .subscribe(loginStatus => {
-        this.userIsAuthenticated = loginStatus[0];
-      });
-    this.isLoggedIn = this.authService.isAuthenticated();
-    this.authService.autoLoginUser();
+    // this.authListenerSubscription = this.authService.getAuthStatusListener()
+    //   .subscribe(loginStatus => {
+    //     this.userIsAuthenticated = loginStatus[0];
+    //   });
+    // this.isLoggedIn = this.authService.isAuthenticated();
+    // this.authService.autoLoginUser();
   }
 }

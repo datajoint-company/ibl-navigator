@@ -68,59 +68,43 @@ import { SpinningBrainComponent } from './mouse-list/mouse/spinning-brain/spinni
 PlotlyModule.plotlyjs = PlotlyJS;
 
 const appRoutes: Routes = [
-  { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent },
-  // { path: 'plot', component: ViewSamplePlotsComponent },
-  // { path: 'cells', component: CellListComponent },
-  // { path: 'water-weight', component: WaterWeightPlotComponent},
+  { path: '', component: OverviewComponent, 
+    // canActivate: [AuthGuard] 
+  },
+  // { path: 'login', component: LoginComponent },
   {
     path: 'mouse/:mouseUUID',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
     component: MouseComponent
   },
   {
     path: 'mice',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: MouseListComponent
   },
-  // {
-  //   path: 'cell',
-  //   canActivate: [AuthGuard],
-  //   canActivateChild: [AuthGuard],
-  //   children: [{
-  //     path: ':mouseID',
-  //     children: [{
-  //       path: ':sessionTime',
-  //       children: [{
-  //         path: ':clusterID',
-  //         component: CellComponent
-  //       }]
-  //     }]
-  //   }]
-  // },
   {
     path: 'session/:sessionID',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
     component: SessionComponent
   },
   {
     path: 'sessions',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: SessionListComponent
   },
-  {
-    path: 'summary',
-    canActivate: [AuthGuard],
-    component: DailySummaryComponent
-  },
+  // {
+  //   path: 'summary',
+  //   canActivate: [AuthGuard],
+  //   component: DailySummaryComponent
+  // },
   {
     path: 'qc/:subjectID/:sessionStartTime',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: QualityControlComponent
   },
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },
