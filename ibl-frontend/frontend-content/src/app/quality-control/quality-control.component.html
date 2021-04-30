@@ -1,4 +1,5 @@
-<div class="session-info-container">  
+<div class="col-xl-10 offset-xl-1 non-landing-page">
+  <div class="session-info-container">  
     <div class="session-header"><h5>Quality Control</h5></div>
     <div class="row session-info-table">
       <table class="table col-lg-6 col-sm-8 col-xs-12 table-striped table-bordered table-sm" >
@@ -31,6 +32,6 @@
     <div class="driftmap-section" *ngIf="driftmapInfo">
       <app-driftmap [driftmapInfo]="driftmapInfo" (probeSwitch)="probeChange($event)"></app-driftmap>
     </div>
-   
   </div>
-  
+</div>
+    

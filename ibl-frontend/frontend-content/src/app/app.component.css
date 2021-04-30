@@ -1,4 +1,3 @@
-
 .navigator-container {
     width: 100%;
     padding: 0;
@@ -76,6 +75,11 @@ a.logolink * {
 .footer p a:hover {
     color: #03a2da;
     text-decoration: none;
+}
+
+/* this one is not on the app component but is global across all components except for the overview component */
+.non-landing-page {
+    
 }
 
 @media (min-width: 1600px) {

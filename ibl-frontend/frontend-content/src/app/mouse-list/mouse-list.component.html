@@ -1,187 +1,188 @@
-<div class="subject-list-container">
-<h4>
-  List of Mice
-</h4>
-<button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Expand Filter
-  &nbsp;<span class="oi oi-expand-down"></span></button>
-<button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Collapse Filter
-  &nbsp;<span class="oi oi-collapse-up"></span></button>
+<div class="col-xl-10 offset-xl-1 non-landing-page">
+  <div class="subject-list-container">
+    <h4>
+      List of Mice
+    </h4>
+    <button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Expand Filter
+      &nbsp;<span class="oi oi-expand-down"></span></button>
+    <button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Collapse Filter
+      &nbsp;<span class="oi oi-collapse-up"></span></button>
 
-<form [formGroup]="mouse_filter_form" *ngIf="!loading">
-<div [class]="filterExpanded ? 'filterExpand':'filterCollapse'">
-  <div class="filters col-12">
-    <mat-form-field>
-      <label>Labs</label>
-      <input matInput type="text" name="lab_name" formControlName="lab_name_control"
-        [matAutocomplete]="autoCompLN" (focus)="stepBackMenu($event)">
-      <mat-autocomplete #autoCompLN="matAutocomplete">
-        <mat-option *ngFor="let lab of filteredLabNameOptions | async" [value]="lab" (click)="updateMenu()">
-          {{ lab }}</mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+    <form [formGroup]="mouse_filter_form" *ngIf="!loading">
+    <div [class]="filterExpanded ? 'filterExpand':'filterCollapse'">
+      <div class="filters col-12">
+        <mat-form-field>
+          <label>Labs</label>
+          <input matInput type="text" name="lab_name" formControlName="lab_name_control"
+            [matAutocomplete]="autoCompLN" (focus)="stepBackMenu($event)">
+          <mat-autocomplete #autoCompLN="matAutocomplete">
+            <mat-option *ngFor="let lab of filteredLabNameOptions | async" [value]="lab" (click)="updateMenu()">
+              {{ lab }}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-    <mat-form-field>
-      <label>Nickname</label>
-      <input matInput type="text" name="subject_nickname" formControlName="subject_nickname_control"
-        [matAutocomplete]="autoCompSN" (focus)="stepBackMenu($event)">
-      <mat-autocomplete #autoCompSN="matAutocomplete">
-        <mat-option *ngFor="let nickname of filteredSubjectNicknameOptions | async" [value]="nickname" (click)="updateMenu()">
-          {{ nickname }}</mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+        <mat-form-field>
+          <label>Nickname</label>
+          <input matInput type="text" name="subject_nickname" formControlName="subject_nickname_control"
+            [matAutocomplete]="autoCompSN" (focus)="stepBackMenu($event)">
+          <mat-autocomplete #autoCompSN="matAutocomplete">
+            <mat-option *ngFor="let nickname of filteredSubjectNicknameOptions | async" [value]="nickname" (click)="updateMenu()">
+              {{ nickname }}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-    <mat-form-field class="long">
-      <label>Mouse UUID</label>
-      <input matInput type="text" name="subject_uuid" formControlName="subject_uuid_control"
-        [matAutocomplete]="autoCompSUUID" (focus)="stepBackMenu($event)">
-      <mat-autocomplete #autoCompSUUID="matAutocomplete">
-        <mat-option *ngFor="let uuid of filteredSubjectUuidOptions | async" [value]="uuid" (click)="updateMenu()">
-          {{ uuid }}</mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+        <mat-form-field class="long">
+          <label>Mouse UUID</label>
+          <input matInput type="text" name="subject_uuid" formControlName="subject_uuid_control"
+            [matAutocomplete]="autoCompSUUID" (focus)="stepBackMenu($event)">
+          <mat-autocomplete #autoCompSUUID="matAutocomplete">
+            <mat-option *ngFor="let uuid of filteredSubjectUuidOptions | async" [value]="uuid" (click)="updateMenu()">
+              {{ uuid }}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-    <mat-form-field class="short">
-      <label>DOB</label>
-      <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker" [matDatepickerFilter]="miceBirthdayFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)" placeholder="DOB - i.e. 10/23/2018">
-      <mat-datepicker-toggle matSuffix [for]="DOBPicker"></mat-datepicker-toggle>
-      <mat-datepicker #DOBPicker></mat-datepicker>
-    </mat-form-field>
+        <mat-form-field class="short">
+          <label>DOB</label>
+          <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker" [matDatepickerFilter]="miceBirthdayFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)" placeholder="DOB - i.e. 10/23/2018">
+          <mat-datepicker-toggle matSuffix [for]="DOBPicker"></mat-datepicker-toggle>
+          <mat-datepicker #DOBPicker></mat-datepicker>
+        </mat-form-field>
 
-    <mat-form-field class="long">
-      <label>Project</label>
-      <input matInput type="text" name="projects" formControlName="projects_control" [matAutocomplete]="autoCompSPj"
-        (focus)="stepBackMenu($event)">
-      <mat-autocomplete #autoCompSPj="matAutocomplete">
-        <mat-option *ngFor="let proj of filteredProjectsOptions | async" [value]="proj" (click)="updateMenu()">
-          {{ proj }}</mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+        <mat-form-field class="long">
+          <label>Project</label>
+          <input matInput type="text" name="projects" formControlName="projects_control" [matAutocomplete]="autoCompSPj"
+            (focus)="stepBackMenu($event)">
+          <mat-autocomplete #autoCompSPj="matAutocomplete">
+            <mat-option *ngFor="let proj of filteredProjectsOptions | async" [value]="proj" (click)="updateMenu()">
+              {{ proj }}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-    <mat-form-field>
-      <label>Line</label>
-      <input matInput type="text" name="subject_line" formControlName="subject_line_control"
-        [matAutocomplete]="autoCompSL" (focus)="stepBackMenu($event)">
-      <mat-autocomplete #autoCompSL="matAutocomplete">
-        <mat-option *ngFor="let line of filteredSubjectLineOptions | async" [value]="line" (click)="updateMenu()">
-          {{ line }}</mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+        <mat-form-field>
+          <label>Line</label>
+          <input matInput type="text" name="subject_line" formControlName="subject_line_control"
+            [matAutocomplete]="autoCompSL" (focus)="stepBackMenu($event)">
+          <mat-autocomplete #autoCompSL="matAutocomplete">
+            <mat-option *ngFor="let line of filteredSubjectLineOptions | async" [value]="line" (click)="updateMenu()">
+              {{ line }}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-    <mat-form-field>
-      <label>User</label>
-      <input matInput type="text" name="responsible_user" formControlName="responsible_user_control" [matAutocomplete]="autoCompRU" (focus)="stepBackMenu($event)">
-      <mat-autocomplete #autoCompRU="matAutocomplete">
-        <mat-option *ngFor="let responsible_user of filteredResponsibleUserOptions | async" [value]="responsible_user" (click)="updateMenu()">{{ responsible_user }}</mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+        <mat-form-field>
+          <label>User</label>
+          <input matInput type="text" name="responsible_user" formControlName="responsible_user_control" [matAutocomplete]="autoCompRU" (focus)="stepBackMenu($event)">
+          <mat-autocomplete #autoCompRU="matAutocomplete">
+            <mat-option *ngFor="let responsible_user of filteredResponsibleUserOptions | async" [value]="responsible_user" (click)="updateMenu()">{{ responsible_user }}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-    <div class="mouse_sex_filter">
-      <label>Sex</label>
-      <div class="mouse_sex_menu" formArrayName="sex_control">
-        <mat-checkbox class="mouse_sex_menu_chbox" [name]="mice_menu.sex" [formControlName]="i"
-          *ngFor="let sex of mice_menu.sex | keyvalue; let i=index" [value]="sex.key" (change)="stepBackMenu($event)">
-          {{ sex.key }}</mat-checkbox>
+        <div class="mouse_sex_filter">
+          <label>Sex</label>
+          <div class="mouse_sex_menu" formArrayName="sex_control">
+            <mat-checkbox class="mouse_sex_menu_chbox" [name]="mice_menu.sex" [formControlName]="i"
+              *ngFor="let sex of mice_menu.sex | keyvalue; let i=index" [value]="sex.key" (change)="stepBackMenu($event)">
+              {{ sex.key }}</mat-checkbox>
+          </div>
+        </div>
+        
+      </div>
+      <div class="filter-buttons">
+        <div>
+          <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
+        </div>
+        <div>
+          <button mat-raised-button class="btn btn-reset" (click)="clearFilter()">Reset Filter</button>
+        </div>
+        <div class="vital_status_filter">
+          <mat-checkbox class="vital_status_chbox" [checked]="hideDeadMice" (change)="toggleMiceVitalStatus()">
+            Only show alive mice
+          </mat-checkbox>
+        </div>
+        <div class="ready4delay_filter">
+          <mat-checkbox class="ready4delay_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
+            Only show mice with ready for delay training status
+          </mat-checkbox>
+        </div>
+        <div class="spinning_brain_filter">
+          <mat-checkbox class="spinning_brain_chbox" [checked]="onlyShowMiceWithSpinningBrain" (change)="toggleSpinningBrainViewStatus()">
+            Only show mice with resolved probe trajectories.
+          </mat-checkbox>
+        </div>
       </div>
     </div>
-    
+    </form>
+    <div class="loading-icon" *ngIf="loading">
+      <img src="assets/images/loading_icon.gif">
+    </div>
+
+    <div class="table-container">
+    <table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
+      <ng-container matColumnDef="lab_name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
+        <td mat-cell *matCellDef="let mouse"> {{mouse.lab_name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="subject_nickname">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse Nickname </th>
+        <td mat-cell *matCellDef="let mouse"> {{mouse.subject_nickname}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="projects">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+        <td mat-cell *matCellDef="let mouse"> {{mouse.projects}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ready4delay">
+        <th mat-header-cell *matHeaderCellDef> Ready for Delay&nbsp;&nbsp;</th>
+        <td mat-cell *matCellDef="let mouse" class="to-center">
+          <div *ngIf="mouse.ready4delay > 0"><span class="oi oi-lock-unlocked"></span></div>
+          <div *ngIf="mouse.ready4delay == 0"></div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="subject_line">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Line </th>
+        <td mat-cell *matCellDef="let mouse"> {{mouse.subject_line}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="death_date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Vital Status </th>
+        <td mat-cell *matCellDef="let mouse"> {{mouse.death_date=='0'? 'Alive' : 'Deceased (' + mouse.death_date + ')' }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="responsible_user">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
+        <td mat-cell *matCellDef="let mouse"> {{mouse.responsible_user}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="subject_birth_date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse DOB </th>
+        <td mat-cell *matCellDef="let mouse"> {{mouse.subject_birth_date }} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="spinning_brain">
+        <th mat-header-cell *matHeaderCellDef> Resolved Probe Trajectories&nbsp;&nbsp;&nbsp;</th>
+        <td mat-cell *matCellDef="let mouse" class="to-center">
+          <div *ngIf="mouse.spinningbrain > 0"><span class="oi oi-task"></span></div>
+          <div *ngIf="mouse.spinningbrain == 0"></div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="subject_uuid">
+        <th mat-header-cell *matHeaderCellDef> Mouse UUID </th>
+        <td mat-cell *matCellDef="let mouse"> {{mouse.subject_uuid}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sex">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Sex </th>
+        <td mat-cell *matCellDef="let mouse" class="to-center"> {{mouse.sex}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns; let mouse" routerLink="/mouse/{{mouse?.subject_uuid}}"></tr>
+    </table>
+    </div>
+
+    <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>
   </div>
-  <div class="filter-buttons">
-    <div>
-      <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
-    </div>
-    <div>
-      <button mat-raised-button class="btn btn-reset" (click)="clearFilter()">Reset Filter</button>
-    </div>
-    <div class="vital_status_filter">
-      <mat-checkbox class="vital_status_chbox" [checked]="hideDeadMice" (change)="toggleMiceVitalStatus()">
-        Only show alive mice
-      </mat-checkbox>
-    </div>
-    <div class="ready4delay_filter">
-      <mat-checkbox class="ready4delay_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
-        Only show mice with ready for delay training status
-      </mat-checkbox>
-    </div>
-    <div class="spinning_brain_filter">
-      <mat-checkbox class="spinning_brain_chbox" [checked]="onlyShowMiceWithSpinningBrain" (change)="toggleSpinningBrainViewStatus()">
-        Only show mice with resolved probe trajectories.
-      </mat-checkbox>
-    </div>
-  </div>
 </div>
-</form>
-<div class="loading-icon" *ngIf="loading">
-  <img src="assets/images/loading_icon.gif">
-</div>
-
-<div class="table-container">
-<table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
-  <ng-container matColumnDef="lab_name">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.lab_name}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="subject_nickname">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse Nickname </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.subject_nickname}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="projects">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.projects}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="ready4delay">
-    <th mat-header-cell *matHeaderCellDef> Ready for Delay&nbsp;&nbsp;</th>
-    <td mat-cell *matCellDef="let mouse" class="to-center">
-      <div *ngIf="mouse.ready4delay > 0"><span class="oi oi-lock-unlocked"></span></div>
-      <div *ngIf="mouse.ready4delay == 0"></div>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="subject_line">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Line </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.subject_line}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="death_date">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Vital Status </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.death_date=='0'? 'Alive' : 'Deceased (' + mouse.death_date + ')' }}</td>
-  </ng-container>
-  
-  <ng-container matColumnDef="responsible_user">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.responsible_user}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="subject_birth_date">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse DOB </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.subject_birth_date }} </td>
-  </ng-container>
-  
-  <ng-container matColumnDef="spinning_brain">
-    <th mat-header-cell *matHeaderCellDef> Resolved Probe Trajectories&nbsp;&nbsp;&nbsp;</th>
-    <td mat-cell *matCellDef="let mouse" class="to-center">
-      <div *ngIf="mouse.spinningbrain > 0"><span class="oi oi-task"></span></div>
-      <div *ngIf="mouse.spinningbrain == 0"></div>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="subject_uuid">
-    <th mat-header-cell *matHeaderCellDef> Mouse UUID </th>
-    <td mat-cell *matCellDef="let mouse"> {{mouse.subject_uuid}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="sex">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Sex </th>
-    <td mat-cell *matCellDef="let mouse" class="to-center"> {{mouse.sex}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns; let mouse" routerLink="/mouse/{{mouse?.subject_uuid}}"></tr>
-</table>
-</div>
-
-<mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>
-</div>
-
