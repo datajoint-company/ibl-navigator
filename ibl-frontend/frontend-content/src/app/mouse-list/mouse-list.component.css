@@ -132,6 +132,10 @@ mat-checkbox.mouse_sex_menu_chbox {
     margin-right: 12px;
 }
 
+mat-checkbox.mouse_sex_menu_chbox#sexU {
+    visibility: hidden;
+}
+
 .mouse_sex_menu{
     display: flex;
     flex-direction: row;

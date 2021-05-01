@@ -120,7 +120,7 @@
           <div class="mouse_sex_filter">
             <label>Sex</label>
             <div class="mouse_sex_menu" formArrayName="sex"> 
-              <mat-checkbox class="mouse_sex_menu_chbox" [name]="uniqueValuesForEachAttribute.sex" [formControlName]="i"
+              <mat-checkbox class="mouse_sex_menu_chbox" [name]="uniqueValuesForEachAttribute.sex" [formControlName]="i" [id]="sex.key==='U'?'sexU':''"
                 *ngFor="let sex of uniqueValuesForEachAttribute.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()">
                 {{ sex.key }}
               </mat-checkbox>

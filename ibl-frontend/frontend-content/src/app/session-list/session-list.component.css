@@ -216,6 +216,11 @@ button:hover:not(.treeChevron) {
 mat-checkbox.mouse_sex_menu_chbox {
     margin-right: 12px;
 }
+
+mat-checkbox.mouse_sex_menu_chbox#sexU {
+    visibility: hidden;
+}
+
 .mouse_sex_menu_chbox label.mat-checkbox-layout {
     margin-bottom: 0px;
 }
