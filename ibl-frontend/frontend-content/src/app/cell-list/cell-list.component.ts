@@ -348,8 +348,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     * @param sessionInfo primary keys for session
     **/  
     this.cellListService.retrieveProbeInfo(this.sessionInfo).subscribe((probes: Array<any>) => {
-      console.log('probes from probeInsertion: ', probes)
-      this.probeInfo = probes
+      let probeLookup = {}
+      // making the probeInfo to become a lookup by probe_idx (mostly needed for the probe_label)
+      for (let probe of probes) {
+        probeLookup[probe['probe_idx']] = probe
+      }
+      this.probeInfo = probeLookup;
     })
 
     /**
@@ -359,7 +363,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.cellListService.retrieveCoronalSections(this.sessionInfo)
     this.coronalSectionsSubscription = this.cellListService.getCoronalSectionsLoadedListener()
       .subscribe((coronalSections: Array<Object>) => {
-        console.log('coronal sections: ', coronalSections)
         // once coronal sections come back successfully, store and extract just the probe indexes for rendering
         this.coronalSections = coronalSections;
         for (let section of coronalSections) {
@@ -388,7 +391,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
             probeIndexListing.push(entry['probe_idx']);
           }
           this.probeIndex = Math.min(...probeIndexListing);
-          console.log('probe index listing: ', probeIndexListing)
 
           for (let entry of Object.values(cellListData)) {
             if (!this.probeIndices.includes(entry['probe_idx'])) {
@@ -655,7 +657,6 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.probeTrajectorySubscription = this.cellListService.getProbeTrajectoryLoadedListener()
             .subscribe((probeTraj) => {
               if (probeTraj && probeTraj[0]) {
-                console.log('probeTrajectory: ', probeTraj[0])
                 // trajectory_source was formerly pulled from data_source table but now from provenance table as provenance_description
                 // this.probeTrajInfo['trajectory_source'] = probeTraj[0].insertion_data_source; 
                 this.probeTrajInfo['trajectory_source'] = probeTraj[0].provenance_description; // 
