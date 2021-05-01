@@ -11,13 +11,24 @@ h4 {
 
 .home-container {
     width: 100vw;
+    position: relative;
 }
+
+.home-top-container,
+.home-light-container,
+.home-shaded-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .home-top-container {  
     background-image: url("/assets/images/home_ibl_brainbow.jpg");
     background-repeat: no-repeat;
-    background-position: right center;
+    background-position: center;
     background-size: cover;
-    height: 600px;
+    /* height: 600px; */
 }
 
 .top-text-container {
@@ -44,16 +55,21 @@ ol a:hover {
 }
 
 .code-style {
-    font-family: 'Source Code Pro';
+    font-family: 'Source Code Pro', monospace, sans-serif;
+    color:rgb(32, 31, 34);
+    background-color: rgb(245, 244, 244);
+    padding: 2px 8px;
+    border: 1px solid gray;
+    border-radius: 2px;
 }
 
 .home-shaded-container,
 .home-light-container {
     height: auto;
+    padding-bottom: 42px;
 }
 
 .home-light-container {
-    padding-bottom: 35px;
     border-bottom: 1px solid lightgray;
 }
 
@@ -71,7 +87,8 @@ ol a:hover {
 .detail-container ol,
 .detail-container ul {
     font-size: 1.15rem;
-    list-style-position: inside;
+    list-style-position: outside;
+    margin-left: 24px;
 }
 .figures {
     display: inline-flex;
@@ -148,6 +165,11 @@ ol {
     .detail-container h3 {
         font-size: 1.5rem;
     }
+
+    .detail-container ol,
+    .detail-container ul {
+        margin-left: 18px;
+    }
     .top-text-details,
     .detail-container .detail-text,
     .detail-text * {
@@ -221,7 +243,7 @@ ol {
 /* L (992px to 1200px) */
 @media only screen and (min-width: 993px) and (max-width: 1200px) {
     .home-shaded-container {
-        min-height: 800px;
+        /* min-height: 800px; */
     }
     .top-text-container {
         padding: 160px 120px 80px 80px;
@@ -278,8 +300,8 @@ ol {
 /* XXL (1600px to 2200px) */
 @media only screen and (min-width: 1601px) and (max-width: 2200px) {
     .home-top-container {
-        background-position: -150px;
-        height: auto;
+        /* background-position: -150px; */
+        /* height: auto; */
     }
     .home-shaded-container,
     .home-light-container {
@@ -303,24 +325,28 @@ ol {
 /* XXXL (2200px and up) */
 @media only screen and (min-width: 2201px) {
     .home-top-container {
-        background-position: -400px;
+        /* background-position: -400px; */
+    }
+
+    .home-top-container,
+    .home-light-container,
+    .home-shaded-container {
+        margin: 0 auto;
         height: auto;
     }
-    .home-shaded-container,
-    .home-light-container {
-        height: auto;
-    }
+
     .top-text-container,
     .detail-container {
         max-width: 1800px;
     }
+
     .top-title {
-        font-size: 3rem;
+        font-size: 2.75rem;
     }
     .top-text-details,
     .detail-container .detail-text,
     .detail-text * {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 
 }
