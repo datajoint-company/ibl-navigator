@@ -93,20 +93,22 @@
         <div>
           <button mat-raised-button class="btn btn-reset" (click)="clearFilter()">Reset Filter</button>
         </div>
-        <div class="vital_status_filter">
-          <mat-checkbox class="vital_status_chbox" [checked]="hideDeadMice" (change)="toggleMiceVitalStatus()">
-            Only show alive mice
-          </mat-checkbox>
-        </div>
-        <div class="ready4delay_filter">
-          <mat-checkbox class="ready4delay_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
-            Only show mice with ready for delay training status
-          </mat-checkbox>
-        </div>
-        <div class="spinning_brain_filter">
-          <mat-checkbox class="spinning_brain_chbox" [checked]="onlyShowMiceWithSpinningBrain" (change)="toggleSpinningBrainViewStatus()">
-            Only show mice with resolved probe trajectories.
-          </mat-checkbox>
+        <div class="checkbox-filters">
+          <div class="vital_status_filter">
+            <mat-checkbox class="vital_status_chbox" [checked]="hideDeadMice" (change)="toggleMiceVitalStatus()">
+              Only show alive mice
+            </mat-checkbox>
+          </div>
+          <div class="ready4delay_filter">
+            <mat-checkbox class="ready4delay_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
+              Only show mice with ready for delay training status
+            </mat-checkbox>
+          </div>
+          <div class="spinning_brain_filter">
+            <mat-checkbox class="spinning_brain_chbox" [checked]="onlyShowMiceWithSpinningBrain" (change)="toggleSpinningBrainViewStatus()">
+              Only show mice with resolved probe trajectories.
+            </mat-checkbox>
+          </div>
         </div>
       </div>
     </div>

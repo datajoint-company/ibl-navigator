@@ -98,6 +98,11 @@ mat-form-field.short {
     width: 100%;
 }
 
+.filter-buttons .checkbox-filters {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .btn-reset {
     border: 2px solid rgb(180, 69, 134) !important;
 }
