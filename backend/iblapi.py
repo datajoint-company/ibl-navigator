@@ -113,7 +113,7 @@ reqmap = {
     'sessionpsych': plotting_behavior.SessionPsychCurve,
     'sessionRTC': plotting_behavior.SessionReactionTimeContrast,
     'sessionRTTN': plotting_behavior.SessionReactionTimeTrialNumber,
-    'waterweight': plotting_behavior.CumulativeSummary.WaterWeight,
+    # 'waterweight': plotting_behavior.CumulativeSummary.WaterWeight,
     'TCsessionduration': plotting_behavior.CumulativeSummary.TrialCountsSessionDuration,
     'performanceRT': plotting_behavior.CumulativeSummary.PerformanceReactionTime,
     'contrastheatmap': plotting_behavior.CumulativeSummary.ContrastHeatmap,
@@ -296,31 +296,31 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             keep_all_rows=True)
 
         q = subject.Subject() * dead_mice * spinning_brain * lab_name * user_name * projects * ready4delay & args & proj_restr
-    elif subpath == 'dailysummary':
-        # find the latest summary geneartion for each lab
-        latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
-            plotting_behavior.DailyLabSummary, latest_summary_date='max(last_session_time)') & 'last_session_time = latest_summary_date'
-        # identify mouse summary corresponding to the latest lab summary
-        mouse_we_care = plotting_behavior.DailyLabSummary.SubjectSummary & latest_summary
+    # elif subpath == 'dailysummary':
+    #     # find the latest summary geneartion for each lab
+    #     latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
+    #         plotting_behavior.DailyLabSummary, latest_summary_date='max(last_session_time)') & 'last_session_time = latest_summary_date'
+    #     # identify mouse summary corresponding to the latest lab summary
+    #     mouse_we_care = plotting_behavior.DailyLabSummary.SubjectSummary & latest_summary
 
-        proj_restr = None
-        for e in args:
-            if 'projects' in e and e['projects'] != 'unassigned':
-                proj_restr = {'subject_project': e.pop('projects')}
-        if proj_restr is not None:
-            proj_restr = (subject.SubjectProject & proj_restr).proj()
-        else:
-            proj_restr = {}
+    #     proj_restr = None
+    #     for e in args:
+    #         if 'projects' in e and e['projects'] != 'unassigned':
+    #             proj_restr = {'subject_project': e.pop('projects')}
+    #     if proj_restr is not None:
+    #         proj_restr = (subject.SubjectProject & proj_restr).proj()
+    #     else:
+    #         proj_restr = {}
 
-        projects = mouse_we_care.aggr(subject.SubjectProject, projects='GROUP_CONCAT(DISTINCT subject_project'
-                                    ' ORDER BY subject_project SEPARATOR ",")', keep_all_rows=True).proj(projects='IFNULL(projects, "unassigned")')
+    #     projects = mouse_we_care.aggr(subject.SubjectProject, projects='GROUP_CONCAT(DISTINCT subject_project'
+    #                                 ' ORDER BY subject_project SEPARATOR ",")', keep_all_rows=True).proj(projects='IFNULL(projects, "unassigned")')
 
-        # get the latest plots
-        plots = plotting_behavior.CumulativeSummary.WaterWeight * plotting_behavior.CumulativeSummary.ContrastHeatmap * \
-            plotting_behavior.CumulativeSummary.TrialCountsSessionDuration * \
-            plotting_behavior.CumulativeSummary.PerformanceReactionTime & plotting_behavior.SubjectLatestDate
-        # find latest plots for mouse with summary
-        q = plots * mouse_we_care * projects & args & proj_restr
+    #     # get the latest plots
+    #     plots = plotting_behavior.CumulativeSummary.WaterWeight * plotting_behavior.CumulativeSummary.ContrastHeatmap * \
+    #         plotting_behavior.CumulativeSummary.TrialCountsSessionDuration * \
+    #         plotting_behavior.CumulativeSummary.PerformanceReactionTime & plotting_behavior.SubjectLatestDate
+    #     # find latest plots for mouse with summary
+    #     q = plots * mouse_we_care * projects & args & proj_restr
     elif subpath == 'clusternavplot':
         # print('fetching cluster plot info...')
 
