@@ -9,11 +9,10 @@ tr.mat-row:hover {
 }
 
 .loading-icon {
-    text-align: center;
-    /* position: absolute;
-    margin-left: 40%;
-    margin-top: 37px;
-    z-index: 999; */
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
 }
 
 .loading-icon img {
@@ -21,7 +20,11 @@ tr.mat-row:hover {
 }
 
 .subject-list-container {
+    position: relative;
     padding-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 h4 {
@@ -38,10 +41,10 @@ form {
     width: 100%;
 } 
 
-.filterExpand {
-    height: auto;
-    visibility: visible;
+button.filter-visibility {
+    width: fit-content;
 }
+
 .filterCollapse,
 .filterCollapse * {
     height: 0;
@@ -90,15 +93,20 @@ mat-form-field.short {
     width: 190px;
 }
 
-.filter-buttons {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: row;
+.filter-button-checkbox-area {
+    margin-top: 24px;
     float: left;
     width: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
-.filter-buttons .checkbox-filters {
+.filter-button-checkbox-area .filter-buttons {
+     display: flex;
+     flex-direction: row;
+ }
+
+.filter-button-checkbox-area .checkbox-filters {
     display: flex;
     flex-wrap: wrap;
 }
@@ -146,12 +154,36 @@ mat-checkbox.mouse_sex_menu_chbox#sexU {
     flex-direction: row;
 };
 
+/* for different screen sizes */
+/* M (768px and up) */
+@media only screen and (min-width: 768px) {
+} 
 
+/* L (992px and up) */
+@media only screen and (min-width: 992px) {
+} 
 
+/* XL (1200px and up) */
+@media only screen and (min-width: 1200px) {
+}
+
+@media only screen and (max-width: 1383px) {
+    table {
+        overflow-x: auto;
+    }
+}
 /* XXXL (2200px and up) */
 @media only screen and (min-width: 2200px) {
-    .loading-icon {
-        margin-left: 700px;
+}
+
+/* XS and S (768px and down) */
+@media only screen and (max-width: 768px) {
+    .filter-button-checkbox-area {
+        display: flex;
+        flex-direction: column;
+    }
+    .filter-button-checkbox-area .checkbox-filters {
+        margin-top: 16px;
     }
 }
 

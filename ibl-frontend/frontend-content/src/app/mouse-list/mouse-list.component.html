@@ -1,11 +1,11 @@
-<div class="col-xl-10 offset-xl-1 non-landing-page">
+<div class="non-landing-page">
   <div class="subject-list-container">
     <h4>
       List of Mice
     </h4>
-    <button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Expand Filter
+    <button mat-raised-button class="btn filter-visibility" *ngIf="!filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Expand Filter
       &nbsp;<span class="oi oi-expand-down"></span></button>
-    <button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Collapse Filter
+    <button mat-raised-button class="btn filter-visibility" *ngIf="filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Collapse Filter
       &nbsp;<span class="oi oi-collapse-up"></span></button>
 
     <form [formGroup]="mouse_filter_form" *ngIf="!loading">
@@ -86,12 +86,14 @@
         </div>
         
       </div>
-      <div class="filter-buttons">
-        <div>
-          <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
-        </div>
-        <div>
-          <button mat-raised-button class="btn btn-reset" (click)="clearFilter()">Reset Filter</button>
+      <div class="filter-button-checkbox-area">
+        <div class="filter-buttons">
+          <div>
+            <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
+          </div>
+          <div>
+            <button mat-raised-button class="btn btn-reset" (click)="clearFilter()">Reset Filter</button>
+          </div>
         </div>
         <div class="checkbox-filters">
           <div class="vital_status_filter">

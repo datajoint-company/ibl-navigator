@@ -3,8 +3,8 @@
     <h4>
       List of Sessions
     </h4>
-    <button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="isLoading" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
-    <button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="isLoading" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
+    <button mat-raised-button class="btn filter-visibility" *ngIf="!filterExpanded" [disabled]="isLoading" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
+    <button mat-raised-button class="btn filter-visibility" *ngIf="filterExpanded" [disabled]="isLoading" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
 
 
     <form [formGroup]="session_filter_form" [class]="isLoading ? 'loading': ''">
@@ -126,7 +126,7 @@
               </mat-checkbox>
             </div>
           </div>
-          
+
           <mat-form-field>
             <label>Line</label>
             <input matInput type="text" name="subject_line" formControlName="subject_line" [matAutocomplete]="autoCompSL"
@@ -201,33 +201,33 @@
       <br>
       <div *ngIf="filterExpanded" class="form-submit-button-area">
         <div>
-          <button mat-raised-button class="btn" (click)="handleApplyFilterButtonPress()">Apply Filter</button>
+          <div>
+            <button mat-raised-button class="btn" (click)="handleApplyFilterButtonPress()">Apply Filter</button>
+          </div>
+          <div>
+            <button mat-raised-button class="btn btn-reset" (click)="handleResetFilterButtonPress()">Reset Filter</button>
+          </div>
+          <div>
+            <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>
+          </div>
         </div>
-        <div>
-          <button mat-raised-button class="btn btn-reset" (click)="handleResetFilterButtonPress()">Reset Filter</button>
-        </div>
-        <div>
-          <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>
-        </div>
-        <div>
-          <div class="nplot_status_filter">
+        <div class="checkbox-filters">
+          <div class="chbox-filter">
             <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
               Only show session with behavior plots
             </mat-checkbox>
           </div>
-          <div class="nprobe_status_filter">
+          <div class="chbox-filter">
             <mat-checkbox class="nprobe_status_chbox" [checked]="hideMissingEphys" (change)="toggleNprobeStatus()">
               Only show session with ephys data
             </mat-checkbox>
           </div>
-        </div>
-        <div>
-          <div class="nprobe_status_filter">
+          <div class="chbox-filter">
             <mat-checkbox class="nprobe_status_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
               Only show session with mouse ready for delay
             </mat-checkbox>
           </div>
-          <div class="nprobe_status_filter">
+          <div class="chbox-filter">
             <mat-checkbox class="nprobe_status_chbox" [checked]="hideNG4BrainMap" (change)="toggleG4BMviewStatus()">
               Only show session good for brainwide map
             </mat-checkbox>

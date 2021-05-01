@@ -1,5 +1,9 @@
 .session-list-container {
+    position: relative;
     padding-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 h4 {
@@ -19,9 +23,8 @@ form.loading {
     display: none;
 }
 
-.filterExpand {
-    height: auto;
-    visibility: visible;
+button.filter-visibility {
+    width: fit-content;
 }
 
 .filterCollapse,
@@ -183,20 +186,20 @@ button:hover:not(.treeChevron) {
 }
 
 .btn-reset {
-    border: 2px solid rgb(180, 69, 134);
+    border: 2px solid rgb(180, 69, 134) !important;
 }
 .btn-reset:hover {
-    border: 2px solid rgb(180, 69, 134);
-    background-color: rgb(180, 69, 134);
-    color: white;
+    border: 2px solid rgb(180, 69, 134) !important;
+    background-color: rgb(180, 69, 134) !important;
+    color: white !important;
 }
 
 .btn-refresh {
-    border: 2px solid rgb(167, 163, 165);
+    border: 2px solid rgb(167, 163, 165) !important;
 }
 .btn-refresh:hover {
-    border: 2px solid rgb(167, 163, 165);
-    background-color: rgb(167, 163, 165);
+    border: 2px solid rgb(167, 163, 165) !important;
+    background-color: rgb(167, 163, 165) !important;
     color: white;
 }
 
@@ -233,12 +236,13 @@ mat-checkbox.mouse_sex_menu_chbox#sexU {
     flex-direction: row;
 }
 
-.nplot_status_filter {
-    margin-left: 15px;
-    margin-top: 7px;
+.form-submit-button-area .checkbox-filters {
+    display: flex;
+    flex-wrap: wrap;
+    
 }
 
-.nprobe_status_filter {
+.chbox-filter {
     margin-left: 15px;
     margin-top: 7px;
 }
@@ -321,25 +325,24 @@ button.treeChevron {
 /* XS and S (768px and down) */
 @media only screen and (max-width: 768px) {
     .form-submit-button-area {
-        display: block;
+        display: flex;
+        flex-direction: column;
     }
     .form-submit-button-area button {
         display: inline-flex;
         flex-direction: row;
     }
-    .nplot_status_filter {
-        padding-top: 50px;
+    .form-submit-button-area .checkbox-filters {
+        margin-top: 16px;
     }
 } 
 
 /* M (768px and up) */
 @media only screen and (min-width: 768px) {
- 
 } 
 
 /* L (992px and up) */
 @media only screen and (min-width: 992px) {
-
 } 
 
 /* XL (1200px and up) */
@@ -359,9 +362,7 @@ button.treeChevron {
 
 /* XXXL (2200px and up) */
 @media only screen and (min-width: 2200px) {
-    .loading-icon {
-        margin-left: 700px;
-    }
+
 }
 
 
