@@ -47,17 +47,17 @@ ol a:hover {
     font-family: 'Source Code Pro';
 }
 
-.home-middle-container,
-.home-bottom-container {
+.home-shaded-container,
+.home-light-container {
     height: auto;
 }
 
-.home-bottom-container {
+.home-light-container {
     padding-bottom: 35px;
     border-bottom: 1px solid lightgray;
 }
 
-.home-middle-container {
+.home-shaded-container {
     background-color: #ecececc0;
 }
 
@@ -131,8 +131,8 @@ ol {
         background-size: 200%;
         background-position: center;
     }
-    .home-middle-container,
-    .home-bottom-container {
+    .home-shaded-container,
+    .home-light-container {
         height: auto;
     }
     .top-text-container {
@@ -180,8 +180,8 @@ ol {
         background-size: 175%;
         background-position: center bottom;
     }
-    .home-middle-container,
-    .home-bottom-container {
+    .home-shaded-container,
+    .home-light-container {
         height: auto;
         background-size: 200%;
     }
@@ -220,7 +220,7 @@ ol {
 
 /* L (992px to 1200px) */
 @media only screen and (min-width: 993px) and (max-width: 1200px) {
-    .home-middle-container {
+    .home-shaded-container {
         min-height: 800px;
     }
     .top-text-container {
@@ -281,8 +281,8 @@ ol {
         background-position: -150px;
         height: auto;
     }
-    .home-middle-container,
-    .home-bottom-container {
+    .home-shaded-container,
+    .home-light-container {
         height: auto;
     }
     .top-text-container,
@@ -306,8 +306,8 @@ ol {
         background-position: -400px;
         height: auto;
     }
-    .home-middle-container,
-    .home-bottom-container {
+    .home-shaded-container,
+    .home-light-container {
         height: auto;
     }
     .top-text-container,
