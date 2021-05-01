@@ -39,15 +39,13 @@
   </div>
   <div *ngIf="probeTrajInfo && probeTrajInfo.LM">
     <b>LM</b>: {{probeTrajInfo.LM}}, <b>AP</b>: {{probeTrajInfo.AP}}, <b>z</b>: {{probeTrajInfo.z}}, <b>depth</b>: {{probeTrajInfo.depth}}, 
-    <b>angle</b>: {{probeTrajInfo.angle}}, <b>hemisphere</b>: {{probeTrajInfo.hemisphere}}, <b>trajectory source</b>: {{probeTrajInfo.trajectory_source}}
+    <b>angle</b>: {{probeTrajInfo.angle}}, <b>hemisphere</b>: {{probeTrajInfo.hemisphere}}
   </div>
   <div *ngIf="!probeTrajInfo || !probeTrajInfo.LM">
     <p>No probe trajectory information found for the selected probe.</p>
   </div>
   <div *ngIf="goodClusters.length > 0">Good Clusters ({{goodClusters.length}})/ All Clusters ({{cellsByProbeIns.length}})</div>
-  <div style="background-color: rgb(151, 9, 4); width: fit-content; padding: 0 8px;" *ngIf="plot_data_processed && plot_data_processed[0] && probeTrajInfo && probeTrajInfo.trajectory_source !== 'Ephys aligned histology track'">
-    <b style="color:white;" >Temporary plot alignment: NOT based on ephys-aligned histology</b>
-  </div>
+
 
   <span class="cluster-nav-filters">
     <!-- used for debugging the coronal section probe selectors -->
