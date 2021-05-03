@@ -1,4 +1,4 @@
-<div class="col-xl-10 offset-xl-1 non-landing-page">
+<div class="non-landing-page">
   <div class="mouse-info-container">
     <div class="mouse-title">
       <h5>Mouse <{{ mouse?.subject_nickname }}> Info</h5>
@@ -58,7 +58,7 @@
           <td>{{ mouse?.subject_description }}</td>
         </tr>
       </table>
-      <div class="col-lg-3" *ngIf="mouse">
+      <div class="spinning-brain-container col-xs-12 col-sm-6 col-lg-4" *ngIf="mouse">
         <app-spinning-brain [mouseInfo]="mouse"></app-spinning-brain>
       </div>
     </div>
