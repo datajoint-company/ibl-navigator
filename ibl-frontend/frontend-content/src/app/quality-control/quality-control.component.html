@@ -1,4 +1,4 @@
-<div class="col-xl-10 offset-xl-1 non-landing-page">
+<div class="non-landing-page">
   <div class="session-info-container">  
     <div class="session-header"><h5>Quality Control</h5></div>
     <div class="row session-info-table">
@@ -10,7 +10,7 @@
           <th>Subject Nickname</th><td>{{ subject_nickname }}</td>
         </tr>
         <tr>
-          <th>Session Project</th><td>{{ session_project}}</td>
+          <th>Session Project</th><td>{{ session_project }}</td>
         </tr>
         <tr>
           <th>Task Protocol</th><td>{{ protocol }}</td>
@@ -31,6 +31,9 @@
     <p>probe switch event: {{probeSwitch | json}}</p> -->
     <div class="driftmap-section" *ngIf="driftmapInfo">
       <app-driftmap [driftmapInfo]="driftmapInfo" (probeSwitch)="probeChange($event)"></app-driftmap>
+    </div>
+    <div class="driftmap-section" *ngIf="!driftmapInfo">
+      <p>Quality control driftmap plot information unavailable</p>
     </div>
   </div>
 </div>
