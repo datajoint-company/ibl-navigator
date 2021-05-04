@@ -183,6 +183,17 @@ td span.oi {
     margin-top: -12px;
 }
 
+.raster-psth-area.row {
+    border: 1px solid red;
+    width: 100%;
+    display: flex;
+}
+
+.raster-psth-area.row:first-child {
+    border: 1px solid green;
+    width: 50%;
+}
+
 .row-long {
     width: 100vw;
     display: flex;

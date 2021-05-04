@@ -213,12 +213,12 @@
     </div>
   
   
-    <div class="row">
-      <div *ngIf="rasterLookup[clickedClusterId]">
+    <div class="raster-psth-area row">
+      <div class="raster" *ngIf="rasterLookup[clickedClusterId]">
         <plotly-plot [data]="rasterLookup[clickedClusterId]['data']" [layout]="rasterLookup[clickedClusterId]['layout']" [config]="rasterLookup[clickedClusterId]['config']"></plotly-plot> 
       </div>
       
-      <div *ngIf="psthLookup[clickedClusterId]">
+      <div class="psth" *ngIf="psthLookup[clickedClusterId]">
         <plotly-plot [data]="psthLookup[clickedClusterId]['data']" [layout]="psthLookup[clickedClusterId]['layout']" [config]="psthLookup[clickedClusterId]['config']"></plotly-plot> 
       </div>
     </div>
