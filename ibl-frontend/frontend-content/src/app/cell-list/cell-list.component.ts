@@ -2155,16 +2155,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         y: currentTemplate.layout.title.y,
       };
       this.rasterLookup[raster['cluster_id']]['layout']['yaxis']['range'] = [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
-      this.rasterLookup[raster['cluster_id']]['layout']['width'] = 658;
+      this.rasterLookup[raster['cluster_id']]['layout']['width'] = 750; // set default width to longer size for plots with long legends;
       this.rasterLookup[raster['cluster_id']]['layout']['height'] = 420;
 
       if (this.sortType === 'trial_id') {
-        this.rasterLookup[raster['cluster_id']]['layout']['width'] = 530;
+        this.rasterLookup[raster['cluster_id']]['layout']['width'] = 530; // override size for plot known to have zero legend;
       }
 
       if (this.sortType === 'contrast') {   
         this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']['tickvals'] = raster['plot_contrast_tick_pos'];
         this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']['ticktext'] = raster['plot_contrasts'];
+        this.rasterLookup[raster['cluster_id']]['layout']['width'] = 600; // override size for plot known to have zero legend + extra y-axis labels;
       }
 
 
