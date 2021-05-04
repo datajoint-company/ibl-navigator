@@ -22,7 +22,7 @@ COPY --chown=dja:anaconda ["notebooks", "/src/iblapi/notebooks"]
 COPY --chown=dja:anaconda ["./*.txt", "./*.sh", "./*.rst", "./*.py", "/src/iblapi/"]
 
 RUN \
-    pip install -e /src/iblapi && \
+    pip install --no-cache-dir -e /src/iblapi && \
     chmod +x /src/iblapi/run-ibl-api.prod.sh && \
     chmod +x /src/iblapi/run-ibl-api.dev.sh
 
