@@ -21,7 +21,11 @@ export class FilterStoreService {
   summaryPageIndexInfo: number;
   summaryPageSizeInfo: number;
   summarySortInfo: Object;
-  constructor() { }
+
+  hideMissingPlots: boolean;
+  hideMissingEphys: boolean;
+  hideNG4BrainMap: boolean;
+  hideNotReady4Delay: boolean;
 
   // ========= Session List Filter Sticky ===============//
   storeSessionFilter(filterForm) {

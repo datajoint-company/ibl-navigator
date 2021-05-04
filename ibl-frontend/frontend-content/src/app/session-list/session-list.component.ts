@@ -242,16 +242,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
 
       // Check storage to see if there is anything there
-      
-      // Check if paginiator info is there
-      /*
-      if (this.filterStoreService.sessionPageIndexInfo !== undefined && this.filterStoreService.sessionPageSizeInfo !== undefined) {
-        console.log('PageIndex and PAge size is valid', this.filterStoreService.sessionPageIndexInfo, this.filterStoreService.sessionPageSizeInfo)
-        // Both are not undefined thus set the page index and size
-        this.paginator.pageIndex = this.filterStoreService.sessionPageIndexInfo;
-        this.paginator.pageSize = this.filterStoreService.sessionPageSizeInfo;
-      }
-      */
       // Check for paginator
       if (this.filterStoreService.sessionPaginator) {
         this.paginator.pageSize = this.filterStoreService.sessionPaginator['pageSize'];
@@ -264,6 +254,24 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.sort.active = this.filterStoreService.sessionSortInfo['active'];
         this.sort.direction = this.filterStoreService.sessionSortInfo['direction'];
       }
+
+      // Check for the hide buttons
+      if (this.filterStoreService.hideMissingEphys) {
+        this.hideMissingEphys = true;
+      }
+
+      if (this.filterStoreService.hideMissingPlots) {
+        this.hideMissingPlots = true;
+      }
+
+      if (this.filterStoreService.hideNG4BrainMap) {
+        this.hideNG4BrainMap = true;
+      }
+
+      if (this.filterStoreService.hideNotReady4Delay) {
+        this.hideNotReady4Delay = true;
+      }
+      
 
       // Check for preloaded sessions
       if (this.filterStoreService.loadedSessions) {
@@ -298,6 +306,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
         
         this.dataSource.paginator = this.paginator
       }
+
+      this.updateSelection();
     });
 
     // Brain tree is part of the filter, this code seems to be independent of the other filter construction
@@ -311,10 +321,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy() {
-    //this.filterStoreService.sessionPaginator = {pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
+    // Store paginator, sort, buttons, and sessions
     this.filterStoreService.sessionPaginator = {length: this.paginator.length, pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
-    
     this.filterStoreService.sessionSortInfo = {active: this.sort.active, direction: this.sort.direction};
+    this.filterStoreService.hideMissingEphys = this.hideMissingEphys;
+    this.filterStoreService.hideMissingPlots = this.hideMissingPlots;
+    this.filterStoreService.hideNG4BrainMap = this.hideNG4BrainMap;
+    this.filterStoreService.hideNotReady4Delay = this.hideNotReady4Delay;
     this.filterStoreService.loadedSessions = this.allSessions
 
     if (this.sessionsSubscription) {
