@@ -164,7 +164,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
 
       // Process the params to conver them IBLAPI format
-      console.log(params);
       for (const key in params) {
         if (key === '__json') {
           // If key is __json than to reformat to IBL API format
