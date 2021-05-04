@@ -164,6 +164,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
 
       // Process the params to conver them IBLAPI format
+      console.log(params);
       for (const key in params) {
         if (key === '__json') {
           // If key is __json than to reformat to IBL API format
@@ -221,7 +222,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
         }
         else if (key === 'sex' && params[key] !== null) {
-          this.session_filter_form.controls.sex.patchValue(params[key]);
+          this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
         } 
         else if (key === 'subject_birth_date') {
           // Set subject Birth date
@@ -376,7 +377,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
-
+    
     keys.forEach(key => {
       this.uniqueValuesForEachAttribute[key] = new Set();
     })
