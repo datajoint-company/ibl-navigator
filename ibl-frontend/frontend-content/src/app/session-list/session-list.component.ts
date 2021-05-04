@@ -221,8 +221,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
         }
         else if (key === 'sex' && params[key] !== null) {
-          this.session_filter_form.controls.sex.patchValue(params[key]);
-        } 
+          this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+        }  
         else if (key === 'subject_birth_date') {
           // Set subject Birth date
           if (params[key] !== null) {
