@@ -280,10 +280,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
           this.loading = false;
           this.mice = mice;
           this.updateTableView(); // making sure the hide button checkbox filters are included in this table view update
-          // this.dataSource = new MatTableDataSource(this.mice);
-          // this.dataSource.sort = this.sort;
-          // this.dataSource.sortingDataAccessor = (data, header) => data[header];
-          // this.dataSource.paginator = this.paginator;
       });
     } else {
       this.resetFilter();
@@ -369,10 +365,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
         this.mice = mice;
         this.allMice = mice;
         this.updateTableView(); // making sure the hide button checkbox filters are included in this table view update
-        // this.dataSource = new MatTableDataSource(this.mice);
-        // this.dataSource.sort = this.sort;
-        // this.dataSource.sortingDataAccessor = (data, header) => data[header];
-        // this.dataSource.paginator = this.paginator;
       });
   }
 
