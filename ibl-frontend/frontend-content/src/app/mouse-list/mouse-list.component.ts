@@ -103,6 +103,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
       this.sort.direction = Object.values(tableState[2])[0].direction;
       // console.log(Object.keys(tableState[2])[0], ' => ',  Object.values(tableState[2])[0].direction);
     }
+
     this.applyFilter();
     // for creating the initial full menu
     this.allMiceService.getAllMiceMenu({'__order': 'lab_name'});
@@ -126,6 +127,11 @@ export class MouseListComponent implements OnInit, OnDestroy {
     if (this.miceMenuSubscription) {
       this.miceMenuSubscription.unsubscribe();
     }
+
+    // store checkbox filters upon leaving
+    this.filterStoreService.hideDeadMice = this.hideDeadMice;
+    this.filterStoreService.hideNotReady4DelayMice = this.hideNotReady4Delay;
+    this.filterStoreService.onlyShowMiceWithSpinningBrain = this.onlyShowMiceWithSpinningBrain;
   }
 
 
@@ -259,9 +265,12 @@ export class MouseListComponent implements OnInit, OnDestroy {
 
   applyFilter() {
     this.loading = true;
-    this.hideDeadMice = false;
-    this.hideNotReady4Delay = false;
-    this.onlyShowMiceWithSpinningBrain = false;
+
+    // Check for the hide buttons in filter storage and apply
+    this.hideDeadMice = this.filterStoreService.hideDeadMice;
+    this.hideNotReady4Delay = this.filterStoreService.hideNotReady4DelayMice;
+    this.onlyShowMiceWithSpinningBrain = this.filterStoreService.onlyShowMiceWithSpinningBrain;
+
     const request = this.filterRequests();
     if (Object.entries(request).length > 0) {
       this.filterStoreService.storeMouseFilter(request);
@@ -270,10 +279,11 @@ export class MouseListComponent implements OnInit, OnDestroy {
         .subscribe((mice: any) => {
           this.loading = false;
           this.mice = mice;
-          this.dataSource = new MatTableDataSource(this.mice);
-          this.dataSource.sort = this.sort;
-          this.dataSource.sortingDataAccessor = (data, header) => data[header];
-          this.dataSource.paginator = this.paginator;
+          this.updateTableView(); // making sure the hide button checkbox filters are included in this table view update
+          // this.dataSource = new MatTableDataSource(this.mice);
+          // this.dataSource.sort = this.sort;
+          // this.dataSource.sortingDataAccessor = (data, header) => data[header];
+          // this.dataSource.paginator = this.paginator;
       });
     } else {
       this.resetFilter();
@@ -281,7 +291,6 @@ export class MouseListComponent implements OnInit, OnDestroy {
   }
 
   updateMenu() {
-    // console.log(this.mouse_filter_form.value);
     const menuRequest = this.filterRequests();
     if (Object.entries(menuRequest).length > 0) {
       this.allMiceService.getMiceMenu(menuRequest);
@@ -359,13 +368,17 @@ export class MouseListComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.mice = mice;
         this.allMice = mice;
-        this.dataSource = new MatTableDataSource(this.mice);
-        this.dataSource.sort = this.sort;
-        this.dataSource.sortingDataAccessor = (data, header) => data[header];
-        this.dataSource.paginator = this.paginator;
+        this.updateTableView(); // making sure the hide button checkbox filters are included in this table view update
+        // this.dataSource = new MatTableDataSource(this.mice);
+        // this.dataSource.sort = this.sort;
+        // this.dataSource.sortingDataAccessor = (data, header) => data[header];
+        // this.dataSource.paginator = this.paginator;
       });
   }
 
+  /**
+   * called when user presses the rest button on the browser
+   */
   clearFilter() {
     for (const control in this.mouse_filter_form.controls) {
       const toReset = {}
@@ -390,6 +403,9 @@ export class MouseListComponent implements OnInit, OnDestroy {
     });
 
     this.sort.active = '';
+    this.filterStoreService.hideDeadMice = false;
+    this.filterStoreService.hideNotReady4DelayMice = false;
+    this.filterStoreService.onlyShowMiceWithSpinningBrain = false;
     this.applyFilter();
   }
 
@@ -407,27 +423,10 @@ export class MouseListComponent implements OnInit, OnDestroy {
     this.filterStoreService.storeMouseTableState(pageIndex, pageSize, sorter);
   }
 
-  // toggleMiceVitalStatus() {
-  //   if (!this.hideDeadMice) {
-  //     const aliveMice = [];
-  //     for (const mouse of this.mice) {
-  //       if (mouse.death_date === '0') {
-  //         aliveMice.push(mouse);
-  //       }
-  //     }
-  //     this.dataSource = new MatTableDataSource(aliveMice);
-  //   } else {
-  //     this.dataSource = new MatTableDataSource(this.mice);
-  //   }
-  //   this.dataSource.sort = this.sort;
-  //   this.dataSource.sortingDataAccessor = (data, header) => data[header];
-  //   this.dataSource.paginator = this.paginator;
-
-  //   this.hideDeadMice = !this.hideDeadMice;
-  // }
-
-
-  updateSelection() {
+  /**
+   * considers the hide button checkbox filters, then updates the table view according to the data source
+   */
+  updateTableView() {
     let criteria = []
     if (this.hideDeadMice) {
         criteria.push(_.map(this.mice, x => x.death_date === '0'));
@@ -448,7 +447,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
       let selection = _.map(_.zip(...criteria), (x) => _.every(x));
       selectedMice = _.filter(this.mice, (x, i) => selection[i]);
     }
-    
+
+    // update the table view here
     this.dataSource = new MatTableDataSource(selectedMice);
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (data, header) => data[header];
@@ -460,7 +460,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
    */
   toggleMiceVitalStatus() {
     this.hideDeadMice = !this.hideDeadMice;
-    this.updateSelection();
+    this.updateTableView();
   }
   ​
   /**
@@ -468,7 +468,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
    */
   toggleR4DviewStatus() {
     this.hideNotReady4Delay = !this.hideNotReady4Delay;
-    this.updateSelection();
+    this.updateTableView();
   }
 
   /**
@@ -476,7 +476,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
    */
   toggleSpinningBrainViewStatus() {
     this.onlyShowMiceWithSpinningBrain = !this.onlyShowMiceWithSpinningBrain;
-    this.updateSelection();
+    this.updateTableView();
   }
 
 }
