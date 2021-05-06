@@ -1,8 +1,352 @@
-.user-guide-container {
+/* .user-guide-container {
     padding-top: 20px;
+}
+h4 {
+    font-weight: 300;
+} */
+
+* {
+    box-sizing: border-box;
+}
+
+.home-container {
+    width: 100vw;
+    position: relative;
+}
+
+.home-top-container,
+.home-light-container,
+.home-shaded-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.home-top-container {  
+    background-image: url("/assets/images/home_ibl_brainbow.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    /* height: 600px; */
+}
+
+.top-text-container {
+    color: rgb(32, 31, 34);
+    padding: 220px 220px 120px 80px;
+}
+
+.top-title {
+    font-size: 2.75rem;
+}
+.top-text-details {
+    padding: 18px 0 18px;
+    background-color: rgba(255, 255, 255, 0.55);
+    font-size: 1.25rem;
+}
+.top-text-details a,
+ol a {
+    color: #03a2da; 
+}
+.top-text-details a:hover,
+ol a:hover {
+    color: #c944a4;
+    text-decoration: none;
+}
+
+.code-style {
+    font-family: 'Source Code Pro', monospace, sans-serif;
+    color:rgb(32, 31, 34);
+    background-color: rgb(245, 244, 244);
+    padding: 2px 8px;
+    border: 1px solid gray;
+    border-radius: 2px;
+}
+
+.home-shaded-container,
+.home-light-container {
+    height: auto;
+    padding-bottom: 42px;
+}
+
+.home-light-container {
+    border-bottom: 1px solid lightgray;
+}
+
+.home-shaded-container {
+    background-color: #ecececc0;
+}
+
+.detail-container {
+    padding: 80px 220px 10px 80px;
+}
+.detail-container .detail-text {
+    padding: 18px 0 0;
+    font-size: 1.25rem;
+}
+.detail-container ol,
+.detail-container ul {
+    font-size: 1.15rem;
+    list-style-position: outside;
+    margin-left: 24px;
+}
+.figures {
+    display: inline-flex;
+    flex-direction: row;
+    /* justify-content: space-evenly; */
+}
+
+.small-figures {
+    display: flex;
+    flex-direction: column;
+}
+
+.each-figure {
+    margin: 0px 18px;
+    text-align: center;
+}
+
+.text-image-wide {
+    max-height: 250px;
+}
+
+.text-image {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.figure-caption,
+.figure-caption-long {
+    margin-top: 8px;  
+    color: #6c757d; 
+    font-size: 0.88rem;
+}
+
+.figure-caption-long {
+    text-align: left;
+}
+
+ 
+
+#fig3 {
+    width: 250px;
+}
+#fig4 {
+    width: 100%;
+}
+
+ol {
+    margin-top: 18px;
+    font-size: 0.9rem;
+}
+
+/* for different screen sizes */
+/* XS and S (768px and down) */
+@media only screen and (max-width: 768px) {
+    .home-top-container {
+        height: auto;
+        background-size: 200%;
+        background-position: center;
+    }
+    .home-shaded-container,
+    .home-light-container {
+        height: auto;
+    }
+    .top-text-container {
+        padding: 100px 80px 50px 30px;
+    }
+    .top-title {
+        font-size: 1.75rem;
+    }
+    .detail-container {
+        padding: 60px 80px 10px 30px;
+    }
+
+    .detail-container h3 {
+        font-size: 1.5rem;
+    }
+
+    .detail-container ol,
+    .detail-container ul {
+        margin-left: 18px;
+    }
+    .top-text-details,
+    .detail-container .detail-text,
+    .detail-text * {
+        font-size: 1rem;
+    }
+    .figures {
+        display: inline-block;
+        justify-content: flex-start;
+    }
+    .each-figure {
+        height: auto;
+        margin: 10px 8px;
+        float: left;
+    }
+
+    .text-image {
+        max-width: 50vw;
+        max-height: auto;
+    }
+    .text-image-wide {
+        max-width: 66vw;
+    }
+
+} 
+
+/* M (768px to 992) */
+@media only screen and (min-width: 769px) and (max-width: 992px) {
+    .home-top-container {
+        height: auto;
+        background-size: 175%;
+        background-position: center bottom;
+    }
+    .home-shaded-container,
+    .home-light-container {
+        height: auto;
+        background-size: 200%;
+    }
+    .top-text-container {
+        padding: 120px 80px 50px 30px;
+    }
+    .top-title {
+        font-size: 2rem;
+    }
+    .detail-container {
+        padding: 60px 80px 10px 30px;
+    }
+    .top-text-details,
+    .detail-container .detail-text,
+    .detail-text * {
+        font-size: 1rem;
+    }
+    .figures {
+        display: inline-block;
+        justify-content: flex-start;
+    }
+    .each-figure {
+        margin: 0px 8px;
+        float: left;
+    }
+
+    .text-image  {
+        max-width: 220px;
+        max-height: 220px;
+    }
+    .text-image-wide {
+        max-height: 200px;
+    }
+ 
+} 
+
+/* L (992px to 1200px) */
+@media only screen and (min-width: 993px) and (max-width: 1200px) {
+    .home-shaded-container {
+        /* min-height: 800px; */
+    }
+    .top-text-container {
+        padding: 160px 120px 80px 80px;
+    }
+    .top-title {
+        font-size: 2.25rem;
+    }
+    .detail-container {
+        padding: 80px 120px 10px 80px;
+    }
+    .top-text-details,
+    .detail-container .detail-text,
+    .detail-text * {
+        font-size: 1.15rem;
+    }
+    .each-figure {
+        margin: 0px 12px;
+    }
+
+    .text-image {
+        max-width: 250px;
+        max-height: 250px;
+    }
+    .text-image-wide {
+        max-height: 180px;
+    }
+
+} 
+
+/* XL (1200px to 1600) */
+@media only screen and (min-width: 1201px) and (max-width: 1600px) {
+ 
+    .top-text-container {
+        padding: 180px 150px 120px 80px;
+    }
+    .top-title {
+        font-size: 2.5rem;
+    }
+    .detail-container {
+        padding: 80px 150px 10px 80px;
+    }
+    .top-text-details,
+    .detail-container .detail-text,
+    .detail-text * {
+        font-size: 1.2rem;
+    }
+
+    .text-image-wide {
+        max-height: 200px;
+    }
+
+}
+
+/* XXL (1600px to 2200px) */
+@media only screen and (min-width: 1601px) and (max-width: 2200px) {
+    .home-top-container {
+        /* background-position: -150px; */
+        /* height: auto; */
+    }
+    .home-shaded-container,
+    .home-light-container {
+        height: auto;
+    }
+    .top-text-container,
+    .detail-container {
+        max-width: 1800px;
+    }
+    .top-title {
+        font-size: 2.75rem;
+    }
+    .top-text-details,
+    .detail-container .detail-text,
+    .detail-text * {
+        font-size: 1.4rem;
+    }
 }
 
 
-h4 {
-    font-weight: 300;
+/* XXXL (2200px and up) */
+@media only screen and (min-width: 2201px) {
+    .home-top-container {
+        /* background-position: -400px; */
+    }
+
+    .home-top-container,
+    .home-light-container,
+    .home-shaded-container {
+        margin: 0 auto;
+        height: auto;
+    }
+
+    .top-text-container,
+    .detail-container {
+        max-width: 1800px;
+    }
+
+    .top-title {
+        font-size: 2.75rem;
+    }
+    .top-text-details,
+    .detail-container .detail-text,
+    .detail-text * {
+        font-size: 1.4rem;
+    }
+
 }
