@@ -32,7 +32,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   mice_menu: any;
   // setup for the table columns
   displayedColumns: string[] = ['lab_name', 'subject_nickname', 'subject_birth_date',
-    'projects', 'subject_line', 'responsible_user', 'sex', 'ready4delay', 'death_date', 'spinning_brain', 'subject_uuid'];
+    'projects', 'subject_line', 'responsible_user', 'sex', 'spinning_brain', 'subject_uuid'];
   hideDeadMice = false;
   hideNotReady4Delay = false;
   onlyShowMiceWithSpinningBrain = false;
