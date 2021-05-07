@@ -134,6 +134,18 @@ ol a:hover {
 #fig4 {
     width: 100%;
 }
+#fig5 {
+    position: relative;
+    width: 70%;
+    margin: 16px 15%;
+}
+a.figure-folder-link {
+    width: 70%;
+    display: flex;
+    margin: 8px auto;
+    justify-content: flex-start;
+    font-size: 0.8rem;
+}
 
 ol {
     margin-top: 18px;
@@ -192,7 +204,13 @@ ol {
     .text-image-wide {
         max-width: 66vw;
     }
-
+    #fig5 {
+        width: 100%;
+        margin: 16px 0;
+    }
+    a.figure-folder-link {
+        width: 100%;
+    }
 } 
 
 /* M (768px to 992) */
@@ -237,7 +255,13 @@ ol {
     .text-image-wide {
         max-height: 200px;
     }
- 
+    #fig5 {
+        width: 90%;
+        margin: 16px 5%;
+    }
+    a.figure-folder-link {
+        width: 90%;
+    }
 } 
 
 /* L (992px to 1200px) */
@@ -270,7 +294,13 @@ ol {
     .text-image-wide {
         max-height: 180px;
     }
-
+    #fig5 {
+        width: 80%;
+        margin: 16px 10%;
+    }
+    a.figure-folder-link {
+        width: 80%;
+    }
 } 
 
 /* XL (1200px to 1600) */
