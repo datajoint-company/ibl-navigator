@@ -32,6 +32,14 @@ def test_mkvmod(mod):
     return dj.create_virtual_module(
         mod, dj.config.get('database.prefix', '') + 'test_ibl_{}'.format(mod))
 
+# set up the aws s3 bucket name depending on public/internal
+if os.environ.get('API_MODE') in ['private', None]:
+    BUCKET_LOCATION = 'ibl-dj-external'
+elif os.environ.get('API_MODE') == 'public':
+    BUCKET_LOCATION = 'ibl-dj-external-public'
+else:
+    raise Exception('Invalid API_MODE, it should either be not defined / private / public, please check your environment variables.')
+
 
 subject = mkvmod('subject')
 reference = mkvmod('reference')
@@ -54,7 +62,7 @@ dj.config['stores'] = {
         endpoint='s3.amazonaws.com',
         access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
         secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
-        bucket='ibl-dj-external',
+        bucket=BUCKET_LOCATION,
         location='/ephys'
     ),
     'plotting': dict(
@@ -62,7 +70,7 @@ dj.config['stores'] = {
         endpoint='s3.amazonaws.com',
         access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
         secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
-        bucket='ibl-dj-external',
+        bucket=BUCKET_LOCATION,
         location='/plotting'
     )
 }
@@ -355,7 +363,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '' and parsed_item['plotting_data_link'] != None:  # if empty link or NULL, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -374,17 +382,17 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 if parsed_item['plotting_data_link_low_res'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link_low_res'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link_low_res']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link_low_res']},
                                                         ExpiresIn=3*60*60)
                 if parsed_item['plotting_data_link_very_low_res'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link_very_low_res'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link_very_low_res']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link_very_low_res']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -397,7 +405,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -410,7 +418,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -423,7 +431,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -436,7 +444,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -453,7 +461,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['subject_spinning_brain_link'] != '':  # if empty link, skip
                     parsed_item['subject_spinning_brain_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['subject_spinning_brain_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['subject_spinning_brain_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -466,7 +474,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['probe_trajectory_coronal_link'] != '':  # if empty link, skip
                     parsed_item['probe_trajectory_coronal_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['probe_trajectory_coronal_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['probe_trajectory_coronal_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
