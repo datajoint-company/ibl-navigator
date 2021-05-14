@@ -218,11 +218,6 @@
             </mat-checkbox>
           </div>
           <div class="chbox-filter">
-            <mat-checkbox class="nprobe_status_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
-              Only show sessions with mice ready for delay
-            </mat-checkbox>
-          </div>
-          <div class="chbox-filter">
             <mat-checkbox class="nprobe_status_chbox" [checked]="hideNG4BrainMap" (change)="toggleG4BMviewStatus()">
               Only show sessions good for brainwide map
             </mat-checkbox>
@@ -239,7 +234,7 @@
     <div [class]="isLoading && initialLoad ? 'loading-icon loading initial': isLoading ? 'loading-icon loading': 'loading-icon'">
       <img src="assets/images/loading_icon.gif">
       <p [class]="initialLoad ? 'session-list-loading-message show' : 'session-list-loading-message'">
-        Loading time for the sessions may take a while depending on your internet connection. We appreciate your patience as we load the full list of sessions.
+        Loading for the sessions may take a while depending on your internet connection. We appreciate your patience as we load the full list of sessions.
       </p>
     </div>
     <div class="table-container">
@@ -310,14 +305,6 @@
         <td mat-cell *matCellDef="let session" class="to-center">
           <!-- <div *ngIf="session.nprobe">&#9889;</div><div *ngIf="!session.nprobe"></div> -->
           <div *ngIf="session.nprobe"><span class="oi oi-flash"></span></div><div *ngIf="!session.nprobe"></div>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="ready4delay">
-        <th mat-header-cell *matHeaderCellDef> Ready for Delay</th>
-        <td mat-cell *matCellDef="let session" class="to-center">
-          <div *ngIf="session.training_status == 'ready4delay'"><span class="oi oi-lock-unlocked"></span></div>
-          <div *ngIf="session.training_status != 'ready4delay'"></div>
         </td>
       </ng-container>
 
