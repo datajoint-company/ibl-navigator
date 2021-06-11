@@ -30,7 +30,7 @@ services:
     environment:
     - SUBDOMAINS
     - URL
-    # - STAGING=true # Keep uncommented for dev, comment out for Production use
+    - STAGING=true # Keep uncommented for dev, comment out for Production use
     volumes:
       - ./letsencrypt-keys:/config/etc/letsencrypt
       - ./letsencrypt/healthcheck.sh:/healthcheck.sh
