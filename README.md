@@ -76,7 +76,12 @@ for test dev mode, in `docker-compose-deploy.yml` make sure `STAGING=true` for `
 `ssh testdev` go to `ibl-navigator`
 `docker-compose -f docker-compose-deploy.yml down` to stop what's already running
 `sudo rm -R letsencrypt-keys` to get rid of key folder that generated in the previous run.
-`git pull origin dev` to get the latest from `mahos/ibl-navigator` repo.
+
+`git pull https://github.com/vathes/ibl-navigator.git dev` to get the latest from `vathes/ibl-navigator` repo.
+NOTE: to make sure branch is freshly deployed, `git checkout remote/branch` is recommended. 
+`origin` should be pointed to `https://github.com/vathes/ibl-navigator.git` in the testdev EC2 but do double check.
+
+login with your regular github credentials (the one registered under github vathes)
 make sure to move over to the `dev` branch by `git checkout dev`
 `docker login registry.vathes.com` to docker to get access.
 `docker-compose -f docker-compose-deploy.yml pull` to get the ibl-navigator container
@@ -93,7 +98,11 @@ for client deploy mode, in `docker-compose-deploy.yml` make sure to comment out 
 
 `ssh djcompute` go to `nagivator-deployer/ibl-navigator`
 `docker-compose -f docker-compose-deploy.yml down` to stop what's already running
-`git pull origin master` to get the latest from `mahos/ibl-navigator` repo.
+
+`git pull https://github.com/vathes/ibl-navigator.git master` to get the latest from `vathes/ibl-navigator` repo.
+NOTE: to make sure branch is freshly deployed, `git checkout remote/branch` is recommended. Do check which remote is pointing to which repo before checking a branch out.
+
+login with your regular github credentials (the one registered under github vathes)
 make sure to move over to the `master` branch by `git checkout master`
 `docker login registry.vathes.com` to docker to get access.
 `docker-compose -f docker-compose-deploy.yml pull` to get the ibl-navigator container

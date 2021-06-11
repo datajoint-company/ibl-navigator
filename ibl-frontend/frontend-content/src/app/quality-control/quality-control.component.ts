@@ -44,9 +44,9 @@ export class QualityControlComponent implements OnInit, OnDestroy {
     this.session_project = this.route.snapshot.queryParamMap.get('project');
     this.protocol = this.route.snapshot.queryParamMap.get('protocol')
     let queryParamTest = this.route.snapshot.queryParamMap
-    console.log('session start time: ', this.session_start_time)
-    console.log('nickname: ', this.subject_nickname)
-    console.log('all queryParams: ', queryParamTest)
+    // console.log('session start time: ', this.session_start_time)
+    // console.log('nickname: ', this.subject_nickname)
+    // console.log('all queryParams: ', queryParamTest)
 
     this.QCService.retrieveProbeInsertions({'subject_uuid': this.subject_uuid, 'session_start_time': this.session_start_time});
     this.probeInsertionSubscription = this.QCService.getProbeInsertionsLoadedListener()
@@ -73,7 +73,7 @@ export class QualityControlComponent implements OnInit, OnDestroy {
   }
 
   probe_selected(probe) {
-    console.log('probe selected! - ', probe);
+    // console.log('probe selected! - ', probe);
     this.probeIndex = probe;
     this.driftmapInfo['probe_idx'] = this.probeIndex;
 
@@ -82,7 +82,7 @@ export class QualityControlComponent implements OnInit, OnDestroy {
   }
 
   probeChange(event) {
-    console.log('probe change detected - QC nedpoint')
+    // console.log('probe change detected - QC nedpoint')
   }
 
 }

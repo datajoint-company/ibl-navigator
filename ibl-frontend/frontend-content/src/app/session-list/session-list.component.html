@@ -3,51 +3,51 @@
 <h4>
   List of Sessions
 </h4>
-<button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
-<button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="loading" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
+<button mat-raised-button class="btn" *ngIf="!filterExpanded" [disabled]="false" (click)="filterExpanded=!filterExpanded">Expand Filter &nbsp;<span class="oi oi-expand-down"></span></button>
+<button mat-raised-button class="btn" *ngIf="filterExpanded" [disabled]="false" (click)="filterExpanded=!filterExpanded">Collapse Filter &nbsp;<span class="oi oi-collapse-up"></span></button>
 
 
-<form [formGroup]="session_filter_form" *ngIf="!loading">
+<form [formGroup]="session_filter_form" [class]="isLoading ? 'loading': ''">
   <div [class]="filterExpanded ? 'filters col-12 filterExpand':'filters col-12 filterCollapse'">
     <div class="session-field-filters form-section">
       <mat-form-field class="long">
         <label for="">Task Protocol</label>
-        <input matInput type="text" name="task_protocol" formControlName="task_protocol_control" [matAutocomplete]="auto"
+        <input matInput type="text" name="task_protocol" formControlName="task_protocol" [matAutocomplete]="auto"
           (focus)="stepBackMenu($event)">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let tp of filteredTaskProtocolOptions | async" [value]="tp" (click)="updateMenu()">{{ tp }}
+          <mat-option *ngFor="let tp of dropDownMenuOptions.filteredTaskProtocolOptions | async" [value]="tp" (click)="updateMenu()">{{ tp }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
 
       <mat-form-field class="long">
         <label for="">Session UUID</label>
-        <input matInput type="text" name="session_uuid" formControlName="session_uuid_control" [matAutocomplete]="auto2"
+        <input matInput type="text" name="session_uuid" formControlName="session_uuid" [matAutocomplete]="auto2"
           (focus)="stepBackMenu($event)">
         <mat-autocomplete #auto2="matAutocomplete">
-          <mat-option *ngFor="let sessionUuid of filteredSessionUuidOptions | async" [value]="sessionUuid"
+          <mat-option *ngFor="let sessionUuid of dropDownMenuOptions.filteredSessionUuidOptions | async" [value]="sessionUuid"
             (click)="updateMenu()">{{ sessionUuid }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
 
       <div class="session-date-filter">
         <div class="date-range-toggler">
-          <label for="dateRangeToggler">Session Start Date</label>
+          <label for="isSessionDateUsingRanger">Session Start Date</label>
           <div>
-            On&nbsp;<mat-slide-toggle name="dateRangeToggler" [checked]="dateRangeToggle" (change)="dateRangeToggle=!dateRangeToggle">From/To
+            On&nbsp;<mat-slide-toggle name="isSessionDateUsingRanger" [checked]="isSessionDateUsingRange" (change)="isSessionDateUsingRange=!isSessionDateUsingRange">From/To
             </mat-slide-toggle>
           </div>
         </div>
-        <mat-form-field class="short" *ngIf="!dateRangeToggle">
+        <mat-form-field class="short" *ngIf="!isSessionDateUsingRange">
           <label for="">Sessions On</label>
-          <input matInput formControlName="session_start_time_control" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)">
+          <input matInput formControlName="session_start_time" [matDatepicker]="datePicker" [min]="sessionMinDate" [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)">
           <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
           <mat-datepicker #datePicker></mat-datepicker>
         </mat-form-field>
-        <div formGroupName="session_range_filter" *ngIf="dateRangeToggle" class="range-filter-inputs">
+        <div formGroupName="session_range_filter" *ngIf="isSessionDateUsingRange" class="range-filter-inputs">
           <mat-form-field class="short">
             <label for="">Sessions From</label>
-            <input matInput formControlName="session_range_start_control" [matDatepicker]="datePickerSRS" [min]="sessionMinDate"
+            <input matInput formControlName="session_range_start" [matDatepicker]="datePickerSRS" [min]="sessionMinDate"
               [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()"
               (focus)="stepBackMenu($event)">
             <mat-datepicker-toggle matSuffix [for]="datePickerSRS"></mat-datepicker-toggle>
@@ -55,7 +55,7 @@
           </mat-form-field>
           <mat-form-field class="short">
             <label for="">Sessions Up To</label>
-            <input matInput formControlName="session_range_end_control" [matDatepicker]="datePickerSRE" [min]="sessionMinDate"
+            <input matInput formControlName="session_range_end" [matDatepicker]="datePickerSRE" [min]="sessionMinDate"
               [max]="sessionMaxDate" [matDatepickerFilter]="sessionDateFilter" (blur)="updateMenu()"
               (focus)="stepBackMenu($event)">
             <mat-datepicker-toggle matSuffix [for]="datePickerSRE"></mat-datepicker-toggle>
@@ -68,20 +68,20 @@
     <div class="mouse-field-filters form-section">
       <mat-form-field>
         <label>Lab</label>
-        <input matInput type="text" name="session_lab" formControlName="session_lab_control" [matAutocomplete]="autoCompLN"
+        <input matInput type="text" name="session_lab" formControlName="session_lab" [matAutocomplete]="autoCompLN"
           (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompLN="matAutocomplete">
-          <mat-option *ngFor="let lab of filteredSessionLabOptions | async" [value]="lab" (click)="updateMenu()">
+          <mat-option *ngFor="let lab of dropDownMenuOptions.filteredSessionLabOptions | async" [value]="lab" (click)="updateMenu()">
             {{ lab }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
       
       <mat-form-field>
         <label>Mouse Nickname</label>
-        <input matInput type="text" name="subject_nickname" formControlName="subject_nickname_control"
+        <input matInput type="text" name="subject_nickname" formControlName="subject_nickname"
           [matAutocomplete]="autoCompSN" (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompSN="matAutocomplete">
-          <mat-option *ngFor="let nickname of filteredSubjectNicknameOptions | async" [value]="nickname"
+          <mat-option *ngFor="let nickname of dropDownMenuOptions.filteredSubjectNicknameOptions | async" [value]="nickname"
             (click)="updateMenu()">
             {{ nickname }}</mat-option>
         </mat-autocomplete>
@@ -89,27 +89,27 @@
 
       <mat-form-field class="long">
         <label>Project</label>
-        <input matInput type="text" name="session_project" formControlName="session_project_control"
+        <input matInput type="text" name="session_project" formControlName="session_project"
           [matAutocomplete]="autoCompSProj" (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompSProj="matAutocomplete">
-          <mat-option *ngFor="let project of filteredSessionProjectOptions | async" [value]="project" (click)="updateMenu()">
+          <mat-option *ngFor="let project of dropDownMenuOptions.filteredSessionProjectOptions | async" [value]="project" (click)="updateMenu()">
             {{ project }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
       
       <mat-form-field class="long">
         <label>Mouse UUID</label>
-        <input matInput type="text" name="subject_uuid" formControlName="subject_uuid_control"
+        <input matInput type="text" name="subject_uuid" formControlName="subject_uuid"
           [matAutocomplete]="autoCompSUUID" (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompSUUID="matAutocomplete">
-          <mat-option *ngFor="let uuid of filteredSubjectUuidOptions | async" [value]="uuid" (click)="updateMenu()">
+          <mat-option *ngFor="let uuid of dropDownMenuOptions.filteredSubjectUuidOptions | async" [value]="uuid" (click)="updateMenu()">
             {{ uuid }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
       
       <mat-form-field class="short">
         <label>DOB</label>
-        <input matInput formControlName="subject_birth_date_control" [matDatepicker]="DOBPicker"
+        <input matInput formControlName="subject_birth_date" [matDatepicker]="DOBPicker"
           [matDatepickerFilter]="miceBirthdayFilter" (blur)="updateMenu()" (focus)="stepBackMenu($event)"
           placeholder="DOB - i.e. 10/23/2018">
         <mat-datepicker-toggle matSuffix [for]="DOBPicker"></mat-datepicker-toggle>
@@ -119,9 +119,9 @@
 
       <div class="mouse_sex_filter">
         <label>Sex</label>
-        <div class="mouse_sex_menu" formArrayName="sex_control"> 
-          <mat-checkbox class="mouse_sex_menu_chbox" [name]="session_menu.sex" [formControlName]="i"
-            *ngFor="let sex of session_menu.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()">
+        <div class="mouse_sex_menu" formArrayName="sex"> 
+          <mat-checkbox class="mouse_sex_menu_chbox" [name]="uniqueValuesForEachAttribute.sex" [formControlName]="i"
+            *ngFor="let sex of uniqueValuesForEachAttribute.sex | keyvalue ; let i=index" [value]="sex.key" (change)="updateMenu()">
             {{ sex.key }}
           </mat-checkbox>
         </div>
@@ -129,25 +129,25 @@
       <div class="cleardivider"></div>
       <mat-form-field>
         <label>Line</label>
-        <input matInput type="text" name="subject_line" formControlName="subject_line_control" [matAutocomplete]="autoCompSL"
+        <input matInput type="text" name="subject_line" formControlName="subject_line" [matAutocomplete]="autoCompSL"
           (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompSL="matAutocomplete">
-          <mat-option *ngFor="let line of filteredSubjectLineOptions | async" [value]="line" (click)="updateMenu()">
+          <mat-option *ngFor="let line of dropDownMenuOptions.filteredSubjectLineOptions | async" [value]="line" (click)="updateMenu()">
             {{ line }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
       
       <mat-form-field>
         <label>User</label>
-        <input matInput type="text" name="responsible_user" formControlName="responsible_user_control"
+        <input matInput type="text" name="responsible_user" formControlName="responsible_user"
           [matAutocomplete]="autoCompRU" (focus)="stepBackMenu($event)">
         <mat-autocomplete #autoCompRU="matAutocomplete">
-          <mat-option *ngFor="let responsible_user of filteredResponsibleUserOptions | async" [value]="responsible_user"
+          <mat-option *ngFor="let responsible_user of dropDownMenuOptions.filteredResponsibleUserOptions | async" [value]="responsible_user"
             (click)="updateMenu()">{{ responsible_user }}</mat-option>
         </mat-autocomplete>
       </mat-form-field>
 
-      <!-- Brain Tree Selection Area -->
+      <!-- // Brain Tree Selection Area -->
       <div class="brain-tree-zone">
         <mat-form-field>
           <label>Brain Regions</label>
@@ -155,7 +155,6 @@
         </mat-form-field>
         <div>Selected Brain Region:
           <div class="chip-list">
-            <!-- <div class="selected-chip" *ngFor="let item of BT_selections"> -->
             <div class="selected-chip" *ngFor="let item of requested_BR">
               <div>{{ item }}</div>
               <div class="chip-close" (click)="chipClicked(item)"><mat-icon class="mat-icon-close">{{'close'}}</mat-icon></div>
@@ -165,16 +164,16 @@
 
         <div class="br-selection-area">
           <mat-tree [dataSource]="treeDataSource" [treeControl]="treeControl" class="brain-tree">
-            <!-- This is the tree node template for leaf nodes -->
+            <!-- // This is the tree node template for leaf nodes -->
             <mat-nested-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
               <li class="mat-tree-node">
-                <!-- use a disabled button to provide padding for tree leaf -->
+                <!-- // use a disabled button to provide padding for tree leaf  -->
                 <button class="treeChevron" mat-icon-button disabled></button>
                 <mat-checkbox (change)="selectionToggle($event.checked, node)"
                   [checked]="BT_allSelected(node)">{{node.display}}</mat-checkbox>  
               </li>
             </mat-nested-tree-node>
-            <!-- This is the tree node template for expandable nodes -->
+            <!-- // This is the tree node template for expandable nodes -->
             <mat-nested-tree-node *matTreeNodeDef="let node; when: BT_hasChild">
               <li>
                 <div class="mat-tree-node">
@@ -196,17 +195,16 @@
           </mat-tree>
         </div>
       </div>
-      
 
     </div>
   </div>
   <br>
   <div *ngIf="filterExpanded" class="form-submit-button-area">
     <div>
-      <button mat-raised-button class="btn" (click)="applyFilter()">Apply Filter</button>
+      <button mat-raised-button class="btn" (click)="handleApplyFilterButtonPress()">Apply Filter</button>
     </div>
     <div>
-      <button mat-raised-button class="btn btn-reset" (click)="clearControl()">Reset Filter</button>
+      <button mat-raised-button class="btn btn-reset" (click)="handleResetFilterButtonPress()">Reset Filter</button>
     </div>
     <div>
       <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>
@@ -236,9 +234,9 @@
       </div>
     </div>
   </div>
-
 </form>
-<div class="loading-icon" *ngIf="loading">
+
+<div [class]="isLoading? 'loading-icon loading': 'loading-icon'">
   <img src="assets/images/loading_icon.gif">
 </div>
 <div class="table-container">

@@ -73,7 +73,7 @@ export class DriftmapComponent implements OnInit, OnDestroy {
   constructor(public QCService: QualityControlService) { }
 
   ngOnInit() {
-    console.log('driftmapInfo: ', this.driftmapInfo)
+    // console.log('driftmapInfo: ', this.driftmapInfo)
     this.driftmapLoading = true;
     this.QCService.getDriftmapTemplates();
 

@@ -63,6 +63,7 @@ import { RasterPlotsComponent } from './cell-list/cell/raster-plots/raster-plots
 import { PsthPlotsComponent } from './cell-list/cell/psth-plots/psth-plots.component';
 import { QualityControlComponent } from './quality-control/quality-control.component';
 import { DriftmapComponent } from './quality-control/driftmap/driftmap.component';
+import { SpinningBrainComponent } from './mouse-list/mouse/spinning-brain/spinning-brain.component';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -159,7 +160,8 @@ const appRoutes: Routes = [
     RasterPlotsComponent,
     PsthPlotsComponent,
     QualityControlComponent,
-    DriftmapComponent
+    DriftmapComponent,
+    SpinningBrainComponent
   ],
   imports: [
     CommonModule, PlotlyModule,

@@ -33,13 +33,13 @@ export class CellPlotsService {
       'cluster_revision': clusterInfo['cluster_revision']
     }
     // let timeA = new Date()
-    console.log('fetching ALL raster plots..');
+    // console.log('fetching ALL raster plots..');
     this.http.post(BACKEND_API_URL + `/plot/raster`, query)
       .subscribe(
         (plotData) => {
-          console.log('received ALL raster plots');
+          // console.log('received ALL raster plots');
           // console.log('duration: ', new Date() - timeA, ' ms');
-          console.log('length of data: ', Object.entries(plotData).length);
+          // console.log('length of data: ', Object.entries(plotData).length);
           this.allRasters = plotData;
 
           this.allRastersLoaded.next(this.allRasters);
@@ -65,9 +65,9 @@ export class CellPlotsService {
     this.http.post(BACKEND_API_URL + `/plot/raster`, query)
       .subscribe(
         (plotData) => {
-          console.log('received feedback event raster plots');
+          // console.log('received feedback event raster plots');
           // console.log('duration: ', new Date() - timeX, ' ms');
-          console.log('length of data: ', Object.entries(plotData).length);
+          // console.log('length of data: ', Object.entries(plotData).length);
           this.rasterEventFeedback = plotData;
 
           this.rasterEventFeedbackLoaded.next(this.rasterEventFeedback);
@@ -89,13 +89,13 @@ export class CellPlotsService {
       'event': 'response'
     }
     // let timeY = new Date()
-    console.log('fetching event response raster plots..');
+    // console.log('fetching event response raster plots..');
     this.http.post(BACKEND_API_URL + `/plot/raster`, query)
       .subscribe(
         (plotData) => {
-          console.log('received response event raster plots');
+          // console.log('received response event raster plots');
           // console.log('duration: ', new Date() - timeY, ' ms');
-          console.log('length of data: ', Object.entries(plotData).length);
+          // console.log('length of data: ', Object.entries(plotData).length);
           this.rasterEventResponse = plotData;
 
           this.rasterEventResponseLoaded.next(this.rasterEventResponse);
@@ -117,13 +117,13 @@ export class CellPlotsService {
       'event': 'stim on'
     }
     // let timeZ = new Date()
-    console.log('fetching event stim-on raster plots..');
+    // console.log('fetching event stim-on raster plots..');
     this.http.post(BACKEND_API_URL + `/plot/raster`, query)
       .subscribe(
         (plotData) => {
-          console.log('received stim-on event raster plots');
+          // console.log('received stim-on event raster plots');
           // console.log('duration: ', new Date() - timeZ, ' ms');
-          console.log('length of data: ', Object.entries(plotData).length);
+          // console.log('length of data: ', Object.entries(plotData).length);
           this.rasterEventStimOn = plotData;
 
           this.rasterEventStimOnLoaded.next(this.rasterEventStimOn);
@@ -144,13 +144,13 @@ export class CellPlotsService {
       'cluster_revision': clusterInfo['cluster_revision']
     }
     // let timeA = new Date()
-    console.log('fetching all 3 psth plots..');
+    // console.log('fetching all 3 psth plots..');
     this.http.post(BACKEND_API_URL + `/plot/psth`, query)
       .subscribe(
         (plotData) => {
-          console.log('received all 3 psth plots');
+          // console.log('received all 3 psth plots');
           // console.log('duration: ', new Date() - timeA, ' ms');
-          console.log('length of data: ', Object.entries(plotData).length);
+          // console.log('length of data: ', Object.entries(plotData).length);
           this.allPsthPlots = plotData;
 
           this.allPsthPlotsLoaded.next(this.allPsthPlots);

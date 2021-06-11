@@ -15,10 +15,15 @@ form {
     width: 100%;
 } 
 
+form.loading {
+    display: none;
+}
+
 .filterExpand {
     height: auto;
     visibility: visible;
 }
+
 .filterCollapse,
 .filterCollapse * {
     height: 0;
@@ -78,9 +83,14 @@ label {
 
 .loading-icon {
     text-align: center;
+    display: none;
 }
 
-.loading-icon img {
+.loading-icon.loading {
+    display: block;
+}
+
+.loading-icon.loading img {
     width: 100px;
 }
 

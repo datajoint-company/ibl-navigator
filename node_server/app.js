@@ -763,7 +763,57 @@ app.get('/brainRegionTree', checkAuth, cacheMiddleware(15*60), (req, res) => {
     })
 })
 
+app.post('/plot/spinningBrain', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/_q/spinningbrain', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [Spinning Brain]: ', error);
+            res.status(500).end();
+            return;
+        }
+        
+        res.send(body);
+    })
 
+    /* 
+    ** attempt to download gif from s3 to local storage and return path
+    */
+    let downloadGIF = async function(S3Link, subjectUUID) {
+        console.log('running downloadGIF function')
+
+        // trying to write the S3 link gif into a local file
+        download = function(url, filename, callback){
+            request.head(url, function(err, res, body){
+                console.log('content-type:', res.headers['content-type']);
+                console.log('content-length:', res.headers['content-length']);
+          
+                request(url)
+                .pipe(fs.createWriteStream(filename, {flag: 'a', encoding: 'base64'}))
+                .on('close', callback)
+                .on('error', (err) => {
+                    console.error(err)
+                })
+            });
+        };
+          
+        download(S3Link, `/GIFtempStorage/${subjectUUID}.gif`, function(){
+            console.log('done writing to file');
+            return `/GIFtempStorage/${subjectUUID}.gif`
+        });
+
+        // return `/GIFtempStorage/${subjectUUID}.gif`
+    }
+})
+
+app.post('/plot/coronalSections', checkAuth, (req, res) => {
+    request.post(flask_backend + '/v0/_q/coronalsections', { form: req.body, timeout: 200000 }, function (error, httpResponse, body) {
+        if (error) {
+            console.error('error [coronal sections]: ', error);
+            res.status(500).end();
+            return;
+        }
+        res.send(body);
+    })
+})
 
 app.get('/images/raster/:mouse_id/:session_time/:probe_index/:cluster_revision/:event_type/:sort_by', (req, res) => {
     let p = path.join(__dirname, `/test/raster/${req.params.mouse_id}/${req.params.session_time}/${req.params.probe_index}/${req.params.cluster_revision}/${req.params.event_type}/${req.params.sort_by}/0.png`)

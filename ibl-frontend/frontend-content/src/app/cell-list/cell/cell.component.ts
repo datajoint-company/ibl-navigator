@@ -44,8 +44,8 @@ export class CellComponent implements OnInit, OnDestroy {
   }
 
   rasterEventSelected(event) {
-    console.log('raster plot event selected!');
-    console.log(event);
+    // console.log('raster plot event selected!');
+    // console.log(event);
     this.selectedEvent = event;
   }
 

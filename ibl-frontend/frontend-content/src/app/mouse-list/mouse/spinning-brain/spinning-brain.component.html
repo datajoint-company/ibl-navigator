@@ -1,0 +1,18 @@
+<div class="brain-gif-container">
+  <!-- from the original S3 link - super GIF player won't work on this one -->
+  <img #brainGIF class="brainGIF-image" [src]="spinningBrainSrc" />
+  <!-- ideally GIF url placed under same domain/port as frontend - super GIF player should work on this one -->
+  <!-- <img #brainGIF [src]="base64GIFsrc" /> -->
+  <!-- super gif test case of spinningBrain in the frontend asset folder -->
+  <!-- <img #brainGIF src="../../assets/images/spinningBrainTest.gif"/> -->
+  <div *ngIf="spinningBrain && spinningBrain.isReady()" style="margin-left:120px" class="spinning-brain-controls">
+    <button (click)="spinningBrain.pause()">pause</button>
+    <button (click)="spinningBrain.play()">play</button>
+    <button (click)="spinningBrain.stepFrame(-1)">-1</button>
+    <button (click)="spinningBrain.stepFrame(1)">+1</button>
+    <div style="height:10px; width: 200px; border: 1px solid black">
+      <div style="background-color: rgb(165, 10, 10); height: 8px;" [style.width]="(spinningBrain.getCurrentFrame()/spinningBrain.getLength()) * 100 + '%'"></div>
+    </div>
+    <p>{{spinningBrain.getCurrentFrame()}}/{{spinningBrain.getLength()}}</p>
+  </div>
+</div>

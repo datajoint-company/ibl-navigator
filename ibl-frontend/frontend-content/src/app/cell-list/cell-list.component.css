@@ -44,7 +44,15 @@ td span.oi {
 
 .clusterListContainer {
     height: 400px;
+    width: 320px;
     overflow-y: auto;
+    border: 1px solid rgb(150, 150, 150);
+    border-right: none;
+}
+
+.clusterListContainer .clusterListTable {
+    width: 100%;
+    background-color: white;
 }
 
 .cluster-nav-filters {
@@ -52,12 +60,36 @@ td span.oi {
 }
 
 .cluster-nav-filters .gc-filter-area {
-    margin-left: 12px;
+    margin-top:8px;
+}
+
+.plots-navigator {
+    position: fixed;
+    z-index: 999;
+    display: inline-flex;
+    flex-direction: row;
+    right: 0;
+    bottom: 430px;
+    transition: right 0.5s;
+}
+
+.plots-navigator.minimize {
+    right: -260px;
+    transition: right 0.5s;
+    margin-left: 0;
+}
+
+.plots-navigator.minimize .plots-navigator-buttons {
+    position: fixed;
+    right: 0;
+    bottom: 258px;
+    padding-right: 16px;
+    padding-left: 14px;
 }
 
 .plots-navigator-buttons {
-    margin-right: 5px;
-    margin-top: 8px;
+    padding: 8px 5px;
+    border: 1px solid rgb(150, 150, 150);
 }
 
 .plots-navigator-buttons span:hover {
@@ -88,6 +120,16 @@ td span.oi {
 
 .depth-peth-plot-area .order-buttons {
     margin-top: 15px;
+}
+
+.depth-peth-not-available {
+    border: 1px solid gray;
+    margin: 12px;
+    width: 400px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .order-button-content .radio-option,
@@ -122,6 +164,9 @@ td span.oi {
     padding-right: 10px;
 }
 
+.cluster-nav-plot-area {
+    padding-left: 12px;
+}
 .cluster-nav-plot-area > .yaxis-selector-plot-area {
     display: flex;
     flex-direction: row;
@@ -156,15 +201,59 @@ td span.oi {
     padding-right: 15px;
 }
 
+.coronal-section-area {
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.coronal-section-probe-options {
+    display: flex;
+    flex-direction: row;
+}
+
+.coronal-section-probe-options .probe-selector {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid lightgray;
+    margin-right: 24px;
+    cursor: pointer;
+    box-shadow: gray 1px 2px 1px;
+    align-items: center;
+    width: 300px;
+}
+
+.coronal-section-probe-options .probe-selector * {
+    cursor: pointer;
+}
+
+.coronal-section-probe-options .probe-selector:hover {
+    box-shadow: gray 1px 2px 4px;
+}
+
+.probe-selector img {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.probe-selector img.selected,
+.probe-selector .dummy-image.selected {
+    border: 6px solid #03a2da;
+}
+
+.probe-selector .dummy-image {
+    height: 200px;
+    width: 100%;
+    border: 1px solid lightgray;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+}
 
 /* M (768px and up) */
 @media only screen and (max-width: 900px) {
     .plots-navigator {
-        position: fixed;
-        z-index: 999;
-        display: inline-flex;
-        flex-direction: row;
-        right: 0;
         bottom: 200px;
     }
     .clusterListTable * {
@@ -176,12 +265,12 @@ td span.oi {
 /* L (900px and up) */
 @media only screen and (min-width: 901px) {
     .plots-navigator {
-        position: fixed;
+        /* position: fixed;
         z-index: 999;
         display: inline-flex;
         flex-direction: row;
         right: 0;
-        bottom: 430px;
+        bottom: 430px; */
     }
 
 } 
@@ -189,18 +278,12 @@ td span.oi {
 /* L (1420px and up) */
 @media only screen and (min-width: 1420px) {
     .plots-navigator {
-        /* position: relative;
+        /* position: fixed;
         z-index: 999;
         display: inline-flex;
         flex-direction: row;
         right: 0;
-        bottom: 0px; */
-        position: fixed;
-        z-index: 999;
-        display: inline-flex;
-        flex-direction: row;
-        right: 0;
-        bottom: 430px;
+        bottom: 430px; */
     }
 
 } 

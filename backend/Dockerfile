@@ -5,7 +5,7 @@ FROM raphaelguzman/djlab:py3.6-debian
 #     pip install \
 #         git+https://github.com/dimitri-yatsenko/datajoint-python.git@dev#egg=datajoint-python
 
-RUN pip install --upgrade --pre datajoint
+RUN pip install --upgrade --pre datajoint==0.12.9
 
 HEALTHCHECK       \
     --timeout=3s \ 

@@ -416,7 +416,7 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
             this.loadingPlots[3] = false;
             this.loadingPlots[4] = false;
             this.loadingPlots[5] = false;
-            console.log('date reaction time contrast plot unavailable');
+            // console.log('date reaction time contrast plot unavailable');
           }
         });
       this.mousePlotsService.getDateRTTrialNumPlot({ 'subject_uuid': this.mouseInfo['subject_uuid'], '__order': 'session_date DESC', '__limit': '3' });
