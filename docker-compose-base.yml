@@ -72,7 +72,7 @@ services:
     #     condition: service_healthy
   nginx:
     <<: *net
-    image: datajoint/nginx:v0.0.16
+    image: datajoint/nginx:v0.0.17
     environment:
       - ADD_zfrontend_TYPE=REST
       - ADD_zfrontend_ENDPOINT=ibl-navigator:9000
