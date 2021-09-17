@@ -40,6 +40,7 @@ services:
       retries: 20
   ibl-node-server:
     <<: *net
+    platform: linux/amd64
     # image: registry.vathes.com/ibl-navigator/node-server:v0.3.0 # for internal demo
     image: registry.vathes.com/ibl-navigator/node-server:v0.2.0-public # for public demo
     environment:
@@ -72,7 +73,7 @@ services:
     #     condition: service_healthy
   nginx:
     <<: *net
-    image: datajoint/nginx:v0.0.16
+    image: datajoint/nginx:v0.0.18
     environment:
       - ADD_zfrontend_TYPE=REST
       - ADD_zfrontend_ENDPOINT=ibl-navigator:9000
