@@ -35,7 +35,7 @@ services:
       service: ibl-node-server
     image: ibl-node-server:v0.0.0
     # command: nodemon /src/server.js
-    command: npm test
+    # command: npm test
     ports:
       - "9222:9222"
     volumes:

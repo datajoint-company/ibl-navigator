@@ -33,7 +33,7 @@ export class AllSessionsService {
    * @returns Observable from http.post
    */
   fetchSessions(sessionFilters: any) {
-    return this.http.post(BACKEND_API_URL + '/sessions/', sessionFilters, { responseType: 'json'})
+    return this.http.post(BACKEND_API_URL + '/newdatasessions', sessionFilters, { responseType: 'json'})
   }
 
   getAllSessions() {

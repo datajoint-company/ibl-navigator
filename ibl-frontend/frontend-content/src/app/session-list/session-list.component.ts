@@ -32,6 +32,8 @@ interface BrainTreeNode {
   styleUrls: ['./session-list.component.css']
 })
 export class SessionListComponent implements OnInit, OnDestroy {
+
+  session:"app-session-list";
   session_filter_form = new FormGroup({
     task_protocol: new FormControl(),
     session_uuid: new FormControl(),
@@ -123,6 +125,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+
+    this.session = this.route.snapshot.data["app-session-list"]
     this.isLoading = true;
     this.initialLoad = true;
 
@@ -131,7 +135,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       F: false,
       M: false,
       U: false
-    }
+    } 
 
     // Hide filter if screen size is smaller than the values of 1250x750
     if (window.innerWidth < 1250 || window.innerHeight < 750) {
@@ -319,6 +323,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.buildLookup();
     })
   }
+
+  // ngAfterViewInit(){
+  //   this.paginator.page.subscribe(() => 
+  //     this.dataSource.loadSessions())
+  // }
   
   ngOnDestroy() {
     // Store paginator, sort, buttons, and sessions
