@@ -1,5 +1,11 @@
 # don't build
 FROM vathes/angulardev:angcli7.1.4-angbuild0.11.4
+# RUN \ 
+#     npm cache clean -f && \
+#     npm install -g n && \
+#     n 12.14.0
+
+#RUN id && npm install -g node@^12.0.0
 
 HEALTHCHECK       \
     --timeout=3s \ 
