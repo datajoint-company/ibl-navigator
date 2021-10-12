@@ -33,15 +33,16 @@ services:
   ibl-navigator:
     <<: *net
     # image: registry.vathes.com/ibl-navigator/frontend:v0.4.2 # for internal demo
-    image: registry.vathes.com/ibl-navigator/frontend:v0.2.5-public # for public demo
+    image: registry.vathes.com/ibl-navigator/frontend:v0.2.6-public # for public demo
     healthcheck:
       test: curl --fail http://localhost:9000 || exit 1
       timeout: 3s
       retries: 20
   ibl-node-server:
     <<: *net
+    platform: linux/amd64
     # image: registry.vathes.com/ibl-navigator/node-server:v0.3.0 # for internal demo
-    image: registry.vathes.com/ibl-navigator/node-server:v0.2.0-public # for public demo
+    image: registry.vathes.com/ibl-navigator/node-server:v0.2.1-public # for public demo
     environment:
     - NODE_ENV=development
     - DEMO_USERNAME=ibluser
@@ -72,7 +73,7 @@ services:
     #     condition: service_healthy
   nginx:
     <<: *net
-    image: datajoint/nginx:v0.0.16
+    image: datajoint/nginx:v0.0.18
     environment:
       - ADD_zfrontend_TYPE=REST
       - ADD_zfrontend_ENDPOINT=ibl-navigator:9000

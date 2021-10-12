@@ -204,8 +204,6 @@ app.post('/sessions', checkAuth, cacheMiddleware(15*60), (req, res) => {
     })
 })
 
-
-
 app.get('/mice', checkAuth, (req, res) => {
     // setup for proxy server
     var options = {
