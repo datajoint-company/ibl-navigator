@@ -33,7 +33,6 @@ interface BrainTreeNode {
 })
 export class SessionListComponent implements OnInit, OnDestroy {
 
-  session:"app-session-list";
   session_filter_form = new FormGroup({
     task_protocol: new FormControl(),
     session_uuid: new FormControl(),
@@ -126,7 +125,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
 
-    this.session = this.route.snapshot.data["app-session-list"]
     this.isLoading = true;
     this.initialLoad = true;
 
@@ -323,11 +321,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.buildLookup();
     })
   }
-
-  // ngAfterViewInit(){
-  //   this.paginator.page.subscribe(() => 
-  //     this.dataSource.loadSessions())
-  // }
   
   ngOnDestroy() {
     // Store paginator, sort, buttons, and sessions
