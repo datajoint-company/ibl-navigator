@@ -131,8 +131,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       F: false,
       M: false,
       U: false
-    } 
-    
+    }
+
     // Hide filter if screen size is smaller than the values of 1250x750
     if (window.innerWidth < 1250 || window.innerHeight < 750) {
       this.filterExpanded = false;
