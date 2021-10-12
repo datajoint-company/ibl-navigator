@@ -32,7 +32,6 @@ interface BrainTreeNode {
   styleUrls: ['./session-list.component.css']
 })
 export class SessionListComponent implements OnInit, OnDestroy {
-
   session_filter_form = new FormGroup({
     task_protocol: new FormControl(),
     session_uuid: new FormControl(),
@@ -124,7 +123,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
-
     this.isLoading = true;
     this.initialLoad = true;
 
@@ -134,7 +132,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       M: false,
       U: false
     } 
-
     // Hide filter if screen size is smaller than the values of 1250x750
     if (window.innerWidth < 1250 || window.innerHeight < 750) {
       this.filterExpanded = false;
