@@ -3,7 +3,10 @@ import { FormControl, FormGroup, FormArray, AbstractControl} from '@angular/form
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { MatPaginator, MatTableDataSource, MatSort, MatTreeNestedDataSource } from '@angular/material';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { AllSessionsService } from './all-sessions.service';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
@@ -554,7 +557,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const requestFilter = {};
     let requestJSONstring = '';
     
-    filterList.forEach(filter => {
+    filterList.forEach((filter: Array<any>) => {
       // filter is [["session_lab", "somelab"], ["subject_nickname", null]...]
       const filterKey = filter[0].split('')[0]; // filter[0] is control name like 'session_lab'
       if (filter[1] && filterKey !== focusedField) {

@@ -1,0 +1,23 @@
+
+Initial Chunk Files | Names         |      Size
+main.js             | main          |   5.33 MB
+scripts.js          | scripts       |   2.79 MB
+styles.css          | styles        | 222.78 kB
+polyfills-es5.js    | polyfills-es5 | 140.52 kB
+polyfills.js        | polyfills     |  44.46 kB
+runtime.js          | runtime       |   1.28 kB
+
+| Initial Total |   8.53 MB
+
+Build at: 2021-10-13T17:06:52.668Z - Hash: e5695edbde9420666c43 - Time: 144564ms
+
+** Angular Live Development Server is listening on 0.0.0.0:9000, open your browser on http://localhost:9000/ **
+
+
+✔ Compiled successfully.
+
+6 unchanged chunks
+
+Build at: 2021-10-13T17:06:56.797Z - Hash: 6b89530861c5102ee78a - Time: 3251ms
+
+✔ Compiled successfully.

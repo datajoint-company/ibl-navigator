@@ -2,7 +2,9 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { AllMiceService } from './all-mice.service';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
@@ -324,7 +326,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
   filterRequests(focusedField?: string) {
     const filterList = Object.entries(this.mouse_filter_form.getRawValue());
     const requestFilter = {};
-    filterList.forEach(filter => {
+    filterList.forEach((filter: Array<any>) => {
       // filter is [["lab_name_control", "somelab"], ["subject_nickname_control", null]...]
       const filterKey = filter[0].split('_control')[0]; // filter[0] is control name like 'lab_name_control'
       if (filter[1] && filterKey !== focusedField) {
