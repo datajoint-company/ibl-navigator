@@ -18,7 +18,8 @@ export class SamplePlotComponent implements OnInit, OnChanges, OnDestroy {
   private plotsSubscription: Subscription;
 
 
-  @ViewChild('samplePlot') el: ElementRef;
+  // @ViewChild('samplePlot') el: ElementRef;
+  @ViewChild('samplePlot', {static: true}) el: ElementRef;
   constructor(public plotsService: PlotsService, @Inject(ViewSamplePlotsComponent) public VSPComp: ViewSamplePlotsComponent) {}
 
   ngOnInit() {

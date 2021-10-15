@@ -445,6 +445,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
         birthDates.push(date);
       });
+      console.log("miceBirthdayFilter in Session " + birthDates.length)
+      console.log("calendarDate in miceBirthdayFilter in Session " + calendarDate)
       return birthDates.includes(calendarDate.toISOString().substring(0, 10));
     };
 

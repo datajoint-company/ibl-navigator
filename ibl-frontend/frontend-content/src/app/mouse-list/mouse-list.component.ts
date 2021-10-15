@@ -251,6 +251,8 @@ export class MouseListComponent implements OnInit, OnDestroy {
       for (const date of this.mice_menu['subject_birth_date']) {
         birthDates.push(date);
       }
+      console.log("miceBirthdayFilter " + birthDates.length)
+      console.log("miceBirthdayFilter date value " + d)
       return birthDates.includes(d.toISOString().split('T')[0]);
     };
   }

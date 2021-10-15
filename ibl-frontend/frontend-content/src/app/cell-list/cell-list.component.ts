@@ -277,7 +277,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private fullPSTHLoaded = new Subject();
   private fullRasterPSTHLoaded = new Subject();
   @Input() sessionInfo: Object;
-  @ViewChild('navTable') el_nav: ElementRef;
+  // @ViewChild('navTable') el_nav: ElementRef;
+  @ViewChild('navTable', {static: true}) el_nav: ElementRef;
   // @ViewChild('brainGIF') brain_gif: ElementRef;
   // spinningBrain;
 

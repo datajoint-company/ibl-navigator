@@ -177,15 +177,24 @@ export class ByDateResultPlotsComponent implements OnInit, OnDestroy {
   // @ViewChild('datePsychCurvePlot') elPsych: ElementRef;
   // @ViewChild('dateRTContrastPlot') elRTContrast: ElementRef;
   // @ViewChild('dateRTTrialNumPlot') elRTTrialNum: ElementRef;
-  @ViewChild('datePsychCurvePlot1') elPsych1: ElementRef;
-  @ViewChild('dateRTContrastPlot1') elRTContrast1: ElementRef;
-  @ViewChild('dateRTTrialNumPlot1') elRTTrialNum1: ElementRef;
-  @ViewChild('datePsychCurvePlot2') elPsych2: ElementRef;
-  @ViewChild('dateRTContrastPlot2') elRTContrast2: ElementRef;
-  @ViewChild('dateRTTrialNumPlot2') elRTTrialNum2: ElementRef;
-  @ViewChild('datePsychCurvePlot3') elPsych3: ElementRef;
-  @ViewChild('dateRTContrastPlot3') elRTContrast3: ElementRef;
-  @ViewChild('dateRTTrialNumPlot3') elRTTrialNum3: ElementRef;
+  // @ViewChild('datePsychCurvePlot1') elPsych1: ElementRef;
+  @ViewChild('datePsychCurvePlot1', {static: true}) elPsych1: ElementRef;
+  // @ViewChild('dateRTContrastPlot1') elRTContrast1: ElementRef;
+  @ViewChild('dateRTContrastPlot1', {static: true}) elRTContrast1: ElementRef;
+  // @ViewChild('dateRTTrialNumPlot1') elRTTrialNum1: ElementRef;
+  @ViewChild('dateRTTrialNumPlot1', {static: true}) elRTTrialNum1: ElementRef;
+  // @ViewChild('datePsychCurvePlot2') elPsych2: ElementRef;
+  @ViewChild('datePsychCurvePlot2', {static: true}) elPsych2: ElementRef;
+  // @ViewChild('dateRTContrastPlot2') elRTContrast2: ElementRef;
+  @ViewChild('dateRTContrastPlot2', {static: true}) elRTContrast2: ElementRef;
+  // @ViewChild('dateRTTrialNumPlot2') elRTTrialNum2: ElementRef;
+  @ViewChild('dateRTTrialNumPlot2', {static: true}) elRTTrialNum2: ElementRef;
+  // @ViewChild('datePsychCurvePlot3') elPsych3: ElementRef;
+  @ViewChild('datePsychCurvePlot3', {static: true}) elPsych3: ElementRef;
+  // @ViewChild('dateRTContrastPlot3') elRTContrast3: ElementRef;
+  @ViewChild('dateRTContrastPlot3', {static: true}) elRTContrast3: ElementRef;
+  // @ViewChild('dateRTTrialNumPlot3') elRTTrialNum3: ElementRef;
+  @ViewChild('dateRTTrialNumPlot3', {static: true}) elRTTrialNum3: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
 
