@@ -253,7 +253,7 @@ export class MouseListComponent implements OnInit, OnDestroy {
       }
       console.log("miceBirthdayFilter " + birthDates.length)
       console.log("miceBirthdayFilter date value " + d)
-      return birthDates.includes(d.toISOString().split('T')[0]);
+      return (d == null ? true : birthDates.includes(d.toISOString().split('T')[0]));
     };
   }
 

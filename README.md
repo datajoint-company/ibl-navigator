@@ -19,6 +19,7 @@ AWS_ACCESS_KEY_ID=aws_key
 AWS_SECRET_ACCESS_KEY=aws_secret
 DEMO_PASSWORD=ibl_navigator_password
 JWT_SECRET=secret
+API_MODE=[public | private]
 # utilized for remote deployment
 SUBDOMAINS=sub
 URL=example.com
