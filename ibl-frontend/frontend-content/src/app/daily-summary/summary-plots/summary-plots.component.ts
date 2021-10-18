@@ -59,13 +59,9 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
   @Input() plotsCollapsed: {};
   constructor(public dailySummaryService: DailySummaryService) { }
 
-  // @ViewChild('waterWeightPlot') WWIplot: ElementRef;
   @ViewChild('waterWeightPlot', {static: true}) WWIplot: ElementRef;
-  // @ViewChild('trialCountsSessionDurationPlot') TCSDplot: ElementRef;
   @ViewChild('trailCountsSessionDurationPlot', {static: true}) TCSDplot: ElementRef;
-  // @ViewChild('performanceReactionTimePlot') PRTplot: ElementRef;
   @ViewChild('performanceReactionTimePlot', {static: true}) PRTplot: ElementRef;
-  // @ViewChild('contrastHeatmapPlot') CHplot: ElementRef;
   @ViewChild('contrastHeatmapPlot', {static: true}) CHplot: ElementRef;
   ngOnInit() {
     const WWIplotElem = this.WWIplot.nativeElement;

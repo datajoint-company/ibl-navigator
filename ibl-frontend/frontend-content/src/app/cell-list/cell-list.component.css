@@ -12,6 +12,7 @@
     top: -3px;
     z-index: 99;
     font-size: 0.7rem;
+    background-color: rgb(221, 221, 221);
 }
 
 .clusterListTable tbody {
@@ -48,6 +49,8 @@ td span.oi {
     overflow-y: auto;
     border: 1px solid rgb(150, 150, 150);
     border-right: none;
+    position: absolute;
+    right: 40px;
 }
 
 .clusterListContainer .clusterListTable {
@@ -82,6 +85,8 @@ td span.oi {
 .plots-navigator-buttons {
     padding: 8px 5px;
     border: 1px solid rgb(150, 150, 150);
+    position: absolute;
+    right: 0;
 }
 
 .plots-navigator.minimize .plots-navigator-buttons {

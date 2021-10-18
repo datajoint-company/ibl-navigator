@@ -57,7 +57,6 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   @Input() mouseInfo: Object;
 
   constructor(public mousePlotsService: MousePlotsService) { }
-  // @ViewChild('fitParPlots') elem: ElementRef;
   @ViewChild('fitParPlots', {static: true}) elem: ElementRef;
   smallScreenLayout = {
     'font.size': '10',

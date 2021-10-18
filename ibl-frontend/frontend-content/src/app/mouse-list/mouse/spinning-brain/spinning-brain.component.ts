@@ -14,7 +14,6 @@ export class SpinningBrainComponent implements OnInit, OnDestroy {
   private spinningBrainSubscription: Subscription;
 
   @Input() mouseInfo: Object;
-  // @ViewChild('brainGIF') brain_gif: ElementRef;
   @ViewChild('brainGIF', {static: true}) brain_gif: ElementRef;
   spinningBrain: any;
   spinningBrainSrc: string = '';

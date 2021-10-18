@@ -122,7 +122,6 @@ export class WaterWeightPlotComponent implements OnInit, OnDestroy {
   @Output() WIWPlotAvailability: EventEmitter<any> = new EventEmitter();
   constructor(public mousePlotsService: MousePlotsService) { }
 
-  // @ViewChild('waterIntake_weight_plot') el: ElementRef;
   @ViewChild('waterIntake_weight_plot', {static: true}) el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;

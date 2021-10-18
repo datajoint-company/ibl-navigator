@@ -20,7 +20,6 @@ export class AnimatedPsychCurvePlotComponent implements OnInit {
   private sessionQuerySubscription: Subscription;
   constructor(public mousePlotsService: MousePlotsService, public allSessionsService: AllSessionsService) { }
   @Input() mouseInfo: Object;
-  // @ViewChild('animatedPsychCurvePlot') element: ElementRef;
   @ViewChild('animatedPsychCurvePlot', {static: true}) element: ElementRef;
   ngOnInit() {
     this.showInfo = false;

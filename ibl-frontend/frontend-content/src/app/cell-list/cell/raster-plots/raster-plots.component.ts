@@ -55,7 +55,6 @@ export class RasterPlotsComponent implements OnInit, OnDestroy {
  
 
   @Input() clusterInfo: Object;
-  // @ViewChild('raster_plots') el: ElementRef;
   @ViewChild('raster_plots', {static: true}) el: ElementRef;
   @Output() eventSelected: EventEmitter<string> = new EventEmitter();
   constructor(public cellPlotsService: CellPlotsService) { }

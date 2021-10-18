@@ -105,7 +105,6 @@ export class PerformanceReactionTimePlotComponent implements OnInit, OnDestroy {
   @Output() PRPPlotAvailability: EventEmitter<any> = new EventEmitter();
   constructor(public mousePlotsService: MousePlotsService) { }
 
-  // @ViewChild('performanceReactionTimePlot') el: ElementRef;
   @ViewChild('performanceReactionTimePlot', {static: true}) el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;

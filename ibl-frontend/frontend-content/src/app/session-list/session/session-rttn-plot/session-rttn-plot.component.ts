@@ -99,7 +99,6 @@ export class SessionRTTNPlotComponent implements OnInit, OnDestroy {
   @Output() openSRTTNplot: EventEmitter<any> = new EventEmitter();
   constructor(public sessionPlotsService: SessionPlotsService) { }
 
-  // @ViewChild('session_RTTN_plot') el: ElementRef;
   @ViewChild('session_RTTN_plot', {static: true}) el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;

@@ -1,18 +1,6 @@
 FROM vathes/angulardev:angcli7.1.4-angbuild0.11.4
 
-RUN apt-get install \
-    apt-transport-https \
-    curl \
-    software-properties-common \ 
-    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - \
-    sudo apt-get install nodejs
 
-# RUN \ 
-#     npm cache clean -f && \
-#     npm install -g n && \
-#     n 
-
-# RUN id && npm install -g node@^12.0.0
 
 WORKDIR /app/dist/pipeline-viewer
 

@@ -434,31 +434,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
         sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
       });
-
-      console.log("sessionDateFilter in Session " + sessionDates.length)
-      console.log("calendarDate in sessionDateFilter in Session " + date)
-
       // filter out dates without any session
       return (date == null ? true : sessionDates.includes(date.toISOString().split('T')[0]))
     };
 
     // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
-    // @Input('matDatepickerFilter')
-    // dateFilter: DateFilterFn<D>
     this.miceBirthdayFilter = (calendarDate: Date): boolean => {
       let birthDates = [];
       this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
         birthDates.push(date);
-      });
-
-      // If calendarDate is null, return false.
-      // if (!calendarDate) {
-      //   console.log('calendarDate ' + calendarDate)
-      //   return false 
-      // }  
-
-      console.log("miceBirthdayFilter in Session " + birthDates.length)
-      console.log("calendarDate in miceBirthdayFilter in Session " + calendarDate)
+      }); 
       return (calendarDate == null ? true : birthDates.includes(calendarDate.toISOString().split('T')[0]))
     };
 

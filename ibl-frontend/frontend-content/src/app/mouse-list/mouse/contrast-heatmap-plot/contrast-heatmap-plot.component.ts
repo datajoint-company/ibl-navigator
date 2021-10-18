@@ -98,7 +98,6 @@ export class ContrastHeatmapPlotComponent implements OnInit, OnDestroy {
 
   @Output() contrastHeatmapPlotAvailability: EventEmitter<any> = new EventEmitter();
   @Input() mouseInfo: Object;
-  // @ViewChild('contrastHeatmapPlot') elem: ElementRef;
   @ViewChild('contrastHeatmapPlot', {static: true}) elem: ElementRef;
   constructor(public mousePlotsService: MousePlotsService) { }
 

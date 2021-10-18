@@ -1,20 +1,6 @@
 # don't build
 # FROM vathes/angulardev:angcli7.1.4-angbuild0.11.4
 
-# RUN apt-get install \
-#     apt-transport-https && \
-#     curl \
-#     software-properties-common && \ 
-#     curl https://deb.nodesource.com/setup_12.x | -E bash - && \
-#     apt-get install nodejs
-
-# RUN \ 
-#     npm cache clean -f && \
-#     npm install -g n && \
-#     n lts
-
-# RUN id && npm install -g node@^12.0.0
-
 FROM node:12-bullseye
 
 HEALTHCHECK       \
