@@ -60,7 +60,7 @@ export class SummaryPlotsComponent implements OnInit, OnDestroy {
   constructor(public dailySummaryService: DailySummaryService) { }
 
   @ViewChild('waterWeightPlot', {static: true}) WWIplot: ElementRef;
-  @ViewChild('trailCountsSessionDurationPlot', {static: true}) TCSDplot: ElementRef;
+  @ViewChild('trialCountsSessionDurationPlot', {static: true}) TCSDplot: ElementRef;
   @ViewChild('performanceReactionTimePlot', {static: true}) PRTplot: ElementRef;
   @ViewChild('contrastHeatmapPlot', {static: true}) CHplot: ElementRef;
   ngOnInit() {
