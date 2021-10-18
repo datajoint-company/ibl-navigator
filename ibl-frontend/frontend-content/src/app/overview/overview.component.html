@@ -42,39 +42,50 @@
 
   <div class="home-shaded-container">
     <div class="detail-container">
-      <h3>How can you access the data?</h3>
-      <ol class="detail-text">
-        <li>To access the <b>data associated with the electrophysiology recordings</b>, follow <a href="https://int-brain-lab.github.io/iblenv/public_docs/public_one.html" target="_blank">
-          these guidelines</a>.
-        </li>
-        <li>To access the <b>behavior data</b> used in this online portal, you have three options:
-          <ol style="list-style-type: lower-alpha">
-            <li><b>Access the DataJoint database via <a target="_blank" href="https://jupyterhub.internationalbrainlab.org">JupyterHub</a>:</b> this site hosts 
-              several notebooks that allow you to directly interact with the database with DataJoint. You do not need to download or install anything locally.
-              <ol style="list-style-type: lower-roman">
-                <li>Log in with your GitHub account.</li>
-                <li>Read the README</li>
-                <li>Click on <span class="code-style">public_notebooks/Explore IBL pipeline</span> to run several notebooks (one of which replicates 
-                  figure 2 of <a target="_blank" href="https://doi.org/10.1101/2020.01.17.909838">The International Brain Laboratory et al. 2020</a>).</li>
-              </ol>
+        <h3>How can you access the data?</h3>
+        <p>To access the data outside of this online portal, you have several options.</p>
+        <ol class="detail-text">
+            <li>Access the data using <a
+                    href=" https://int-brain-lab.github.io/iblenv/notebooks_external/one_quickstart.html"
+                    target="_blank">ONE</a>. Follow the guidelines <a
+                    href="https://int-brain-lab.github.io/iblenv/public_docs/public_one.html"
+                    target="_blank">here</a>. The data includes both compressed raw ephys data and preprocessed
+                data, as well as behaviour and video data.</li>
+            <br>
+            <li>Access the database via <a target="_blank"
+                    href="https://jupyterhub.internationalbrainlab.org">JupyterHub</a> using <a target="_blank"
+                    href="https://datajoint.org">DataJoint</a>. This site
+                hosts
+                several notebooks that allow you to directly interact with the database with DataJoint. You do not
+                need to download or install anything locally.
+                <ol style="list-style-type: lower-alpha">
+                    <li>Log in with your GitHub account.</li>
+                    <li>Read the README</li>
+                    <li>Click on <span class="code-style">public_notebooks/Explore IBL pipeline</span> to run
+                        the notebooks (one of which replicates
+                        Figure 2 of <a target="_blank" href="https://doi.org/10.1101/2020.01.17.909838">The
+                            International Brain Laboratory et al. 2020</a>).</li>
+                </ol>
             </li>
             <br>
-            <li><b>Access the database locally with <a target="_blank" href="https://datajoint.org">DataJoint</a>.</b>
-              <ol style="list-style-type: lower-roman">
-                <li>See detailed instructions on <a href="https://int-brain-lab.github.io/iblenv/public_docs/public_datajoint.html" target="_blank">accessing the database locally</a></li>
-              </ol>
+            <li>Access the database locally with <a target="_blank" href="https://datajoint.org">DataJoint</a>. See
+                detailed instructions on <a
+                    href="https://int-brain-lab.github.io/iblenv/public_docs/public_datajoint.html"
+                    target="_blank">accessing the database locally</a></li> <br>
+            <li>Access the data set through direct download from your browser without running any code. Simply
+                load an internet browser and use the provided link from the <a
+                    href="http://ibl.flatironinstitute.org/public/behavior_paper_data.zip" target="_blank">Behavior
+                    paper data URL</a>.
             </li>
             <br>
-            <li>You may also directly download the data through your web browser without running any code. Simply load an internet browser and use the provided link from the <a href="http://ibl.flatironinstitute.org/public/behavior_paper_data.zip" target="_blank"><b>Behavior paper data URL</b></a>
-            </li>
-            <br>
-          </ol>
-        </li>
-      </ol>
-      <p class="detail-text">Issues with accessing the data? Email <a href="mailto:info@internationalbrainlab.org" target="_blank">info@internationalbrainlab.org</a>.</p>
-      <p class="detail-text">General questions about the paper <a target="_blank" href="https://doi.org/10.1101/2020.01.17.909838">The International Brain Laboratory et al. 2020</a>? 
-        Email <a href="mailto:info+behavior@internationalbrainlab.org" target="_blank">info+behavior@internationalbrainlab.org</a>.
-      </p>
+        </ol>
+        <p class="detail-text">Issues with accessing the data? Email <a href="mailto:info@internationalbrainlab.org"
+                target="_blank">info@internationalbrainlab.org</a>.</p>
+        <p class="detail-text">General questions about the paper <a target="_blank"
+                href="https://doi.org/10.1101/2020.01.17.909838">The International Brain Laboratory et al. 2020</a>?
+            Email <a href="mailto:info+behavior@internationalbrainlab.org"
+                target="_blank">info+behavior@internationalbrainlab.org</a>.
+        </p>
     </div>
 
     <!-- temporary for NMA events -->
@@ -154,19 +165,19 @@
         The related training status indicated on the website are marked in bold and quoted.
       </p>
       <p class="detail-text">
-        When the animal starts behavioral training, it first undergoes a period of habituation, then it is trained in the basic task 
-        until reaching full proficiency (‘<b>trained</b>’). If the mouse does not reach proficiency in the basic task without 40 days of 
-        training, it is marked as untrainable (‘<b>over 40 days</b>’). Once proficiency in the basic task is reached, the animal is trained 
+        When the animal starts behavioral training, it first undergoes a period of habituation, then it is trained on the basic task 
+        until reaching full proficiency (‘<b>trained</b>’). If the mouse does not reach proficiency in the basic task within 40 days of 
+        training, it is marked as untrainable. Once proficiency in the basic task is reached, the animal is trained 
         in the biased task until proficiency is achieved (‘<b>ready for ephys rig</b>’).
       </p>
       <p class="detail-text">
-        Once the animal is placed on the ephys rig, it undergoes a habituation to that rig, until it is deemed ready for electrophysiological 
-        recording to be conducted (‘<b>ready for recording</b>’). Once a recording has been completed, the behavior quality is validated for 
+        Once the animal is placed on the ephys rig, it undergoes a habituation to that rig until it is deemed ready for electrophysiological 
+        recordings to be conducted (‘<b>ready for neuropixels recording</b>’). Once a recording has been completed, the behavior quality is validated for 
         downstream analysis (‘<b>good enough for brainwide map</b>’). The associated methods and protocols to habituate a mouse to the ephys rig and 
         perform the Neuropixels recording have not been yet publicly released; please see the figure below for a preliminary introduction 
         to our full training pipeline.
         <br>
-        <img id="fig5" src="assets/images/pipeline_NP.png" alt="figure pipeline">
+        <img id="fig5" src="assets/images/training_pipeline.svg" alt="Training procedure">
       </p>
     </div>
   </div>
