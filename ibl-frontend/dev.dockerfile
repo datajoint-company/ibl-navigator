@@ -14,7 +14,7 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 # CMD tail -f /dev/null
 
-CMD ["/app/node_modules/@angular/cli/bin/ng","serve","--host","0.0.0.0","--port","9000","--disable-host-check"]
+CMD ["node","--max_old_space_size=8192","/app/node_modules/@angular/cli/bin/ng","serve","--host","0.0.0.0","--port","9000","--disable-host-check"]
 
 WORKDIR /app
 
