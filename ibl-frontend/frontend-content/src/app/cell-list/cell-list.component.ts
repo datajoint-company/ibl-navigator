@@ -1974,68 +1974,68 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       for (let templateType of Object.entries(this.psthLookup[psth['cluster_id']]['data'])) {
         // console.log('templateType: ', templateType);
         if (psth['psth_time']) {
-          this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = psth['psth_time'].split(',');
+          this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = (psth['psth_time'].split(',')).map(Number);
         }
         
         switch (templateType[0]) {
           case '0':
             if (psth['psth_left_upper']) {
-              this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left_upper'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][0]['y'] = (psth['psth_left_upper'].split(',')).map(Number);
             }
             break;
           case '1':
             if (psth['psth_left']) {
-              this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][1]['y'] = (psth['psth_left'].split(',')).map(Number);
             }
             break;
           case '2':
             if (psth['psth_left_lower']) {
-              this.psthLookup[psth['cluster_id']]['data'][2]['y'] = psth['psth_left_lower'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][2]['y'] = (psth['psth_left_lower'].split(',')).map(Number);
             }
             break;
           case '3':
             if (psth['psth_right_upper']) {
-              this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right_upper'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][3]['y'] = (psth['psth_right_upper'].split(',')).map(Number);
             }
             break;
           case '4':
             if (psth['psth_right']) {
-              this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][4]['y'] = (psth['psth_right'].split(',')).map(Number);
             }
             break;
           case '5':
             if (psth['psth_right_lower']) {
-              this.psthLookup[psth['cluster_id']]['data'][5]['y'] = psth['psth_right_lower'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][5]['y'] = (psth['psth_right_lower'].split(',')).map(Number);
             }
             break;
           case '6':
             if (psth['psth_incorrect_upper']) {
-              this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect_upper'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][6]['y'] = (psth['psth_incorrect_upper'].split(',')).map(Number);
             }
             break;
           case '7':
             if (psth['psth_incorrect']) {
-              this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][7]['y'] = (psth['psth_incorrect'].split(',')).map(Number);
             }
             break;
           case '8':
             if (psth['psth_incorrect_lower']) {
-              this.psthLookup[psth['cluster_id']]['data'][8]['y'] = psth['psth_incorrect_lower'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][8]['y'] = (psth['psth_incorrect_lower'].split(',')).map(Number);
             }
             break;
           case '9':
             if (psth['psth_all_upper']) {
-              this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all_upper'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][9]['y'] = (psth['psth_all_upper'].split(',')).map(Number);
             }
             break;
           case '10':
             if (psth['psth_all']) {
-              this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][10]['y'] = (psth['psth_all'].split(',')).map(Number);
             }
             break;
           case '11':
             if (psth['psth_all_lower']) {
-              this.psthLookup[psth['cluster_id']]['data'][11]['y'] = psth['psth_all_lower'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][11]['y'] = (psth['psth_all_lower'].split(',')).map(Number);
             }
             break;
         }
@@ -2043,7 +2043,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       
 
       this.psthLookup[psth['cluster_id']]['layout']['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
-      this.psthLookup[psth['cluster_id']]['layout']['xaxis']['range'] = psth['psth_x_lim'] ? psth['psth_x_lim'].split(',') : [];
+      this.psthLookup[psth['cluster_id']]['layout']['xaxis']['range'] = psth['psth_x_lim'] ? (psth['psth_x_lim'].split(',')).map(Number) : [];
       this.psthLookup[psth['cluster_id']]['layout']['width'] = 770;
       this.psthLookup[psth['cluster_id']]['layout']['height'] = 420;
 
@@ -2402,7 +2402,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       }
       // console.log('xAcgArray: ', xAcgArray);
       this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = xAcgArray;
-      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['y'] = acg['acg'].split(',');
+      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['y'] = (acg['acg'].split(',')).map(Number);
       this.autocorrelogramLookup[acg['cluster_id']]['layout']['yaxis']['range'] = acg['plot_ylim']
 
       // original sizing : 400 height / 580 width

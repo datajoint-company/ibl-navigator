@@ -23,14 +23,17 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              {
+                "input": "node_modules/@angular/material/prebuilt-themes/indigo-pink-ibl.css"
+              },
+              {
+                "input": "src/assets/fonts/css/open-iconic-bootstrap.min.css"
+              },
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink-ibl.css",
+              "src/assets/fonts/css/open-iconic-bootstrap.min.css",
               "src/styles.css"
             ],
             "scripts": [
-              // "node_modules/mathjax/MathJax.js",
-              // "node_modules/mathjax/jax/output/SVG/config.js",
-              // "node_modules/mathjax/extensions/MathMenu.js",
-              // "node_modules/mathjax/extensions/MathZoom.js",
               "node_modules/plotly.js-dist/plotly.js"
             ]
           },
