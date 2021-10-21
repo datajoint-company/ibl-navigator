@@ -110,3 +110,8 @@ make sure to move over to the `master` branch by `git checkout master`
 `docker-compose -f docker-compose-deploy.yml up -d`
 
 -------------------------------------
+
+## External links
+
+- ![Training Pipeline Diagram (draw.io)](https://drive.google.com/file/d/1PrSq6JbLMzBLAijxop-hgb4A__aSNPfZ/view?usp=sharing)
+- ![Internal Navigator Documentation (Google)](https://docs.google.com/document/d/18RVyk0pDQpLR_uX9I6s0YMpoF-bETzFSy2NZB-oNcAM/edit?usp=sharing)
