@@ -3,7 +3,10 @@ import { FormControl, FormGroup, FormArray, AbstractControl} from '@angular/form
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { MatPaginator, MatTableDataSource, MatSort, MatTreeNestedDataSource } from '@angular/material';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { AllSessionsService } from './all-sessions.service';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
@@ -431,9 +434,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
         sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
       });
-
       // filter out dates without any session
-      return sessionDates.includes(date.toISOString().substring(0, 10));
+      return (date == null ? true : sessionDates.includes(date.toISOString().split('T')[0]))
     };
 
     // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
@@ -441,8 +443,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       let birthDates = [];
       this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
         birthDates.push(date);
-      });
-      return birthDates.includes(calendarDate.toISOString().substring(0, 10));
+      }); 
+      return (calendarDate == null ? true : birthDates.includes(calendarDate.toISOString().split('T')[0]))
     };
 
     // Set material from drop down
@@ -554,7 +556,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const requestFilter = {};
     let requestJSONstring = '';
     
-    filterList.forEach(filter => {
+    filterList.forEach((filter: Array<any>) => {
       // filter is [["session_lab", "somelab"], ["subject_nickname", null]...]
       const filterKey = filter[0].split('')[0]; // filter[0] is control name like 'session_lab'
       if (filter[1] && filterKey !== focusedField) {

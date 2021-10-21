@@ -117,7 +117,7 @@ export class SessionPsychPlotComponent implements OnInit, OnDestroy {
   @Output() psychCurveFitPars: EventEmitter<any> = new EventEmitter();
   constructor(public sessionPlotsService: SessionPlotsService) { }
 
-  @ViewChild('session_psych_plot') el: ElementRef;
+  @ViewChild('session_psych_plot', {static: true}) el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
     // console.log('screensize change: ', this.newScreenWidth);
