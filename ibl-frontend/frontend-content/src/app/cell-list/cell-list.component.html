@@ -83,9 +83,9 @@
           </div>
         </div> 
       
-        <plotly-plot [data]="plot_data_processed" [layout]="plot_layout_processed" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+        <plotly-plot [data]="plot_data_processed" [layout]="plot_layout_processed" [config]="plot_config" (restyle)="restylePlot($event)" (plotlyClick)="clusterSelectedPlot($event)"></plotly-plot>
       </div>
-      <plotly-plot *ngIf="!plot_data_processed || !plot_data_processed[0]" [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (click)="clusterSelectedPlot($event)"></plotly-plot>
+      <plotly-plot *ngIf="!plot_data_processed || !plot_data_processed[0]" [data]="plot_data" [layout]="plot_layout" [config]="plot_config" (restyle)="restylePlot($event)" (plotlyClick)="clusterSelectedPlot($event)"></plotly-plot>
 
       <div *ngIf="plot_data_processed && plot_data_processed[0]" class="alternative_plot_buttons x_axis">
         <label for="x_label"><b>x axis</b></label>
