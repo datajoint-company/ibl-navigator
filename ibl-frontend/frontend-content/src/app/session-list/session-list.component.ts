@@ -363,8 +363,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
     
     // Add the default sorting for the api request
     filters['__order'] = 'session_start_time DESC';
+    // filters['__page'] = this.pageIndex
+    // filters['__limit'] = this.pageSize
 
     this.allSessions = await this.allSessionsService.fetchSessions(filters).toPromise();
+    this.allSessions = this.allSessions['records'];
+    //record count json and assign it here 
   }
 
   setDropDownFormOptions(dropDownMenuOptionKey, formControl: AbstractControl, key: string) {
