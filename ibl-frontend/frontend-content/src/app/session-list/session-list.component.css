@@ -1,5 +1,9 @@
 .session-list-container {
+    position: relative;
     padding-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 h4 {
@@ -19,9 +23,8 @@ form.loading {
     display: none;
 }
 
-.filterExpand {
-    height: auto;
-    visibility: visible;
+button.filter-visibility {
+    width: fit-content;
 }
 
 .filterCollapse,
@@ -44,10 +47,11 @@ form.loading {
 
 .form-section {
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .session-date-filter {
-    float: left;
     width: 440px;
     margin-top: 9px;
     display: inline-flex;
@@ -84,10 +88,32 @@ label {
 .loading-icon {
     text-align: center;
     display: none;
+    border: none;
+    padding: 0;
+    background-color:transparent;
+    width: auto;
+    margin: 0 auto;
+}
+
+.session-list-loading-message {
+    text-align: left;
+    margin: 24px auto 0;
+    display: none;
+}
+
+.session-list-loading-message.show {
+    display: block;
 }
 
 .loading-icon.loading {
     display: block;
+}
+
+.loading-icon.loading.initial {
+    border: 1px solid gray;
+    padding: 36px 24px;
+    background-color:rgba(250, 250, 250, 0.8);
+    width: 400px;
 }
 
 .loading-icon.loading img {
@@ -111,7 +137,6 @@ td.to-center {
 mat-form-field {
     margin: 10px;
     width: 220px;
-    float: left;
 }
 
 mat-form-field input {
@@ -161,20 +186,20 @@ button:hover:not(.treeChevron) {
 }
 
 .btn-reset {
-    border: 2px solid rgb(180, 69, 134);
+    border: 2px solid rgb(180, 69, 134) !important;
 }
 .btn-reset:hover {
-    border: 2px solid rgb(180, 69, 134);
-    background-color: rgb(180, 69, 134);
-    color: white;
+    border: 2px solid rgb(180, 69, 134) !important;
+    background-color: rgb(180, 69, 134) !important;
+    color: white !important;
 }
 
 .btn-refresh {
-    border: 2px solid rgb(167, 163, 165);
+    border: 2px solid rgb(167, 163, 165) !important;
 }
 .btn-refresh:hover {
-    border: 2px solid rgb(167, 163, 165);
-    background-color: rgb(167, 163, 165);
+    border: 2px solid rgb(167, 163, 165) !important;
+    background-color: rgb(167, 163, 165) !important;
     color: white;
 }
 
@@ -184,8 +209,6 @@ button:hover:not(.treeChevron) {
     margin-top: 11px;
     margin-left: 10px;
     margin-bottom: 8px;
-    width: 150px;
-    float: left;
 }
 
 .mouse_sex_filter label {
@@ -194,6 +217,12 @@ button:hover:not(.treeChevron) {
 mat-checkbox.mouse_sex_menu_chbox {
     margin-right: 12px;
 }
+
+mat-checkbox.mouse_sex_menu_chbox#sexU {
+    /* visibility: hidden; */
+    display: none;
+}
+
 .mouse_sex_menu_chbox label.mat-checkbox-layout {
     margin-bottom: 0px;
 }
@@ -201,21 +230,19 @@ mat-checkbox.mouse_sex_menu_chbox {
     display: flex;
     flex-direction: row;
 };
-.cleardivider {
-    visibility: hidden;
-}
 
 .form-submit-button-area {
     display: flex;
     flex-direction: row;
 }
 
-.nplot_status_filter {
-    margin-left: 15px;
-    margin-top: 7px;
+.form-submit-button-area .checkbox-filters {
+    display: flex;
+    flex-wrap: wrap;
+    
 }
 
-.nprobe_status_filter {
+.chbox-filter {
     margin-left: 15px;
     margin-top: 7px;
 }
@@ -298,25 +325,24 @@ button.treeChevron {
 /* XS and S (768px and down) */
 @media only screen and (max-width: 768px) {
     .form-submit-button-area {
-        display: block;
+        display: flex;
+        flex-direction: column;
     }
     .form-submit-button-area button {
         display: inline-flex;
         flex-direction: row;
     }
-    .nplot_status_filter {
-        padding-top: 50px;
+    .form-submit-button-area .checkbox-filters {
+        margin-top: 16px;
     }
 } 
 
 /* M (768px and up) */
 @media only screen and (min-width: 768px) {
- 
 } 
 
 /* L (992px and up) */
 @media only screen and (min-width: 992px) {
-
 } 
 
 /* XL (1200px and up) */
@@ -332,54 +358,11 @@ button.treeChevron {
 /* XXL (1600px and up) */
 @media only screen and (min-width: 1600px) {
 }
-/* note - to make sure the filter folds smoothly without getting stuck */
-/* problem folding areas */
-/* 2076px - 2267px is where the menu breaks */
-@media only screen and (min-width: 2076px) and (max-width: 2267px) {
-    .cleardivider {
-        width: 100vw;
-        height: 2px;
-        display: inline-block;
-    }
-}
-/* 1200px - 1247px is where the menu breaks */
-@media only screen and (min-width: 1200px) and (max-width: 1247px) {
-    .cleardivider {
-        width: 100vw;
-        height: 2px;
-        display: inline-block;
-    }
-}
-/* 910px - 1039px is where the menu breaks */
-@media only screen and (min-width: 910px) and (max-width: 1039px) {
-    .cleardivider {
-        width: 100vw;
-        height: 2px;
-        display: inline-block;
-    }
-}
-
-/* 512px - 641px is where the menu breaks */
-@media only screen and (min-width: 512px) and (max-width: 641px) {
-    .cleardivider {
-        width: 100vw;
-        height: 2px;
-        display: inline-block;
-    }
-}
-
-@media only screen and (max-width: 639px) {
-    .mouse_sex_filter {
-        /* margin-bottom: 20px; */
-    }
-}
 
 
 /* XXXL (2200px and up) */
 @media only screen and (min-width: 2200px) {
-    .loading-icon {
-        margin-left: 700px;
-    }
+
 }
 
 

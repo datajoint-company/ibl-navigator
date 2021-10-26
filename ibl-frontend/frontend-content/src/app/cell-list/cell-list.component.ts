@@ -87,6 +87,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   firing_rate_data = [];
   toPlot_x = 'cluster_amp';
   toPlot_y = 'cluster_depth';
+  probeTrajectoryIsResolved = false;
 
   probeTrajInfo = {};
   depthPETH;
@@ -276,7 +277,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
   private fullPSTHLoaded = new Subject();
   private fullRasterPSTHLoaded = new Subject();
   @Input() sessionInfo: Object;
-  @ViewChild('navTable') el_nav: ElementRef;
+  @ViewChild('navTable', {static: true}) el_nav: ElementRef;
   // @ViewChild('brainGIF') brain_gif: ElementRef;
   // spinningBrain;
 
@@ -347,7 +348,12 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     * @param sessionInfo primary keys for session
     **/  
     this.cellListService.retrieveProbeInfo(this.sessionInfo).subscribe((probes: Array<any>) => {
-      this.probeInfo = probes
+      let probeLookup = {}
+      // making the probeInfo to become a lookup by probe_idx (mostly needed for the probe_label)
+      for (let probe of probes) {
+        probeLookup[probe['probe_idx']] = probe
+      }
+      this.probeInfo = probeLookup;
     })
 
     /**
@@ -380,6 +386,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           this.sortedCellsByProbeIns = [];
 
           let probeIndexListing = [];
+
           for (let entry of Object.values(cellListData)) {
             probeIndexListing.push(entry['probe_idx']);
           }
@@ -1782,28 +1789,45 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
     this.clickedClusterId = this.sortedCellsByProbeIns[this.clickedClusterIndex]['cluster_id'];
   }
 
+  /** this is for switching the axis option for cluster navigation plot when brain region bar is available
+  * @param data is either [{selected_y: value}] or [{selected_x: value}] value can be cluster_amp, cluster_depth, or firing_rate
+  * format of data is there to match the plotly setup
+  **/
   restylePlot(data) {
-    if (data[0]['selected_y']) {
-      
+    if (data[0]['selected_y']) { 
       let selected_plot = data[0]['selected_y'];
       this.plot_data[0].y = this[`${selected_plot}_data`];
       this.toPlot_y = selected_plot;
-    } else if (data[0]['selected_x']) {
+    } 
+    else if (data[0]['selected_x']) {
       let selected_plot = data[0]['selected_x'];
       this.plot_data[0].x = this[`${selected_plot}_data`];
       this.toPlot_x = selected_plot;
     }
-    if (this.fullNavPlotData && this.fullNavPlotData[0]) {
-      if (this.toPlot_y === 'cluster_depth') {
 
+    if (this.probeTrajectoryIsResolved) {
+      if (this.toPlot_y === 'cluster_depth') {
         this.plot_layout_processed = deepCopy(this.plot_layout_DBR)
         this.plot_layout_processed['annotations'] = this.annotationField
         this.plot_data_processed = deepCopy(this.fullNavPlotData)
-      } else {
+      } 
+      else {
         this.plot_layout['updatemenus'] = [];
         this.plot_layout_processed = deepCopy(this.plot_layout)
         this.plot_data_processed = deepCopy(this.plot_data)
       }
+    }
+    else {
+      if (this.toPlot_y === 'cluster_depth') {
+        this.plot_layout_processed = deepCopy(this.plot_layout_DBR)
+      }
+      else {
+        this.plot_layout['updatemenus'] = [];
+        this.plot_layout_processed = deepCopy(this.plot_layout)
+      }
+      this.annotationField = [];
+      this.plot_layout_processed['annotations'] = this.annotationField;
+      this.plot_data_processed = deepCopy(this.plot_data)
     }
   }
 
@@ -1840,6 +1864,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           depthBrainRegions = depthBrainRegions[0];
           this.depthBrainRegionDataPts = []
           this.annotationField = []
+          this.probeTrajectoryIsResolved = true;
           
           depthBrainRegions['region_boundaries'].forEach((value, index) => {
             this.annotationField.push({
@@ -1906,11 +1931,16 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           // add in the depth region data and then the annotation info to existing cluster nav plot data
           this.fullNavPlotData = this.depthBrainRegionDataPts.concat(copyPlotData);
           this.plot_data_processed = deepCopy(this.fullNavPlotData);
-          this.plot_layout_processed['annotations'] = this.annotationField
+          this.plot_layout_processed['annotations'] = this.annotationField;
+          // the empty annotation needs to disappear when user has selected a y-axis different from cluster_depth prior to selecting the new probe with resolved probe trajectory
+          if (this.toPlot_y !== 'cluster_depth') {
+            this.restylePlot([{selected_y: this.toPlot_y}]);
+          }
         }
         else {
+          this.probeTrajectoryIsResolved = false;
           // make sure to empty out the brain region plot info if there is nothing returned for database
-          this.depthBrainRegionDataPts = []
+          this.depthBrainRegionDataPts = [{}, {}, {}, {}] // adding four empty objects here because that is what plotly is expecting for cases where there are both resolved and unresolved trajectories in the same session
           
           // slot for the brain region plot needs to be kept for plotly to correctly render when user switches back to the probe with brain region data
           let copyPlotData = [...this.plot_data];
@@ -1919,7 +1949,8 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
           })
           // clear out brain region annotation info on the plot
           this.plot_data_processed = deepCopy(copyPlotData);
-          this.plot_layout_processed['annotations'] = []
+          this.annotationField = [];
+          this.plot_layout_processed['annotations'] = this.annotationField;
         }
       });
   }
@@ -1943,68 +1974,68 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       for (let templateType of Object.entries(this.psthLookup[psth['cluster_id']]['data'])) {
         // console.log('templateType: ', templateType);
         if (psth['psth_time']) {
-          this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = psth['psth_time'].split(',');
+          this.psthLookup[psth['cluster_id']]['data'][parseInt(templateType[0], 10)]['x'] = (psth['psth_time'].split(',')).map(Number);
         }
         
         switch (templateType[0]) {
           case '0':
             if (psth['psth_left_upper']) {
-              this.psthLookup[psth['cluster_id']]['data'][0]['y'] = psth['psth_left_upper'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][0]['y'] = (psth['psth_left_upper'].split(',')).map(Number);
             }
             break;
           case '1':
             if (psth['psth_left']) {
-              this.psthLookup[psth['cluster_id']]['data'][1]['y'] = psth['psth_left'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][1]['y'] = (psth['psth_left'].split(',')).map(Number);
             }
             break;
           case '2':
             if (psth['psth_left_lower']) {
-              this.psthLookup[psth['cluster_id']]['data'][2]['y'] = psth['psth_left_lower'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][2]['y'] = (psth['psth_left_lower'].split(',')).map(Number);
             }
             break;
           case '3':
             if (psth['psth_right_upper']) {
-              this.psthLookup[psth['cluster_id']]['data'][3]['y'] = psth['psth_right_upper'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][3]['y'] = (psth['psth_right_upper'].split(',')).map(Number);
             }
             break;
           case '4':
             if (psth['psth_right']) {
-              this.psthLookup[psth['cluster_id']]['data'][4]['y'] = psth['psth_right'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][4]['y'] = (psth['psth_right'].split(',')).map(Number);
             }
             break;
           case '5':
             if (psth['psth_right_lower']) {
-              this.psthLookup[psth['cluster_id']]['data'][5]['y'] = psth['psth_right_lower'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][5]['y'] = (psth['psth_right_lower'].split(',')).map(Number);
             }
             break;
           case '6':
             if (psth['psth_incorrect_upper']) {
-              this.psthLookup[psth['cluster_id']]['data'][6]['y'] = psth['psth_incorrect_upper'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][6]['y'] = (psth['psth_incorrect_upper'].split(',')).map(Number);
             }
             break;
           case '7':
             if (psth['psth_incorrect']) {
-              this.psthLookup[psth['cluster_id']]['data'][7]['y'] = psth['psth_incorrect'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][7]['y'] = (psth['psth_incorrect'].split(',')).map(Number);
             }
             break;
           case '8':
             if (psth['psth_incorrect_lower']) {
-              this.psthLookup[psth['cluster_id']]['data'][8]['y'] = psth['psth_incorrect_lower'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][8]['y'] = (psth['psth_incorrect_lower'].split(',')).map(Number);
             }
             break;
           case '9':
             if (psth['psth_all_upper']) {
-              this.psthLookup[psth['cluster_id']]['data'][9]['y'] = psth['psth_all_upper'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][9]['y'] = (psth['psth_all_upper'].split(',')).map(Number);
             }
             break;
           case '10':
             if (psth['psth_all']) {
-              this.psthLookup[psth['cluster_id']]['data'][10]['y'] = psth['psth_all'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][10]['y'] = (psth['psth_all'].split(',')).map(Number);
             }
             break;
           case '11':
             if (psth['psth_all_lower']) {
-              this.psthLookup[psth['cluster_id']]['data'][11]['y'] = psth['psth_all_lower'].split(',');
+              this.psthLookup[psth['cluster_id']]['data'][11]['y'] = (psth['psth_all_lower'].split(',')).map(Number);
             }
             break;
         }
@@ -2012,7 +2043,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       
 
       this.psthLookup[psth['cluster_id']]['layout']['title']['text'] = `PSTH, aligned to ${psth['event']} time`;
-      this.psthLookup[psth['cluster_id']]['layout']['xaxis']['range'] = psth['psth_x_lim'] ? psth['psth_x_lim'].split(',') : [];
+      this.psthLookup[psth['cluster_id']]['layout']['xaxis']['range'] = psth['psth_x_lim'] ? (psth['psth_x_lim'].split(',')).map(Number) : [];
       this.psthLookup[psth['cluster_id']]['layout']['width'] = 770;
       this.psthLookup[psth['cluster_id']]['layout']['height'] = 420;
 
@@ -2124,16 +2155,17 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
         y: currentTemplate.layout.title.y,
       };
       this.rasterLookup[raster['cluster_id']]['layout']['yaxis']['range'] = [raster['plot_ylim'][0].toString(), raster['plot_ylim'][1].toString()]
-      this.rasterLookup[raster['cluster_id']]['layout']['width'] = 658;
+      this.rasterLookup[raster['cluster_id']]['layout']['width'] = 750; // set default width to longer size for plots with long legends;
       this.rasterLookup[raster['cluster_id']]['layout']['height'] = 420;
 
       if (this.sortType === 'trial_id') {
-        this.rasterLookup[raster['cluster_id']]['layout']['width'] = 530;
+        this.rasterLookup[raster['cluster_id']]['layout']['width'] = 530; // override size for plot known to have zero legend;
       }
 
       if (this.sortType === 'contrast') {   
         this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']['tickvals'] = raster['plot_contrast_tick_pos'];
         this.rasterLookup[raster['cluster_id']]['layout']['yaxis2']['ticktext'] = raster['plot_contrasts'];
+        this.rasterLookup[raster['cluster_id']]['layout']['width'] = 600; // override size for plot known to have zero legend + extra y-axis labels;
       }
 
 
@@ -2370,7 +2402,7 @@ export class CellListComponent implements OnInit, OnDestroy, DoCheck {
       }
       // console.log('xAcgArray: ', xAcgArray);
       this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['x'] = xAcgArray;
-      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['y'] = acg['acg'].split(',');
+      this.autocorrelogramLookup[acg['cluster_id']]['data'][0]['y'] = (acg['acg'].split(',')).map(Number);
       this.autocorrelogramLookup[acg['cluster_id']]['layout']['yaxis']['range'] = acg['plot_ylim']
 
       // original sizing : 400 height / 580 width

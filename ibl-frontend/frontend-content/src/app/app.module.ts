@@ -6,28 +6,28 @@ import { PlotlyModule } from 'angular-plotly.js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
-import { MatSelectModule,
-         MatAutocompleteModule,
-         MatIconModule,
-         MatInputModule,
-         MatCheckboxModule,
-         MatRadioModule,
-         MatNativeDateModule,
-         MatDatepickerModule,
-         MatSlideToggleModule,
-         MatCardModule,
-         MatButtonModule,
-         MatTableModule,
-         MatPaginatorModule,
-         MatSortModule,
-         MatSliderModule,
-         MatExpansionModule,
-         MatDialogModule,
-         MatTreeModule,
-         MatFormFieldModule } from '@angular/material';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatSelectModule} from '@angular/material/select';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatTreeModule} from '@angular/material/tree';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 
 import { AuthGuard } from './auth/auth-guard.service';
@@ -68,59 +68,43 @@ import { SpinningBrainComponent } from './mouse-list/mouse/spinning-brain/spinni
 PlotlyModule.plotlyjs = PlotlyJS;
 
 const appRoutes: Routes = [
-  { path: '', component: OverviewComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent },
-  // { path: 'plot', component: ViewSamplePlotsComponent },
-  // { path: 'cells', component: CellListComponent },
-  // { path: 'water-weight', component: WaterWeightPlotComponent},
+  { path: '', component: OverviewComponent, 
+    // canActivate: [AuthGuard] 
+  },
+  // { path: 'login', component: LoginComponent },
   {
     path: 'mouse/:mouseUUID',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
     component: MouseComponent
   },
   {
     path: 'mice',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: MouseListComponent
   },
-  // {
-  //   path: 'cell',
-  //   canActivate: [AuthGuard],
-  //   canActivateChild: [AuthGuard],
-  //   children: [{
-  //     path: ':mouseID',
-  //     children: [{
-  //       path: ':sessionTime',
-  //       children: [{
-  //         path: ':clusterID',
-  //         component: CellComponent
-  //       }]
-  //     }]
-  //   }]
-  // },
   {
     path: 'session/:sessionID',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
     component: SessionComponent
   },
   {
     path: 'sessions',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: SessionListComponent
   },
-  {
-    path: 'summary',
-    canActivate: [AuthGuard],
-    component: DailySummaryComponent
-  },
+  // {
+  //   path: 'summary',
+  //   canActivate: [AuthGuard],
+  //   component: DailySummaryComponent
+  // },
   {
     path: 'qc/:subjectID/:sessionStartTime',
-      canActivate: [AuthGuard],
-      canActivateChild: [AuthGuard],
+      // canActivate: [AuthGuard],
+      // canActivateChild: [AuthGuard],
       component: QualityControlComponent
   },
   // { path: 'not-found', component: ErrorPageComponent, data: { message: '404 - Page not found!' } },

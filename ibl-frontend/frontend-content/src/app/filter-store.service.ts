@@ -21,7 +21,17 @@ export class FilterStoreService {
   summaryPageIndexInfo: number;
   summaryPageSizeInfo: number;
   summarySortInfo: Object;
-  constructor() { }
+
+  // for sessions checkbox filters
+  hideMissingPlots: boolean;
+  hideMissingEphys: boolean;
+  hideNG4BrainMap: boolean;
+  hideNotReady4Delay: boolean;
+
+  // for mice checkbox filters
+  hideDeadMice: boolean;
+  hideNotReady4DelayMice: boolean;
+  onlyShowMiceWithSpinningBrain: boolean;
 
   // ========= Session List Filter Sticky ===============//
   storeSessionFilter(filterForm) {

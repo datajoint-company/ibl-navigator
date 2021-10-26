@@ -51,7 +51,7 @@ export class PsthPlotsComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() clusterInfo: Object;
   @Input() selectedEvent: String;
-  @ViewChild('PSTH_plot') el: ElementRef;
+  @ViewChild('PSTH_plot', {static: true}) el: ElementRef;
   constructor(public cellPlotsService: CellPlotsService) { }
 
   ngOnInit() {

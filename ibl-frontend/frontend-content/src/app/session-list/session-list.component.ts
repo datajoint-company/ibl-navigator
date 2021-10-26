@@ -1,14 +1,19 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import { FormControl, FormGroup, FormArray, AbstractControl} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { MatPaginator, MatTableDataSource, MatSort, MatTreeNestedDataSource } from '@angular/material';
+import { Subscription, Observable, merge, of as observableOf } from 'rxjs';
+import { map, startWith, catchError, switchMap } from 'rxjs/operators';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { AllSessionsService } from './all-sessions.service';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { GithubIssue } from './GithubIssueInterface';
 
 
 enum Sex {
@@ -50,6 +55,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     responsible_user: new FormControl()
   });
   isLoading;
+  initialLoad;
   filterExpanded;
   allSessions;
   restrictedSessions: Array<any>;
@@ -77,7 +83,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   // setup for the table columns
   displayedColumns: string[] = ['session_lab', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
-                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'ready4delay', 'good4bmap'];
+                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'good4bmap'];
   nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
@@ -108,12 +114,18 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   selectedSession = {};
 
+  exampleDatabase: AllSessionsService | null;
+  data: GithubIssue[] = [];
+  resultsLength = 0;
+  isLoadingResults = true;
+  isRateLimitReached = false;
+
   private sessionsSubscription: Subscription;
   private sessionMenuSubscription: Subscription;
   private allSessionMenuSubscription: Subscription;
   private reqSessionsSubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {
+  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService, private _httpClient: HttpClient) {
     this.treeDataSource.data = this.brainRegionTree
     // Initalized the material table
     this.dataSource = new MatTableDataSource<any>();
@@ -123,6 +135,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     this.isLoading = true;
+    this.initialLoad = true;
 
     // Patch job to initalized sex to the filters can be rendered
     this.uniqueValuesForEachAttribute['sex'] = {
@@ -219,8 +232,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
         }
         else if (key === 'sex' && params[key] !== null) {
-          this.session_filter_form.controls.sex.patchValue(params[key]);
-        } 
+          this.session_filter_form.controls.sex['controls'][this.genderForm2MenuMap[params[key]]].patchValue(true);
+        }
         else if (key === 'subject_birth_date') {
           // Set subject Birth date
           if (params[key] !== null) {
@@ -240,16 +253,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
 
       // Check storage to see if there is anything there
-      
-      // Check if paginiator info is there
-      /*
-      if (this.filterStoreService.sessionPageIndexInfo !== undefined && this.filterStoreService.sessionPageSizeInfo !== undefined) {
-        console.log('PageIndex and PAge size is valid', this.filterStoreService.sessionPageIndexInfo, this.filterStoreService.sessionPageSizeInfo)
-        // Both are not undefined thus set the page index and size
-        this.paginator.pageIndex = this.filterStoreService.sessionPageIndexInfo;
-        this.paginator.pageSize = this.filterStoreService.sessionPageSizeInfo;
-      }
-      */
       // Check for paginator
       if (this.filterStoreService.sessionPaginator) {
         this.paginator.pageSize = this.filterStoreService.sessionPaginator['pageSize'];
@@ -263,6 +266,24 @@ export class SessionListComponent implements OnInit, OnDestroy {
         this.sort.direction = this.filterStoreService.sessionSortInfo['direction'];
       }
 
+      // Check for the hide buttons
+      if (this.filterStoreService.hideMissingEphys) {
+        this.hideMissingEphys = true;
+      }
+
+      if (this.filterStoreService.hideMissingPlots) {
+        this.hideMissingPlots = true;
+      }
+
+      if (this.filterStoreService.hideNG4BrainMap) {
+        this.hideNG4BrainMap = true;
+      }
+
+      if (this.filterStoreService.hideNotReady4Delay) {
+        this.hideNotReady4Delay = true;
+      }
+      
+
       // Check for preloaded sessions
       if (this.filterStoreService.loadedSessions) {
         // We have previously loaded sessions, thus just use that
@@ -271,6 +292,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       else {
         // Else fetch from database
         await this.fetchSessions();
+        this.initialLoad = false;
       }
       
       // Check if there are params, if they are then apply them via this.applyFilter();
@@ -295,6 +317,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
         
         this.dataSource.paginator = this.paginator
       }
+
+      this.updateSelection();
     });
 
     // Brain tree is part of the filter, this code seems to be independent of the other filter construction
@@ -306,12 +330,50 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.buildLookup();
     })
   }
+
+  ngAfterViewInit() {
+    this.exampleDatabase = new AllSessionsService(this._httpClient);
+
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    merge(this.sort.sortChange, this.paginator.page)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.exampleDatabase!.getRepoIssues(
+              {"__page": this.paginator.pageIndex + 1})
+            .pipe(catchError(() => observableOf(null)));
+        }),
+        map(data => {
+          // Flip flag to show that loading has finished.
+          this.isLoadingResults = false;
+          this.isRateLimitReached = data === null;
+
+          if (data === null) {
+            return [];
+          }
+
+          // Only refresh the result length if there is new data. In case of rate
+          // limit errors, we do not want to reset the paginator to zero, as that
+          // would prevent users from re-triggering requests.
+          this.resultsLength = data.records_count;
+          console.log("data githubIssue" + data.records)
+          console.log("length " + this.resultsLength)
+          return data.records;
+        })
+      ).subscribe(data => this.data = data);
+  }
   
   ngOnDestroy() {
-    //this.filterStoreService.sessionPaginator = {pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
+    // Store paginator, sort, buttons, and sessions
     this.filterStoreService.sessionPaginator = {length: this.paginator.length, pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize}
-    
     this.filterStoreService.sessionSortInfo = {active: this.sort.active, direction: this.sort.direction};
+    this.filterStoreService.hideMissingEphys = this.hideMissingEphys;
+    this.filterStoreService.hideMissingPlots = this.hideMissingPlots;
+    this.filterStoreService.hideNG4BrainMap = this.hideNG4BrainMap;
+    this.filterStoreService.hideNotReady4Delay = this.hideNotReady4Delay;
     this.filterStoreService.loadedSessions = this.allSessions
 
     if (this.sessionsSubscription) {
@@ -344,8 +406,13 @@ export class SessionListComponent implements OnInit, OnDestroy {
     
     // Add the default sorting for the api request
     filters['__order'] = 'session_start_time DESC';
+    // filters['__page'] = this.pageIndex
+    // filters['__limit'] = this.pageSize
 
     this.allSessions = await this.allSessionsService.fetchSessions(filters).toPromise();
+    this.allSessions = this.allSessions['records'];
+    console.log("\n\n\n\nSESSIONS: " + this.allSessions + " \n\n\n\n")
+    //record count json and assign it here 
   }
 
   setDropDownFormOptions(dropDownMenuOptionKey, formControl: AbstractControl, key: string) {
@@ -373,7 +440,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
     'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
-
+    
     keys.forEach(key => {
       this.uniqueValuesForEachAttribute[key] = new Set();
     })
@@ -415,9 +482,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
         sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
       });
-
       // filter out dates without any session
-      return sessionDates.includes(date.toISOString().substring(0, 10));
+      return (date == null ? true : sessionDates.includes(date.toISOString().split('T')[0]))
     };
 
     // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
@@ -425,8 +491,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       let birthDates = [];
       this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
         birthDates.push(date);
-      });
-      return birthDates.includes(calendarDate.toISOString().substring(0, 10));
+      }); 
+      return (calendarDate == null ? true : birthDates.includes(calendarDate.toISOString().split('T')[0]))
     };
 
     // Set material from drop down
@@ -538,7 +604,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const requestFilter = {};
     let requestJSONstring = '';
     
-    filterList.forEach(filter => {
+    filterList.forEach((filter: Array<any>) => {
       // filter is [["session_lab", "somelab"], ["subject_nickname", null]...]
       const filterKey = filter[0].split('')[0]; // filter[0] is control name like 'session_lab'
       if (filter[1] && filterKey !== focusedField) {

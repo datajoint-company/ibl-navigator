@@ -1,5 +1,7 @@
 FROM vathes/angulardev:angcli7.1.4-angbuild0.11.4
 
+
+
 WORKDIR /app/dist/pipeline-viewer
 
 COPY ./entrypoint.sh /entrypoint.sh

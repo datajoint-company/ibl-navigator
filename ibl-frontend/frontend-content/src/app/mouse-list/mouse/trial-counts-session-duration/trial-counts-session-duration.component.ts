@@ -107,7 +107,7 @@ export class TrialCountsSessionDurationComponent implements OnInit, OnDestroy {
   @Input() mouseInfo: Object;
   constructor(public mousePlotsService: MousePlotsService) { }
 
-  @ViewChild('trialCountsSessionDurationPlot') el: ElementRef;
+  @ViewChild('trialCountsSessionDurationPlot', {static: true}) el: ElementRef;
   @HostListener('window:resize', ['$event.target']) onresize(event) {
     this.newScreenWidth = event.innerWidth;
 

@@ -79,17 +79,17 @@ td span.oi {
     margin-left: 0;
 }
 
+.plots-navigator-buttons {
+    padding: 8px 5px;
+    border: 1px solid rgb(150, 150, 150);
+}
+
 .plots-navigator.minimize .plots-navigator-buttons {
     position: fixed;
     right: 0;
     bottom: 258px;
     padding-right: 16px;
     padding-left: 14px;
-}
-
-.plots-navigator-buttons {
-    padding: 8px 5px;
-    border: 1px solid rgb(150, 150, 150);
 }
 
 .plots-navigator-buttons span:hover {
@@ -138,10 +138,10 @@ td span.oi {
 }
 
 
-
 .radio-option label {
     margin-left: 2px;
     margin-top: 2px;
+    cursor: pointer;
 }
 
 
@@ -181,6 +181,16 @@ td span.oi {
 
 .js-plotly-plot {
     margin-top: -12px;
+}
+
+.raster-psth-area.row {
+    width: 100%;
+    display: flex;
+}
+
+.raster-psth-area.row .raster {
+    width: fit-content;
+    margin-right: 32px;
 }
 
 .row-long {
@@ -251,13 +261,20 @@ td span.oi {
     margin-bottom: 8px;
 }
 
-/* M (768px and up) */
+
+@media only screen and (max-width: 768px) {
+
+}
+/* M (900 and down) */
 @media only screen and (max-width: 900px) {
     .plots-navigator {
         bottom: 200px;
     }
     .clusterListTable * {
         font-size: 0.72rem;
+    }
+    .plots-navigator.minimize .plots-navigator-buttons {
+        bottom: 28px;
     }
     
 } 

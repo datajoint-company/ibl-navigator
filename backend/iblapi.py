@@ -32,6 +32,14 @@ def test_mkvmod(mod):
     return dj.create_virtual_module(
         mod, dj.config.get('database.prefix', '') + 'test_ibl_{}'.format(mod))
 
+# set up the aws s3 bucket name depending on public/internal
+if os.environ.get('API_MODE') in ['private', None]:
+    BUCKET_LOCATION = 'ibl-dj-external'
+elif os.environ.get('API_MODE') == 'public':
+    BUCKET_LOCATION = 'ibl-dj-external-public'
+else:
+    raise Exception('Invalid API_MODE, it should either be not defined / private / public, please check your environment variables.')
+
 
 subject = mkvmod('subject')
 reference = mkvmod('reference')
@@ -41,10 +49,10 @@ plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
 plotting_histology = mkvmod('plotting_histology')
-test_plotting_ephys = test_mkvmod('plotting_ephys')
+# test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
 histology = mkvmod('histology')
-test_histology = test_mkvmod('histology')
+# test_histology = test_mkvmod('histology')
 original_max_join_size = dj.conn().query(
     "show variables like 'max_join_size'").fetchall()[0][1]
 
@@ -54,7 +62,7 @@ dj.config['stores'] = {
         endpoint='s3.amazonaws.com',
         access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
         secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
-        bucket='ibl-dj-external',
+        bucket=BUCKET_LOCATION,
         location='/ephys'
     ),
     'plotting': dict(
@@ -62,7 +70,7 @@ dj.config['stores'] = {
         endpoint='s3.amazonaws.com',
         access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
         secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
-        bucket='ibl-dj-external',
+        bucket=BUCKET_LOCATION,
         location='/plotting'
     )
 }
@@ -113,7 +121,7 @@ reqmap = {
     'sessionpsych': plotting_behavior.SessionPsychCurve,
     'sessionRTC': plotting_behavior.SessionReactionTimeContrast,
     'sessionRTTN': plotting_behavior.SessionReactionTimeTrialNumber,
-    'waterweight': plotting_behavior.CumulativeSummary.WaterWeight,
+    # 'waterweight': plotting_behavior.CumulativeSummary.WaterWeight,
     'TCsessionduration': plotting_behavior.CumulativeSummary.TrialCountsSessionDuration,
     'performanceRT': plotting_behavior.CumulativeSummary.PerformanceReactionTime,
     'contrastheatmap': plotting_behavior.CumulativeSummary.ContrastHeatmap,
@@ -160,13 +168,15 @@ def do_req(subpath):
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
     values = request.values
+    print(f"\n\n\n\nValues: {values}\n\n\n\n")
     postargs, jsonargs = {}, None
     # construct kwargs
     kwargs = {'as_dict': True}
-    limit = int(request.values['__limit']) if '__limit' in values else None
-    order = request.values['__order'] if '__order' in values else None
+    limit = int(request.values['__limit']) if '__limit' in values else 25
+    order = request.values['__order'] if '__order' in values else 'KEY ASC'
+    page = int(request.values['__page']) if '__page' in values else 1
     proj = json.loads(request.values['__proj']) if '__proj' in values else None
-    special_fields = ['__json', '__limit', '__order', '__proj', '__json_kwargs']
+    special_fields = ['__json', '__limit', '__order', '__proj', '__json_kwargs', '__page']
     for a in (v for v in values if v not in special_fields):
         # HACK: 'uuid' attrs -> UUID type (see also: datajoint-python #594)
         postargs[a] = UUID(values[a]) if 'uuid' in a else values[a]
@@ -180,9 +190,10 @@ def do_req(subpath):
     args = {} if not args else dj.AndList(args)
     kwargs = {k: v for k, v in (('as_dict', True,),
                                    ('limit', limit,),
-                                   ('order_by', order,)) if v is not None}
+                                   ('order_by', order,),
+                                   ('offset', (page-1)*limit)) if v is not None}
     # 2) and dispatch
-    app.logger.debug("args: '{}', kwargs: {}".format(args, kwargs))
+    app.logger.info("args: '{}', kwargs: {}".format(args, kwargs))
     if obj not in reqmap:
         abort(404)
     elif obj == '_q':
@@ -201,12 +212,15 @@ def do_req(subpath):
         return dumps(fetched)
         # return dumps(q.fetch(**kwargs))
 
+# def handle_q(subpath, args, proj, fetch_args=None, limit: int = 10, page: int = 1, **kwargs):
 def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
     '''
     special queries (under '/_q/ URL Space)
       - for sessionpage, provide:
         ((session * subject * lab * user) & arg).proj(flist)
     '''
+
+    app.logger.info("\n\n\nthe value for limit is: {}\n\n\n".format(request.args))
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
     app.logger.info('key words: {}'.format(kwargs))
 
@@ -259,9 +273,22 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() *
               subject.SubjectLab() * subject.SubjectUser() * trainingStatus) & args & brain_restriction)
         
+        # newLimit = int(request.args.get("limit", 10))
+        # page = int(request.args.get("page", 1))
+
+        app.logger.info('\n\n\n\n\nFetch Args: {}\n\n\n\n'.format(fetch_args))
+        q = q.proj(*proj) if proj else q
+        
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
-        q = q.proj(*proj).fetch(**fetch_args) if proj else q.fetch(**fetch_args)
+        # q = q.proj(*proj).fetch(limit=newLimit, offset=(page-1)*limit, **fetch_args) if proj else q.fetch(limit=newLimit, offset=(page-1)*limit, **fetch_args)
+        
+        ret_count = len(q)
+
+        ret = q.fetch(**fetch_args) 
+
         dj.conn().query("SET SESSION max_join_size={}".format(original_max_join_size))
+
+        return dumps({"records_count": ret_count, "records": ret})
     elif subpath == 'subjpage':
         proj_restr = None
         for e in args:
@@ -289,33 +316,38 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             subject.Death().proj('death_date') * dj.U('death_date'),
             death_date='IFNULL(death_date, 0)',
             keep_all_rows=True)
-        
-        q = subject.Subject() * dead_mice *lab_name * user_name * projects * ready4delay & args & proj_restr
-    elif subpath == 'dailysummary':
-        # find the latest summary geneartion for each lab
-        latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
-            plotting_behavior.DailyLabSummary, latest_summary_date='max(last_session_time)') & 'last_session_time = latest_summary_date'
-        # identify mouse summary corresponding to the latest lab summary
-        mouse_we_care = plotting_behavior.DailyLabSummary.SubjectSummary & latest_summary
 
-        proj_restr = None
-        for e in args:
-            if 'projects' in e and e['projects'] != 'unassigned':
-                proj_restr = {'subject_project': e.pop('projects')}
-        if proj_restr is not None:
-            proj_restr = (subject.SubjectProject & proj_restr).proj()
-        else:
-            proj_restr = {}
+        spinning_brain = subject.Subject().aggr(
+            plotting_histology.SubjectSpinningBrain().proj(dummy5='"x"') * dj.U('dummy5'),
+            spinningbrain='count(dummy5)',
+            keep_all_rows=True)
 
-        projects = mouse_we_care.aggr(subject.SubjectProject, projects='GROUP_CONCAT(DISTINCT subject_project'
-                                    ' ORDER BY subject_project SEPARATOR ",")', keep_all_rows=True).proj(projects='IFNULL(projects, "unassigned")')
+        q = subject.Subject() * dead_mice * spinning_brain * lab_name * user_name * projects * ready4delay & args & proj_restr
+    # elif subpath == 'dailysummary':
+    #     # find the latest summary geneartion for each lab
+    #     latest_summary = plotting_behavior.DailyLabSummary * dj.U('lab_name').aggr(
+    #         plotting_behavior.DailyLabSummary, latest_summary_date='max(last_session_time)') & 'last_session_time = latest_summary_date'
+    #     # identify mouse summary corresponding to the latest lab summary
+    #     mouse_we_care = plotting_behavior.DailyLabSummary.SubjectSummary & latest_summary
 
-        # get the latest plots
-        plots = plotting_behavior.CumulativeSummary.WaterWeight * plotting_behavior.CumulativeSummary.ContrastHeatmap * \
-            plotting_behavior.CumulativeSummary.TrialCountsSessionDuration * \
-            plotting_behavior.CumulativeSummary.PerformanceReactionTime & plotting_behavior.SubjectLatestDate
-        # find latest plots for mouse with summary
-        q = plots * mouse_we_care * projects & args & proj_restr
+    #     proj_restr = None
+    #     for e in args:
+    #         if 'projects' in e and e['projects'] != 'unassigned':
+    #             proj_restr = {'subject_project': e.pop('projects')}
+    #     if proj_restr is not None:
+    #         proj_restr = (subject.SubjectProject & proj_restr).proj()
+    #     else:
+    #         proj_restr = {}
+
+    #     projects = mouse_we_care.aggr(subject.SubjectProject, projects='GROUP_CONCAT(DISTINCT subject_project'
+    #                                 ' ORDER BY subject_project SEPARATOR ",")', keep_all_rows=True).proj(projects='IFNULL(projects, "unassigned")')
+
+    #     # get the latest plots
+    #     plots = plotting_behavior.CumulativeSummary.WaterWeight * plotting_behavior.CumulativeSummary.ContrastHeatmap * \
+    #         plotting_behavior.CumulativeSummary.TrialCountsSessionDuration * \
+    #         plotting_behavior.CumulativeSummary.PerformanceReactionTime & plotting_behavior.SubjectLatestDate
+    #     # find latest plots for mouse with summary
+    #     q = plots * mouse_we_care * projects & args & proj_restr
     elif subpath == 'clusternavplot':
         # print('fetching cluster plot info...')
 
@@ -350,7 +382,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '' and parsed_item['plotting_data_link'] != None:  # if empty link or NULL, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -369,17 +401,17 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 if parsed_item['plotting_data_link_low_res'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link_low_res'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link_low_res']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link_low_res']},
                                                         ExpiresIn=3*60*60)
                 if parsed_item['plotting_data_link_very_low_res'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link_very_low_res'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link_very_low_res']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link_very_low_res']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -392,7 +424,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -405,7 +437,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -418,7 +450,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -431,7 +463,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['plotting_data_link'] != '':  # if empty link, skip
                     parsed_item['plotting_data_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['plotting_data_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['plotting_data_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -448,7 +480,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['subject_spinning_brain_link'] != '':  # if empty link, skip
                     parsed_item['subject_spinning_brain_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['subject_spinning_brain_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['subject_spinning_brain_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items
@@ -461,7 +493,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
                 if parsed_item['probe_trajectory_coronal_link'] != '':  # if empty link, skip
                     parsed_item['probe_trajectory_coronal_link'] = \
                         s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'ibl-dj-external', 'Key': parsed_item['probe_trajectory_coronal_link']},
+                                                        Params={'Bucket': BUCKET_LOCATION, 'Key': parsed_item['probe_trajectory_coronal_link']},
                                                         ExpiresIn=3*60*60)
                 parsed_items.append(parsed_item)
             return parsed_items

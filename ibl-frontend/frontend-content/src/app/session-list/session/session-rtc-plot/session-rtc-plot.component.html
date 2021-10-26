@@ -1,7 +1,7 @@
 <div [hidden]="dialogClosed">
   <div #session_RTC_plot></div>
 </div>
-<img id="SRTCpngExport" (click)="plotClicked($event)" width="320px" />
+<img id="SRTCpngExport" (plotlyClick)="plotClicked($event)" width="320px" />
 <div *ngIf="plotLoading">
   <p>plot loading...</p>
 </div>

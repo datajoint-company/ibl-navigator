@@ -57,7 +57,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
   @Input() mouseInfo: Object;
 
   constructor(public mousePlotsService: MousePlotsService) { }
-  @ViewChild('fitParPlots') elem: ElementRef;
+  @ViewChild('fitParPlots', {static: true}) elem: ElementRef;
   smallScreenLayout = {
     'font.size': '10',
     width: '516',
@@ -233,7 +233,7 @@ export class FitParPlotsComponent implements OnInit, OnDestroy {
           this.plotLoading = false;
           this.fitParPlotsAreAvailable = false;
           this.fitParPlotsAvailability.emit(this.fitParPlotsAreAvailable);
-          console.log('fit parameters plots not available');
+          // console.log('fit parameters plots not available');
         }
       });
   }

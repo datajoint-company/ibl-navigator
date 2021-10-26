@@ -23,16 +23,27 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              {
+                "input": "node_modules/@angular/material/prebuilt-themes/indigo-pink-ibl.css",
+                "inject": true
+              },
+              {
+                "input": "src/assets/fonts/css/open-iconic-bootstrap.min.css",
+                "inject": true
+              },
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink-ibl.css",
+              "src/assets/fonts/css/open-iconic-bootstrap.min.css",
               "src/styles.css"
             ],
             "scripts": [
-              // "node_modules/mathjax/MathJax.js",
-              // "node_modules/mathjax/jax/output/SVG/config.js",
-              // "node_modules/mathjax/extensions/MathMenu.js",
-              // "node_modules/mathjax/extensions/MathZoom.js",
               "node_modules/plotly.js-dist/plotly.js"
-            ]
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -45,9 +56,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -56,10 +65,15 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "7mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",

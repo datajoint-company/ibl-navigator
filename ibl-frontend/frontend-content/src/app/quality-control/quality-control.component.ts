@@ -69,7 +69,9 @@ export class QualityControlComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    
+    if (this.probeInsertionSubscription) {
+      this.probeInsertionSubscription.unsubscribe();
+    }
   }
 
   probe_selected(probe) {

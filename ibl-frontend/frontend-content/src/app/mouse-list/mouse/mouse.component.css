@@ -47,7 +47,11 @@ hr {
     border-right: 1px solid rgba(131, 139, 211, 0.35);
     border-top: 1px solid rgba(131, 139, 211, 0.35);
     /* background:linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1), rgba(93, 111, 190, 0.08), rgba(3, 161, 218, 0.1), rgba(255, 255, 255, 0.75)); */
+}
 
+/* only relavant when water weight plot is gone */
+.single-plot:first-of-type {
+    border-top: none; 
 }
 
 .h-long-plot {
@@ -57,7 +61,7 @@ hr {
 .v-long-plot-container {
     float: left;
     width: 50%;
-    border-top: 1px solid rgba(131, 139, 211, 0.35);
+    /* border-top: 1px solid rgba(131, 139, 211, 0.35); */ /* put back when water weight is available */
 }
 
 .by-date-plots-container {

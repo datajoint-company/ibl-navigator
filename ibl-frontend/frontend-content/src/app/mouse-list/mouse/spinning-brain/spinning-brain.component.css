@@ -1,5 +1,7 @@
 .brain-gif-container {
-  width: 20vw;
+  position: relative;
+  width: 100%;
+  min-width: 20vw;
   height: 220px;
   overflow-y: hidden;
   display: flex;

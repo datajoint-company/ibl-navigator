@@ -1,0 +1,21 @@
+.session-info-container {
+  padding-top: 20px;
+}
+
+.session-header {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.session-info-table {
+  font-size: 85%;
+  margin-left: 1%;
+}
+
+.session-info-table table {
+  margin-left: 1%;
+}
+
+h5 {
+  font-weight: 300;
+}

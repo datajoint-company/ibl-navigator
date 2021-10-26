@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { GithubApi } from './GithubApiInterface';
+import { GithubIssue } from './GithubIssueInterface';
 
 import { environment } from '../../environments/environment';
 
@@ -34,6 +36,13 @@ export class AllSessionsService {
    */
   fetchSessions(sessionFilters: any) {
     return this.http.post(BACKEND_API_URL + '/sessions/', sessionFilters, { responseType: 'json'})
+  }
+
+  getRepoIssues(body: Object): Observable<GithubApi> {
+    const requestUrl = 'https://fakeservices.datajoint.io/api/sessions';
+    
+
+    return this.http.post<GithubApi>(requestUrl, body, { responseType: 'json' });
   }
 
   getAllSessions() {
