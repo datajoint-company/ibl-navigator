@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import { FormControl, FormGroup, FormArray, AbstractControl} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Subscription, Observable, merge, of as observableOf } from 'rxjs';
+import { map, startWith, catchError, switchMap } from 'rxjs/operators';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,6 +13,7 @@ import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { GithubIssue } from './GithubIssueInterface';
 
 
 enum Sex {
@@ -112,12 +114,18 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   selectedSession = {};
 
+  exampleDatabase: AllSessionsService | null;
+  data: GithubIssue[] = [];
+  resultsLength = 0;
+  isLoadingResults = true;
+  isRateLimitReached = false;
+
   private sessionsSubscription: Subscription;
   private sessionMenuSubscription: Subscription;
   private allSessionMenuSubscription: Subscription;
   private reqSessionsSubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {
+  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService, private _httpClient: HttpClient) {
     this.treeDataSource.data = this.brainRegionTree
     // Initalized the material table
     this.dataSource = new MatTableDataSource<any>();
@@ -322,6 +330,41 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.buildLookup();
     })
   }
+
+  ngAfterViewInit() {
+    this.exampleDatabase = new AllSessionsService(this._httpClient);
+
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    merge(this.sort.sortChange, this.paginator.page)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.exampleDatabase!.getRepoIssues(
+              {"__page": this.paginator.pageIndex + 1})
+            .pipe(catchError(() => observableOf(null)));
+        }),
+        map(data => {
+          // Flip flag to show that loading has finished.
+          this.isLoadingResults = false;
+          this.isRateLimitReached = data === null;
+
+          if (data === null) {
+            return [];
+          }
+
+          // Only refresh the result length if there is new data. In case of rate
+          // limit errors, we do not want to reset the paginator to zero, as that
+          // would prevent users from re-triggering requests.
+          this.resultsLength = data.records_count;
+          console.log("data githubIssue" + data.records)
+          console.log("length " + this.resultsLength)
+          return data.records;
+        })
+      ).subscribe(data => this.data = data);
+  }
   
   ngOnDestroy() {
     // Store paginator, sort, buttons, and sessions
@@ -368,6 +411,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
     this.allSessions = await this.allSessionsService.fetchSessions(filters).toPromise();
     this.allSessions = this.allSessions['records'];
+    console.log("\n\n\n\nSESSIONS: " + this.allSessions + " \n\n\n\n")
     //record count json and assign it here 
   }
 

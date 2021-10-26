@@ -238,7 +238,7 @@
       </p>
     </div>
     <div class="table-container">
-    <table mat-table class="col-12" [dataSource]="dataSource" matSort (matSortChange)="storeTableInfo($event)">
+    <table mat-table class="col-12" [dataSource]="data" matSort (matSortChange)="storeTableInfo($event)">
 
       <ng-container matColumnDef="session_lab">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
@@ -321,7 +321,8 @@
     </table>
     </div>
 
-    <mat-paginator [pageSize]="pageSize"
+    <mat-paginator [length]="resultsLength"
+                [pageSize]="pageSize"
                 [pageSizeOptions]="pageSizeOptions"
                 showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>
   </div>
