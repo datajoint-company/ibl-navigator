@@ -172,7 +172,7 @@ def do_req(subpath):
     postargs, jsonargs = {}, None
     # construct kwargs
     kwargs = {'as_dict': True}
-    limit = int(request.values['__limit']) if '__limit' in values else 25
+    limit = int(request.values['__limit']) if '__limit' in values else None
     order = request.values['__order'] if '__order' in values else 'KEY ASC'
     page = int(request.values['__page']) if '__page' in values else 1
     proj = json.loads(request.values['__proj']) if '__proj' in values else None
@@ -188,10 +188,14 @@ def do_req(subpath):
     if '__json_kwargs' in values:
         json_kwargs = json.loads(request.values['__json_kwargs'])
     args = {} if not args else dj.AndList(args)
-    kwargs = {k: v for k, v in (('as_dict', True,),
-                                   ('limit', limit,),
-                                   ('order_by', order,),
-                                   ('offset', (page-1)*limit)) if v is not None}
+    if limit == None:
+        kwargs = {k: v for k, v in (('as_dict', True,),
+                                   ('order_by', order,)) if v is not None}
+    else:
+        kwargs = {k: v for k, v in (('as_dict', True,),
+                                    ('limit', limit,),
+                                    ('order_by', order,),
+                                    ('offset', (page-1)*limit)) if v is not None}
     # 2) and dispatch
     app.logger.info("args: '{}', kwargs: {}".format(args, kwargs))
     if obj not in reqmap:
