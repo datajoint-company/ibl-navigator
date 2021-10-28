@@ -1031,6 +1031,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
     //await this.updateTableView(this.restrictedSessions);
+    this.ngAfterViewInit();
     this.isLoading = false;
   }
 
@@ -1039,38 +1040,40 @@ export class SessionListComponent implements OnInit, OnDestroy {
    */
   async handleResetFilterButtonPress() {
     this.isLoading = true;
-    for (const control in this.session_filter_form.controls) {
-      const toReset = {}
+    // for (const control in this.session_filter_form.controls) {
+    //   const toReset = {}
       
-      if (control === 'session_range_filter') {
-        toReset[control] = { 'session_range_start': null, 'session_range_end': null}
+    //   if (control === 'session_range_filter') {
+    //     toReset[control] = { 'session_range_start': null, 'session_range_end': null}
         
-      } else if (control === 'sex') {
-        toReset[control] = [false, false, false];
-        for (const index in this.session_filter_form.get(control)['controls']) {
-          this.session_filter_form.get(control).get([index]).enable();
-        }
-      } else {
-        toReset[control] = null;
-      }
-      this.session_filter_form.patchValue(toReset); 
-    }
+    //   } else if (control === 'sex') {
+    //     toReset[control] = [false, false, false];
+    //     for (const index in this.session_filter_form.get(control)['controls']) {
+    //       this.session_filter_form.get(control).get([index]).enable();
+    //     }
+    //   } else {
+    //     toReset[control] = null;
+    //   }
+    //   this.session_filter_form.patchValue(toReset); 
+    // }
 
-    this.route.queryParams.subscribe(async param => {
-      if (Object.keys(param).length > 0) {
-        // Clear all URL params, and do a fresh fetch
-        this.router.navigate(
-          [],
-          {
-            relativeTo: this.route,
-            queryParams: null
-          });
-      }
-    })
+    // this.route.queryParams.subscribe(async param => {
+    //   if (Object.keys(param).length > 0) {
+    //     // Clear all URL params, and do a fresh fetch
+    //     this.router.navigate(
+    //       [],
+    //       {
+    //         relativeTo: this.route,
+    //         queryParams: null
+    //       });
+    //   }
+    // })
+
+    //all of the above code can just be done with this.session_filter_form.reset()
+    this.session_filter_form.reset()
 
     // clear the filter in storage before applying filter
     this.filterStoreService.clearSessionFilter();
-    
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
 
@@ -1078,13 +1081,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.paginator.pageIndex = 0;
     this.paginator.pageSize = 25;
     // the below is to remove the arrow UI that doesn't go away after this.sort.active = '' 
-    this.sort.sortables.forEach(sortItem => {
-      this.sort.sort(sortItem);
-    });
-    this.sort.active = '';
+    // this.sort.sortables.forEach(sortItem => {
+    //   this.sort.sort(sortItem);
+    // });
+    // this.sort.active = '';
 
     //await this.updateTableView(this.restrictedSessions);
     this.isLoading = false;
+    this.ngAfterViewInit();
     return;
   }
 
