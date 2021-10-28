@@ -39,7 +39,7 @@ export class AllSessionsService {
   }
 
   getRepoIssues(body: Object): Observable<GithubApi> {
-    const requestUrl = 'https://fakeservices.datajoint.io/api/sessions';
+    const requestUrl = BACKEND_API_URL + '/sessions';
     
 
     return this.http.post<GithubApi>(requestUrl, body, { responseType: 'json' });
