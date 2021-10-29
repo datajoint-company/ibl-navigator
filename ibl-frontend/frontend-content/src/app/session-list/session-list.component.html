@@ -247,8 +247,11 @@
       </p>
     </div>
     <div class="table-container">
+      <div class="example-loading-shade"
+          *ngIf="isLoadingTable">
+        <mat-spinner *ngIf="isLoadingTable"></mat-spinner>
+      </div>
     <table mat-table class="col-12" [dataSource]="data" matSort (matSortChange)="storeTableInfo($event)">
-
       <!-- <mat-spinner *ngIf="isLoadingResults"></mat-spinner> -->
       <ng-container matColumnDef="session_lab">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>

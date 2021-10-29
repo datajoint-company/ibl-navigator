@@ -55,6 +55,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     responsible_user: new FormControl()
   });
   isLoading;
+  isLoadingTable = true;
   initialLoad;
   filterExpanded;
   allSessions;
@@ -343,6 +344,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    this.isLoading = false;
     this.exampleDatabase = new AllSessionsService(this._httpClient);
 
     // If the user changes the sort order, reset back to the first page.
@@ -354,6 +356,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       .pipe(
         startWith({}),
         switchMap(() => {
+          this.isLoadingTable = true;
           if(this.sort.direction == ''){
             this.sort.active = 'session_start_time';
             this.sort.direction = 'desc'
@@ -428,6 +431,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
             .pipe(catchError(() => observableOf(null)));
         }),
         map(data => {
+          this.isLoadingTable = false;
           // Flip flag to show that loading has finished.
           this.isLoadingResults = false;
           this.isRateLimitReached = data === null;
