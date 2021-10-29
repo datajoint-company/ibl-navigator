@@ -959,68 +959,68 @@ export class SessionListComponent implements OnInit, OnDestroy {
    */
   async applyFilter(focusFieldKey?: string) {
     return [];
-    if (!this.allSessions) {
-      return [];
-    }
+    // if (!this.allSessions) {
+    //   return [];
+    // }
 
-    // Hide certain checkboxes
-    this.hideMissingPlots = false;
-    this.hideMissingEphys = false;
-    this.hideNG4BrainMap = false;
-    this.hideNotReady4Delay = false;
+    // // Hide certain checkboxes
+    // this.hideMissingPlots = false;
+    // this.hideMissingEphys = false;
+    // this.hideNG4BrainMap = false;
+    // this.hideNotReady4Delay = false;
     
-    let tupleToRestrict = this.allSessions // By default this should be all sessions
+    // let tupleToRestrict = this.allSessions // By default this should be all sessions
 
-    // Check if there is a brain region request, if so override the tupleToRestrict reference
-    const brainRegionRequest = this.requested_BR;
-    if (brainRegionRequest.length !== 0) {
-      // BrainRegionRequest is not empty, thus query the backend for it
-      let requestFilter = {}
-      let BR_JSONstring = '';
-      if (brainRegionRequest.length > 0) {
-        BR_JSONstring = '';
-        brainRegionRequest.filter(function(selection, index) {
-          if (index > 0) {
-            BR_JSONstring += `, "${selection}"`
-          } else {
-            BR_JSONstring += `"${selection}"`
-          }
-        })
-        BR_JSONstring = '[' + BR_JSONstring + ']'
-      }
+    // // Check if there is a brain region request, if so override the tupleToRestrict reference
+    // const brainRegionRequest = this.requested_BR;
+    // if (brainRegionRequest.length !== 0) {
+    //   // BrainRegionRequest is not empty, thus query the backend for it
+    //   let requestFilter = {}
+    //   let BR_JSONstring = '';
+    //   if (brainRegionRequest.length > 0) {
+    //     BR_JSONstring = '';
+    //     brainRegionRequest.filter(function(selection, index) {
+    //       if (index > 0) {
+    //         BR_JSONstring += `, "${selection}"`
+    //       } else {
+    //         BR_JSONstring += `"${selection}"`
+    //       }
+    //     })
+    //     BR_JSONstring = '[' + BR_JSONstring + ']'
+    //   }
 
-      // Add it it to the requestFilter object
-      if (brainRegionRequest.length > 0) {
-        requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
-      }
+    //   // Add it it to the requestFilter object
+    //   if (brainRegionRequest.length > 0) {
+    //     requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
+    //   }
 
-      // Add the default sorting for the api request
-      requestFilter['__order'] = 'session_start_time DESC';
+    //   // Add the default sorting for the api request
+    //   requestFilter['__order'] = 'session_start_time DESC';
 
-      console.log(requestFilter)
+    //   console.log(requestFilter)
 
-      // Query back end
-      tupleToRestrict = await this.allSessionsService.fetchSessions(requestFilter).toPromise();
-    }
+    //   // Query back end
+    //   tupleToRestrict = await this.allSessionsService.fetchSessions(requestFilter).toPromise();
+    // }
     
-    // Filter based on what the user requested
-    let restrictionObjectFromForm = this.session_filter_form.getRawValue();
+    // // Filter based on what the user requested
+    // let restrictionObjectFromForm = this.session_filter_form.getRawValue();
 
-    // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
-    if (focusFieldKey) {
-      restrictionObjectFromForm[focusFieldKey] = null;
-    }
+    // // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
+    // if (focusFieldKey) {
+    //   restrictionObjectFromForm[focusFieldKey] = null;
+    // }
 
-    // Iterate through the tuples and restrict accordingly
-    // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
-    let restrictedSessions = [];
-    for (let tuple of tupleToRestrict) {
-      if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
-        restrictedSessions.push(tuple);
-      }
-    }
-    console.log(restrictedSessions)
-    return restrictedSessions;
+    // // Iterate through the tuples and restrict accordingly
+    // // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
+    // let restrictedSessions = [];
+    // for (let tuple of tupleToRestrict) {
+    //   if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
+    //     restrictedSessions.push(tuple);
+    //   }
+    // }
+    // console.log(restrictedSessions)
+    // return restrictedSessions;
   }
 
   /**
