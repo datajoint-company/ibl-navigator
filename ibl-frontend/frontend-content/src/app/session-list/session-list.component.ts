@@ -298,7 +298,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       else {
         // Else fetch from database
         console.log('in ngOnIt fetchSessions')
-        await this.fetchSessions();
+        // await this.fetchSessions();
         this.initialLoad = false;
       }
       
@@ -545,56 +545,57 @@ export class SessionListComponent implements OnInit, OnDestroy {
     keys.forEach(key => {
       this.uniqueValuesForEachAttribute[key] = new Set();
     })
+ 
 
-    // Loop through each tuple
-    restrictedSessions.forEach(tuple => {
-      keys.forEach(key => {
-        if (tuple[key] !== null && !this.uniqueValuesForEachAttribute[key].has(tuple[key])) {
-          // Add it to the uniqueValuesForColumns if it doesn't already exist in there
-          this.uniqueValuesForEachAttribute[key].add(tuple[key])
-        }
-      })
-    });
+    // // Loop through each tuple
+    // restrictedSessions.forEach(tuple => {
+    //   keys.forEach(key => {
+    //     if (tuple[key] !== null && !this.uniqueValuesForEachAttribute[key].has(tuple[key])) {
+    //       // Add it to the uniqueValuesForColumns if it doesn't already exist in there
+    //       this.uniqueValuesForEachAttribute[key].add(tuple[key])
+    //     }
+    //   })
+    // });
     
-    // Deal with specific case for
-    this.patchSexMaterial(Sex.FEMALE, this.uniqueValuesForEachAttribute['sex'].has('F'));
-    this.patchSexMaterial(Sex.MALE, this.uniqueValuesForEachAttribute['sex'].has('M'));
-    this.patchSexMaterial(Sex.UNDEFINED, this.uniqueValuesForEachAttribute['sex'].has('U'));
+    // // Deal with specific case for
+    // this.patchSexMaterial(Sex.FEMALE, this.uniqueValuesForEachAttribute['sex'].has('F'));
+    // this.patchSexMaterial(Sex.MALE, this.uniqueValuesForEachAttribute['sex'].has('M'));
+    // this.patchSexMaterial(Sex.UNDEFINED, this.uniqueValuesForEachAttribute['sex'].has('U'));
 
-    // This is for selected or not for sex, don't know why this is here blame Maho
-    this.uniqueValuesForEachAttribute['sex'] = {
-      F: false,
-      M: false,
-      U: false
-    }
+    // // This is for selected or not for sex, don't know why this is here blame Maho
+    // this.uniqueValuesForEachAttribute['sex'] = {
+    //   F: false,
+    //   M: false,
+    //   U: false
+    // }
 
-    // Deal with figureing out the range of dates
-    const sessionSeconds = [];
-    this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
-      sessionSeconds.push(new Date(date).getTime());
-    });
+    // // Deal with figureing out the range of dates
+    // const sessionSeconds = [];
+    // this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
+    //   sessionSeconds.push(new Date(date).getTime());
+    // });
 
-    this.sessionMinDate = new Date(Math.min(...sessionSeconds));
-    this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
+    // this.sessionMinDate = new Date(Math.min(...sessionSeconds));
+    // this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
 
-    // Figure out what dates are valid and assign it to this.sessionDateFilter for the material table to highlight those date
-    this.sessionDateFilter = (date: Date): boolean => {
-      let sessionDates = [];
-      this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
-        sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
-      });
-      // filter out dates without any session
-      return (date == null ? true : sessionDates.includes(date.toISOString().split('T')[0]))
-    };
+    // // Figure out what dates are valid and assign it to this.sessionDateFilter for the material table to highlight those date
+    // this.sessionDateFilter = (date: Date): boolean => {
+    //   let sessionDates = [];
+    //   this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
+    //     sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
+    //   });
+    //   // filter out dates without any session
+    //   return (date == null ? true : sessionDates.includes(date.toISOString().split('T')[0]))
+    // };
 
-    // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
-    this.miceBirthdayFilter = (calendarDate: Date): boolean => {
-      let birthDates = [];
-      this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
-        birthDates.push(date);
-      }); 
-      return (calendarDate == null ? true : birthDates.includes(calendarDate.toISOString().split('T')[0]))
-    };
+    // // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
+    // this.miceBirthdayFilter = (calendarDate: Date): boolean => {
+    //   let birthDates = [];
+    //   this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
+    //     birthDates.push(date);
+    //   }); 
+    //   return (calendarDate == null ? true : birthDates.includes(calendarDate.toISOString().split('T')[0]))
+    // };
 
     // Set material from drop down
     this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab, 'session_lab');
@@ -957,68 +958,69 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   async applyFilter(focusFieldKey?: string) {
-    if (!this.allSessions) {
-      return [];
-    }
+    return [];
+    // if (!this.allSessions) {
+    //   return [];
+    // }
 
-    // Hide certain checkboxes
-    this.hideMissingPlots = false;
-    this.hideMissingEphys = false;
-    this.hideNG4BrainMap = false;
-    this.hideNotReady4Delay = false;
+    // // Hide certain checkboxes
+    // this.hideMissingPlots = false;
+    // this.hideMissingEphys = false;
+    // this.hideNG4BrainMap = false;
+    // this.hideNotReady4Delay = false;
     
-    let tupleToRestrict = this.allSessions // By default this should be all sessions
+    // let tupleToRestrict = this.allSessions // By default this should be all sessions
 
-    // Check if there is a brain region request, if so override the tupleToRestrict reference
-    const brainRegionRequest = this.requested_BR;
-    if (brainRegionRequest.length !== 0) {
-      // BrainRegionRequest is not empty, thus query the backend for it
-      let requestFilter = {}
-      let BR_JSONstring = '';
-      if (brainRegionRequest.length > 0) {
-        BR_JSONstring = '';
-        brainRegionRequest.filter(function(selection, index) {
-          if (index > 0) {
-            BR_JSONstring += `, "${selection}"`
-          } else {
-            BR_JSONstring += `"${selection}"`
-          }
-        })
-        BR_JSONstring = '[' + BR_JSONstring + ']'
-      }
+    // // Check if there is a brain region request, if so override the tupleToRestrict reference
+    // const brainRegionRequest = this.requested_BR;
+    // if (brainRegionRequest.length !== 0) {
+    //   // BrainRegionRequest is not empty, thus query the backend for it
+    //   let requestFilter = {}
+    //   let BR_JSONstring = '';
+    //   if (brainRegionRequest.length > 0) {
+    //     BR_JSONstring = '';
+    //     brainRegionRequest.filter(function(selection, index) {
+    //       if (index > 0) {
+    //         BR_JSONstring += `, "${selection}"`
+    //       } else {
+    //         BR_JSONstring += `"${selection}"`
+    //       }
+    //     })
+    //     BR_JSONstring = '[' + BR_JSONstring + ']'
+    //   }
 
-      // Add it it to the requestFilter object
-      if (brainRegionRequest.length > 0) {
-        requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
-      }
+    //   // Add it it to the requestFilter object
+    //   if (brainRegionRequest.length > 0) {
+    //     requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
+    //   }
 
-      // Add the default sorting for the api request
-      requestFilter['__order'] = 'session_start_time DESC';
+    //   // Add the default sorting for the api request
+    //   requestFilter['__order'] = 'session_start_time DESC';
 
-      console.log(requestFilter)
+    //   console.log(requestFilter)
 
-      // Query back end
-      tupleToRestrict = await this.allSessionsService.fetchSessions(requestFilter).toPromise();
-    }
+    //   // Query back end
+    //   tupleToRestrict = await this.allSessionsService.fetchSessions(requestFilter).toPromise();
+    // }
     
-    // Filter based on what the user requested
-    let restrictionObjectFromForm = this.session_filter_form.getRawValue();
+    // // Filter based on what the user requested
+    // let restrictionObjectFromForm = this.session_filter_form.getRawValue();
 
-    // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
-    if (focusFieldKey) {
-      restrictionObjectFromForm[focusFieldKey] = null;
-    }
+    // // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
+    // if (focusFieldKey) {
+    //   restrictionObjectFromForm[focusFieldKey] = null;
+    // }
 
-    // Iterate through the tuples and restrict accordingly
-    // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
-    let restrictedSessions = [];
-    for (let tuple of tupleToRestrict) {
-      if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
-        restrictedSessions.push(tuple);
-      }
-    }
-    console.log(restrictedSessions)
-    return restrictedSessions;
+    // // Iterate through the tuples and restrict accordingly
+    // // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
+    // let restrictedSessions = [];
+    // for (let tuple of tupleToRestrict) {
+    //   if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
+    //     restrictedSessions.push(tuple);
+    //   }
+    // }
+    // console.log(restrictedSessions)
+    // return restrictedSessions;
   }
 
   /**

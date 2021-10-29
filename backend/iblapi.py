@@ -177,7 +177,7 @@ def do_req(subpath):
     page = int(request.values['__page']) if '__page' in values else 1
     proj = json.loads(request.values['__proj']) if '__proj' in values else None
     special_fields = ['__json', '__limit', '__order', '__proj', '__json_kwargs', '__page']
-    for a in (v for v in values if v not in special_fields):
+    for a in (k for k, v in values.items() if k not in special_fields and v):
         # HACK: 'uuid' attrs -> UUID type (see also: datajoint-python #594)
         postargs[a] = UUID(values[a]) if 'uuid' in a else values[a]
     args = [postargs] if len(postargs) else []
