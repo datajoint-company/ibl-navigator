@@ -298,7 +298,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       else {
         // Else fetch from database
         console.log('in ngOnIt fetchSessions')
-        await this.fetchSessions();
+        // await this.fetchSessions();
         this.initialLoad = false;
       }
       
@@ -545,56 +545,57 @@ export class SessionListComponent implements OnInit, OnDestroy {
     keys.forEach(key => {
       this.uniqueValuesForEachAttribute[key] = new Set();
     })
+ 
 
-    // Loop through each tuple
-    restrictedSessions.forEach(tuple => {
-      keys.forEach(key => {
-        if (tuple[key] !== null && !this.uniqueValuesForEachAttribute[key].has(tuple[key])) {
-          // Add it to the uniqueValuesForColumns if it doesn't already exist in there
-          this.uniqueValuesForEachAttribute[key].add(tuple[key])
-        }
-      })
-    });
+    // // Loop through each tuple
+    // restrictedSessions.forEach(tuple => {
+    //   keys.forEach(key => {
+    //     if (tuple[key] !== null && !this.uniqueValuesForEachAttribute[key].has(tuple[key])) {
+    //       // Add it to the uniqueValuesForColumns if it doesn't already exist in there
+    //       this.uniqueValuesForEachAttribute[key].add(tuple[key])
+    //     }
+    //   })
+    // });
     
-    // Deal with specific case for
-    this.patchSexMaterial(Sex.FEMALE, this.uniqueValuesForEachAttribute['sex'].has('F'));
-    this.patchSexMaterial(Sex.MALE, this.uniqueValuesForEachAttribute['sex'].has('M'));
-    this.patchSexMaterial(Sex.UNDEFINED, this.uniqueValuesForEachAttribute['sex'].has('U'));
+    // // Deal with specific case for
+    // this.patchSexMaterial(Sex.FEMALE, this.uniqueValuesForEachAttribute['sex'].has('F'));
+    // this.patchSexMaterial(Sex.MALE, this.uniqueValuesForEachAttribute['sex'].has('M'));
+    // this.patchSexMaterial(Sex.UNDEFINED, this.uniqueValuesForEachAttribute['sex'].has('U'));
 
-    // This is for selected or not for sex, don't know why this is here blame Maho
-    this.uniqueValuesForEachAttribute['sex'] = {
-      F: false,
-      M: false,
-      U: false
-    }
+    // // This is for selected or not for sex, don't know why this is here blame Maho
+    // this.uniqueValuesForEachAttribute['sex'] = {
+    //   F: false,
+    //   M: false,
+    //   U: false
+    // }
 
-    // Deal with figureing out the range of dates
-    const sessionSeconds = [];
-    this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
-      sessionSeconds.push(new Date(date).getTime());
-    });
+    // // Deal with figureing out the range of dates
+    // const sessionSeconds = [];
+    // this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
+    //   sessionSeconds.push(new Date(date).getTime());
+    // });
 
-    this.sessionMinDate = new Date(Math.min(...sessionSeconds));
-    this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
+    // this.sessionMinDate = new Date(Math.min(...sessionSeconds));
+    // this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
 
-    // Figure out what dates are valid and assign it to this.sessionDateFilter for the material table to highlight those date
-    this.sessionDateFilter = (date: Date): boolean => {
-      let sessionDates = [];
-      this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
-        sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
-      });
-      // filter out dates without any session
-      return (date == null ? true : sessionDates.includes(date.toISOString().split('T')[0]))
-    };
+    // // Figure out what dates are valid and assign it to this.sessionDateFilter for the material table to highlight those date
+    // this.sessionDateFilter = (date: Date): boolean => {
+    //   let sessionDates = [];
+    //   this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
+    //     sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
+    //   });
+    //   // filter out dates without any session
+    //   return (date == null ? true : sessionDates.includes(date.toISOString().split('T')[0]))
+    // };
 
-    // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
-    this.miceBirthdayFilter = (calendarDate: Date): boolean => {
-      let birthDates = [];
-      this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
-        birthDates.push(date);
-      }); 
-      return (calendarDate == null ? true : birthDates.includes(calendarDate.toISOString().split('T')[0]))
-    };
+    // // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
+    // this.miceBirthdayFilter = (calendarDate: Date): boolean => {
+    //   let birthDates = [];
+    //   this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
+    //     birthDates.push(date);
+    //   }); 
+    //   return (calendarDate == null ? true : birthDates.includes(calendarDate.toISOString().split('T')[0]))
+    // };
 
     // Set material from drop down
     this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab, 'session_lab');
@@ -957,6 +958,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   async applyFilter(focusFieldKey?: string) {
+    return [];
     if (!this.allSessions) {
       return [];
     }
