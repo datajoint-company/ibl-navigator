@@ -97,7 +97,7 @@ export class AllSessionsService {
         (filteredSessionsData) => {
           let end = new Date();
           // console.log(`It took ${Number(end) - Number(start)}ms to retrieve the session list information`)
-          this.retrievedSessions = filteredSessionsData;
+          this.retrievedSessions = filteredSessionsData['records'];
           // console.log('retrievedSessions data are: ');
           // console.log(this.retrievedSessions);
           this.newSessionsLoaded.next(this.retrievedSessions);
