@@ -168,7 +168,6 @@ def do_req(subpath):
     pathparts = request.path.split('/')[2:]  # ['', 'v0'] [ ... ]
     obj = pathparts[0]
     values = request.values
-    print(f"\n\n\n\nValues: {values}\n\n\n\n")
     postargs, jsonargs = {}, None
     # construct kwargs
     kwargs = {'as_dict': True}
@@ -197,7 +196,7 @@ def do_req(subpath):
                                     ('order_by', order,),
                                     ('offset', (page-1)*limit)) if v is not None}
     # 2) and dispatch
-    app.logger.info("args: '{}', kwargs: {}".format(args, kwargs))
+    app.logger.debug("args: '{}', kwargs: {}".format(args, kwargs))
     if obj not in reqmap:
         abort(404)
     elif obj == '_q':
@@ -216,7 +215,6 @@ def do_req(subpath):
         return dumps(fetched)
         # return dumps(q.fetch(**kwargs))
 
-# def handle_q(subpath, args, proj, fetch_args=None, limit: int = 10, page: int = 1, **kwargs):
 def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
     '''
     special queries (under '/_q/ URL Space)
@@ -226,7 +224,6 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
 
     app.logger.info("\n\n\nthe value for limit is: {}\n\n\n".format(request.args))
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
-    app.logger.info('key words: {}'.format(kwargs))
 
     fetch_args = {} if fetch_args is None else fetch_args
     ret = []
@@ -276,22 +273,11 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
 
         q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() *
               subject.SubjectLab() * subject.SubjectUser() * trainingStatus) & args & brain_restriction)
-        
-        # newLimit = int(request.args.get("limit", 10))
-        # page = int(request.args.get("page", 1))
-
-        app.logger.info('\n\n\n\n\nFetch Args: {}\n\n\n\n'.format(fetch_args))
         q = q.proj(*proj) if proj else q
-        
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
-        # q = q.proj(*proj).fetch(limit=newLimit, offset=(page-1)*limit, **fetch_args) if proj else q.fetch(limit=newLimit, offset=(page-1)*limit, **fetch_args)
-        
         ret_count = len(q)
-
         ret = q.fetch(**fetch_args) 
-
         dj.conn().query("SET SESSION max_join_size={}".format(original_max_join_size))
-
         return dumps({"records_count": ret_count, "records": ret})
     elif subpath == 'subjpage':
         proj_restr = None
