@@ -101,7 +101,7 @@ label {
     display: none;
 }
 
-.example-loading-shade {
+.session-list-loading-shade {
     position: absolute;
     /* top: 0; */
     left: 0;
