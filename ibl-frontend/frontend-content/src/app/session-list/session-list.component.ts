@@ -851,7 +851,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
   updateTableView(restrictedSessions: Array<any>) {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    console.log(restrictedSessions)
     this.dataSource.data = restrictedSessions;
   }
 
@@ -874,11 +873,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     else {
       delete filter.session_range_filter
     }
-    console.log(filter);
-    //this is object of filters being used 
     this.filterStoreService.storeSessionFilter(filter);
-
-
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
     //await this.updateTableView(this.restrictedSessions);
