@@ -221,10 +221,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
       - for sessionpage, provide:
         ((session * subject * lab * user) & arg).proj(flist)
     '''
-
-    app.logger.info("\n\n\nthe value for limit is: {}\n\n\n".format(request.args))
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
-
     fetch_args = {} if fetch_args is None else fetch_args
     ret = []
     post_process = None
