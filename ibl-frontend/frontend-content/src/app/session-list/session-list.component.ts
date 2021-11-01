@@ -8,7 +8,7 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { AllSessionsService, GithubIssue } from './all-sessions.service';
+import { AllSessionsService, SessionRecord } from './all-sessions.service';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -115,7 +115,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   selectedSession = {};
 
   exampleDatabase: AllSessionsService | null;
-  data: GithubIssue[] = [];
+  data: SessionRecord[] = [];
   resultsLength = 0;
   isLoadingResults = true;
   isRateLimitReached = false;
@@ -425,7 +425,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
           newObject["__page"] = this.paginator.pageIndex + 1;
           newObject["__limit"] = this.paginator.pageSize;
           newObject["__order"] = this.sort.active + ' ' + this.sort.direction
-          return this.exampleDatabase!.getRepoIssues(
+          return this.exampleDatabase!.getSessions(
               newObject)
             .pipe(catchError(() => observableOf(null)));
         }),
@@ -455,7 +455,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
           // limit errors, we do not want to reset the paginator to zero, as that
           // would prevent users from re-triggering requests.
           this.resultsLength = data.records_count;
-          console.log("data githubIssue" + data.records)
+          console.log("data SessionRecord" + data.records)
           console.log("length " + this.resultsLength)
           return data.records;
         })

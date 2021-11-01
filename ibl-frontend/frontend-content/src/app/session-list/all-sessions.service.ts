@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 
 const BACKEND_API_URL = environment.backend_url;
 
-export interface GithubIssue {
+export interface SessionRecord {
   mouse_id: number;
   session_date: string;
   session_lab: string;
@@ -25,8 +25,8 @@ export interface GithubIssue {
   good4bmap: string;
 }
 
-interface GithubApi {
-  records: GithubIssue[];
+interface SessionApi {
+  records: SessionRecord[];
   records_count: number;
 }
 
@@ -59,11 +59,11 @@ export class AllSessionsService {
     return this.http.post(BACKEND_API_URL + '/sessions/', sessionFilters, { responseType: 'json'})
   }
 
-  getRepoIssues(body: Object): Observable<GithubApi> {
+  getSessions(body: Object): Observable<SessionApi> {
     const requestUrl = BACKEND_API_URL + '/sessions';
     
 
-    return this.http.post<GithubApi>(requestUrl, body, { responseType: 'json' });
+    return this.http.post<SessionApi>(requestUrl, body, { responseType: 'json' });
   }
 
   getAllSessions() {
