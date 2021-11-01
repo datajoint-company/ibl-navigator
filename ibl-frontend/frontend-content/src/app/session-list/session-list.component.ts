@@ -114,11 +114,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   selectedSession = {};
 
-  exampleDatabase: AllSessionsService | null;
-  data: SessionRecord[] = [];
-  resultsLength = 0;
+  sessionService: AllSessionsService | null;
+  sessionRecords: SessionRecord[] = [];
+  sessionRecordLength = 0;
   isLoadingResults = true;
-  isRateLimitReached = false;
 
   private sessionsSubscription: Subscription;
   private sessionMenuSubscription: Subscription;
@@ -344,7 +343,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.isLoading = false;
-    this.exampleDatabase = new AllSessionsService(this._httpClient);
+    this.sessionService = new AllSessionsService(this._httpClient);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
@@ -425,17 +424,16 @@ export class SessionListComponent implements OnInit, OnDestroy {
           newObject["__page"] = this.paginator.pageIndex + 1;
           newObject["__limit"] = this.paginator.pageSize;
           newObject["__order"] = this.sort.active + ' ' + this.sort.direction
-          return this.exampleDatabase!.getSessions(
+          return this.sessionService!.getSessions(
               newObject)
             .pipe(catchError(() => observableOf(null)));
         }),
-        map(data => {
+        map(sessionRecords => {
           this.isLoadingTable = false;
           // Flip flag to show that loading has finished.
           this.isLoadingResults = false;
-          this.isRateLimitReached = data === null;
 
-          if (data === null) {
+          if (sessionRecords === null) {
             return [];
           }
 
@@ -454,12 +452,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
           // Only refresh the result length if there is new data. In case of rate
           // limit errors, we do not want to reset the paginator to zero, as that
           // would prevent users from re-triggering requests.
-          this.resultsLength = data.records_count;
-          console.log("data SessionRecord" + data.records)
-          console.log("length " + this.resultsLength)
-          return data.records;
+          this.sessionRecordLength = sessionRecords.records_count;
+          return sessionRecords.records;
         })
-      ).subscribe(data => this.data = data);
+      ).subscribe(sessionRecords => this.sessionRecords = sessionRecords);
   }
 
   // async pagedTableData(){

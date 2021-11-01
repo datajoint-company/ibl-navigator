@@ -251,7 +251,7 @@
           *ngIf="isLoadingTable">
         <mat-spinner *ngIf="isLoadingTable"></mat-spinner>
       </div>
-    <table mat-table class="col-12" [dataSource]="data" matSort (matSortChange)="storeTableInfo($event)">
+    <table mat-table class="col-12" [dataSource]="sessionRecords" matSort (matSortChange)="storeTableInfo($event)">
       <!-- <mat-spinner *ngIf="isLoadingResults"></mat-spinner> -->
       <ng-container matColumnDef="session_lab">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Lab </th>
@@ -334,7 +334,7 @@
     </table>
     </div>
 
-    <mat-paginator [length]="resultsLength"
+    <mat-paginator [length]="sessionRecordLength"
                 [pageSize]="pageSize"
                 [pageSizeOptions]="pageSizeOptions"
                 showFirstLastButtons (page)="storeTableInfo($event)"></mat-paginator>
