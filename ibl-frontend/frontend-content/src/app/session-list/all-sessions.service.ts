@@ -61,8 +61,6 @@ export class AllSessionsService {
 
   getSessions(body: Object): Observable<SessionApi> {
     const requestUrl = BACKEND_API_URL + '/sessions';
-    
-
     return this.http.post<SessionApi>(requestUrl, body, { responseType: 'json' });
   }
 
