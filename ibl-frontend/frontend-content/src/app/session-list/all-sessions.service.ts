@@ -25,7 +25,7 @@ export interface GithubIssue {
   good4bmap: string;
 }
 
-export interface GithubApi {
+interface GithubApi {
   records: GithubIssue[];
   records_count: number;
 }
