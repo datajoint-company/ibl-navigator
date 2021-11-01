@@ -16,11 +16,10 @@ COPY ./app.conf /etc/nginx/conf.d/default.conf
 CMD ["nginx", "-g", "daemon off;"]
 
 ADD ./frontend-content/package.json /app/
-# ADD ./frontend-content/package-lock.json /app/
+
 RUN \
     cd /app && \
-    npm install # --save-dev @angular-devkit/build-angular > /dev/null
-
+    npm install 
 
 ADD ./frontend-content /app
 
@@ -29,7 +28,7 @@ COPY ./frontend-content/src/assets/addons/plotly.js /app/node_modules/plotly.js-
 
 RUN \
     cd /app && \
-    node --max_old_space_size=8192 /app/node_modules/@angular/cli/bin/ng build --configuration production
+    node --max_old_space_size=5120 /app/node_modules/@angular/cli/bin/ng build --configuration production
 
 
 # CMD ["http-server","-p", "8080" ,"-a","0.0.0.0"]
