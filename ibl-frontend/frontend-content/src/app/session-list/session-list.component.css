@@ -108,11 +108,11 @@ label {
     /* bottom: 56px; */
     right: 0;
     background: rgba(0, 0, 0, 0.15);
-    z-index: 1;
+    z-index: 9;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 80%;
+    height: 100%;
 }
 
 .session-list-loading-message.show {
@@ -136,6 +136,7 @@ label {
 
 .table-container {
     width: 100%;
+    position: relative;
     overflow-x: auto;
 }
 td.mat-cell, 
