@@ -8,12 +8,11 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { AllSessionsService } from './all-sessions.service';
+import { AllSessionsService, GithubIssue } from './all-sessions.service';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { GithubIssue } from './GithubIssueInterface';
 
 
 enum Sex {
