@@ -190,7 +190,6 @@ app.get('/sessions', checkAuth, (req, res) => {
 })
 
 app.post('/sessions', checkAuth, cacheMiddleware(15*60), (req, res) => {
-    // console.log('posting to filter session page');
     console.log('req.body: ', req.body)
     console.log('type: ', typeof req.body)
     request.post(flask_backend + '/v0/_q/sessionpage', { form: req.body }, function (error, httpResponse, body) {
@@ -199,7 +198,6 @@ app.post('/sessions', checkAuth, cacheMiddleware(15*60), (req, res) => {
             res.status(500).end();
             return;
         }
-        // console.log(body);
         res.send(body);
     })
 })

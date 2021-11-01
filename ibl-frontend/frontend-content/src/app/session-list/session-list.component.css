@@ -101,6 +101,20 @@ label {
     display: none;
 }
 
+.session-list-loading-shade {
+    position: absolute;
+    /* top: 0; */
+    left: 0;
+    /* bottom: 56px; */
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
 .session-list-loading-message.show {
     display: block;
 }
@@ -122,6 +136,7 @@ label {
 
 .table-container {
     width: 100%;
+    position: relative;
     overflow-x: auto;
 }
 td.mat-cell, 

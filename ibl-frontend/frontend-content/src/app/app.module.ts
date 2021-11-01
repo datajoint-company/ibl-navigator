@@ -64,6 +64,7 @@ import { PsthPlotsComponent } from './cell-list/cell/psth-plots/psth-plots.compo
 import { QualityControlComponent } from './quality-control/quality-control.component';
 import { DriftmapComponent } from './quality-control/driftmap/driftmap.component';
 import { SpinningBrainComponent } from './mouse-list/mouse/spinning-brain/spinning-brain.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -154,7 +155,7 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
-    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule,
+    MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule, MatProgressSpinnerModule,
     MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatMomentDateModule, MatSlideToggleModule,
     MatCardModule, MatButtonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSliderModule, MatExpansionModule,
     MatDialogModule, ReactiveFormsModule, FlexLayoutModule, MatTreeModule, MatFormFieldModule
