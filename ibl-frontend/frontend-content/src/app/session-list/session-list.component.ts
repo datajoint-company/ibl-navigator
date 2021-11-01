@@ -178,7 +178,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         if (key === '__json') {
           // If key is __json than to reformat to IBL API format
           const JSONcontent = JSON.parse(params[key]);
-          
           const dateRange = ['', '']; // First value is start date, second value is end date
 
           // Loop through each item in JSON Content and figgure out it is a date or a gender
@@ -251,11 +250,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
         }
       }
-
-      
-
-
-
       // Check storage to see if there is anything there
       // Check for paginator
       if (this.filterStoreService.sessionPaginator) {
@@ -291,12 +285,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
       // Check for preloaded sessions
       if (this.filterStoreService.loadedSessions) {
         // We have previously loaded sessions, thus just use that
-        console.log(this.filterStoreService.loadedSessions);
         this.allSessions = this.filterStoreService.loadedSessions;
       }
       else {
         // Else fetch from database
-        console.log('in ngOnIt fetchSessions')
         // await this.fetchSessions();
         this.initialLoad = false;
       }
@@ -304,13 +296,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
       // Check if there are params, if they are then apply them via this.applyFilter();
       if (params !== undefined && Object.keys(params).length !== 0) {
         // There are params, thus apply the filter and get the restricted sessions
-        console.log(params)
         this.restrictedSessions = await this.applyFilter(); 
-        console.log(this.restrictedSessions)
       }
       else {
         // There are no params so just set restricted Session to all sessions
-        console.log(this.restrictedSessions)
         this.restrictedSessions = this.allSessions
       }
 
@@ -326,8 +315,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         
         this.dataSource.paginator = this.paginator
       }
-
-      console.log("update selection")
       this.updateSelection();
     });
 
@@ -344,12 +331,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
   ngAfterViewInit() {
     this.isLoading = false;
     this.sessionService = new AllSessionsService(this._httpClient);
-
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
     let newObject = {};
-
     merge(this.sort.sortChange, this.paginator.page)
       .pipe(
         startWith({}),
@@ -360,13 +344,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
             this.sort.direction = 'desc'
           }
           let filter = Object.assign({}, this.session_filter_form.getRawValue());
-          console.log(`filter: ${JSON.stringify(filter)}`);
           let newFilter = JSON.stringify(filter)
-          console.log(Object.entries(filter))
 
           for (const [key, value] of Object.entries(filter)) {
             if(key == 'sex'){
-              console.log("\n\ntypeof sex", typeof(value))
               if(value[0] == true){
                 newObject[key] = 'F'
                 //female
@@ -385,22 +366,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
               else{
                 continue
               }
-
-              // for( const [key2, val] of Object.entries(value)){
-              //   console.log("inside sex value")
-              //   console.log(`${key2}: ${val}`)
-              //   if(val == 'true')
-              //   console.log(`\n\nSex Value: ${val}\n\n`)
-              //   console.log(`\n\nkey2`)
-              //   newObject[key2] = val
-              //   continue
-              // }
             }
             if(key == 'session_range_filter'){
-              console.log("\n\ntypeof of session_range_filter ", typeof(value))
               for( const [key2, val] of Object.entries(value)){
-                console.log("inside session_range_filter value")
-                console.log(`${key2}: ${val}`)
                 if(val !== null){
                   newObject[key2] = val
                 }
@@ -410,15 +378,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
             if(value !== null){
               newObject[key] = value
             }
-
-            console.log(`${key}: ${value}`);
           }
-
-          for (const [key, value] of Object.entries(newObject)){
-            console.log('\n\nwithin new list\n\n')
-            console.log(`${key}: ${value}`)
-          }
-          console.log(typeof(filter));
           this.isLoadingResults = true;
 
           newObject["__page"] = this.paginator.pageIndex + 1;
@@ -436,19 +396,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
           if (sessionRecords === null) {
             return [];
           }
-
-          // if (this.applyFilter()){
-          //   const restrictedSessions = this.applyFilter();
-          //   data.records = restrictedSessions;
-          //   return data.records;
-          // }
-
-          // this.restrictedSessions = await this.applyFilter();
-          // this.createMenu(this.restrictedSessions);
-          // await this.updateTableView(this.restrictedSessions);
-
-          
-
           // Only refresh the result length if there is new data. In case of rate
           // limit errors, we do not want to reset the paginator to zero, as that
           // would prevent users from re-triggering requests.
@@ -457,12 +404,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
         })
       ).subscribe(sessionRecords => this.sessionRecords = sessionRecords);
   }
-
-  // async pagedTableData(){
-  //   const restrictedSessions = await this.applyFilter();
-  //   this.data.records = restrictedSessions;
-  //   return data.records;
-  // }
   
   ngOnDestroy() {
     // Store paginator, sort, buttons, and sessions
@@ -498,21 +439,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.hideNotReady4Delay = false;
 
     const filters = {}
-    console.log(filters)
 
     // Store the filters, regardless if it is empty
     this.filterStoreService.storeSessionFilter(filters);
-    console.log(this.filterStoreService.retrieveSessionFilter)
     
     // Add the default sorting for the api request
     filters['__order'] = 'session_start_time DESC';
-    // filters['__page'] = this.pageIndex
-    // filters['__limit'] = this.pageSize
 
     this.allSessions = await this.allSessionsService.fetchSessions(filters).toPromise();
     this.allSessions = this.allSessions['records'];
-    console.log("\n\n\n\nSESSIONS: " + this.allSessions + " \n\n\n\n")
-    //record count json and assign it here 
   }
 
   setDropDownFormOptions(dropDownMenuOptionKey, formControl: AbstractControl, key: string) {
