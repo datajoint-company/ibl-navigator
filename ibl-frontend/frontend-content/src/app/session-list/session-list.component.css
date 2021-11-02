@@ -105,6 +105,20 @@ label {
     display: block;
 }
 
+.session-list-loading-shade {
+    position: absolute;
+    /* top: 0; */
+    left: 0;
+    /* bottom: 56px; */
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
 .loading-icon.loading.initial {
     border: 1px solid gray;
     padding: 36px 24px;
@@ -118,6 +132,7 @@ label {
 
 .table-container {
     width: 100%;
+    position: relative;
     overflow-x: auto;
 }
 td.mat-cell, 
@@ -229,7 +244,7 @@ mat-checkbox.mouse_sex_menu_chbox {
 
 .form-submit-button-area {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .nplot_status_filter {

@@ -172,10 +172,12 @@ def do_req(subpath):
     # construct kwargs
     kwargs = {'as_dict': True}
     limit = int(request.values['__limit']) if '__limit' in values else None
-    order = request.values['__order'] if '__order' in values else None
+    order = request.values['__order'] if '__order' in values else 'KEY ASC'
+    page = int(request.values['__page']) if '__page' in values else 1
     proj = json.loads(request.values['__proj']) if '__proj' in values else None
-    special_fields = ['__json', '__limit', '__order', '__proj', '__json_kwargs']
-    for a in (v for v in values if v not in special_fields):
+    special_fields = ['__json', '__limit', '__order', '__proj', '__json_kwargs', 
+    '__page']
+    for a in (k for k, v in values.items() if k not in special_fields and v):
         # HACK: 'uuid' attrs -> UUID type (see also: datajoint-python #594)
         postargs[a] = UUID(values[a]) if 'uuid' in a else values[a]
     args = [postargs] if len(postargs) else []
@@ -186,9 +188,14 @@ def do_req(subpath):
     if '__json_kwargs' in values:
         json_kwargs = json.loads(request.values['__json_kwargs'])
     args = {} if not args else dj.AndList(args)
-    kwargs = {k: v for k, v in (('as_dict', True,),
-                                   ('limit', limit,),
-                                   ('order_by', order,)) if v is not None}
+    if limit == None:
+        kwargs = {k: v for k, v in (('as_dict', True,),
+                                    ('order_by', order,)) if v is not None}
+    else:
+        kwargs = {k: v for k, v in (('as_dict', True,),
+                                    ('limit', limit,),
+                                    ('order_by', order,),
+                                    ('offset', (page-1)*limit)) if v is not None}
     # 2) and dispatch
     app.logger.debug("args: '{}', kwargs: {}".format(args, kwargs))
     if obj not in reqmap:
@@ -216,8 +223,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         ((session * subject * lab * user) & arg).proj(flist)
     '''
     app.logger.info("handle_q: subpath: '{}', args: {}".format(subpath, args))
-    app.logger.info('key words: {}'.format(kwargs))
-
+    
     fetch_args = {} if fetch_args is None else fetch_args
     ret = []
     post_process = None
@@ -266,10 +272,12 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
 
         q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() *
               subject.SubjectLab() * subject.SubjectUser() * trainingStatus) & args & brain_restriction)
-        
+        q = q.proj(*proj) if proj else q
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
-        q = q.proj(*proj).fetch(**fetch_args) if proj else q.fetch(**fetch_args)
+        ret_count = len(q)
+        ret = q.fetch(**fetch_args)
         dj.conn().query("SET SESSION max_join_size={}".format(original_max_join_size))
+        return dumps({"records_count": ret_count, "records": ret})
     elif subpath == 'subjpage':
         proj_restr = None
         for e in args:

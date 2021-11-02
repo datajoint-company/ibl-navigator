@@ -2,7 +2,7 @@
   <div #session_psych_plot></div>
 </div> 
 <div>
-  <img id="SPCpngExport" (click)="plotClicked($event)" />
+  <img id="SPCpngExport" (plotlyClick)="plotClicked($event)" />
 </div>
 <div *ngIf="plotLoading">
   <p>plot loading...</p>

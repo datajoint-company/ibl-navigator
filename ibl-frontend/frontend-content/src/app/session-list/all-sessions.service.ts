@@ -1,11 +1,35 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
 
 const BACKEND_API_URL = environment.backend_url;
+
+export interface SessionRecord {
+  mouse_id: number;
+  session_date: string;
+  session_lab: string;
+  subject_nickname: string;
+  subject_birth_date: string;
+  session_start_time: string;
+  task_protocol: string; 
+  subject_line: string; 
+  responsible_user: string;
+  session_uuid: string; 
+  sex: string;
+  subject_uuid: string;
+  nplot: string;
+  nprobe: string;
+  session_project: string;
+  good4bmap: string;
+}
+
+interface SessionApi {
+  records: SessionRecord[];
+  records_count: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +58,11 @@ export class AllSessionsService {
    */
   fetchSessions(sessionFilters: any) {
     return this.http.post(BACKEND_API_URL + '/sessions/', sessionFilters, { responseType: 'json'})
+  }
+
+  getSessions(body: Object): Observable<SessionApi> {
+    const requestUrl = BACKEND_API_URL + '/sessions';
+    return this.http.post<SessionApi>(requestUrl, body, { responseType: 'json' });
   }
 
   getAllSessions() {
@@ -88,7 +117,7 @@ export class AllSessionsService {
         (filteredSessionsData) => {
           let end = new Date();
           // console.log(`It took ${Number(end) - Number(start)}ms to retrieve the session list information`)
-          this.retrievedSessions = filteredSessionsData;
+          this.retrievedSessions = filteredSessionsData['records'];
           // console.log('retrievedSessions data are: ');
           // console.log(this.retrievedSessions);
           this.newSessionsLoaded.next(this.retrievedSessions);

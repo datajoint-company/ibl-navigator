@@ -20,6 +20,9 @@ COPY ./ /src/
 # RUN \
 #     mv /src/check-auth.js /src/middleware/
 
-CMD node --max_old_space_size=8192 /src/server.js
+WORKDIR /src
+CMD npm start
+
+# CMD node --max_old_space_size=8192 /src/server.js
 # CMD nodemon /src/server.js
 # CMD tail -f /dev/null
