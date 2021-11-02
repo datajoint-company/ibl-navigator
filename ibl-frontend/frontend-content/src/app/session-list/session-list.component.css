@@ -244,7 +244,7 @@ mat-checkbox.mouse_sex_menu_chbox {
 
 .form-submit-button-area {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .nplot_status_filter {

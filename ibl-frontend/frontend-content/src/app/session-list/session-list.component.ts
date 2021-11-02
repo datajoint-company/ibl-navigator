@@ -482,6 +482,12 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.uniqueValuesForEachAttribute[key] = new Set();
     })
 
+    this.uniqueValuesForEachAttribute['sex'] = {
+      F: false,
+      M: false,
+      U: false
+    }
+
     // Loop through each tuple
     // restrictedSessions.forEach(tuple => {
     //   keys.forEach(key => {
@@ -962,7 +968,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   async refreshData() {
     this.isLoading = true;
     this.filterStoreService.refreshSessionTableState();
-    await this.fetchSessions();
+    // await this.fetchSessions();
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
     //await this.updateTableView(this.restrictedSessions);
