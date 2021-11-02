@@ -2,7 +2,9 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/co
 import { Subscription, Observable, Subject } from 'rxjs';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DailySummaryService } from './daily-summary.service';
 import { FilterStoreService } from '../filter-store.service';

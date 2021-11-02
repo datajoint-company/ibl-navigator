@@ -6,30 +6,28 @@ import { PlotlyModule } from 'angular-plotly.js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
-import { MatSelectModule,
-         MatAutocompleteModule,
-         MatIconModule,
-         MatInputModule,
-         MatCheckboxModule,
-         MatRadioModule,
-         MatNativeDateModule,
-         MatDatepickerModule,
-         MatSlideToggleModule,
-         MatCardModule,
-         MatButtonModule,
-         MatTableModule,
-         MatPaginatorModule,
-         MatSortModule,
-         MatSliderModule,
-         MatExpansionModule,
-         MatDialogModule,
-         MatTreeModule,
-         MatFormFieldModule } from '@angular/material';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MatNativeDateModule } from '@angular/material/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-
+import {MatSelectModule} from '@angular/material/select';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatTreeModule} from '@angular/material/tree';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import { AuthGuard } from './auth/auth-guard.service';
 import { AppComponent } from './app.component';
 import { EachBatchComponent } from './each-batch/each-batch.component';
@@ -64,6 +62,7 @@ import { PsthPlotsComponent } from './cell-list/cell/psth-plots/psth-plots.compo
 import { QualityControlComponent } from './quality-control/quality-control.component';
 import { DriftmapComponent } from './quality-control/driftmap/driftmap.component';
 import { SpinningBrainComponent } from './mouse-list/mouse/spinning-brain/spinning-brain.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -170,6 +169,7 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
+    MatProgressSpinnerModule,
     MatSelectModule, MatAutocompleteModule, MatIconModule, MatInputModule,
     MatCheckboxModule, MatRadioModule, MatNativeDateModule, MatDatepickerModule, MatMomentDateModule, MatSlideToggleModule,
     MatCardModule, MatButtonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSliderModule, MatExpansionModule,

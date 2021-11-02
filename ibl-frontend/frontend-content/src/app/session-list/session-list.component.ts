@@ -1,10 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import { FormControl, FormGroup, FormArray, AbstractControl} from '@angular/forms';
+import { Subscription, Observable, merge, of as observableOf } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { MatPaginator, MatTableDataSource, MatSort, MatTreeNestedDataSource } from '@angular/material';
-import { AllSessionsService } from './all-sessions.service';
+import { map, startWith, catchError, switchMap } from 'rxjs/operators';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { AllSessionsService, SessionRecord } from './all-sessions.service';
 import { FilterStoreService } from '../filter-store.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -50,6 +54,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     responsible_user: new FormControl()
   });
   isLoading;
+  isLoadingTable = true;
   initialLoad;
   filterExpanded;
   allSessions;
@@ -109,12 +114,18 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
   selectedSession = {};
 
+  sessionService: AllSessionsService | null;
+  sessionRecords: SessionRecord[] = [];
+  sessionRecordLength = 0;
+  isLoadingResults = true;
+
   private sessionsSubscription: Subscription;
   private sessionMenuSubscription: Subscription;
   private allSessionMenuSubscription: Subscription;
   private reqSessionsSubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService) {
+  constructor(private route: ActivatedRoute, private router: Router, public allSessionsService: AllSessionsService, public filterStoreService: FilterStoreService,
+    private _httpClient: HttpClient) {
     this.treeDataSource.data = this.brainRegionTree
     // Initalized the material table
     this.dataSource = new MatTableDataSource<any>();
@@ -240,7 +251,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
         }
       }
-
       // Check storage to see if there is anything there
       // Check for paginator
       if (this.filterStoreService.sessionPaginator) {
@@ -280,7 +290,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       }
       else {
         // Else fetch from database
-        await this.fetchSessions();
+        // await this.fetchSessions();
         this.initialLoad = false;
       }
       
@@ -297,7 +307,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
       // Create Menu, Update table view and set loading to false
       this.createMenu(this.restrictedSessions);
       
-      this.updateTableView(this.restrictedSessions);
+      //this.updateTableView(this.restrictedSessions);
       this.isLoading = false;
 
       if (this.filterStoreService.sessionPaginator) {
@@ -318,6 +328,83 @@ export class SessionListComponent implements OnInit, OnDestroy {
       this.treeControl.dataNodes = this.treeDataSource.data;
       this.buildLookup();
     })
+  }
+
+  ngAfterViewInit() {
+    this.isLoading = false;
+    this.sessionService = new AllSessionsService(this._httpClient);
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+    let newObject = {};
+    merge(this.sort.sortChange, this.paginator.page)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingTable = true;
+          if(this.sort.direction == ''){
+            this.sort.active = 'session_start_time';
+            this.sort.direction = 'desc'
+          }
+          let filter = Object.assign({}, this.session_filter_form.getRawValue());
+          let newFilter = JSON.stringify(filter)
+
+          for (const [key, value] of Object.entries(filter)) {
+            if(key == 'sex'){
+              if(value[0] == true){
+                newObject[key] = 'F'
+                //female
+                continue
+              }
+              else if (value[1] == true){
+                newObject[key] = 'M'
+                //male
+                continue
+              }
+              else if (value[2] == true){
+                newObject[key] = 'U'
+                //undefined
+                continue
+              }
+              else{
+                continue
+              }
+            }
+            if(key == 'session_range_filter'){
+              for( const [key2, val] of Object.entries(value)){
+                if(val !== null){
+                  newObject[key2] = val
+                }
+                continue
+              }
+            }
+            if(value !== null){
+              newObject[key] = value
+            }
+          }
+          this.isLoadingResults = true;
+
+          newObject["__page"] = this.paginator.pageIndex + 1;
+          newObject["__limit"] = this.paginator.pageSize;
+          newObject["__order"] = this.sort.active + ' ' + this.sort.direction
+          return this.sessionService!.getSessions(
+              newObject)
+            .pipe(catchError(() => observableOf(null)));
+        }),
+        map(sessionRecords => {
+          this.isLoadingTable = false;
+          // Flip flag to show that loading has finished.
+          this.isLoadingResults = false;
+
+          if (sessionRecords === null) {
+            return [];
+          }
+          // Only refresh the result length if there is new data. In case of rate
+          // limit errors, we do not want to reset the paginator to zero, as that
+          // would prevent users from re-triggering requests.
+          this.sessionRecordLength = sessionRecords.records_count;
+          return sessionRecords.records;
+        })
+      ).subscribe(sessionRecords => this.sessionRecords = sessionRecords);
   }
   
   ngOnDestroy() {
@@ -362,6 +449,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     filters['__order'] = 'session_start_time DESC';
 
     this.allSessions = await this.allSessionsService.fetchSessions(filters).toPromise();
+    this.allSessions = this.allSessions['records'];
   }
 
   setDropDownFormOptions(dropDownMenuOptionKey, formControl: AbstractControl, key: string) {
@@ -395,55 +483,55 @@ export class SessionListComponent implements OnInit, OnDestroy {
     })
 
     // Loop through each tuple
-    restrictedSessions.forEach(tuple => {
-      keys.forEach(key => {
-        if (tuple[key] !== null && !this.uniqueValuesForEachAttribute[key].has(tuple[key])) {
-          // Add it to the uniqueValuesForColumns if it doesn't already exist in there
-          this.uniqueValuesForEachAttribute[key].add(tuple[key])
-        }
-      })
-    });
+    // restrictedSessions.forEach(tuple => {
+    //   keys.forEach(key => {
+    //     if (tuple[key] !== null && !this.uniqueValuesForEachAttribute[key].has(tuple[key])) {
+    //       // Add it to the uniqueValuesForColumns if it doesn't already exist in there
+    //       this.uniqueValuesForEachAttribute[key].add(tuple[key])
+    //     }
+    //   })
+    // });
     
-    // Deal with specific case for
-    this.patchSexMaterial(Sex.FEMALE, this.uniqueValuesForEachAttribute['sex'].has('F'));
-    this.patchSexMaterial(Sex.MALE, this.uniqueValuesForEachAttribute['sex'].has('M'));
-    this.patchSexMaterial(Sex.UNDEFINED, this.uniqueValuesForEachAttribute['sex'].has('U'));
+    // // Deal with specific case for
+    // this.patchSexMaterial(Sex.FEMALE, this.uniqueValuesForEachAttribute['sex'].has('F'));
+    // this.patchSexMaterial(Sex.MALE, this.uniqueValuesForEachAttribute['sex'].has('M'));
+    // this.patchSexMaterial(Sex.UNDEFINED, this.uniqueValuesForEachAttribute['sex'].has('U'));
 
-    // This is for selected or not for sex, don't know why this is here blame Maho
-    this.uniqueValuesForEachAttribute['sex'] = {
-      F: false,
-      M: false,
-      U: false
-    }
+    // // This is for selected or not for sex, don't know why this is here blame Maho
+    // this.uniqueValuesForEachAttribute['sex'] = {
+    //   F: false,
+    //   M: false,
+    //   U: false
+    // }
 
-    // Deal with figureing out the range of dates
-    const sessionSeconds = [];
-    this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
-      sessionSeconds.push(new Date(date).getTime());
-    });
+    // // Deal with figureing out the range of dates
+    // const sessionSeconds = [];
+    // this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
+    //   sessionSeconds.push(new Date(date).getTime());
+    // });
 
-    this.sessionMinDate = new Date(Math.min(...sessionSeconds));
-    this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
+    // this.sessionMinDate = new Date(Math.min(...sessionSeconds));
+    // this.sessionMaxDate = new Date(Math.max(...sessionSeconds));
 
-    // Figure out what dates are valid and assign it to this.sessionDateFilter for the material table to highlight those date
-    this.sessionDateFilter = (date: Date): boolean => {
-      let sessionDates = [];
-      this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
-        sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
-      });
+    // // Figure out what dates are valid and assign it to this.sessionDateFilter for the material table to highlight those date
+    // this.sessionDateFilter = (date: Date): boolean => {
+    //   let sessionDates = [];
+    //   this.uniqueValuesForEachAttribute['session_start_time'].forEach(date => {
+    //     sessionDates.push(date.toString().substring(0, 10)); // Split it at T and only take the first half
+    //   });
 
-      // filter out dates without any session
-      return sessionDates.includes(date.toISOString().substring(0, 10));
-    };
+    //   // filter out dates without any session
+    //   return sessionDates.includes(date.toISOString().substring(0, 10));
+    // };
 
-    // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
-    this.miceBirthdayFilter = (calendarDate: Date): boolean => {
-      let birthDates = [];
-      this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
-        birthDates.push(date);
-      });
-      return birthDates.includes(calendarDate.toISOString().substring(0, 10));
-    };
+    // // Figure out what dates for the mouse Birthday Filter are valid and assign it to this.sessionDateFilter for the material table to highlight those date
+    // this.miceBirthdayFilter = (calendarDate: Date): boolean => {
+    //   let birthDates = [];
+    //   this.uniqueValuesForEachAttribute['subject_birth_date'].forEach(date => {
+    //     birthDates.push(date);
+    //   });
+    //   return birthDates.includes(calendarDate.toISOString().substring(0, 10));
+    // };
 
     // Set material from drop down
     this.setDropDownFormOptions('filteredSessionLabOptions', this.session_filter_form.controls.session_lab, 'session_lab');
@@ -554,7 +642,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     const requestFilter = {};
     let requestJSONstring = '';
     
-    filterList.forEach(filter => {
+    filterList.forEach((filter: Array<any>) => {
       // filter is [["session_lab", "somelab"], ["subject_nickname", null]...]
       const filterKey = filter[0].split('')[0]; // filter[0] is control name like 'session_lab'
       if (filter[1] && filterKey !== focusedField) {
@@ -792,8 +880,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
-    await this.updateTableView(this.restrictedSessions);
+    //await this.updateTableView(this.restrictedSessions);
     this.isLoading = false;
+    this.paginator.pageIndex = 0;
+    this.ngAfterViewInit();
   }
 
   /**
@@ -801,65 +891,69 @@ export class SessionListComponent implements OnInit, OnDestroy {
    * @returns 
    */
   async applyFilter(focusFieldKey?: string) {
-    if (!this.allSessions) {
-      return [];
-    }
+    return [];
+    // if (!this.allSessions) {
+    //   return [];
+    // }
 
-    // Hide certain checkboxes
-    this.hideMissingPlots = false;
-    this.hideMissingEphys = false;
-    this.hideNG4BrainMap = false;
-    this.hideNotReady4Delay = false;
-    
-    let tupleToRestrict = this.allSessions // By default this should be all sessions
+    // // Hide certain checkboxes
+    // this.hideMissingPlots = false;
+    // this.hideMissingEphys = false;
+    // this.hideNG4BrainMap = false;
+    // this.hideNotReady4Delay = false;
 
-    // Check if there is a brain region request, if so override the tupleToRestrict reference
-    const brainRegionRequest = this.requested_BR;
-    if (brainRegionRequest.length !== 0) {
-      // BrainRegionRequest is not empty, thus query the backend for it
-      let requestFilter = {}
-      let BR_JSONstring = '';
-      if (brainRegionRequest.length > 0) {
-        BR_JSONstring = '';
-        brainRegionRequest.filter(function(selection, index) {
-          if (index > 0) {
-            BR_JSONstring += `, "${selection}"`
-          } else {
-            BR_JSONstring += `"${selection}"`
-          }
-        })
-        BR_JSONstring = '[' + BR_JSONstring + ']'
-      }
+    // let tupleToRestrict = this.allSessions // By default this should be all sessions
 
-      // Add it it to the requestFilter object
-      if (brainRegionRequest.length > 0) {
-        requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
-      }
+    // // Check if there is a brain region request, if so override the tupleToRestrict reference
+    // const brainRegionRequest = this.requested_BR;
+    // if (brainRegionRequest.length !== 0) {
+    //   // BrainRegionRequest is not empty, thus query the backend for it
+    //   let requestFilter = {}
+    //   let BR_JSONstring = '';
+    //   if (brainRegionRequest.length > 0) {
+    //     BR_JSONstring = '';
+    //     brainRegionRequest.filter(function(selection, index) {
+    //       if (index > 0) {
+    //         BR_JSONstring += `, "${selection}"`
+    //       } else {
+    //         BR_JSONstring += `"${selection}"`
+    //       }
+    //     })
+    //     BR_JSONstring = '[' + BR_JSONstring + ']'
+    //   }
 
-      // Add the default sorting for the api request
-      requestFilter['__order'] = 'session_start_time DESC';
+    //   // Add it it to the requestFilter object
+    //   if (brainRegionRequest.length > 0) {
+    //     requestFilter['__json_kwargs'] = '{ "brain_regions": ' + BR_JSONstring + '}';
+    //   }
 
-      // Query back end
-      tupleToRestrict = await this.allSessionsService.fetchSessions(requestFilter).toPromise();
-    }
-    
-    // Filter based on what the user requested
-    let restrictionObjectFromForm = this.session_filter_form.getRawValue();
+    //   // Add the default sorting for the api request
+    //   requestFilter['__order'] = 'session_start_time DESC';
 
-    // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
-    if (focusFieldKey) {
-      restrictionObjectFromForm[focusFieldKey] = null;
-    }
+    //   console.log(requestFilter)
 
-    // Iterate through the tuples and restrict accordingly
-    // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
-    let restrictedSessions = [];
-    for (let tuple of tupleToRestrict) {
-      if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
-        restrictedSessions.push(tuple);
-      }
-    }
-    return restrictedSessions;
+    //   // Query back end
+    //   tupleToRestrict = await this.allSessionsService.fetchSessions(requestFilter).toPromise();
+    // }
+
+    // // Filter based on what the user requested
+    // let restrictionObjectFromForm = this.session_filter_form.getRawValue();
+
+    // // if user is focusing on a specific field, then remove the currently focused field's restriction value from menu creation
+    // if (focusFieldKey) {
+    //   restrictionObjectFromForm[focusFieldKey] = null;
+    // }
+
+    // // Iterate through the tuples and restrict accordingly
+    // // This is kind of stupid cause it doesn't check if the restrictionObjectFromForm even have a valid restriction
+    // let restrictedSessions = [];
+    // for (let tuple of tupleToRestrict) {
+    //   if (this.doesTupleMatchRestriction(tuple, restrictionObjectFromForm)) {
+    //     restrictedSessions.push(tuple);
+    //   }
+    // }
+    // console.log(restrictedSessions)
+    // return restrictedSessions;
   }
 
   /**
@@ -871,7 +965,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     await this.fetchSessions();
     this.restrictedSessions = await this.applyFilter();
     this.createMenu(this.restrictedSessions);
-    await this.updateTableView(this.restrictedSessions);
+    //await this.updateTableView(this.restrictedSessions);
+    this.ngAfterViewInit();
     this.isLoading = false;
   }
 
@@ -880,36 +975,38 @@ export class SessionListComponent implements OnInit, OnDestroy {
    */
   async handleResetFilterButtonPress() {
     this.isLoading = true;
-    for (const control in this.session_filter_form.controls) {
-      const toReset = {}
+    // for (const control in this.session_filter_form.controls) {
+    //   const toReset = {}
       
-      if (control === 'session_range_filter') {
-        toReset[control] = { 'session_range_start': null, 'session_range_end': null}
+    //   if (control === 'session_range_filter') {
+    //     toReset[control] = { 'session_range_start': null, 'session_range_end': null}
         
-      } else if (control === 'sex') {
-        toReset[control] = [false, false, false];
-        for (const index in this.session_filter_form.get(control)['controls']) {
-          this.session_filter_form.get(control).get([index]).enable();
-        }
-      } else {
-        toReset[control] = null;
-      }
-      this.session_filter_form.patchValue(toReset); 
-    }
+    //   } else if (control === 'sex') {
+    //     toReset[control] = [false, false, false];
+    //     for (const index in this.session_filter_form.get(control)['controls']) {
+    //       this.session_filter_form.get(control).get([index]).enable();
+    //     }
+    //   } else {
+    //     toReset[control] = null;
+    //   }
+    //   this.session_filter_form.patchValue(toReset); 
+    // }
 
-    this.route.queryParams.subscribe(async param => {
-      if (Object.keys(param).length > 0) {
-        // Clear all URL params, and do a fresh fetch
-        this.router.navigate(
-          [],
-          {
-            relativeTo: this.route,
-            queryParams: null
-          });
-      }
-    })
+    // this.route.queryParams.subscribe(async param => {
+    //   if (Object.keys(param).length > 0) {
+    //     // Clear all URL params, and do a fresh fetch
+    //     this.router.navigate(
+    //       [],
+    //       {
+    //         relativeTo: this.route,
+    //         queryParams: null
+    //       });
+    //   }
+    // })
 
-    // clear the filter in storage before applying filter
+    //all of the above code can just be done with this.session_filter_form.reset()
+    this.session_filter_form.reset()
+
     this.filterStoreService.clearSessionFilter();
     
     this.restrictedSessions = await this.applyFilter();
@@ -919,13 +1016,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.paginator.pageIndex = 0;
     this.paginator.pageSize = 25;
     // the below is to remove the arrow UI that doesn't go away after this.sort.active = '' 
-    this.sort.sortables.forEach(sortItem => {
-      this.sort.sort(sortItem);
-    });
-    this.sort.active = '';
+    // this.sort.sortables.forEach(sortItem => {
+    //   this.sort.sort(sortItem);
+    // });
+    // this.sort.active = '';
 
-    await this.updateTableView(this.restrictedSessions);
+    //await this.updateTableView(this.restrictedSessions);
     this.isLoading = false;
+    this.ngAfterViewInit();
     return;
   }
 

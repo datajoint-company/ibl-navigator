@@ -28,5 +28,9 @@
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.4.0"
+  },
+  "scripts": {
+    "start": "node --max_old_space_size=8192 /src/server.js",
+    "test": "node --max_old_space_size=8192 --inspect-brk=0.0.0.0:9222 /src/server.js"
   }
 }

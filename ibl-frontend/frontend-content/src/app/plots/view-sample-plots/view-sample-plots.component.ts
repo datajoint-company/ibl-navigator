@@ -26,10 +26,10 @@ export class ViewSamplePlotsComponent implements OnInit, OnDestroy {
   private somePostSubscription: Subscription;
 
 
-  @ViewChild('samplePlot2') el: ElementRef;
-  @ViewChild('samplePlot_psych') el2: ElementRef;
+  @ViewChild('samplePlot2', {static: true}) el: ElementRef;
+  @ViewChild('samplePlot_psych', {static: true}) el2: ElementRef;
 
-  @ViewChild(PlotMenuToggleComponent) PMTComp: PlotMenuToggleComponent;
+  @ViewChild('PlotMenuToggleComponent', {static: true}) PMTComp: PlotMenuToggleComponent;
   @Input() selectedPlotChange: PlotMenuToggleComponent;
   constructor(public plotsService: PlotsService) { }
 
