@@ -239,7 +239,7 @@ mat-checkbox.mouse_sex_menu_chbox {
     flex-direction: row;
 };
 .cleardivider {
-    visibility: hidden;
+    visibility: visible;
 }
 
 .form-submit-button-area {
