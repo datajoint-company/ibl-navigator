@@ -344,7 +344,22 @@ export class SessionListComponent implements OnInit, OnDestroy {
             this.sort.direction = 'desc'
           }
           let filter = Object.assign({}, this.session_filter_form.getRawValue());
-          let newFilter = JSON.stringify(filter)
+
+          if(this.hideMissingPlots){
+            filter["nplot"] = 1
+          }
+
+          if(this.hideNG4BrainMap){
+            filter["good_enough_for_brainwide_map"] = 1
+          }
+
+          if(this.hideNotReady4Delay){
+            filter["training_status"] = "ready4delay"
+          }
+
+          if(this.hideMissingEphys){
+            filter["__json"] = '["nprobe>0"]'
+          }
 
           for (const [key, value] of Object.entries(filter)) {
             if(key == 'sex'){
@@ -1157,27 +1172,40 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
   ​
   toggleNplotStatus() {
+    // this.isLoading = true;
     // hide or show sessions that have missing session plots
     this.hideMissingPlots = !this.hideMissingPlots;
-    this.updateSelection();
+    // this.updateSelection();
+    this.isLoading = false; 
+    this.paginator.pageIndex = 0; 
+    this.ngAfterViewInit();
   }
   ​
   toggleNprobeStatus() {
     // hide or show sessions that have missing ephys data (based on existence of probe insertion)
     this.hideMissingEphys = !this.hideMissingEphys;
-    this.updateSelection();
+    // this.updateSelection();
+    this.isLoading = false; 
+    this.paginator.pageIndex = 0; 
+    this.ngAfterViewInit();
   }
 
   toggleG4BMviewStatus() {
     // hide or show sessions that are not good enough for brain map
     this.hideNG4BrainMap = !this.hideNG4BrainMap;
-    this.updateSelection();
+    // this.updateSelection();
+    this.isLoading = false; 
+    this.paginator.pageIndex = 0; 
+    this.ngAfterViewInit();
   }
 
   toggleR4DviewStatus() {
     // hide or show session that are not ready for delay
     this.hideNotReady4Delay = !this.hideNotReady4Delay;
-    this.updateSelection();
+    // this.updateSelection();
+    this.isLoading = false; 
+    this.paginator.pageIndex = 0; 
+    this.ngAfterViewInit();
   }
 
   //==**==**==**==**+=**+== [START] brain tree functions **==**==**==**==**==**==**==**==**==**+=//
