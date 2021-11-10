@@ -159,7 +159,11 @@
           <div class="brain-tree-zone">
             <mat-form-field>
               <label>Brain Regions</label>
-              <input matInput (input)="filterChanged($event.target.value.toLowerCase())">
+              <input matInput type="text" name="brain_regions" formControlName="brain_regions">
+                <mat-autocomplete #autoCompRU="matAutocomplete">
+                  <mat-option *ngFor="let responsible_user of dropDownMenuOptions.filteredResponsibleUserOptions | async"[value]="brain_regions"
+                    (click)="updateMenu()">{{ brain_regions }}</mat-option>
+                </mat-autocomplete>
             </mat-form-field>
            <!-- <div>Selected Brain Region:
               <div class="chip-list">
