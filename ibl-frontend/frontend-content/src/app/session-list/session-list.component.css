@@ -139,6 +139,14 @@ label {
     position: relative;
     overflow-x: auto;
 }
+
+.flipped, .flipped .col-12
+{
+    transform:rotateX(180deg);
+    -ms-transform:rotateX(180deg); /* IE 9 */
+    -webkit-transform:rotateX(180deg); /* Safari and Chrome */
+}
+
 td.mat-cell, 
 td.mat-footer-cell, 
 th.mat-header-cell {

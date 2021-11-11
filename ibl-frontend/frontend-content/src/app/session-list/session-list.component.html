@@ -247,7 +247,7 @@
       <img src="assets/images/loading_icon.gif">
       <p [class]="initialLoad ? 'session-list-loading-message show' : 'session-list-loading-message'"></p>
     </div>
-    <div class="table-container">
+    <div class="table-container flipped">
       <div class="session-list-loading-shade"
           *ngIf="isLoadingTable">
         <mat-spinner *ngIf="isLoadingTable"></mat-spinner>
