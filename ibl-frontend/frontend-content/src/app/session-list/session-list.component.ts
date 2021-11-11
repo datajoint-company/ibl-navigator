@@ -340,7 +340,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
         switchMap(() => {
           this.isLoadingTable = true;
           if(this.sort.direction == ''){
-            this.sort.active = 'session_start_time';
+            this.sort.active = 'nprobe';
             this.sort.direction = 'desc'
           }
           let filter = Object.assign({}, this.session_filter_form.getRawValue());
