@@ -51,7 +51,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     sex: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
     subject_birth_date: new FormControl(),
     subject_line: new FormControl(),
-    responsible_user: new FormControl()
+    responsible_user: new FormControl(),
+    brain_regions: new FormControl()
   });
   isLoading;
   isLoadingTable = true;
@@ -390,6 +391,10 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 continue
               }
             }
+            if(key == 'brain_regions' && value !== null){
+              newObject["__json_kwargs"] = `{"brain_regions": ["${value}"]}`
+              continue
+            }
             if(value !== null){
               newObject[key] = value
             }
@@ -489,7 +494,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   private createMenu(restrictedSessions: Array<any>) {
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
-    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
+    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project', 'brain_regions'];
     
     keys.forEach(key => {
       this.uniqueValuesForEachAttribute[key] = new Set();
@@ -560,6 +565,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol, 'task_protocol');
     this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line, 'subject_line');
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
+    this.setDropDownFormOptions('filteredBrainRegionsOptions',  this.session_filter_form.controls.brain_regions, 'brain_regions');
   }
 
   /**
