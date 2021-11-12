@@ -1178,37 +1178,28 @@ export class SessionListComponent implements OnInit, OnDestroy {
   }
   ​
   toggleNplotStatus() {
-    // this.isLoading = true;
-    // hide or show sessions that have missing session plots
     this.hideMissingPlots = !this.hideMissingPlots;
-    // this.updateSelection();
     this.isLoading = false; 
     this.paginator.pageIndex = 0; 
     this.ngAfterViewInit();
   }
   ​
   toggleNprobeStatus() {
-    // hide or show sessions that have missing ephys data (based on existence of probe insertion)
     this.hideMissingEphys = !this.hideMissingEphys;
-    // this.updateSelection();
     this.isLoading = false; 
     this.paginator.pageIndex = 0; 
     this.ngAfterViewInit();
   }
 
   toggleG4BMviewStatus() {
-    // hide or show sessions that are not good enough for brain map
     this.hideNG4BrainMap = !this.hideNG4BrainMap;
-    // this.updateSelection();
     this.isLoading = false; 
     this.paginator.pageIndex = 0; 
     this.ngAfterViewInit();
   }
 
   toggleR4DviewStatus() {
-    // hide or show session that are not ready for delay
     this.hideNotReady4Delay = !this.hideNotReady4Delay;
-    // this.updateSelection();
     this.isLoading = false; 
     this.paginator.pageIndex = 0; 
     this.ngAfterViewInit();
