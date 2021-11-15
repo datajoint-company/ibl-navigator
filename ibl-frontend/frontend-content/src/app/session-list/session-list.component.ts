@@ -391,7 +391,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 continue
               }
             }
-            if(key == 'brain_regions' && value !== null){
+            if(key == 'brain_regions' && value !== null && value !== ""){
               newObject["__json_kwargs"] = `{"brain_regions": ["${value}"]}`
               continue
             }
