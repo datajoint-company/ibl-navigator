@@ -347,63 +347,63 @@ export class SessionListComponent implements OnInit, OnDestroy {
           let filter = Object.assign({}, this.session_filter_form.getRawValue());
 
           if(this.hideMissingPlots){
-            filter["nplot"] = 1
+            filter["nplot"] = 1;
           }
 
           if(this.hideNG4BrainMap){
-            filter["good_enough_for_brainwide_map"] = 1
+            filter["good_enough_for_brainwide_map"] = 1;
           }
 
           if(this.hideNotReady4Delay){
-            filter["training_status"] = "ready4delay"
+            filter["training_status"] = "ready4delay";
           }
 
           if(this.hideMissingEphys){
-            filter["__json"] = '["nprobe>0"]'
+            filter["__json"] = '["nprobe>0"]';
           }
 
           for (const [key, value] of Object.entries(filter)) {
             if(key == 'sex'){
               if(value[0] == true){
-                newObject[key] = 'F'
+                newObject[key] = 'F';
                 //female
-                continue
+                continue;
               }
               else if (value[1] == true){
-                newObject[key] = 'M'
+                newObject[key] = 'M';
                 //male
-                continue
+                continue;
               }
               else if (value[2] == true){
-                newObject[key] = 'U'
+                newObject[key] = 'U';
                 //undefined
-                continue
+                continue;
               }
               else{
-                continue
+                continue;
               }
             }
             if(key == 'session_range_filter'){
               for( const [key2, val] of Object.entries(value)){
                 if(val !== null){
-                  newObject[key2] = val
+                  newObject[key2] = val;
                 }
-                continue
+                continue;
               }
             }
             if(key == 'brain_regions' && value !== null && value !== ""){
-              newObject["__json_kwargs"] = `{"brain_regions": ["${value}"]}`
-              continue
+              newObject["__json_kwargs"] = `{"brain_regions": ["${value}"]}`;
+              continue;
             }
             if(value !== null){
-              newObject[key] = value
+              newObject[key] = value;
             }
           }
           this.isLoadingResults = true;
 
           newObject["__page"] = this.paginator.pageIndex + 1;
           newObject["__limit"] = this.paginator.pageSize;
-          newObject["__order"] = this.sort.active + ' ' + this.sort.direction
+          newObject["__order"] = this.sort.active + ' ' + this.sort.direction;
           return this.sessionService!.getSessions(
               newObject)
             .pipe(catchError(() => observableOf(null)));
