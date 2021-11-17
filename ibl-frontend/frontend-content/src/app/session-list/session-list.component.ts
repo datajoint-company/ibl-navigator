@@ -52,7 +52,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     subject_birth_date: new FormControl(),
     subject_line: new FormControl(),
     responsible_user: new FormControl(),
-    brain_regions: new FormControl()
+    brain_regions: new FormControl(),
+    death_date: new FormControl()
   });
   isLoading;
   isLoadingTable = true;
@@ -66,6 +67,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   sessionMinDate: Date;
   sessionMaxDate: Date;
   isSessionDateUsingRange: boolean;
+  isAlive: boolean
   dropDownMenuOptions: any = {};
   // filteredTaskProtocolOptions: Observable<string[]>;
   // filteredSessionUuidOptions: Observable<string[]>;
@@ -84,7 +86,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   // setup for the table columns
   displayedColumns: string[] = ['session_lab', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
-                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'good4bmap'];
+                              'session_uuid', 'sex', 'death_date', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'good4bmap'];
   nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
@@ -339,6 +341,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
       .pipe(
         startWith({}),
         switchMap(() => {
+          let dj_restriction_conditions = [];
+
           this.isLoadingTable = true;
           if(this.sort.direction == ''){
             this.sort.active = 'nprobe';
@@ -359,7 +363,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
 
           if(this.hideMissingEphys){
-            filter["__json"] = '["nprobe>0"]';
+            dj_restriction_conditions.push("nprobe>0");
           }
 
           for (const [key, value] of Object.entries(filter)) {
@@ -395,6 +399,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
               newObject["__json_kwargs"] = `{"brain_regions": ["${value}"]}`;
               continue;
             }
+            if(this.isAlive){
+              dj_restriction_conditions.push("death_date is null");
+              continue;
+            }
+            if(!this.isAlive){
+              dj_restriction_conditions.push("death_date is not null");
+              continue;
+            }
             if(value !== null){
               newObject[key] = value;
             }
@@ -404,6 +416,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
           newObject["__page"] = this.paginator.pageIndex + 1;
           newObject["__limit"] = this.paginator.pageSize;
           newObject["__order"] = this.sort.active + ' ' + this.sort.direction;
+          newObject["__json"] = JSON.stringify(dj_restriction_conditions);
           return this.sessionService!.getSessions(
               newObject)
             .pipe(catchError(() => observableOf(null)));
@@ -494,7 +507,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   private createMenu(restrictedSessions: Array<any>) {
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
-    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project', 'brain_regions'];
+    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project', 'brain_regions', 'death_date'];
     
     keys.forEach(key => {
       this.uniqueValuesForEachAttribute[key] = new Set();
@@ -566,6 +579,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line, 'subject_line');
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
     this.setDropDownFormOptions('filteredBrainRegionsOptions',  this.session_filter_form.controls.brain_regions, 'brain_regions');
+    this.setDropDownFormOptions('filteredDeathDateOptions',  this.session_filter_form.controls.death_date, 'death_date');
   }
 
   /**
@@ -595,7 +609,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
             // The unique value does include the user restrction string, thus we need to add it to the validUniqueValues array
             validUniqueValues.push(uniqueValue);
           }
-    
+
           if (validUniqueValues.length > MAX_NUMBER_OF_SUGGESTIONS) {
             return;
           }

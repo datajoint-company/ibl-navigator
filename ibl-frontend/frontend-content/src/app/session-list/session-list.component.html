@@ -155,6 +155,24 @@
             </mat-autocomplete>
           </mat-form-field>
 
+          <div class="date-range-toggler">
+            <label for="isAlive">Mouse Vital Status</label>
+            <div>
+              Deceased&nbsp;<mat-slide-toggle name="isAlive" [checked]="isAlive" (change)="isAlive=!isAlive">Alive
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <!-- <mat-form-field>
+            <label>Alive/Deceased</label>
+            <input matInput type="text" name="death_date" formControlName="death_date"
+              [matAutocomplete]="autoCompRU" (focus)="stepBackMenu($event)">
+            <mat-autocomplete #autoCompRU="matAutocomplete">
+              <mat-option *ngFor="let death_date of dropDownMenuOptions.filteredResponsibleUserOptions | async" [value]="death_date"
+                (click)="updateMenu()">{{ death_date }}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field> -->
+
           <!-- // Brain Tree Selection Area -->
           <div class="brain-tree-zone">
             <mat-form-field>
@@ -306,6 +324,11 @@
       <ng-container matColumnDef="sex">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Sex </th>
         <td mat-cell *matCellDef="let session"class="to-center"> {{session.sex}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="death_date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse Vital Status </th>
+        <td mat-cell *matCellDef="let session"class="to-center"> {{session.death_date}} </td>
       </ng-container>
 
       <ng-container matColumnDef="nplot">
