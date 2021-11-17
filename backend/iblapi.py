@@ -252,7 +252,6 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             )
         subj = subject.Subject().aggr(
             subject.Death().proj('death_date') * dj.U('death_date'),
-            # death_date='IF(death_date>0, 1, 0)',
             death_date='IFNULL(death_date, NULL)',
             keep_all_rows=True)
         regions = kwargs.get('brain_regions', None)
