@@ -250,6 +250,10 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             training_status='training_status', good_enough_for_brainwide_map='good_enough_for_brainwide_map',
             keep_all_rows=True
             )
+        subj = subject.Subject().aggr(
+            subject.Death().proj('death_date') * dj.U('death_date'),
+            death_date='IFNULL(death_date, NULL)',
+            keep_all_rows=True)
         regions = kwargs.get('brain_regions', None)
         #   expected format of brain_regions = ["AB", "ABCa", "CS of TCV"]
         if regions is not None and len(regions) > 0: 
@@ -268,7 +272,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
         #       subject.SubjectLab() * subject.SubjectUser() *
         #       analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
 
-        q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject() *
+        q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subj *
               subject.SubjectLab() * subject.SubjectUser() * trainingStatus) & args & brain_restriction)
         q = q.proj(*proj) if proj else q
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
