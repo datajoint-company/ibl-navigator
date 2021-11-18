@@ -51,7 +51,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
     sex: new FormArray([new FormControl(), new FormControl(), new FormControl()]),
     subject_birth_date: new FormControl(),
     subject_line: new FormControl(),
-    responsible_user: new FormControl()
+    responsible_user: new FormControl(),
+    brain_regions: new FormControl(),
+    death_date: new FormControl()
   });
   isLoading;
   isLoadingTable = true;
@@ -65,6 +67,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   sessionMinDate: Date;
   sessionMaxDate: Date;
   isSessionDateUsingRange: boolean;
+  isAlive: boolean;
   dropDownMenuOptions: any = {};
   // filteredTaskProtocolOptions: Observable<string[]>;
   // filteredSessionUuidOptions: Observable<string[]>;
@@ -83,7 +86,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   // setup for the table columns
   displayedColumns: string[] = ['session_lab', 'subject_nickname', 'subject_birth_date', 'session_start_time',
                               'task_protocol', 'subject_line', 'responsible_user',
-                              'session_uuid', 'sex', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'ready4delay', 'good4bmap'];
+                              'session_uuid', 'sex', 'death_date', 'subject_uuid', 'nplot', 'nprobe', 'session_project', 'ready4delay', 'good4bmap'];
   nplotMap: any = { '0': '', '1': '\u2714' };
   // setup for the paginator
   dataSource;
@@ -340,52 +343,81 @@ export class SessionListComponent implements OnInit, OnDestroy {
       .pipe(
         startWith({}),
         switchMap(() => {
+          let dj_restriction_conditions = [];
           this.isLoadingTable = true;
           if(this.sort.direction == ''){
-            this.sort.active = 'session_start_time';
+            this.sort.active = 'nprobe';
             this.sort.direction = 'desc'
           }
           let filter = Object.assign({}, this.session_filter_form.getRawValue());
-          let newFilter = JSON.stringify(filter)
+          
+          if(this.hideMissingPlots){
+            filter["nplot"] = 1;
+          }
+
+          if(this.hideNG4BrainMap){
+            filter["good_enough_for_brainwide_map"] = 1;
+          }
+
+          if(this.hideNotReady4Delay){
+            filter["training_status"] = "ready4delay";
+          }
+
+          if(this.hideMissingEphys){
+            dj_restriction_conditions.push("nprobe>0");
+          }
 
           for (const [key, value] of Object.entries(filter)) {
             if(key == 'sex'){
               if(value[0] == true){
-                newObject[key] = 'F'
+                newObject[key] = 'F';
                 //female
-                continue
+                continue;
               }
               else if (value[1] == true){
-                newObject[key] = 'M'
+                newObject[key] = 'M';
                 //male
-                continue
+                continue;
               }
               else if (value[2] == true){
-                newObject[key] = 'U'
+                newObject[key] = 'U';
                 //undefined
-                continue
+                continue;
               }
               else{
-                continue
+                continue;
               }
             }
             if(key == 'session_range_filter'){
               for( const [key2, val] of Object.entries(value)){
                 if(val !== null){
-                  newObject[key2] = val
+                  newObject[key2] = val;
                 }
-                continue
+                continue;
               }
             }
+            if(key == 'brain_regions' && value !== null && value !== ""){
+              newObject["__json_kwargs"] = `{"brain_regions": ["${value}"]}`;
+              continue;
+            }
+            if(this.isAlive){
+              dj_restriction_conditions.push("death_date is null");
+              continue;
+            }
+            if(!this.isAlive){
+              dj_restriction_conditions.push("death_date is not null");
+              continue;
+            }
             if(value !== null){
-              newObject[key] = value
+              newObject[key] = value;
             }
           }
           this.isLoadingResults = true;
 
           newObject["__page"] = this.paginator.pageIndex + 1;
           newObject["__limit"] = this.paginator.pageSize;
-          newObject["__order"] = this.sort.active + ' ' + this.sort.direction
+          newObject["__order"] = this.sort.active + ' ' + this.sort.direction;
+          newObject["__json"] = JSON.stringify(dj_restriction_conditions);
           return this.sessionService!.getSessions(
               newObject)
             .pipe(catchError(() => observableOf(null)));
@@ -476,7 +508,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   private createMenu(restrictedSessions: Array<any>) {
     const keys = ['task_protocol', 'session_start_time',
     'session_uuid', 'session_lab', 'subject_birth_date', 'subject_line',
-    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project'];
+    'subject_uuid', 'sex', 'subject_nickname', 'responsible_user', 'session_project', 'brain_regions', 'death_date'];
     
     keys.forEach(key => {
       this.uniqueValuesForEachAttribute[key] = new Set();
@@ -548,6 +580,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredTaskProtocolOptions',  this.session_filter_form.controls.task_protocol, 'task_protocol');
     this.setDropDownFormOptions('filteredSubjectLineOptions',  this.session_filter_form.controls.subject_line, 'subject_line');
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
+    this.setDropDownFormOptions('filteredBrainRegionsOptions',  this.session_filter_form.controls.brain_regions, 'brain_regions');
+    this.setDropDownFormOptions('filteredDeathDateOptions',  this.session_filter_form.controls.death_date, 'death_date');
   }
 
   /**
@@ -1164,25 +1198,33 @@ export class SessionListComponent implements OnInit, OnDestroy {
   toggleNplotStatus() {
     // hide or show sessions that have missing session plots
     this.hideMissingPlots = !this.hideMissingPlots;
-    this.updateSelection();
+    this.isLoading = false; 
+    this.paginator.pageIndex = 0; 
+    this.ngAfterViewInit();
   }
   ​
   toggleNprobeStatus() {
     // hide or show sessions that have missing ephys data (based on existence of probe insertion)
     this.hideMissingEphys = !this.hideMissingEphys;
-    this.updateSelection();
+    this.isLoading = false; 
+    this.paginator.pageIndex = 0; 
+    this.ngAfterViewInit();
   }
 
   toggleG4BMviewStatus() {
     // hide or show sessions that are not good enough for brain map
     this.hideNG4BrainMap = !this.hideNG4BrainMap;
-    this.updateSelection();
+    this.isLoading = false; 
+    this.paginator.pageIndex = 0; 
+    this.ngAfterViewInit();
   }
 
   toggleR4DviewStatus() {
     // hide or show session that are not ready for delay
     this.hideNotReady4Delay = !this.hideNotReady4Delay;
-    this.updateSelection();
+    this.isLoading = false; 
+    this.paginator.pageIndex = 0; 
+    this.ngAfterViewInit();
   }
 
   //==**==**==**==**+=**+== [START] brain tree functions **==**==**==**==**==**==**==**==**==**+=//

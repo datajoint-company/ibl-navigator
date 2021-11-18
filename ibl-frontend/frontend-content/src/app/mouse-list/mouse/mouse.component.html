@@ -6,56 +6,60 @@
   </div>
   <div class="row mouse-info-table">
     <table class="table col-lg-4 col-sm-6 col-xs-12 table-striped table-bordered table-sm">
-      <tr>
-        <th>Mouse Nickname</th>
-        <td>{{ mouse?.subject_nickname }}</td>
-      </tr>
-      <tr>
-        <th>Mouse UUID</th>
-        <td>{{ mouse?.subject_uuid }}</td>
-      </tr>
-      <tr>
-        <th>Mouse DOB</th>
-        <td>{{ mouse?.subject_birth_date }}</td>
-      </tr>
-      <tr>
-        <th>Lab</th>
-        <td>{{ mouse?.lab_name }}</td>
-      </tr>
-      <tr>
-        <th>Sex</th>
-        <td>{{ mouse?.sex }}</td>
-      </tr>
-      <tr>
-        <th>Project</th>
-        <td>{{ mouse?.projects }}</td>
-      </tr>
-      <tr>
-        <th>User</th>
-        <td>{{ mouse?.responsible_user }}</td>
-      </tr>
+      <tbody>
+        <tr>
+          <th>Mouse Nickname</th>
+          <td>{{ mouse?.subject_nickname }}</td>
+        </tr>
+        <tr>
+          <th>Mouse UUID</th>
+          <td>{{ mouse?.subject_uuid }}</td>
+        </tr>
+        <tr>
+          <th>Mouse DOB</th>
+          <td>{{ mouse?.subject_birth_date }}</td>
+        </tr>
+        <tr>
+          <th>Lab</th>
+          <td>{{ mouse?.lab_name }}</td>
+        </tr>
+        <tr>
+          <th>Sex</th>
+          <td>{{ mouse?.sex }}</td>
+        </tr>
+        <tr>
+          <th>Project</th>
+          <td>{{ mouse?.projects }}</td>
+        </tr>
+        <tr>
+          <th>User</th>
+          <td>{{ mouse?.responsible_user }}</td>
+        </tr>
+      </tbody>
     </table>
     <table class="table col-lg-3 col-sm-6 col-xs-12 table-striped table-bordered table-sm">
-      <tr>
-        <th>Ear Mark</th>
-        <td>{{ mouse?.ear_mark }}</td>
-      </tr>
-      <tr>
-        <th>Mouse Line</th>
-        <td>{{ mouse?.subject_line }}</td>
-      </tr>
-      <tr>
-        <th>Source</th>
-        <td>{{ mouse?.subject_source }}</td>
-      </tr>
-      <tr>
-        <th>Protocol Number</th>
-        <td>{{ mouse?.protocol_number }}</td>
-      </tr>
-      <tr>
-        <th>Description</th>
-        <td>{{ mouse?.subject_description }}</td>
-      </tr>
+      <tbody>  
+        <tr>
+          <th>Ear Mark</th>
+          <td>{{ mouse?.ear_mark }}</td>
+        </tr>
+        <tr>
+          <th>Mouse Line</th>
+          <td>{{ mouse?.subject_line }}</td>
+        </tr>
+        <tr>
+          <th>Source</th>
+          <td>{{ mouse?.subject_source }}</td>
+        </tr>
+        <tr>
+          <th>Protocol Number</th>
+          <td>{{ mouse?.protocol_number }}</td>
+        </tr>
+        <tr>
+          <th>Description</th>
+          <td>{{ mouse?.subject_description }}</td>
+        </tr>
+      </tbody>
     </table>
     <div class="col-lg-3" *ngIf="mouse">
       <app-spinning-brain [mouseInfo]="mouse"></app-spinning-brain>

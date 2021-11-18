@@ -157,11 +157,23 @@
         </mat-autocomplete>
       </mat-form-field>
 
+      <div class="date-range-toggler">
+        <label for="isAlive">Mouse Vital Status</label>
+        <div>
+          Deceased&nbsp;<mat-slide-toggle name="isAlive" [checked]="isAlive" (change)="isAlive=!isAlive">Alive
+          </mat-slide-toggle>
+        </div>
+      </div>
+
       <!-- // Brain Tree Selection Area -->
       <div class="brain-tree-zone">
         <mat-form-field>
           <label>Brain Regions</label>
-          <input matInput (input)="filterChanged($event.target.value.toLowerCase())">
+          <input matInput type="text" name="brain_regions" formControlName="brain_regions">
+                <mat-autocomplete #autoCompRU="matAutocomplete">
+                  <mat-option *ngFor="let responsible_user of dropDownMenuOptions.filteredResponsibleUserOptions | async"[value]="brain_regions"
+                    (click)="updateMenu()">{{ brain_regions }}</mat-option>
+                </mat-autocomplete>
         </mat-form-field>
         <!-- <div>Selected Brain Region:
           <div class="chip-list">
@@ -220,7 +232,7 @@
         <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>
       </div>
     </div>
-      <!-- <div class="nplot_status_filter">
+      <div class="nplot_status_filter">
         <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
           Only show session with behavior plots
         </mat-checkbox>
@@ -230,7 +242,6 @@
           Only show session with ephys data
         </mat-checkbox>
       </div>
-    </div>
     <div>
       <div class="nprobe_status_filter">
         <mat-checkbox class="nprobe_status_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
@@ -242,7 +253,7 @@
           Only show session good for brainwide map
         </mat-checkbox>
       </div>
-    </div> -->
+    </div>
   </div>
 </form>
 
@@ -250,7 +261,7 @@
   <img src="assets/images/loading_icon.gif">
   <p [class]="initialLoad ? 'session-list-loading-message show' : 'session-list-loading-message'"></p>
 </div>
-<div class="table-container">
+<div class="table-container flipped">
   <div class="session-list-loading-shade" *ngIf="isLoadingTable">
 <mat-spinner *ngIf="isLoadingTable"></mat-spinner>
   </div>
@@ -309,6 +320,11 @@
   <ng-container matColumnDef="sex">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Sex </th>
     <td mat-cell *matCellDef="let session"class="to-center"> {{session.sex}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="death_date">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Mouse Vital Status </th>
+    <td mat-cell *matCellDef="let session"class="to-center"> {{session.death_date}} </td>
   </ng-container>
 
   <ng-container matColumnDef="nplot">
