@@ -69,7 +69,6 @@ form.loading {
 .date-range-toggler {
     margin-top: 14px;
     margin-right: 13px;
-    width: 33%;
 }
 
 .date-range-toggler div {
@@ -253,6 +252,16 @@ mat-checkbox.mouse_sex_menu_chbox {
 .form-submit-button-area {
     display: flex;
     flex-direction: column;
+}
+
+.form-submit-button-area .checkbox-filters {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.chbox-filter {
+    margin-left: 15px;
+    margin-top: 7px;
 }
 
 .nplot_status_filter {
