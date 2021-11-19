@@ -232,26 +232,28 @@
         <button mat-raised-button class="btn btn-refresh" (click)="refreshData()">Refresh Data</button>
       </div>
     </div>
-      <div class="nplot_status_filter">
-        <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
-          Only show session with behavior plots
-        </mat-checkbox>
-      </div>
-      <div class="nprobe_status_filter">
-        <mat-checkbox class="nprobe_status_chbox" [checked]="hideMissingEphys" (change)="toggleNprobeStatus()">
-          Only show session with ephys data
-        </mat-checkbox>
-      </div>
-    <div>
-      <div class="nprobe_status_filter">
-        <mat-checkbox class="nprobe_status_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
-          Only show session with mouse ready for delay
-        </mat-checkbox>
-      </div>
-      <div class="nprobe_status_filter">
-        <mat-checkbox class="nprobe_status_chbox" [checked]="hideNG4BrainMap" (change)="toggleG4BMviewStatus()">
-          Only show session good for brainwide map
-        </mat-checkbox>
+    <div class="checkbox-filters">
+      <div class="chbox-filter">
+          <mat-checkbox class="nplot_status_chbox" [checked]="hideMissingPlots" (change)="toggleNplotStatus()">
+            Only show session with behavior plots
+          </mat-checkbox>
+        </div>
+        <div class="chbox-filter">
+          <mat-checkbox class="nprobe_status_chbox" [checked]="hideMissingEphys" (change)="toggleNprobeStatus()">
+            Only show session with ephys data
+          </mat-checkbox>
+        </div>
+      <div>
+        <div class="chbox-filter">
+          <mat-checkbox class="nprobe_status_chbox" [checked]="hideNotReady4Delay" (change)="toggleR4DviewStatus()">
+            Only show session with mouse ready for delay
+          </mat-checkbox>
+        </div>
+        <div class="chbox-filter">
+          <mat-checkbox class="nprobe_status_chbox" [checked]="hideNG4BrainMap" (change)="toggleG4BMviewStatus()">
+            Only show session good for brainwide map
+          </mat-checkbox>
+        </div>
       </div>
     </div>
   </div>

@@ -352,14 +352,17 @@ export class SessionListComponent implements OnInit, OnDestroy {
           let filter = Object.assign({}, this.session_filter_form.getRawValue());
           
           if(this.hideMissingPlots){
-            filter["nplot"] = 1;
+            dj_restriction_conditions.push("nplot=1");
+            // filter["nplot"] = 1;
           }
 
           if(this.hideNG4BrainMap){
-            filter["good_enough_for_brainwide_map"] = 1;
+            dj_restriction_conditions.push("good_enough_for_brainwide_map=1");
+            // filter["good_enough_for_brainwide_map"] = 1;
           }
 
           if(this.hideNotReady4Delay){
+            // dj_restriction_conditions.push("training_status=ready4delay");
             filter["training_status"] = "ready4delay";
           }
 
@@ -368,6 +371,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
 
           for (const [key, value] of Object.entries(filter)) {
+            if(key == 'training_status' && value !== null){
+              newObject[key] = 'ready4delay';
+            }
             if(key == 'sex'){
               if(value[0] == true){
                 newObject[key] = 'F';
