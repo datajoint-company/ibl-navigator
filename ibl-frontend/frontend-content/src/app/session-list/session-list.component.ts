@@ -67,7 +67,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   sessionMinDate: Date;
   sessionMaxDate: Date;
   isSessionDateUsingRange: boolean;
-  isAlive: boolean;
+  isAlive: boolean = true;
   dropDownMenuOptions: any = {};
   // filteredTaskProtocolOptions: Observable<string[]>;
   // filteredSessionUuidOptions: Observable<string[]>;
@@ -352,18 +352,18 @@ export class SessionListComponent implements OnInit, OnDestroy {
           let filter = Object.assign({}, this.session_filter_form.getRawValue());
           
           if(this.hideMissingPlots){
-            dj_restriction_conditions.push("nplot=1");
             // filter["nplot"] = 1;
+            dj_restriction_conditions.push("nplot=1");
           }
 
           if(this.hideNG4BrainMap){
-            dj_restriction_conditions.push("good_enough_for_brainwide_map=1");
             // filter["good_enough_for_brainwide_map"] = 1;
+            dj_restriction_conditions.push("good_enough_for_brainwide_map=1");
           }
 
           if(this.hideNotReady4Delay){
-            // dj_restriction_conditions.push("training_status=ready4delay");
             filter["training_status"] = "ready4delay";
+            // dj_restriction_conditions.push("training_status=ready4delay");
           }
 
           if(this.hideMissingEphys){
@@ -371,9 +371,52 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
 
           for (const [key, value] of Object.entries(filter)) {
-            if(key == 'training_status' && value !== null){
-              newObject[key] = 'ready4delay';
+            
+            if( key == 'task_protocol' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
             }
+
+            if( key == 'session_uuid' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
+            }
+
+            if( key == 'subject_nickname' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
+            }
+
+            if( key == 'responsible_user' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
+            }
+
+            if( key == 'subject_line' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
+            }
+
+            if( key == 'session_lab' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
+            }
+
+            if( key == 'subject_birth_date' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
+            }
+
+            if( key == 'session_project' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
+            }
+
+            if( key == 'subject_uuid' && value !== null && value !== ""){
+              newObject[key] = value
+              continue;
+            }
+
             if(key == 'sex'){
               if(value[0] == true){
                 newObject[key] = 'F';
@@ -416,6 +459,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
             }
             if(value !== null){
               newObject[key] = value;
+              continue;
             }
           }
           this.isLoadingResults = true;

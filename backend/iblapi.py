@@ -252,7 +252,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             training_status='training_status', good_enough_for_brainwide_map='good_enough_for_brainwide_map',
             keep_all_rows=True
             )
-        subj = subject.Subject().aggr(
+        subj = subject.Subject() * subject.Subject().aggr(
             subject.Death().proj('death_date') * dj.U('death_date'),
             death_date='IFNULL(death_date, NULL)',
             keep_all_rows=True)
