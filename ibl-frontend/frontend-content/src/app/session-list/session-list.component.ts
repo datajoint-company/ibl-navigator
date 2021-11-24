@@ -373,47 +373,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
 
           for (const [key, value] of Object.entries(filter)) {
 
-            if( key == 'task_protocol' && value !== null && value !== ""){
-              newObject[key] = value
-              continue;
-            }
-
-            if( key == 'session_uuid' && value !== null && value !== ""){
-              newObject[key] = value
-              continue;
-            }
-
-            if( key == 'subject_nickname' && value !== null && value !== ""){
-              newObject[key] = value
-              continue;
-            }
-
-            if( key == 'responsible_user' && value !== null && value !== ""){
-              newObject[key] = value
-              continue;
-            }
-
-            if( key == 'subject_line' && value !== null && value !== ""){
-              newObject[key] = value
-              continue;
-            }
-
-            if( key == 'session_lab' && value !== null && value !== ""){
-              newObject[key] = value
-              continue;
-            }
-
-            if( key == 'subject_birth_date' && value !== null && value !== ""){
-              newObject[key] = value
-              continue;
-            }
-
-            if( key == 'session_project' && value !== null && value !== ""){
-              newObject[key] = value
-              continue;
-            }
-            
-            if( key == 'subject_uuid' && value !== null && value !== ""){
+            if(value !== null && value !== "" && ['task_protocol', 'session_uuid', 'subject_nickname', 'responsible_user', 'subject_line', 'session_lab', 'session_start_time', 'subject_birth_date', 'session_project', 'subject_uuid', 'training_status'].includes(key)){
               newObject[key] = value
               continue;
             }
