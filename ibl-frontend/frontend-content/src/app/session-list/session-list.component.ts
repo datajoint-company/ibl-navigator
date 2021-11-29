@@ -353,18 +353,15 @@ export class SessionListComponent implements OnInit, OnDestroy {
           console.log(filter)
 
           if(this.hideMissingPlots){
-            // filter["nplot"] = 1;
             dj_restriction_conditions.push("nplot=1");
           }
 
           if(this.hideNG4BrainMap){
-            // filter["good_enough_for_brainwide_map"] = 1;
             dj_restriction_conditions.push("good_enough_for_brainwide_map=1");
           }
 
           if(this.hideNotReady4Delay){
             filter["training_status"] = "ready4delay";
-            // dj_restriction_conditions.push("training_status=ready4delay");
           }
 
           if(this.hideMissingEphys){
