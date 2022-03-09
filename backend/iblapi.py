@@ -273,69 +273,8 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             
         else:
             brain_restriction = {}
-        # q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
-        #       subject.SubjectLab() * subject.SubjectUser() *
-        #       analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
-
-        # print(f"\n\n\n this is the session {dir(acquisition.Session())}", flush=True)
 
         tag_query = (acquisition.Session() * behavior.SessionTag.Tag() * behavior.Tag()) & "description = 'move-to-public'"
-
-        # q = tag_query
-
-        # print(f"\n\n\n this is the partial tag query{len(tag_query)}", flush=True)
-
-
-
-        # a = (tag_query * sess_proj * psych_curve * ephys_data * subj * subject.SubjectLab())
-
-        # print(f"\n\n\n{len(a)}", flush=True)
-
-        # b = (a * ephys_data)
-
-        # print(f"\n\n\n{len(b)}", flush=True)
-
-        # q = a 
-
-        # c = b * ephys_data
-
-        # print(f"\n\n\n{len(c)}", flush=True)
-
-        # d = c * subj
-
-        # print(f"\n\n\n{len(d)}", flush=True)
-
-        # e = d * subject.SubjectLab()
-
-        # print(f"\n\n\n{len(e)}", flush=True)
-
-        # q = (tag_query * sess_proj * psych_curve * ephys_data * subj * subject.SubjectLab()).join(subject.SubjectUser(), left=True) * trainingStatus & args & brain_restriction
-
-        print(f"\n\n\n{dj.__version__}", flush=True)
-
-        # print(f"\n\n\n this is the converted {len(converted)}", flush=True)
-
-        # q = converted.join(subject.SubjectUser(), left=True) * trainingStatus & args & brain_restriction 
-
-        # print(f"\n\n\n this is the full query {dir(query)}", flush=True)
-
-        # sessiontags = acquisition.Session.aggr(test_behavior.SessionTag.Tag, session_tags='GROUP_CONCAT(tag SEPARATOR "; ")')
-
-        # q = (tag_query * sess_proj * psych_curve * ephys_data * subj * subject.SubjectLab()).join(subject.SubjectUser(), left=True) * trainingStatus & args & brain_restriction 
-
-        # q = tag_query * sess_proj * psych_curve * ephys_data * subj * subject.SubjectLab()
-
-        # print(f"\n\n\n{dir(q)}", flush=True)
-
-        # q = k.join(subject.SubjectUser(), left=True)
-
-        # print("\n\n\n\n\n\nargs\n\n\n\n", flush=True)
-        # print(args[0], flush=True)
-        # if "tag" in args[0]: 
-        #     print(tag_query * test_acquisition.Session() * sess_proj * psych_curve * ephys_data * subj *
-        #       subject.SubjectLab() * subject.SubjectUser() * trainingStatus)
-        #     # q = ((tag_query))
-        #     print("\n\n\n\n\nhello\n\n\n\n\n\n", flush=True)
 
         q = ((sess_proj * psych_curve * ephys_data * subj *
               subject.SubjectLab() * tag_query * subjUser * trainingStatus) & args & brain_restriction)

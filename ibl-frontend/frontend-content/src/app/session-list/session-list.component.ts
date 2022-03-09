@@ -370,7 +370,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
           console.log("filter", filter)
 
           for (const [key, value] of Object.entries(filter)) {
-            console.log("key: value", key, value)
             if(key == 'sex'){
               if(value[0] == true){
                 newObject[key] = 'F';
