@@ -367,8 +367,6 @@ export class SessionListComponent implements OnInit, OnDestroy {
             dj_restriction_conditions.push("nprobe>0");
           }
 
-          console.log("filter", filter)
-
           for (const [key, value] of Object.entries(filter)) {
             if(key == 'sex'){
               if(value[0] == true){
