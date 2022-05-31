@@ -1,0 +1,24 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ibl-node-server-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  rules:
+  - host: data-test.internationalbrainlab.org
+    http:
+      paths:
+      - path: /api(/|$)(.*) 
+        backend:
+          serviceName: ibl-node-server
+          servicePort: 3333
+  tls:
+    - hosts:
+      - data-test.internationalbrainlab.org
+      secretName: ibl-node-server-tls
+...
