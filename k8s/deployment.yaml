@@ -1,50 +1,85 @@
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: iblapi
-#spec:
-#  selector:
-#    matchLabels:
-#      run: ibl-navigator-flask
-#  replicas: 1
-#  template:
-#    metadata:
-#      labels:
-#        run: ibl-navigator-flask
-#        app: iblapi
-#    spec:
-#      containers:
-#        - name: iblapi
-#          image: registry.vathes.com/ibl-navigator/iblapi:v0.3.1-public
-#          env:
-#          - name: DJ_HOST
-#            value: "datajoint-public.internationalbrainlab.org"
-#          - name: DJ_USER
-#            value: "ibl-navigator"
-#          - name: AWS_DEFAULT_REGION
-#            value: "us-east-1"
-#          - name: WORKER_COUNT
-#            value: "1"
-#          - name: API_MODE
-#            value: "public"
-#          envFrom:
-#          - secretRef:
-#              name: ibl-nav-private # add a secret for the sensitive env vars
-#          command: ["/src/iblapi/run-ibl-api.prod.sh"]
-#          ports:
-#            - containerPort: 5000
-#              protocol: TCP
-#          resources:
-#            requests:
-#              cpu: 600m
-#              memory: 1Gi
-#            limits:
-#              cpu: 600m
-#              memory: 1Gi
-#      imagePullSecrets:
-#        - name: registry-creds # add a secret to access the private registry
-#...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iblapi
+spec:
+  selector:
+    matchLabels:
+      run: ibl-navigator-flask
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: ibl-navigator-flask
+        app: iblapi
+    spec:
+      containers:
+        - name: iblapi
+          image: registry.vathes.com/ibl-navigator/iblapi:v0.3.1-public
+          env:
+          - name: DJ_HOST
+            value: "datajoint-public.internationalbrainlab.org"
+          - name: DJ_USER
+            value: "ibl-navigator"
+          - name: AWS_DEFAULT_REGION
+            value: "us-east-1"
+          - name: WORKER_COUNT
+            value: "1"
+          - name: API_MODE
+            value: "public"
+          envFrom:
+          - secretRef:
+              name: ibl-nav-private 
+          command: ["/src/iblapi/run-ibl-api.prod.sh"]
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 600m
+              memory: 1Gi
+            limits:
+              cpu: 600m
+              memory: 1Gi
+      imagePullSecrets:
+        - name: external-registry-creds
+...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ibl-frontend
+spec:
+  selector:
+    matchLabels:
+      run: ibl-navigator-frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: ibl-navigator-frontend
+        app: ibl-frontend
+    spec:
+      containers:
+        - name: ibl-frontend
+          image: registry.vathes.com/ibl-navigator/frontend:v0.3.2-public
+          env:
+          - name: PROD_NODE_BACKEND
+            value: "https://data.internationalbrainlab.org/api"
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi 
+            limits:
+              cpu: 100m
+              memory: 100Mi
+      imagePullSecrets:
+        - name: external-registry-creds
+...
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -69,8 +104,8 @@ spec:
             value: "development"
           - name: DEMO_USERNAME
             value: "ibluser"
-#          - name: PY_BACKEND
-#            value: "http://$(IBLAPI_SERVICE_HOST):$(IBLAPI_SERVICE_PORT)"
+          - name: PY_BACKEND
+            value: "http://$(IBLAPI_SERVICE_HOST):$(IBLAPI_SERVICE_PORT)"
           envFrom:
           - secretRef:
               name: ibl-nav-private

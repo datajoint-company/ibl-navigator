@@ -1,5 +1,6 @@
+#Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 #networking.k8s.io/v1 Ingress
 kind: Ingress
 metadata:
   name: ibl-node-server-ingress
@@ -7,10 +8,11 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+#    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   rules:
-  - host: data-test.internationalbrainlab.org
+  - host: data.internationalbrainlab.org
     http:
       paths:
       - path: /api(/|$)(.*) 
@@ -19,6 +21,28 @@ spec:
           servicePort: 3333
   tls:
     - hosts:
-      - data-test.internationalbrainlab.org
+      - data.internationalbrainlab.org
       secretName: ibl-node-server-tls
+...
+---
+apiVersion: extensions/v1beta1 #networking.k8s.io/v1 Ingress
+kind: Ingress
+metadata:
+  name: ibl-frontend-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  rules:
+  - host: data.internationalbrainlab.org
+    http:
+      paths:
+      - backend:
+          serviceName: ibl-frontend
+          servicePort: 9000
+  tls:
+    - hosts:
+      - data.internationalbrainlab.org
+      secretName: ibl-frontend-tls
 ...

@@ -1,22 +1,18 @@
-#---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  #Name as appears in env var + "_PORT"
-#  #ALL CAPS and - --> _
-#  #remove leading protocol
-#  name: iblapi
-#  labels:
-#    app: iblapi-svc
-#spec:
-#  ports:
-#  - port: 5000
-#    targetPort: 5000
-#  # clusterIP: 100.70.190.150
-#  selector:
-#    app: iblapi
-#  type: ClusterIP
-#...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iblapi
+  labels:
+    app: iblapi-svc
+spec:
+  ports:
+  - port: 5000
+    targetPort: 5000
+  selector:
+    app: iblapi
+  type: ClusterIP
+...
 ---
 apiVersion: v1
 kind: Service
@@ -30,5 +26,20 @@ spec:
     targetPort: 3333
   selector:
     app: ibl-node-server
+  type: ClusterIP
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ibl-frontend
+  labels:
+    app: ibl-frontend-svc
+spec:
+  ports:
+  - port: 9000
+    targetPort: 9000
+  selector:
+    app: ibl-frontend
   type: ClusterIP
 ...
