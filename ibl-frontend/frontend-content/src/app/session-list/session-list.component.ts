@@ -68,7 +68,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   sessionMinDate: Date;
   sessionMaxDate: Date;
   isSessionDateUsingRange: boolean;
-  isAlive: boolean = true;
+  isAlive: boolean = false;
   dropDownMenuOptions: any = {};
   // filteredTaskProtocolOptions: Observable<string[]>;
   // filteredSessionUuidOptions: Observable<string[]>;
