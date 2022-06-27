@@ -68,7 +68,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
   sessionMinDate: Date;
   sessionMaxDate: Date;
   isSessionDateUsingRange: boolean;
-  isAlive: boolean
+  isAlive: boolean = false;
   dropDownMenuOptions: any = {};
   // filteredTaskProtocolOptions: Observable<string[]>;
   // filteredSessionUuidOptions: Observable<string[]>;
@@ -351,12 +351,14 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
           let filter = Object.assign({}, this.session_filter_form.getRawValue());
 
+          console.log(filter)
+
           if(this.hideMissingPlots){
-            filter["nplot"] = 1;
+            dj_restriction_conditions.push("nplot=1");
           }
 
           if(this.hideNG4BrainMap){
-            filter["good_enough_for_brainwide_map"] = 1;
+            dj_restriction_conditions.push("good_enough_for_brainwide_map=1");
           }
 
           if(this.hideNotReady4Delay){
@@ -368,6 +370,11 @@ export class SessionListComponent implements OnInit, OnDestroy {
           }
 
           for (const [key, value] of Object.entries(filter)) {
+
+            if(value !== null && value !== "" && ['task_protocol', 'session_uuid', 'subject_nickname', 'responsible_user', 'subject_line', 'session_lab', 'session_start_time', 'subject_birth_date', 'session_project', 'subject_uuid', 'training_status'].includes(key)){
+              newObject[key] = value
+              continue;
+            }
             if(key == 'sex'){
               if(value[0] == true){
                 newObject[key] = 'F';
@@ -413,8 +420,9 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 continue;
               }
             }
-            if(value !== null){
+            if(value !== null ){
               newObject[key] = value;
+              continue;
             }
           }
           this.isLoadingResults = true;
