@@ -69,7 +69,6 @@ form.loading {
 .date-range-toggler {
     margin-top: 14px;
     margin-right: 13px;
-    width: 33%;
 }
 
 .date-range-toggler div {
@@ -135,6 +134,14 @@ label {
     position: relative;
     overflow-x: auto;
 }
+
+.flipped, .flipped .col-12
+{
+    transform:rotateX(180deg);
+    -ms-transform:rotateX(180deg); /* IE 9 */
+    -webkit-transform:rotateX(180deg); /* Safari and Chrome */
+}
+
 td.mat-cell, 
 td.mat-footer-cell, 
 th.mat-header-cell {
@@ -245,6 +252,16 @@ mat-checkbox.mouse_sex_menu_chbox {
 .form-submit-button-area {
     display: flex;
     flex-direction: column;
+}
+
+.form-submit-button-area .checkbox-filters {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.chbox-filter {
+    margin-left: 15px;
+    margin-top: 7px;
 }
 
 .nplot_status_filter {
