@@ -53,7 +53,8 @@ export class SessionListComponent implements OnInit, OnDestroy {
     subject_line: new FormControl(),
     responsible_user: new FormControl(),
     brain_regions: new FormControl(),
-    death_date: new FormControl()
+    death_date: new FormControl(),
+    tag: new FormControl()
   });
   isLoading;
   isLoadingTable = true;
@@ -401,18 +402,23 @@ export class SessionListComponent implements OnInit, OnDestroy {
                 }
                 continue;
               }
+              continue;
             }
             if(key == 'brain_regions' && value !== null && value !== ""){
               newObject["__json_kwargs"] = `{"brain_regions": ["${value}"]}`;
               continue;
             }
             if(this.isAlive){
-              dj_restriction_conditions.push("death_date is null");
-              continue;
+              if(!dj_restriction_conditions.includes("death_date is null")){
+                dj_restriction_conditions.push("death_date is null");
+                continue;
+              }
             }
             if(!this.isAlive){
-              dj_restriction_conditions.push("death_date is not null");
-              continue;
+              if(!dj_restriction_conditions.includes("death_date is not null")){
+                dj_restriction_conditions.push("death_date is not null");
+                continue;
+              }
             }
             if(value !== null ){
               newObject[key] = value;
@@ -588,6 +594,7 @@ export class SessionListComponent implements OnInit, OnDestroy {
     this.setDropDownFormOptions('filteredResponsibleUserOptions',  this.session_filter_form.controls.responsible_user, 'responsible_user');
     this.setDropDownFormOptions('filteredBrainRegionsOptions',  this.session_filter_form.controls.brain_regions, 'brain_regions');
     this.setDropDownFormOptions('filteredDeathDateOptions',  this.session_filter_form.controls.death_date, 'death_date');
+    this.setDropDownFormOptions('filteredTag',  this.session_filter_form.controls.tag, 'tag');
   }
 
   /**

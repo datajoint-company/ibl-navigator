@@ -49,6 +49,7 @@ plotting_behavior = mkvmod('plotting_behavior')
 analyses_behavior = mkvmod('analyses_behavior')
 plotting_ephys = mkvmod('plotting_ephys')
 plotting_histology = mkvmod('plotting_histology')
+behavior = mkvmod('behavior')
 # test_plotting_ephys = test_mkvmod('plotting_ephys')
 ephys = mkvmod('ephys')
 histology = mkvmod('histology')
@@ -254,11 +255,10 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             subject.Death().proj('death_date') * dj.U('death_date'),
             death_date='IFNULL(death_date, NULL)',
             keep_all_rows=True)
-        print(f'what is in here: {subject.Subject()}');
-        # subj2 = subject.Subject().aggr(
-        #     subject.Subject() * dj.U('sex'),
-        #     sex='IFNULL(sex, NULL)',
-        #     keep_all_rows=True)
+        subjUser = subject.Subject().aggr(
+            subject.SubjectUser().proj('responsible_user') * dj.U('responsible_user'),
+            responsible_user='IFNULL(responsible_user, NULL)',
+            keep_all_rows=True)
         regions = kwargs.get('brain_regions', None)
         #   expected format of brain_regions = ["AB", "ABCa", "CS of TCV"]
         if regions is not None and len(regions) > 0: 
@@ -273,12 +273,11 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
             
         else:
             brain_restriction = {}
-        # q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subject.Subject()*
-        #       subject.SubjectLab() * subject.SubjectUser() *
-        #       analyses_behavior.SessionTrainingStatus()) & args & brain_restriction)
 
-        q = ((acquisition.Session() * sess_proj * psych_curve * ephys_data * subj *
-              subject.SubjectLab() * subject.SubjectUser() * trainingStatus) & args & brain_restriction)
+        tag_query = (acquisition.Session() * behavior.SessionTag.Tag() * behavior.Tag()) & "description = 'move-to-public'"
+
+        q = ((sess_proj * psych_curve * ephys_data * subj *
+              subject.SubjectLab() * tag_query * subjUser * trainingStatus) & args & brain_restriction)
         q = q.proj(*proj) if proj else q
         dj.conn().query("SET SESSION max_join_size={}".format('18446744073709551615'))
         ret_count = len(q)

@@ -173,6 +173,10 @@
                     (click)="updateMenu()">{{ brain_regions }}</mat-option>
                 </mat-autocomplete>
             </mat-form-field>
+
+            
+
+            
            <!-- <div>Selected Brain Region:
               <div class="chip-list">
                 <div class="selected-chip" *ngFor="let item of requested_BR">
@@ -215,6 +219,14 @@
               </mat-tree>
             </div> -->
           </div>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Tags</mat-label>
+            <select matNativeControl formControlName="tag">
+              <option tag="Behavior-2022">Behavior-2022</option>
+              <option tag="Repeated-Site-2022">Repeated-Site-2022</option>
+            </select>
+          </mat-form-field>
 
         </div>
       </div>
