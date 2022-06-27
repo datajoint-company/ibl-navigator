@@ -9,7 +9,7 @@ services:
   iblapi:
     <<: *net
     # image: registry.vathes.com/ibl-navigator/iblapi:v0.5.3 # for internal demo
-    image: registry.vathes.com/ibl-navigator/iblapi:v0.3.1-public # for public demo
+    image: registry.vathes.com/ibl-navigator/iblapi:v0.3.2-public # for public demo
     environment:
     # for internal djcompute
     # - DJ_USER=maho
@@ -33,7 +33,7 @@ services:
   ibl-navigator:
     <<: *net
     # image: registry.vathes.com/ibl-navigator/frontend:v0.4.2 # for internal demo
-    image: registry.vathes.com/ibl-navigator/frontend:v0.3.2-public # for public demo
+    image: registry.vathes.com/ibl-navigator/frontend:v0.3.3-public # for public demo
     healthcheck:
       test: curl --fail http://localhost:9000 || exit 1
       timeout: 3s
@@ -42,7 +42,7 @@ services:
     <<: *net
     platform: linux/amd64
     # image: registry.vathes.com/ibl-navigator/node-server:v0.3.0 # for internal demo
-    image: registry.vathes.com/ibl-navigator/node-server:v0.3.1-public # for public demo
+    image: registry.vathes.com/ibl-navigator/node-server:v0.3.2-public # for public demo
     environment:
     - NODE_ENV=development
     - DEMO_USERNAME=ibluser
