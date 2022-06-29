@@ -500,7 +500,7 @@ def handle_q(subpath, args, proj, fetch_args=None, **kwargs):
     # print('D type', ret.dtype)
     # print(ret)
     print('About to return ', len(ret), 'entries')
-    return dumps(post_process(ret)) if post_process else dumps(ret)
+    return dumps(post_process(ret)).replace('NaN', 'null') if post_process else dumps(ret).replace('NaN', 'null')
 
 
 if is_gunicorn:
